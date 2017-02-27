@@ -1,4 +1,4 @@
-package com.survey.softbistro.sending.gmail;
+package com.survey.softbistro.sending.gmail.service;
 
 import java.util.Properties;
 
@@ -11,16 +11,25 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.stereotype.Controller;
+
+import com.survey.softbistro.sending.gmail.dao.EmailDao;
+import com.survey.softbistro.sending.gmail.interfacee.IEmail;
+
 /**
  * Sending message to users
  * 
  * @author zviproject
  *
  */
+
+@Controller
 public class EmailSender {
 	private static final String USERNAME = "zarovni03@gmail.com";
 	private static final String PASSWORD = "19991904";
 	private Properties props;
+	IEmail iEmail = new EmailDao();
 
 	public EmailSender() {
 		props = new Properties();
@@ -37,7 +46,7 @@ public class EmailSender {
 	 * @param toEmail
 	 *            - receiver message
 	 */
-	public void send(String toEmail) {
+	public void send() {
 		Session session = Session.getInstance(props, new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(USERNAME, PASSWORD);
@@ -45,20 +54,27 @@ public class EmailSender {
 		});
 
 		try {
-			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(USERNAME));
-			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-			message.setSubject(generateThemeFoeMessage());
-			message.setText(generateTextForMessage());
 
-			Transport.send(message);
+			for (String email : iEmail.getEmailsForSending()) {
+				Message message = new MimeMessage(session);
+				message.setFrom(new InternetAddress(USERNAME));
+				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+				message.setSubject(generateThemeFoeMessage());
+				message.setText(generateTextForMessage());
+
+				Transport.send(message);
+			}
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public String generateTextForMessage() {
-		String textMessage = "HELLO)";
+		String urlForVote = String.format("https://trainee.atlassian.net/%s",
+				DigestUtils.md5Hex("projects/SUR/summary"));
+
+		String textMessage = String.format("Survey on theme %s by %s was created.\n", "Testing", "SoftBistro")
+				+ String.format("You can vote by clicking on URL: %s", urlForVote);
 		return textMessage;
 	}
 

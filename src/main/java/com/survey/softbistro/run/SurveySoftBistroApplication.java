@@ -3,7 +3,7 @@ package com.survey.softbistro.run;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.survey.softbistro.sending.gmail.EmailSender;
+import com.survey.softbistro.sending.gmail.service.EmailSender;
 
 @SpringBootApplication
 public class SurveySoftBistroApplication {
@@ -13,6 +13,6 @@ public class SurveySoftBistroApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SurveySoftBistroApplication.class, args);
 		emailSender = new EmailSender();
-		emailSender.send("vitya.semenyuk1995@gmail.com");
+		emailSender.send();
 	}
 }
