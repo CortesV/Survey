@@ -11,15 +11,18 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+/**
+ * Sending message to users
+ * 
+ * @author zviproject
+ *
+ */
 public class EmailSender {
-	private String username;
-	private String password;
+	private static final String USERNAME = "zarovni03@gmail.com";
+	private static final String PASSWORD = "19991904";
 	private Properties props;
 
-	public EmailSender(String username, String password) {
-		this.username = username;
-		this.password = password;
-
+	public EmailSender() {
 		props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port", "465");
@@ -28,29 +31,40 @@ public class EmailSender {
 		props.put("mail.smtp.port", "465");
 	}
 
-	public void send(String subject, String text, String fromEmail, String toEmail) {
+	/**
+	 * Sending message from main accaunt to email of users
+	 * 
+	 * @param toEmail
+	 *            - receiver message
+	 */
+	public void send(String toEmail) {
 		Session session = Session.getInstance(props, new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(username, password);
+				return new PasswordAuthentication(USERNAME, PASSWORD);
 			}
 		});
 
 		try {
 			Message message = new MimeMessage(session);
-			// от кого
-			message.setFrom(new InternetAddress(username));
-			// кому
+			message.setFrom(new InternetAddress(USERNAME));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-			// Заголовок письма
-			message.setSubject(subject);
-			// Содержимое
-			message.setText(text);
+			message.setSubject(generateThemeFoeMessage());
+			message.setText(generateTextForMessage());
 
-			// Отправляем сообщение
 			Transport.send(message);
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public String generateTextForMessage() {
+		String textMessage = "HELLO)";
+		return textMessage;
+	}
+
+	public String generateThemeFoeMessage() {
+		String themeOfMessage = "SoftBistro";
+		return String.format("Survey %s", themeOfMessage);
 	}
 
 }
