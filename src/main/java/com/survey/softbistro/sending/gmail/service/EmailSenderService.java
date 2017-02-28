@@ -12,10 +12,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.survey.softbistro.sending.gmail.dao.EmailDao;
-import com.survey.softbistro.sending.gmail.interfacee.IEmail;
+import com.survey.softbistro.sending.gmail.component.interfacee.IEmail;
 
 /**
  * Sending message to users
@@ -24,14 +24,16 @@ import com.survey.softbistro.sending.gmail.interfacee.IEmail;
  *
  */
 
-@Controller
-public class EmailSender {
+@Service
+public class EmailSenderService {
 	private static final String USERNAME = "zarovni03@gmail.com";
 	private static final String PASSWORD = "19991904";
 	private Properties props;
-	IEmail iEmail = new EmailDao();
 
-	public EmailSender() {
+	@Autowired
+	IEmail iEmail;
+
+	public EmailSenderService() {
 		props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port", "465");
@@ -69,7 +71,7 @@ public class EmailSender {
 		}
 	}
 
-	public String generateTextForMessage() {
+	private String generateTextForMessage() {
 		String urlForVote = String.format("https://trainee.atlassian.net/%s",
 				DigestUtils.md5Hex("projects/SUR/summary"));
 
@@ -78,7 +80,7 @@ public class EmailSender {
 		return textMessage;
 	}
 
-	public String generateThemeFoeMessage() {
+	private String generateThemeFoeMessage() {
 		String themeOfMessage = "SoftBistro";
 		return String.format("Survey %s", themeOfMessage);
 	}

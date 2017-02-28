@@ -1,4 +1,4 @@
-package com.survey.softbistro.sending.gmail.interfacee;
+package com.survey.softbistro.sending.gmail.component.interfacee;
 
 import java.util.List;
 
