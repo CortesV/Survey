@@ -15,6 +15,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.survey.softbistro.response.ResponseStatus;
 import com.survey.softbistro.sending.gmail.component.interfacee.IEmail;
 
 /**
@@ -48,14 +49,13 @@ public class EmailSenderService {
 	 * @param toEmail
 	 *            - receiver message
 	 */
-	public void send() {
-		Session session = Session.getInstance(props, new Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(USERNAME, PASSWORD);
-			}
-		});
-
+	public ResponseStatus send() {
 		try {
+			Session session = Session.getInstance(props, new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(USERNAME, PASSWORD);
+				}
+			});
 
 			for (String email : iEmail.getEmailsForSending()) {
 				Message message = new MimeMessage(session);
@@ -65,10 +65,13 @@ public class EmailSenderService {
 				message.setText(generateTextForMessage());
 
 				Transport.send(message);
+
 			}
 		} catch (MessagingException e) {
 			throw new RuntimeException(e);
 		}
+
+		return ResponseStatus.DONE;
 	}
 
 	private String generateTextForMessage() {

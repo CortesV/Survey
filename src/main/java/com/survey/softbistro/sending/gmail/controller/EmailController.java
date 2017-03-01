@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.survey.softbistro.response.ResponseStatus;
 import com.survey.softbistro.sending.gmail.service.EmailSenderService;
 
 @RestController
@@ -15,7 +16,7 @@ public class EmailController {
 	EmailSenderService emailSenderService;
 
 	@RequestMapping(value = "sendemails", method = RequestMethod.GET)
-	public void sendingMessages() {
-		emailSenderService.send();
+	public ResponseStatus sendingMessages() {
+		return emailSenderService.send();
 	}
 }
