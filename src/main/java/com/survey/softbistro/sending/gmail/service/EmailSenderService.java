@@ -57,7 +57,7 @@ public class EmailSenderService {
 				}
 			});
 
-			for (String email : iEmail.getEmailsForSending()) {
+			for (String email : iEmail.getEmailsForSending(0)) {
 				Message message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(USERNAME));
 				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));

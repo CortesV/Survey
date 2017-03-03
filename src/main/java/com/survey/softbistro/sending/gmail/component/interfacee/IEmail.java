@@ -7,5 +7,5 @@ public interface IEmail {
 	 * Get records from DB with emails of users for sending messages about
 	 * survey
 	 */
-	public List<String> getEmailsForSending();
+	public List<String> getEmailsForSending(Integer page);
 }
