@@ -10,35 +10,26 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.survey.softbistro.sending.gmail.component.interfacee.IEmail;
+import com.survey.softbistro.sending.gmail.component.entity.SurveyMessage;
+import com.survey.softbistro.sending.gmail.component.interfacee.ISurveyMessage;
 
 @Repository
-public class EmailDao implements IEmail {
+public class EmailDao implements ISurveyMessage {
 	int countOfRecords = 10;
 
-	private static final String SQL_GET_LIST_ID_NEW_SURVEYS = "SELECT id FROM survey.survey WHERE status = \"NEW\" LIMIT ? OFFSET ?";
+	private static final String SQL_GET_LIST_ID_NEW_SURVEYS = "SELECT id FROM survey.survey WHERE status = 'NEW' LIMIT ? OFFSET ?";
 
 	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey`.`survey` SET `status`= ? WHERE status = ? LIMIT ?";
 
-	// private static final String SQL_GET_LIST_EMAILS_FOR_REGISTRATION=;
-	//
-	// private static final String SQL_GET_LIST_EMAILS_FOR_VERIFY_PASSWORD=;
-
-	private static final String SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY = "SELECT p.email FROM participant AS p "
-			+ "INNER JOIN connect_group_participant AS connect "
-			+ "ON p.id = connect.participant_id "
-			+ "INNER JOIN `group` AS g "
-			+ "ON connect.group_id = g.id "
-			+ "INNER JOIN connect_group_survey "
-			+ "ON connect_group_survey.group_id "
-			+ "INNER JOIN survey "
-			+ "ON  connect_group_survey.survey_id = survey.id "
-			+ "WHERE survey.id = ? GROUP BY email";
-
-	private static final String SQL_GET_CLIENT_NAME_OF_SURVEY = "SELECT c.client_name " + "FROM clients AS c "
-			+ "INNER JOIN survey " + "ON c.id = survey.client_id " + "WHERE survey.name = ?";
-
-	private static final String SQL_GET_THEME_OF_SURVEY = "SELECT survey.theme FROM survey WHERE survey.name = ?";
+	private static final String SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY = "SELECT p.email , survey.name, c.client_name, p.id AS participant_id, survey.id AS survey_id "
+			+ "FROM participant AS p "
+			+ "INNER JOIN connect_group_participant AS connect ON p.id = connect.participant_id "
+			+ "INNER JOIN `group` AS g ON connect.group_id = g.id "
+			+ "INNER JOIN connect_group_survey ON connect_group_survey.group_id = g.id "
+			+ "INNER JOIN survey AS participantSurvey ON  connect_group_survey.survey_id = participantSurvey.id, "
+			+ "survey.survey, survey.clients AS c "
+			+ "INNER JOIN survey AS surveyClient ON surveyClient.client_id = c.id "
+			+ "WHERE  participantSurvey.id = ? AND survey.id=? AND surveyClient.id=? GROUP BY email";
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -49,12 +40,19 @@ public class EmailDao implements IEmail {
 	 * @author zviproject
 	 *
 	 */
-	public static class ConnectToDB implements RowMapper<String> {
+	public static class ConnectToDB implements RowMapper<SurveyMessage> {
 
 		@Override
-		public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-			String userEmail = rs.getString(1);
-			return userEmail;
+		public SurveyMessage mapRow(ResultSet rs, int rowNum) throws SQLException {
+			SurveyMessage message = new SurveyMessage();
+
+			message.setParticipantEmail(rs.getString(1));
+			message.setSurveyName(rs.getString(2));
+			message.setClientName(rs.getString(3));
+			message.setParticipantId(rs.getInt(4));
+			message.setSurveyId(5);
+
+			return message;
 		}
 	}
 
@@ -64,7 +62,7 @@ public class EmailDao implements IEmail {
 	 * @author zviproject
 	 *
 	 */
-	public static class GetId implements RowMapper<Integer> {
+	public class GetId implements RowMapper<Integer> {
 
 		@Override
 		public Integer mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -78,15 +76,35 @@ public class EmailDao implements IEmail {
 	 * survey
 	 */
 	@Override
-	public List<String> getEmailsForSending(Integer page) {
+	public List<SurveyMessage> getEmailsForSending(Integer page) {
 
-		List<String> allEmailsOfUsers = new ArrayList<>();
+		List<SurveyMessage> allEmailsOfUsers = new ArrayList<>();
 
-		List<String> emailsOfUsers = new ArrayList<>();
+		List<SurveyMessage> emailsOfUsers = new ArrayList<>();
+
+		// jdbcTemplate.batchUpdate(SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY, new
+		// BatchPreparedStatementSetter() {
+		//
+		// @Override
+		// public void setValues(PreparedStatement ps, int i) throws
+		// SQLException {
+		// Integer surveyId = newSurveysId.get(i);
+		// ps.setInt(1, surveyId);
+		// ps.setInt(2, surveyId);
+		// ps.setInt(3, surveyId);
+		// }
+		//
+		// @Override
+		// public int getBatchSize() {
+		//
+		// return newSurveysId.size();
+		// }
+		// });
 
 		for (int surveyId : getSurveysId(page)) {
 
-			emailsOfUsers = jdbcTemplate.query(SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDB(), surveyId);
+			emailsOfUsers = jdbcTemplate.query(SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDB(), surveyId,
+					surveyId, surveyId);
 
 			allEmailsOfUsers.addAll(emailsOfUsers);
 		}
@@ -111,12 +129,4 @@ public class EmailDao implements IEmail {
 		return surveysId;
 	}
 
-	// /**
-	// * Getting information about name survey
-	// */
-	// public String getSurveyName(String surveyName) {
-	// String name = jdbcTemplate.//----(SQL_GET_THEME_OF_SURVEY, new
-	// ConnectToDB(), surveyName);
-	// return name;
-	// }
 }

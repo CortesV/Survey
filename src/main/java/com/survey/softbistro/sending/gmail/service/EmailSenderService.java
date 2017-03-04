@@ -1,5 +1,6 @@
 package com.survey.softbistro.sending.gmail.service;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -16,7 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.survey.softbistro.response.ResponseStatus;
-import com.survey.softbistro.sending.gmail.component.interfacee.IEmail;
+import com.survey.softbistro.sending.gmail.component.entity.SurveyMessage;
+import com.survey.softbistro.sending.gmail.component.interfacee.ISurveyMessage;
 
 /**
  * Sending message to users
@@ -32,7 +34,7 @@ public class EmailSenderService {
 	private Properties props;
 
 	@Autowired
-	IEmail iEmail;
+	ISurveyMessage iSurveyMessage;
 
 	public EmailSenderService() {
 		props = new Properties();
@@ -57,12 +59,17 @@ public class EmailSenderService {
 				}
 			});
 
-			for (String email : iEmail.getEmailsForSending(0)) {
+			List<SurveyMessage> messages = iSurveyMessage.getEmailsForSending(0);
+
+			for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
 				Message message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(USERNAME));
-				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-				message.setSubject(generateThemeFoeMessage());
-				message.setText(generateTextForMessage());
+				message.setRecipients(Message.RecipientType.TO,
+						InternetAddress.parse(messages.get(emailIndex).getParticipantEmail()));
+				message.setSubject(generateThemeForMessage());
+				message.setText(generateTextForMessage(messages.get(emailIndex).getSurveyName(),
+						messages.get(emailIndex).getClientName(), messages.get(emailIndex).getSurveyId(),
+						messages.get(emailIndex).getParticipantId()));
 
 				Transport.send(message);
 
@@ -74,18 +81,18 @@ public class EmailSenderService {
 		return ResponseStatus.DONE;
 	}
 
-	private String generateTextForMessage() {
+	private String generateTextForMessage(String surveyName, String clientName, Integer surveyId,
+			Integer participantId) {
 		String urlForVote = String.format("https://trainee.atlassian.net/%s",
-				DigestUtils.md5Hex("projects/SUR/summary"));
+				DigestUtils.md5Hex(String.format("survey_id%d/participant_id%d", surveyId, participantId)));
 
-		String textMessage = String.format("Survey on theme %s by %s was created.\n", "Testing", "SoftBistro")
+		String textMessage = String.format("Survey with name \"%s\" by \"%s\" was created.\n", surveyName, clientName)
 				+ String.format("You can vote by clicking on URL: %s", urlForVote);
 		return textMessage;
 	}
 
-	private String generateThemeFoeMessage() {
-		String themeOfMessage = "SoftBistro";
-		return String.format("Survey %s", themeOfMessage);
+	private String generateThemeForMessage() {
+		return String.format("Survey");
 	}
 
 }
