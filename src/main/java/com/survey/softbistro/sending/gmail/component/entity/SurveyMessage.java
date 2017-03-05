@@ -1,5 +1,7 @@
 package com.survey.softbistro.sending.gmail.component.entity;
 
+import java.util.Date;
+
 /**
  * Entity for structure of email
  * 
@@ -13,6 +15,9 @@ public class SurveyMessage {
 
 	private Integer participantId;
 	private Integer surveyId;
+
+	private Date surveyStartTime;
+	private Date surveyFinashTime;
 
 	public Integer getParticipantId() {
 		return participantId;
@@ -52,6 +57,22 @@ public class SurveyMessage {
 
 	public void setParticipantEmail(String participantEmail) {
 		this.participantEmail = participantEmail;
+	}
+
+	public Date getSurveyFinashTime() {
+		return surveyFinashTime;
+	}
+
+	public void setSurveyFinashTime(Date surveyFinashTime) {
+		this.surveyFinashTime = surveyFinashTime;
+	}
+
+	public Date getSurveyStartTime() {
+		return surveyStartTime;
+	}
+
+	public void setSurveyStartTime(Date surveyStartTime) {
+		this.surveyStartTime = surveyStartTime;
 	}
 
 }

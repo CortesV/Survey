@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,13 +16,15 @@ import com.survey.softbistro.sending.gmail.component.interfacee.ISurveyMessage;
 
 @Repository
 public class EmailDao implements ISurveyMessage {
-	int countOfRecords = 10;
+
+	@Value("${count.of.records}")
+	int countOfRecords;
 
 	private static final String SQL_GET_LIST_ID_NEW_SURVEYS = "SELECT id FROM survey.survey WHERE status = 'NEW' LIMIT ? OFFSET ?";
 
-	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey`.`survey` SET `status`= ? WHERE status = ? LIMIT ?";
+	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey`.`survey` SET `status`= 'DONE' WHERE status = 'NEW' LIMIT ?";
 
-	private static final String SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY = "SELECT p.email , survey.name, c.client_name, p.id AS participant_id, survey.id AS survey_id "
+	private static final String SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY = "SELECT p.email , survey.name, c.client_name, p.id AS participant_id, survey.id AS survey_id, survey.start_time, survey.finish_time "
 			+ "FROM participant AS p "
 			+ "INNER JOIN connect_group_participant AS connect ON p.id = connect.participant_id "
 			+ "INNER JOIN `group` AS g ON connect.group_id = g.id "
@@ -50,7 +53,9 @@ public class EmailDao implements ISurveyMessage {
 			message.setSurveyName(rs.getString(2));
 			message.setClientName(rs.getString(3));
 			message.setParticipantId(rs.getInt(4));
-			message.setSurveyId(5);
+			message.setSurveyId(rs.getInt(5));
+			message.setSurveyStartTime(rs.getDate(6));
+			message.setSurveyFinashTime(rs.getDate(7));
 
 			return message;
 		}
@@ -82,25 +87,6 @@ public class EmailDao implements ISurveyMessage {
 
 		List<SurveyMessage> emailsOfUsers = new ArrayList<>();
 
-		// jdbcTemplate.batchUpdate(SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY, new
-		// BatchPreparedStatementSetter() {
-		//
-		// @Override
-		// public void setValues(PreparedStatement ps, int i) throws
-		// SQLException {
-		// Integer surveyId = newSurveysId.get(i);
-		// ps.setInt(1, surveyId);
-		// ps.setInt(2, surveyId);
-		// ps.setInt(3, surveyId);
-		// }
-		//
-		// @Override
-		// public int getBatchSize() {
-		//
-		// return newSurveysId.size();
-		// }
-		// });
-
 		for (int surveyId : getSurveysId(page)) {
 
 			emailsOfUsers = jdbcTemplate.query(SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDB(), surveyId,
@@ -111,20 +97,12 @@ public class EmailDao implements ISurveyMessage {
 		return allEmailsOfUsers;
 	}
 
-	/**
-	 * Get id surveys from DB where status = "NEW"
-	 * 
-	 * @return
-	 */
 	private List<Integer> getSurveysId(int page) {
 		List<Integer> surveysId = new ArrayList<>();
 		page *= countOfRecords;
 		surveysId = jdbcTemplate.query(SQL_GET_LIST_ID_NEW_SURVEYS, new GetId(), countOfRecords, page);
 
-		String statusForChange = "NEW";
-		String statusWillBeChaged = "IN_PROGRESS";
-
-		jdbcTemplate.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, statusForChange, statusWillBeChaged, countOfRecords);
+		jdbcTemplate.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
 
 		return surveysId;
 	}

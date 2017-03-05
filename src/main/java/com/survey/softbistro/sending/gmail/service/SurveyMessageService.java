@@ -12,7 +12,6 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,7 @@ import com.survey.softbistro.sending.gmail.component.interfacee.ISurveyMessage;
  */
 
 @Service
-public class EmailSenderService {
+public class SurveyMessageService {
 	private static final String USERNAME = "zarovni03@gmail.com";
 	private static final String PASSWORD = "19991904";
 	private Properties props;
@@ -36,7 +35,7 @@ public class EmailSenderService {
 	@Autowired
 	ISurveyMessage iSurveyMessage;
 
-	public EmailSenderService() {
+	public SurveyMessageService() {
 		props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port", "465");
@@ -62,14 +61,13 @@ public class EmailSenderService {
 			List<SurveyMessage> messages = iSurveyMessage.getEmailsForSending(0);
 
 			for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
+
 				Message message = new MimeMessage(session);
 				message.setFrom(new InternetAddress(USERNAME));
 				message.setRecipients(Message.RecipientType.TO,
 						InternetAddress.parse(messages.get(emailIndex).getParticipantEmail()));
 				message.setSubject(generateThemeForMessage());
-				message.setText(generateTextForMessage(messages.get(emailIndex).getSurveyName(),
-						messages.get(emailIndex).getClientName(), messages.get(emailIndex).getSurveyId(),
-						messages.get(emailIndex).getParticipantId()));
+				message.setText(generateTextForMessage(messages.get(emailIndex)));
 
 				Transport.send(message);
 
@@ -81,13 +79,18 @@ public class EmailSenderService {
 		return ResponseStatus.DONE;
 	}
 
-	private String generateTextForMessage(String surveyName, String clientName, Integer surveyId,
-			Integer participantId) {
-		String urlForVote = String.format("https://trainee.atlassian.net/%s",
-				DigestUtils.md5Hex(String.format("survey_id%d/participant_id%d", surveyId, participantId)));
+	private String generateTextForMessage(SurveyMessage message) {
+		String urlForVote = String.format("http://localhost:8080/survey/survey_id%d/participant_id%d",
+				message.getSurveyId(), message.getParticipantId());
+		// DigestUtils.md5Hex(String.format("survey_id%d/participant_id%d",
+		// surveyId, participantId)));
 
-		String textMessage = String.format("Survey with name \"%s\" by \"%s\" was created.\n", surveyName, clientName)
-				+ String.format("You can vote by clicking on URL: %s", urlForVote);
+		String textMessage = String.format(
+		"Survey with name \"%s\" by \"%s\" was created.\n "+
+		"Survey will be from \" %tD \" to \" %tD \" \n"+
+		"You can vote by clicking on URL : %s",
+				message.getSurveyName(), message.getClientName(), message.getSurveyStartTime(),
+				message.getSurveyFinashTime(), urlForVote) ;
 		return textMessage;
 	}
 
