@@ -12,6 +12,5 @@ public class SurveySoftBistroApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SurveySoftBistroApplication.class, args);
-
 	}
 }

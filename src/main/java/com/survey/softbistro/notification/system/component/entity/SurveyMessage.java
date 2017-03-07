@@ -1,4 +1,4 @@
-package com.survey.softbistro.sending.gmail.component.entity;
+package com.survey.softbistro.notification.system.component.entity;
 
 import java.util.Date;
 
