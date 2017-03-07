@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.survey.softbistro.notification.system.component.interfacee.ISendingMessage;
 import com.survey.softbistro.notification.system.service.ChangePasswordMessageService;
 import com.survey.softbistro.notification.system.service.RegistrationMessageServise;
 import com.survey.softbistro.notification.system.service.SurveyMessageService;
@@ -18,21 +19,23 @@ public class StartNotificationSystem {
 	private Logger log = LogManager.getLogger(getClass());
 
 	@Autowired
-	RegistrationMessageServise registrationMessageServise;
-	@Autowired
-	SurveyMessageService surveyMessageService;
-	@Autowired
-	ChangePasswordMessageService changePasswordMessageService;
+	ISendingMessage iSendingMessage;
 
 	@Scheduled(fixedRate = 10000)
 	public void test() {
-		Thread registrationThread = new Thread(registrationMessageServise);
-		Thread surveyThread = new Thread(surveyMessageService);
-		Thread passwordThread = new Thread(changePasswordMessageService);
+		Thread registrationThread = new Thread(new RegistrationMessageServise(iSendingMessage));
+		Thread surveyThread = new Thread(new SurveyMessageService(iSendingMessage));
+		Thread passwordThread = new Thread(new ChangePasswordMessageService(iSendingMessage));
 
 		registrationThread.start();
+		log.info("Registration thread" + registrationThread.getName());
+
 		surveyThread.start();
+		log.info("Survey thread" + registrationThread.getName());
+
 		passwordThread.start();
+		log.info("Password thread" + registrationThread.getName());
+		System.out.println("=========================");
 	}
 
 }

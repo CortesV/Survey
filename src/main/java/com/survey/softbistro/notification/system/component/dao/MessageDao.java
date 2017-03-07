@@ -105,7 +105,8 @@ public class MessageDao implements ISendingMessage {
 		clientsEmails = jdbcTemplate.query(SQL_GET_LIST_EMAIL_NEW_CLIENTS, new ConnectToDBforRegistration(),
 				countOfRecords, page);
 
-		jdbcTemplate.update(SQL_UPDATE_LIST_NEW_CLIENTS, "NEW", countOfRecords);
+		// jdbcTemplate.update(SQL_UPDATE_LIST_NEW_CLIENTS, "NEW",
+		// countOfRecords);
 		return clientsEmails;
 
 	}
@@ -123,7 +124,8 @@ public class MessageDao implements ISendingMessage {
 		clientsEmails = jdbcTemplate.query(SQL_GET_LIST_EMAIL_UPDATE_PASSWORD, new ConnectToDBforRegistration(),
 				countOfRecords, page);
 
-		jdbcTemplate.update(SQL_UPDATE_LIST_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
+		// jdbcTemplate.update(SQL_UPDATE_LIST_NEW_CLIENTS, "VERIFY_PASSWORD",
+		// countOfRecords);
 		return clientsEmails;
 
 	}
@@ -154,7 +156,7 @@ public class MessageDao implements ISendingMessage {
 		page *= countOfRecords;
 		surveysId = jdbcTemplate.queryForList(SQL_GET_LIST_ID_NEW_SURVEYS, Integer.class, countOfRecords, page);
 
-		jdbcTemplate.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
+		// jdbcTemplate.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
 
 		return surveysId;
 	}
