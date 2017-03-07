@@ -3,7 +3,7 @@ package com.survey.softbistro.notification.system.component.entity;
 import java.util.Date;
 
 /**
- * Entity for structure of email
+ * Entity for structure of email about survey
  * 
  * @author zviproject
  *

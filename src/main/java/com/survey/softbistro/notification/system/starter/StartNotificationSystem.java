@@ -12,6 +12,14 @@ import com.survey.softbistro.notification.system.service.ChangePasswordMessageSe
 import com.survey.softbistro.notification.system.service.RegistrationMessageServise;
 import com.survey.softbistro.notification.system.service.SurveyMessageService;
 
+/**
+ * Starting NotificationSystem in three thread 1- checking registration<br>
+ * 2- checking new surveys <br>
+ * 3 - checiking changed passwords
+ * 
+ * @author zviproject
+ *
+ */
 @Component
 @EnableScheduling
 public class StartNotificationSystem {

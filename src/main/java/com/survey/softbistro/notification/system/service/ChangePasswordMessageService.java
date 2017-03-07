@@ -16,6 +16,13 @@ import com.survey.softbistro.notification.system.component.interfacee.ISendingMe
 import com.survey.softbistro.notification.system.interfacee.IMessage;
 import com.survey.softbistro.notification.system.thrads.MessageClientThread;
 
+/**
+ * For createing and sending message that will contain information about changed
+ * password
+ * 
+ * @author zviproject
+ *
+ */
 @Service
 public class ChangePasswordMessageService implements Runnable, IMessage<RegistrationMessage> {
 
@@ -42,14 +49,14 @@ public class ChangePasswordMessageService implements Runnable, IMessage<Registra
 	}
 
 	@Override
-	public void send(int page) {
+	public void send() {
 		Session session = Session.getInstance(props, new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(USERNAME, PASSWORD);
 			}
 		});
 
-		List<RegistrationMessage> messages = iSendingMessage.getEmailOfNewPassword(page);
+		List<RegistrationMessage> messages = iSendingMessage.getEmailOfNewPassword();
 
 		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
 			Thread thread = new Thread(new MessageClientThread(session, messages, emailIndex, generateThemeForMessage(),
@@ -79,7 +86,7 @@ public class ChangePasswordMessageService implements Runnable, IMessage<Registra
 
 	@Override
 	public void run() {
-		send(0);
+		send();
 	}
 
 }

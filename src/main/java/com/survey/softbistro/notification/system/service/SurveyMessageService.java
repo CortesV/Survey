@@ -17,12 +17,12 @@ import com.survey.softbistro.notification.system.interfacee.IMessage;
 import com.survey.softbistro.notification.system.thrads.MessageSurveyThread;
 
 /**
- * Sending message to users
+ * For createing and sending message, that will contain information about survey
+ * for participant
  * 
  * @author zviproject
  *
  */
-
 @Service
 public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
 	protected static final String USERNAME = "zarovni03@gmail.com";
@@ -49,7 +49,7 @@ public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
 	 * @param toEmail
 	 *            - receiver message
 	 */
-	public void send(int page) {
+	public void send() {
 
 		Session session = Session.getInstance(props, new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
@@ -57,7 +57,7 @@ public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
 			}
 		});
 
-		List<SurveyMessage> messages = iSendingMessage.getEmailsForSending(page);
+		List<SurveyMessage> messages = iSendingMessage.getEmailsForSending();
 
 		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
 
@@ -75,8 +75,6 @@ public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
 	public String generateTextForMessage(SurveyMessage message) {
 		String urlForVote = String.format("http://localhost:8080/survey/survey_id%d/participant_id%d",
 				message.getSurveyId(), message.getParticipantId());
-		// DigestUtils.md5Hex(String.format("survey_id%d/participant_id%d",
-		// surveyId, participantId)));
 
 		String textMessage = String.format(
 				"Survey with name \"%s\" by \"%s\" was created.\n Survey will be from \" %tD \" to \" %tD \" \n"
@@ -93,7 +91,7 @@ public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
 
 	@Override
 	public void run() {
-		send(0);
+		send();
 	}
 
 }

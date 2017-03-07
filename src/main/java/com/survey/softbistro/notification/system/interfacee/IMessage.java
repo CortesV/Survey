@@ -6,7 +6,7 @@ public interface IMessage<T> {
 	 * 
 	 * @param page
 	 */
-	public void send(int page);
+	public void send();
 
 	/**
 	 * Generate text in message

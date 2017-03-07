@@ -16,6 +16,13 @@ import com.survey.softbistro.notification.system.component.interfacee.ISendingMe
 import com.survey.softbistro.notification.system.interfacee.IMessage;
 import com.survey.softbistro.notification.system.thrads.MessageClientThread;
 
+/**
+ * For createing and sending message that will contain information about new
+ * user for confirm registration
+ * 
+ * @author zviproject
+ *
+ */
 @Service
 public class RegistrationMessageServise implements Runnable, IMessage<RegistrationMessage> {
 	private Logger log = LogManager.getLogger(getClass());
@@ -42,14 +49,14 @@ public class RegistrationMessageServise implements Runnable, IMessage<Registrati
 	}
 
 	@Override
-	public void send(int page) {
+	public void send() {
 		Session session = Session.getInstance(props, new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication(USERNAME, PASSWORD);
 			}
 		});
 
-		List<RegistrationMessage> messages = iSurveyMessage.getEmailOfNewClients(page);
+		List<RegistrationMessage> messages = iSurveyMessage.getEmailOfNewClients();
 
 		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
 
@@ -78,7 +85,7 @@ public class RegistrationMessageServise implements Runnable, IMessage<Registrati
 
 	@Override
 	public void run() {
-		send(0);
+		send();
 	}
 
 }

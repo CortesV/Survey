@@ -23,7 +23,7 @@ public class MessageDao implements ISendingMessage {
 	@Value("${count.of.records}")
 	private int countOfRecords;
 
-	private static final String SQL_GET_LIST_ID_NEW_SURVEYS = "SELECT id FROM survey.survey WHERE status = 'NEW' LIMIT ? OFFSET ?";
+	private static final String SQL_GET_LIST_ID_NEW_SURVEYS = "SELECT id FROM survey.survey WHERE status = 'NEW' LIMIT ?";
 
 	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey`.`survey` SET `status`= 'DONE' WHERE status = 'NEW' LIMIT ?";
 
@@ -38,10 +38,10 @@ public class MessageDao implements ISendingMessage {
 			+ "WHERE  participantSurvey.id = ? AND survey.id=? AND surveyClient.id=? GROUP BY email";
 
 	private static final String SQL_GET_LIST_EMAIL_NEW_CLIENTS = "SELECT clients.client_name, clients.email FROM clients "
-			+ "WHERE clients.status='NEW'  LIMIT ? OFFSET ?";
+			+ "WHERE clients.status='NEW'  LIMIT ? ";
 
 	private static final String SQL_GET_LIST_EMAIL_UPDATE_PASSWORD = "SELECT clients.client_name, clients.email FROM clients "
-			+ "WHERE clients.status='VERIFY_PASSWORD'  LIMIT ? OFFSET ?";
+			+ "WHERE clients.status='VERIFY_PASSWORD'  LIMIT ? ";
 
 	private static final String SQL_UPDATE_LIST_NEW_CLIENTS = "UPDATE clients SET status='IN_PROGRESS' WHERE status = ? LIMIT ?";
 
@@ -99,11 +99,10 @@ public class MessageDao implements ISendingMessage {
 	 * @return
 	 */
 	@Override
-	public List<RegistrationMessage> getEmailOfNewClients(Integer page) {
+	public List<RegistrationMessage> getEmailOfNewClients() {
 		List<RegistrationMessage> clientsEmails = new ArrayList<>();
-		page *= countOfRecords;
 		clientsEmails = jdbcTemplate.query(SQL_GET_LIST_EMAIL_NEW_CLIENTS, new ConnectToDBforRegistration(),
-				countOfRecords, page);
+				countOfRecords);
 
 		// jdbcTemplate.update(SQL_UPDATE_LIST_NEW_CLIENTS, "NEW",
 		// countOfRecords);
@@ -118,11 +117,10 @@ public class MessageDao implements ISendingMessage {
 	 * @return
 	 */
 	@Override
-	public List<RegistrationMessage> getEmailOfNewPassword(Integer page) {
+	public List<RegistrationMessage> getEmailOfNewPassword() {
 		List<RegistrationMessage> clientsEmails = new ArrayList<>();
-		page *= countOfRecords;
 		clientsEmails = jdbcTemplate.query(SQL_GET_LIST_EMAIL_UPDATE_PASSWORD, new ConnectToDBforRegistration(),
-				countOfRecords, page);
+				countOfRecords);
 
 		// jdbcTemplate.update(SQL_UPDATE_LIST_NEW_CLIENTS, "VERIFY_PASSWORD",
 		// countOfRecords);
@@ -135,13 +133,13 @@ public class MessageDao implements ISendingMessage {
 	 * survey
 	 */
 	@Override
-	public List<SurveyMessage> getEmailsForSending(Integer page) {
+	public List<SurveyMessage> getEmailsForSending() {
 
 		List<SurveyMessage> allEmailsOfUsers = new ArrayList<>();
 
 		List<SurveyMessage> emailsOfUsers = new ArrayList<>();
 
-		for (int surveyId : getSurveysId(page)) {
+		for (int surveyId : getSurveysId()) {
 
 			emailsOfUsers = jdbcTemplate.query(SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDBforSurvey(),
 					surveyId, surveyId, surveyId);
@@ -151,10 +149,9 @@ public class MessageDao implements ISendingMessage {
 		return allEmailsOfUsers;
 	}
 
-	private List<Integer> getSurveysId(int page) {
+	private List<Integer> getSurveysId() {
 		List<Integer> surveysId = new ArrayList<>();
-		page *= countOfRecords;
-		surveysId = jdbcTemplate.queryForList(SQL_GET_LIST_ID_NEW_SURVEYS, Integer.class, countOfRecords, page);
+		surveysId = jdbcTemplate.queryForList(SQL_GET_LIST_ID_NEW_SURVEYS, Integer.class, countOfRecords);
 
 		// jdbcTemplate.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
 

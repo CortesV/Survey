@@ -11,6 +11,12 @@ import javax.mail.internet.MimeMessage;
 
 import com.survey.softbistro.notification.system.component.entity.SurveyMessage;
 
+/**
+ * Start thread for sending message about surveys
+ * 
+ * @author zviproject
+ *
+ */
 public class MessageSurveyThread implements Runnable {
 
 	private Session session;
@@ -30,6 +36,9 @@ public class MessageSurveyThread implements Runnable {
 		this.username = username;
 	}
 
+	/**
+	 * Sending message on email
+	 */
 	public void sendMessage() {
 		try {
 			Message message = new MimeMessage(session);

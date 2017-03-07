@@ -10,7 +10,7 @@ public interface ISendingMessage {
 	 * Get records from DB with emails of users for sending messages about
 	 * survey
 	 */
-	public List<SurveyMessage> getEmailsForSending(Integer page);
+	public List<SurveyMessage> getEmailsForSending();
 
 	/**
 	 * Get emails new clients for confirm registration new account
@@ -18,7 +18,7 @@ public interface ISendingMessage {
 	 * @param page
 	 * @return
 	 */
-	public List<RegistrationMessage> getEmailOfNewClients(Integer page);
+	public List<RegistrationMessage> getEmailOfNewClients();
 
 	/**
 	 * Get emails of clients that changed password for confirm it.
@@ -26,5 +26,5 @@ public interface ISendingMessage {
 	 * @param page
 	 * @return
 	 */
-	public List<RegistrationMessage> getEmailOfNewPassword(Integer page);
+	public List<RegistrationMessage> getEmailOfNewPassword();
 }

@@ -1,5 +1,11 @@
 package com.survey.softbistro.notification.system.component.entity;
 
+/**
+ * Entity for structure of email about client
+ * 
+ * @author zviproject
+ *
+ */
 public class RegistrationMessage {
 	private String clientName;
 	private String clientEmail;
