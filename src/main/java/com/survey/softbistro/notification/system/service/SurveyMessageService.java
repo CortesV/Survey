@@ -1,7 +1,6 @@
 package com.survey.softbistro.notification.system.service;
 
 import java.util.List;
-import java.util.Properties;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
@@ -24,23 +23,13 @@ import com.survey.softbistro.notification.system.thrads.MessageSurveyThread;
  *
  */
 @Service
-public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
-	protected static final String USERNAME = "zarovni03@gmail.com";
-	protected static final String PASSWORD = "19991904";
-	protected Properties props;
+public class SurveyMessageService extends ConnectionToEmail implements Runnable, IMessage<SurveyMessage> {
 	private static final Logger log = LogManager.getLogger(SurveyMessageService.class);
 
 	private ISendingMessage iSendingMessage;
 
 	public SurveyMessageService(ISendingMessage iSendingMessage) {
 		this.iSendingMessage = iSendingMessage;
-
-		props = new Properties();
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.socketFactory.port", "465");
-		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.port", "465");
 	}
 
 	/**
