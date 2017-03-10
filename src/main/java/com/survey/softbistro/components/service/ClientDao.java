@@ -12,10 +12,12 @@ import org.springframework.stereotype.Repository;
 
 import com.survey.softbistro.components.entity.AuthorityName;
 import com.survey.softbistro.components.entity.Client;
+import com.survey.softbistro.components.entity.ResponseStatus;
 import com.survey.softbistro.components.interfaces.IClient;
 
 /**
  * CRUD for entity Client
+ * 
  * @author cortes
  *
  */
@@ -38,9 +40,6 @@ public class ClientDao implements IClient {
 			+ "and survey.answers.question_id = survey.questions.id and survey.questions.question_section_id = survey.question_sections.id "
 			+ "and survey.questions.survey_id = survey.survey.id and survey.question_sections.survey_id = survey.survey.id "
 			+ "and survey.client_role.client_id = survey.clients.id and survey.clients.id = ?";
-	private static final String KEY_RESPONSE_STATUS = "responseStatus";
-	private static final String SUCCESSFUL_RESPONSE_STATUS = "Client succesful added(updated, deleted) to database";
-	private static final String FAILED_RESPONSE_STATUS = "Client didn`t add(update, deleted) to database, something";
 
 	@Autowired
 	private JdbcTemplate jdbc;
@@ -111,7 +110,7 @@ public class ClientDao implements IClient {
 	@Override
 	public Map<String, String> saveClient(Client client) {
 
-		return returnResponseStatus(
+		return ResponseStatus.returnResponseStatus(
 				jdbc.update(SAVE_CLIENT, client.getClientName(), client.getPassword(), client.getEmail()));
 
 	}
@@ -127,20 +126,7 @@ public class ClientDao implements IClient {
 	public Map<String, String> deleteClient(String email) {
 
 		Client client = jdbc.queryForObject(SELECT_BY_EMAIL, new WorkingWithRowMap(), email);
-		return returnResponseStatus(jdbc.update(DELETE_CLIENT, client.getId()));
-	}
-
-	@Override
-	public Map<String, String> updateClient(Client client, String oldEmail, String oldPassword) {
-
-		Client oldClient = jdbc.queryForObject(SELECT_BY_EMAIL, new WorkingWithRowMap(), oldEmail);
-		if (!oldClient.getPassword().equals(oldPassword)) {
-			return new HashMap<>();
-		}
-
-		return returnResponseStatus(
-				jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), client.getPassword(), oldEmail));
-
+		return ResponseStatus.returnResponseStatus(jdbc.update(DELETE_CLIENT, client.getId()));
 	}
 
 	/**
@@ -155,16 +141,17 @@ public class ClientDao implements IClient {
 	 *            password - email of client that used for authorization
 	 * @return return - status of execution this method
 	 */
-	private Map<String, String> returnResponseStatus(int status) {
+	@Override
+	public Map<String, String> updateClient(Client client, String oldEmail, String oldPassword) {
 
-		Map<String, String> response = new HashMap<>();
-		if (status > 0) {
-			response.put(KEY_RESPONSE_STATUS, SUCCESSFUL_RESPONSE_STATUS);
-			return response;
-		} else {
-			response.put(KEY_RESPONSE_STATUS, FAILED_RESPONSE_STATUS);
-			return response;
+		Client oldClient = jdbc.queryForObject(SELECT_BY_EMAIL, new WorkingWithRowMap(), oldEmail);
+		if (!oldClient.getPassword().equals(oldPassword)) {
+			return new HashMap<>();
 		}
+
+		return ResponseStatus.returnResponseStatus(
+				jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), client.getPassword(), oldEmail));
+
 	}
 
 }
