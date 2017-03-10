@@ -23,14 +23,17 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	maven {
+        url 'https://repo.spring.io/libs-snapshot'
+    }
 }
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-jdbc')
-	compile('org.springframework.boot:spring-boot-starter-security')
-	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	runtime('mysql:mysql-connector-java')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile 'org.apache.commons:commons-lang3:3.5'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '1.5.1.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.1.RELEASE'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.5'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
 }
+
