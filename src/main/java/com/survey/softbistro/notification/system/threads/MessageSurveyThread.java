@@ -1,4 +1,4 @@
-package com.survey.softbistro.notification.system.thrads;
+package com.survey.softbistro.notification.system.threads;
 
 import java.util.List;
 
@@ -9,24 +9,24 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import com.survey.softbistro.notification.system.component.entity.RegistrationMessage;
+import com.survey.softbistro.notification.system.component.entity.SurveyMessage;
 
 /**
- * Start thread for sending message about client
+ * Start thread for sending message about surveys
  * 
  * @author zviproject
  *
  */
-public class MessageClientThread implements Runnable {
+public class MessageSurveyThread implements Runnable {
 
 	private Session session;
-	private List<RegistrationMessage> messages;
+	private List<SurveyMessage> messages;
 	private int emailIndex;
 	private String messageTheme;
 	private String messageText;
 	private String username;
 
-	public MessageClientThread(Session session, List<RegistrationMessage> messages, int emailIndex, String messageTheme,
+	public MessageSurveyThread(Session session, List<SurveyMessage> messages, int emailIndex, String messageTheme,
 			String messageText, String username) {
 		this.session = session;
 		this.messages = messages;
@@ -45,7 +45,7 @@ public class MessageClientThread implements Runnable {
 			message.setFrom(new InternetAddress(username));
 
 			message.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse(messages.get(emailIndex).getClientEmail()));
+					InternetAddress.parse(messages.get(emailIndex).getParticipantEmail()));
 
 			message.setSubject(messageTheme);
 			message.setText(messageText);

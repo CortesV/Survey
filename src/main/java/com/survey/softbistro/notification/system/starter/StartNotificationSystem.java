@@ -4,7 +4,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.survey.softbistro.notification.system.component.interfacee.ISendingMessage;
@@ -29,7 +28,7 @@ public class StartNotificationSystem {
 	@Autowired
 	ISendingMessage iSendingMessage;
 
-	@Scheduled(fixedRate = 10000)
+	// @Scheduled(fixedRate = 10000)
 	public void test() {
 		Thread registrationThread = new Thread(new RegistrationMessageServise(iSendingMessage));
 		Thread surveyThread = new Thread(new SurveyMessageService(iSendingMessage));

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import com.survey.softbistro.notification.system.component.entity.RegistrationMessage;
 import com.survey.softbistro.notification.system.component.interfacee.ISendingMessage;
 import com.survey.softbistro.notification.system.interfacee.IMessage;
-import com.survey.softbistro.notification.system.thrads.MessageClientThread;
+import com.survey.softbistro.notification.system.threads.MessageClientThread;
 
 /**
  * For createing and sending message that will contain information about changed
