@@ -67,7 +67,7 @@ public class SurveyController {
 	 * @param groups
 	 * @return
 	 */
-	@RequestMapping(value = "/survey_{survey_id}", method = RequestMethod.POST)
+	@RequestMapping(value = "/survey_{survey_id}/add_group", method = RequestMethod.POST)
 	public Status addGroupsToSurvey(@RequestBody JSONArray json) {
 		return surveyService.addGroupsToSurvey(json);
 	}
@@ -82,4 +82,15 @@ public class SurveyController {
 	public List<Group> getGroups(@PathVariable(value = "client_id") Integer clientId) {
 		return surveyService.getGroups(clientId);
 	}
+
+	/**
+	 * Get all groups that has survey
+	 * 
+	 * @param surveyId
+	 */
+	@RequestMapping(value = "/survey_{survey_id}/groups", method = RequestMethod.GET)
+	public List<Group> getGroupsSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
+		return surveyService.getGroupsSurvey(surveyId);
+	}
+
 }

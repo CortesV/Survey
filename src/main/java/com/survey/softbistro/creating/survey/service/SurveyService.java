@@ -61,7 +61,7 @@ public class SurveyService {
 	 * @return
 	 */
 	public List<Group> getGroups(Integer clientId) {
-		return iSurvey.getGroups(clientId);
+		return iSurvey.getGroupsClient(clientId);
 	}
 
 	/**
@@ -84,6 +84,15 @@ public class SurveyService {
 			return Status.ERROR;
 		}
 
+	}
+
+	/**
+	 * Get all groups that has survey
+	 * 
+	 * @param surveyId
+	 */
+	public List<Group> getGroupsSurvey(Integer surveyId) {
+		return iSurvey.getGroupsSurvey(surveyId);
 	}
 
 }

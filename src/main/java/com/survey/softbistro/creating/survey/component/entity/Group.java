@@ -1,14 +1,8 @@
 package com.survey.softbistro.creating.survey.component.entity;
 
-import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Group implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class Group {
 
 	@JsonProperty(value = "group_id")
 	private Integer id;

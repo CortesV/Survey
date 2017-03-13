@@ -25,8 +25,11 @@ public class SurveyDao implements ISurvey {
 	private static final String SQL_INSERT_INFORMATION_ABOUT_SURVEY = "INSERT INTO survey.survey (client_id, name, theme,start_time, finish_time) VALUES(?, ?, ?, ?, ?)";
 	private static final String SQL_UPDATE_NAME_OF_SURVEY = "UPDATE survey SET survey.name = ? WHERE survey.id = ?";
 	private static final String SQL_GET_LIST_OF_SURVEYS = "SELECT * FROM survey WHERE client_id = ?";
-	private static final String SQL_GET_LIST_OF_GROUPS = "SELECT * FROM survey.group WHERE client_id = ?";
+	private static final String SQL_GET_LIST_OF_GROUPS_CLIENT = "SELECT * FROM survey.group WHERE client_id = ?";
 	private static final String SQL_ADD_GROUP_TO_SURVEY = "INSERT INTO survey.connect_group_survey (survey_id, group_id) VALUES(?,?) ";
+	private static final String SQL_GET_LIST_OF_GROUPS_SURVEY = "SELECT g.id, g.client_id, g.group_name FROM `group` AS g INNER JOIN connect_group_survey AS c "
+			+ "ON c.group_id = g.id INNER JOIN survey AS s ON s.id= c.survey_id WHERE s.id=? ";
+
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
@@ -80,9 +83,14 @@ public class SurveyDao implements ISurvey {
 			preparedStatement.setDate(4, survey.getStartTime());
 			preparedStatement.setDate(5, survey.getFinishTime());
 
-			preparedStatement.execute();
+			preparedStatement.executeUpdate();
+			ResultSet keys = preparedStatement.getGeneratedKeys();
 
-			return new Response(preparedStatement.getGeneratedKeys().getInt(1), Status.DONE);
+			Integer generatedId = 0;
+			if (keys.next()) {
+				generatedId = keys.getInt(1);
+			}
+			return new Response(generatedId, Status.DONE);
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return new Response(0, Status.ERROR);
@@ -121,8 +129,8 @@ public class SurveyDao implements ISurvey {
 	 * @return
 	 */
 	@Override
-	public List<Group> getGroups(Integer clientId) {
-		List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS, new ListOfGroups(), clientId);
+	public List<Group> getGroupsClient(Integer clientId) {
+		List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_CLIENT, new ListOfGroups(), clientId);
 		return groups;
 	}
 
@@ -149,6 +157,17 @@ public class SurveyDao implements ISurvey {
 			}
 		});
 		return Status.DONE;
+	}
+
+	/**
+	 * Get all groups that has survey
+	 * 
+	 * @param surveyId
+	 */
+	@Override
+	public List<Group> getGroupsSurvey(Integer surveyId) {
+		List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_SURVEY, new ListOfGroups(), surveyId);
+		return groups;
 	}
 
 }
