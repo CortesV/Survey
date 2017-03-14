@@ -29,6 +29,9 @@ public class SurveyDao implements ISurvey {
 	private static final String SQL_ADD_GROUP_TO_SURVEY = "INSERT INTO survey.connect_group_survey (survey_id, group_id) VALUES(?,?) ";
 	private static final String SQL_GET_LIST_OF_GROUPS_SURVEY = "SELECT g.id, g.client_id, g.group_name FROM `group` AS g INNER JOIN connect_group_survey AS c "
 			+ "ON c.group_id = g.id INNER JOIN survey AS s ON s.id= c.survey_id WHERE s.id=? ";
+	private static final String SQL_DELETE_SURVEY = "delete s,c,q,quest from survey.survey as s "
+			+ "left join connect_group_survey as c on c.survey_id = s.id left join question_sections as q "
+			+ "on q.survey_id = s.id left join questions as quest on quest.survey_id = s.id where s.id= ?";
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -168,6 +171,18 @@ public class SurveyDao implements ISurvey {
 	public List<Group> getGroupsSurvey(Integer surveyId) {
 		List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_SURVEY, new ListOfGroups(), surveyId);
 		return groups;
+	}
+
+	/**
+	 * 
+	 * Delete survey from database
+	 * 
+	 * @param surveyId
+	 */
+	@Override
+	public Status deleteSurvey(Integer surveyId) {
+		jdbcTemplate.update(SQL_DELETE_SURVEY, surveyId);
+		return Status.DONE;
 	}
 
 }

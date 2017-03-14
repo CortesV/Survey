@@ -58,4 +58,12 @@ public interface ISurvey {
 	 */
 	public List<Group> getGroupsSurvey(Integer surveyId);
 
+	/**
+	 * 
+	 * Delete survey from database
+	 * 
+	 * @param surveyId
+	 */
+	public Status deleteSurvey(Integer surveyId);
+
 }

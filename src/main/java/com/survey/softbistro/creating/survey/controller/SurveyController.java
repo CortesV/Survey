@@ -93,4 +93,15 @@ public class SurveyController {
 		return surveyService.getGroupsSurvey(surveyId);
 	}
 
+	/**
+	 * 
+	 * Delete survey from database
+	 * 
+	 * @param surveyId
+	 */
+	@RequestMapping(value = "/survey_{survey_id}", method = RequestMethod.DELETE)
+	public Status deleteSurvey(Integer surveyId) {
+		return surveyService.deleteSurvey(surveyId);
+	}
+
 }

@@ -95,4 +95,14 @@ public class SurveyService {
 		return iSurvey.getGroupsSurvey(surveyId);
 	}
 
+	/**
+	 * 
+	 * Delete survey from database
+	 * 
+	 * @param surveyId
+	 */
+	public Status deleteSurvey(Integer surveyId) {
+		return iSurvey.deleteSurvey(surveyId);
+	}
+
 }
