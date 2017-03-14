@@ -99,7 +99,7 @@ public class SurveyController {
 	 * 
 	 * @param surveyId
 	 */
-	@RequestMapping(value = "/survey_{survey_id}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/survey_{survey_id}", method = RequestMethod.DELETE)
 	public Status deleteSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
 		return surveyService.deleteSurvey(surveyId);
 	}

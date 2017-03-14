@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,6 +23,9 @@ import com.survey.softbistro.response.Status;
 @Repository
 public class SurveyDao implements ISurvey {
 
+	@Value("${deleting.survey}")
+	private String statusForDeleting;
+
 	private static final String SQL_INSERT_INFORMATION_ABOUT_SURVEY = "INSERT INTO survey.survey (client_id, name, theme,start_time, finish_time) VALUES(?, ?, ?, ?, ?)";
 	private static final String SQL_UPDATE_NAME_OF_SURVEY = "UPDATE survey SET survey.name = ? WHERE survey.id = ?";
 	private static final String SQL_GET_LIST_OF_SURVEYS = "SELECT * FROM survey WHERE client_id = ?";
@@ -29,9 +33,10 @@ public class SurveyDao implements ISurvey {
 	private static final String SQL_ADD_GROUP_TO_SURVEY = "INSERT INTO survey.connect_group_survey (survey_id, group_id) VALUES(?,?) ";
 	private static final String SQL_GET_LIST_OF_GROUPS_SURVEY = "SELECT g.id, g.client_id, g.group_name FROM `group` AS g INNER JOIN connect_group_survey AS c "
 			+ "ON c.group_id = g.id INNER JOIN survey AS s ON s.id= c.survey_id WHERE s.id=? ";
-	private static final String SQL_DELETE_SURVEY = "delete s,c,q,quest from survey.survey as s "
-			+ "left join connect_group_survey as c on c.survey_id = s.id left join question_sections as q "
-			+ "on q.survey_id = s.id left join questions as quest on quest.survey_id = s.id where s.id= ?";
+	private static final String SQL_DELETE_SURVEY = "UPDATE survey.survey AS s "
+			+ "LEFT JOIN connect_group_survey AS c " + "ON c.survey_id = s.id " + "LEFT JOIN question_sections AS q "
+			+ "ON q.survey_id = s.id " + "LEFT JOIN questions AS quest " + "ON quest.survey_id = s.id "
+			+ "SET s.status = ?, q.status = ?, c.status = ?, quest.status = ? " + "WHERE s.id = ?";
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -181,7 +186,8 @@ public class SurveyDao implements ISurvey {
 	 */
 	@Override
 	public Status deleteSurvey(Integer surveyId) {
-		jdbcTemplate.update(SQL_DELETE_SURVEY, surveyId);
+		jdbcTemplate.update(SQL_DELETE_SURVEY, statusForDeleting, statusForDeleting, statusForDeleting,
+				statusForDeleting, surveyId);
 		return Status.DONE;
 	}
 
