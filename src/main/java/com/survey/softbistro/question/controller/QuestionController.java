@@ -1,16 +1,15 @@
-package com.survey.softbistro.web.controller;
-
-import java.util.Map;
+package com.survey.softbistro.question.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.survey.softbistro.components.entity.Question;
-import com.survey.softbistro.service.QuestionService;
+import com.survey.softbistro.question.components.entity.Question;
+import com.survey.softbistro.question.service.QuestionService;
+import com.survey.softbistro.response.Response;
 
 /**
  * Controller for CRUD of Client
@@ -19,7 +18,7 @@ import com.survey.softbistro.service.QuestionService;
  *
  */
 @RestController
-@RequestMapping(value = "/question")
+@RequestMapping(value = "/rest/survey/v1/question")
 public class QuestionController {
 
 	@Autowired
@@ -32,8 +31,8 @@ public class QuestionController {
 	 *            id - id of question
 	 * @return return - all information about question
 	 */
-	@RequestMapping(value = "/getQuestion", method = RequestMethod.GET)
-	public Question findQuestionById(@RequestHeader Long id) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public Response findQuestionById(@PathVariable("id") Long id) {
 
 		return questionService.findQuestionById(id);
 	}
@@ -46,8 +45,8 @@ public class QuestionController {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "/saveQuestion", method = RequestMethod.POST)
-	public Map<String, String> saveQuestion(@RequestBody Question question) {
+	@RequestMapping(value = "/", method = RequestMethod.POST)
+	public Response saveQuestion(@RequestBody Question question) {
 
 		return questionService.saveQuestion(question);
 	}
@@ -59,8 +58,8 @@ public class QuestionController {
 	 *            of question
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "/deleteQuestion", method = RequestMethod.DELETE)
-	public Map<String, String> deleteQuestion(@RequestHeader Long id) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public Response deleteQuestion(@PathVariable("id") Long id) {
 
 		return questionService.deleteQuestion(id);
 	}
@@ -75,8 +74,8 @@ public class QuestionController {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "/updateQuestion", method = RequestMethod.PUT)
-	public Map<String, String> updateQuestion(@RequestBody Question question, @RequestHeader Long id) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public Response updateQuestion(@RequestBody Question question, @PathVariable("id") Long id) {
 
 		return questionService.updateQuestion(question, id);
 	}

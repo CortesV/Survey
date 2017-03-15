@@ -1,12 +1,11 @@
-package com.survey.softbistro.service;
-
-import java.util.Map;
+package com.survey.softbistro.question.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.survey.softbistro.components.entity.Question;
-import com.survey.softbistro.components.interfaces.IQuestion;
+import com.survey.softbistro.question.components.entity.Question;
+import com.survey.softbistro.question.components.interfaces.IQuestion;
+import com.survey.softbistro.response.Response;
 
 @Service
 public class QuestionService {
@@ -21,7 +20,7 @@ public class QuestionService {
 	 *            id - id of question
 	 * @return return - all information about question
 	 */
-	public Question findQuestionById(Long id) {
+	public Response findQuestionById(Long id) {
 
 		return iQuestion.findQuestionById(id);
 	}
@@ -34,7 +33,7 @@ public class QuestionService {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public Map<String, String> saveQuestion(Question question) {
+	public Response saveQuestion(Question question) {
 
 		return iQuestion.saveQuestion(question);
 	}
@@ -46,7 +45,7 @@ public class QuestionService {
 	 *            of question
 	 * @return return - status of execution this method
 	 */
-	public Map<String, String> deleteQuestion(Long id) {
+	public Response deleteQuestion(Long id) {
 
 		return iQuestion.deleteQuestion(id);
 	}
@@ -61,7 +60,7 @@ public class QuestionService {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
-	public Map<String, String> updateQuestion(Question question, Long id) {
+	public Response updateQuestion(Question question, Long id) {
 
 		return iQuestion.updateQuestion(question, id);
 	}

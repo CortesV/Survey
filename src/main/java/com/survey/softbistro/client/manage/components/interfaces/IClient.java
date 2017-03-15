@@ -1,8 +1,7 @@
-package com.survey.softbistro.components.interfaces;
+package com.survey.softbistro.client.manage.components.interfaces;
 
-import java.util.Map;
-
-import com.survey.softbistro.components.entity.Client;
+import com.survey.softbistro.client.manage.components.entity.Client;
+import com.survey.softbistro.response.Response;
 
 public interface IClient {
 
@@ -13,7 +12,7 @@ public interface IClient {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	public Client findClientByEmail(String email);
+	public Response findClientByEmail(String email);
 
 	/**
 	 * Save client to database
@@ -23,7 +22,7 @@ public interface IClient {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public Map<String, String> saveClient(Client client);
+	public Response saveClient(Client client);
 
 	/**
 	 * Delete client from database by email of client
@@ -32,7 +31,7 @@ public interface IClient {
 	 *            email - email of client
 	 * @return return - status of execution this method
 	 */
-	public Map<String, String> deleteClient(String email);
+	public Response deleteClient(String email);
 
 	/**
 	 * Update information of client
@@ -46,5 +45,5 @@ public interface IClient {
 	 *            password - email of client that used for authorization
 	 * @return return - status of execution this method
 	 */
-	public Map<String, String> updateClient(Client client, String oldEmail, String oldPassword);
+	public Response updateClient(Client client, String oldEmail, String oldPassword);
 }

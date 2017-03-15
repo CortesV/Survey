@@ -1,4 +1,4 @@
-package com.survey.softbistro.components.entity;
+package com.survey.softbistro.question.components.entity;
 
 /**
  * Simple JavaBean bject that represents a Question

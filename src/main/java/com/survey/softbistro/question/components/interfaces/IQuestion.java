@@ -1,8 +1,7 @@
-package com.survey.softbistro.components.interfaces;
+package com.survey.softbistro.question.components.interfaces;
 
-import java.util.Map;
-
-import com.survey.softbistro.components.entity.Question;
+import com.survey.softbistro.question.components.entity.Question;
+import com.survey.softbistro.response.Response;
 
 /**
  * 
@@ -18,7 +17,7 @@ public interface IQuestion {
 	 *            id - id of question
 	 * @return return - all information about question
 	 */
-	public Question findQuestionById(Long id);
+	public Response findQuestionById(Long id);
 
 	/**
 	 * Save client to database
@@ -28,7 +27,7 @@ public interface IQuestion {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public Map<String, String> saveQuestion(Question question);
+	public Response saveQuestion(Question question);
 
 	/**
 	 * Delete question from database by id of question
@@ -37,7 +36,7 @@ public interface IQuestion {
 	 *            of question
 	 * @return return - status of execution this method
 	 */
-	public Map<String, String> deleteQuestion(Long id);
+	public Response deleteQuestion(Long id);
 
 	/**
 	 * Update information of question
@@ -49,5 +48,5 @@ public interface IQuestion {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
-	public Map<String, String> updateQuestion(Question question, Long id);
+	public Response updateQuestion(Question question, Long id);
 }

@@ -1,4 +1,4 @@
-package com.survey.softbistro.components.entity;
+package com.survey.softbistro.client.manage.components.entity;
 
 import java.util.List;
 
