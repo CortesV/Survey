@@ -45,7 +45,7 @@ dependencies {
 
 	
 	
-	runtime('mysql:mysql-connector-java')
+	runtime('mysql:mysql-connector-java', version: '6.0.5')
 
 }
 
