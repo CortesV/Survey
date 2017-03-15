@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
-//@ComponentScan("com.survey.softbistro")
 @ComponentScan(basePackages = { "com.survey.softbistro" }, excludeFilters = {
 		@Filter(type = FilterType.ANNOTATION, value = Configuration.class) })
 public class SurveySoftBistroApplication {

@@ -31,7 +31,7 @@ public interface IClient {
 	 *            email - email of client
 	 * @return return - status of execution this method
 	 */
-	public Response deleteClient(String email);
+	public Response deleteClient(Integer id);
 
 	/**
 	 * Update information of client
@@ -45,5 +45,5 @@ public interface IClient {
 	 *            password - email of client that used for authorization
 	 * @return return - status of execution this method
 	 */
-	public Response updateClient(Client client, String oldEmail, String oldPassword);
+	public Response updateClient(Client client, Integer id);
 }

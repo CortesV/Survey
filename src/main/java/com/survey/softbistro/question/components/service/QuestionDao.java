@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.survey.softbistro.client.manage.components.entity.Client;
-import com.survey.softbistro.client.manage.components.service.ClientDao.WorkingWithRowMap;
 import com.survey.softbistro.question.components.entity.Question;
 import com.survey.softbistro.question.components.interfaces.IQuestion;
 import com.survey.softbistro.response.Response;

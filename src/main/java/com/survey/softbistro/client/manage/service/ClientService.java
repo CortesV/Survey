@@ -16,7 +16,7 @@ import com.survey.softbistro.response.Response;
 public class ClientService {
 
 	@Autowired
-	IClient iClient;
+	private IClient iClient;
 
 	/**
 	 * Find client in database by email of client
@@ -50,9 +50,9 @@ public class ClientService {
 	 *            email - email of client
 	 * @return return - status of execution this method
 	 */
-	public Response deleteClient(String email) {
+	public Response deleteClient(Integer id) {
 		
-		return iClient.deleteClient(email);
+		return iClient.deleteClient(id);
 
 	}
 
@@ -68,9 +68,9 @@ public class ClientService {
 	 *            password - email of client that used for authorization
 	 * @return return - status of execution this method
 	 */
-	public Response updateClient(Client client, String oldEmail, String oldPassword) {
+	public Response updateClient(Client client, Integer id) {
 
-		return iClient.updateClient(client, oldEmail, oldPassword);
+		return iClient.updateClient(client, id);
 	}
 
 	

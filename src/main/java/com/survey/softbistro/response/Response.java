@@ -2,6 +2,11 @@ package com.survey.softbistro.response;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * Response template
+ * @author cortes
+ *
+ */
 public class Response {
 
 	private Object data;

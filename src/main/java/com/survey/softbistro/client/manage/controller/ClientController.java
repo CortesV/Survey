@@ -1,6 +1,7 @@
 package com.survey.softbistro.client.manage.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ import com.survey.softbistro.response.Response;
 public class ClientController {
 
 	@Autowired
-	ClientService clientService;
+	private ClientService clientService;
 
 	/**
 	 * Find client in database by email of client
@@ -58,10 +59,10 @@ public class ClientController {
 	 *            email - email of client
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.DELETE)
-	public Response deleteClient(@RequestHeader String email) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public Response deleteClient(@PathVariable("id") Integer id) {
 
-		return clientService.deleteClient(email);
+		return clientService.deleteClient(id);
 	}
 
 	/**
@@ -76,11 +77,10 @@ public class ClientController {
 	 *            password - email of client that used for authorization
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "/updateClient", method = RequestMethod.PUT)
-	public Response updateClient(@RequestBody Client client, @RequestHeader String oldEmail,
-			@RequestHeader String oldPassword) {
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public Response updateClient(@RequestBody Client client, @PathVariable("id") Integer id) {
 
-		return clientService.updateClient(client, oldEmail, oldPassword);
+		return clientService.updateClient(client, id);
 	}
 
 }

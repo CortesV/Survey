@@ -11,7 +11,7 @@ import com.survey.softbistro.response.Response;
 public class QuestionService {
 
 	@Autowired
-	IQuestion iQuestion;
+	private IQuestion iQuestion;
 
 	/**
 	 * Find question in database by id of question

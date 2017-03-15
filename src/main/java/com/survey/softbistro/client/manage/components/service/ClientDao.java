@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -25,7 +26,7 @@ public class ClientDao implements IClient {
 
 	private static final String SELECT_BY_EMAIL = "SELECT * FROM survey.clients  WHERE email = ? and status != 'DELETE'";
 	private static final String SAVE_CLIENT = "INSERT INTO survey.clients (client_name, password, email, status) VALUES(?, ?, ?, 'NEW')";
-	private static final String UPDATE_CLIENT = "UPDATE survey.clients SET client_name = ?, email = ?, password = ? WHERE email = ?";
+	private static final String UPDATE_CLIENT = "UPDATE survey.clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
 	private static final String SELECT_CLIENT_ROLES = "SELECT sa.name_authority FROM survey.client_role as scr inner join survey.clients as sc on sc.id = scr.client_id "
 			+ "inner join survey.authority as sa on sa.id = scr.authority_id where sc.id = ?";
 	private static final String DELETE_CLIENT = "UPDATE survey.clients as sc LEFT JOIN survey.survey as ss on ss.client_id = sc.id LEFT JOIN survey.`group` as sg on "
@@ -41,28 +42,6 @@ public class ClientDao implements IClient {
 
 	@Autowired
 	private JdbcTemplate jdbc;
-
-	/**
-	 * Class for geting clients from database
-	 * 
-	 * @author cortes
-	 *
-	 */
-	public class WorkingWithRowMap implements RowMapper<Client> {
-
-		@Override
-		public Client mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-			Client client = new Client();
-			client.setId(resultSet.getLong(1));
-			client.setClientName(resultSet.getString(2));
-			client.setEmail(resultSet.getString(3));
-			client.setPassword(resultSet.getString(4));
-			boolean value = resultSet.getInt(6) > 0;
-			client.setEnabled(value);
-			client.setLastPasswordResetDate(resultSet.getDate(7));
-			return client;
-		}
-	}
 
 	/**
 	 * Class for geting authorities of client from database
@@ -93,9 +72,11 @@ public class ClientDao implements IClient {
 	@Override
 	public Response findClientByEmail(String email) {
 
+		
 		Client client = new Client();
 		try {
-			client = jdbc.queryForObject(SELECT_BY_EMAIL, new WorkingWithRowMap(), email);
+
+			client = jdbc.queryForObject(SELECT_BY_EMAIL, new BeanPropertyRowMapper<>(Client.class), email);
 			client.setAuthorities(jdbc.query(SELECT_CLIENT_ROLES, new GetRowMap(), client.getId()));
 		} catch (Exception ex) {
 
@@ -137,14 +118,11 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response deleteClient(String email) {
+	public Response deleteClient(Integer id) {
 
-		Client client = new Client();
-		
 		try {
 			
-			client = jdbc.queryForObject(SELECT_BY_EMAIL, new WorkingWithRowMap(), email);
-			jdbc.update(DELETE_CLIENT, client.getId());
+			jdbc.update(DELETE_CLIENT, id);
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
@@ -166,19 +144,10 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response updateClient(Client client, String oldEmail, String oldPassword) {
-
-		
-
-		
+	public Response updateClient(Client client, Integer id) {		
 		
 		try {
-			Client oldClient = jdbc.queryForObject(SELECT_BY_EMAIL, new WorkingWithRowMap(), oldEmail);
-			if (!oldClient.getPassword().equals(oldPassword)) {
-
-				new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, WRONG_PASSWORD);
-			}
-			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), client.getPassword(), oldEmail);
+			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), client.getPassword(), id);
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());

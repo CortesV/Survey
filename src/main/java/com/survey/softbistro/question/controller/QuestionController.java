@@ -22,7 +22,7 @@ import com.survey.softbistro.response.Response;
 public class QuestionController {
 
 	@Autowired
-	QuestionService questionService;
+	private QuestionService questionService;
 
 	/**
 	 * Find question in database by id of question
