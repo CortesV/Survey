@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -138,7 +139,8 @@ public class SurveyDao implements ISurvey {
 	 */
 	@Override
 	public List<Group> getGroupsClient(Integer clientId) {
-		List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_CLIENT, new ListOfGroups(), clientId);
+		List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_CLIENT, new BeanPropertyRowMapper<>(Group.class),
+				clientId);
 		return groups;
 	}
 

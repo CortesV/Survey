@@ -19,11 +19,11 @@ import com.survey.softbistro.response.Status;
 import net.minidev.json.JSONArray;
 
 @RestController
-@RequestMapping(value = "/client_{client_id}")
+@RequestMapping(value = "rest/survey/v1/survey")
 public class SurveyController {
 
 	@Autowired
-	SurveyService surveyService;
+	private SurveyService surveyService;
 
 	/**
 	 * Writing new survey into database.
@@ -32,8 +32,8 @@ public class SurveyController {
 	 *            - parsed JSON with information about survey.
 	 * @return Response
 	 */
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public Response createSurvey(@RequestBody Survey survey) {
+	@RequestMapping(method = RequestMethod.POST)
+	public Response create(@RequestBody Survey survey) {
 		return surveyService.createSurvey(survey);
 	}
 
@@ -45,7 +45,7 @@ public class SurveyController {
 	 *            - id of survey that will be changed
 	 */
 	@RequestMapping(value = "/survey_{survey_id}/update", method = RequestMethod.PUT)
-	public Response updateNameOfSurvey(@RequestHeader(name = "new_name") String newNameOfSurvey,
+	public Response update(@RequestHeader(name = "new_name") String newNameOfSurvey,
 			@PathVariable(name = "survey_id") Integer surveyId) {
 		return surveyService.updateNameOfSurvey(newNameOfSurvey, surveyId);
 	}
@@ -56,7 +56,7 @@ public class SurveyController {
 	 * @param clientId
 	 * @return
 	 */
-	@RequestMapping(value = "/surveys", method = RequestMethod.GET)
+	@RequestMapping(value = "{client_id}/surveys", method = RequestMethod.GET)
 	public List<Survey> getAllSurveysOfClient(@PathVariable(name = "client_id") Integer clientId) {
 		return surveyService.getAllSurveysOfClient(clientId);
 	}
