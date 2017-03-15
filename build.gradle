@@ -7,15 +7,20 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath('se.transmode.gradle:gradle-docker:1.2')
+		
 	}
 }
+
+group = 'survey'
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'docker'
 
 jar {
-	baseName = 'Survey'
+	baseName = 'survey'
 	version = '0.0.1-SNAPSHOT'
 }
 
@@ -40,6 +45,18 @@ dependencies {
 
 	
 	
-	runtime('mysql:mysql-connector-java')
+	runtime('mysql:mysql-connector-java', version: '6.0.5')
 
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+  push = false
+  applicationName = jar.baseName
+  dockerfile = file('src/main/docker/Dockerfile')
+  doFirst {
+    copy {
+      from jar
+      into stageDir
+    }
+  }
 }
