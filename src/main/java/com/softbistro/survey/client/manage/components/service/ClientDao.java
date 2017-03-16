@@ -38,6 +38,7 @@ public class ClientDao implements IClient {
 			+ "SET sc.`delete` = '1', ss.`delete` = '1', sg.`delete` = '1', cgp.`delete` = '1', sa.`delete` = '1', sp.`delete` = '1', "
 			+ "sav.`delete` = '1', answ.`delete` = '1', sq.`delete` = '1', qs.`delete` = '1', cgs.`delete` = '1', cr.`delete` = '1'"
 			+ " WHERE sc.id = ?";
+	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE survey.clients SET password = ? WHERE id = ?";
 
 	@Autowired
 	private JdbcTemplate jdbc;
@@ -146,6 +147,30 @@ public class ClientDao implements IClient {
 
 		try {
 			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), client.getPassword(), id);
+		} catch (Exception ex) {
+
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+		}
+
+		return new Response(null, HttpStatus.OK, null);
+	}
+
+	/**
+	 * Update client's password
+	 * 
+	 * @param client
+	 *            client - all information about client that will write to
+	 *            database
+	 * @param id
+	 *            id - id of client 
+	 * 
+	 * @return return - status of execution this method
+	 */
+	@Override
+	public Response updatePassword(Client client, Integer id) {
+
+		try {
+			jdbc.update(UPDATE_CLIENT_PASSWORD, client.getPassword(), id);
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());

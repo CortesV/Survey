@@ -27,8 +27,8 @@ public interface IClient {
 	/**
 	 * Delete client from database by email of client
 	 * 
-	 * @param email
-	 *            email - email of client
+	 * @param id
+	 *            id - id of client
 	 * @return return - status of execution this method
 	 */
 	public Response deleteClient(Integer id);
@@ -39,11 +39,22 @@ public interface IClient {
 	 * @param client
 	 *            client - all information about client that will write to
 	 *            database
-	 * @param oldEmail
-	 *            oldEmail - email of client that used for authorization
-	 * @param oldPassword
-	 *            password - email of client that used for authorization
+	 * @param id
+	 *            id - id of client
+	 * 
 	 * @return return - status of execution this method
 	 */
 	public Response updateClient(Client client, Integer id);
+	/**
+	 * Update client's password
+	 * 
+	 * @param client
+	 *            client - all information about client that will write to
+	 *            database
+	 * @param id
+	 *            id - id of client 
+	 * 
+	 * @return return - status of execution this method
+	 */
+	public Response updatePassword(Client client, Integer id);
 }
