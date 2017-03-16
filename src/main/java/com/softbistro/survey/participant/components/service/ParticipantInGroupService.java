@@ -18,7 +18,7 @@ import com.softbistro.survey.response.Response;
 public class ParticipantInGroupService {
 
 	@Autowired
-	IParticipantInGroup iparticipantInGroup;
+	private IParticipantInGroup iparticipantInGroup;
 
 	/**
 	 * Method for getting all participant by group
