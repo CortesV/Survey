@@ -12,7 +12,7 @@ import com.softbistro.survey.participant.components.service.AttributesService;
 import com.softbistro.survey.response.Response;
 
 /**
- * Controller
+ * Controller for Participant entity
  * 
  * @author af150416
  *
