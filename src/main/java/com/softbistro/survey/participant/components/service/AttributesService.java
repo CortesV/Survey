@@ -17,7 +17,7 @@ import com.softbistro.survey.response.Response;
 public class AttributesService {
 
 	@Autowired
-	IAttributes iAttributes;
+	private IAttributes iAttributes;
 
 	/**
 	 * Method for creating the attribute value
