@@ -22,7 +22,7 @@ import com.softbistro.survey.response.Response;
 public class GroupController {
 
 	@Autowired
-	GroupService groupService;
+	private GroupService groupService;
 
 	/**
 	 * Method to create group
