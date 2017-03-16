@@ -22,7 +22,7 @@ import com.softbistro.survey.response.Response;
 public class ParticipantInGroupDao implements IParticipantInGroup {
 
 	@Autowired
-	JdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
 	private final static String SQL_FOR_ADDING_PARTICIPANT_IN_GROUP = "INSERT INTO survey.connect_group_participant (survey.connect_group_participant.group_id, survey.connect_group_participant.participant_id) VALUES (?, ?)";
 	private final static String SQL_FOR_DELETING_PARTICIPANT_IN_GROUP = "UPDATE survey.connect_group_participant AS c SET c.status = 'DELETE' WHERE c.group_id = ? AND c.participant_id = ?";
