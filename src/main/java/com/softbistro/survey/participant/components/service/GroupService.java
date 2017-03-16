@@ -17,7 +17,7 @@ import com.softbistro.survey.response.Response;
 public class GroupService {
 
 	@Autowired
-	IGroup iGroup;
+	private IGroup iGroup;
 
 	/**
 	 * Method to create group
