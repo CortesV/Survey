@@ -22,7 +22,7 @@ import com.softbistro.survey.response.Response;
 public class AttributeValuesController {
 
 	@Autowired
-	AttributeValuesService attributeValuesService;
+	private AttributeValuesService attributeValuesService;
 
 	/**
 	 * Method for creating attribute values
