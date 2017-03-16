@@ -7,7 +7,7 @@ package com.softbistro.survey.question.components.entity;
  *
  */
 public class Question {
-
+	
 	private Long id;
 	private Long surveyId;
 	private String question;
