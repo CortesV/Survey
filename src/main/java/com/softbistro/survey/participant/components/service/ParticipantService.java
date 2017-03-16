@@ -17,7 +17,7 @@ import com.softbistro.survey.response.Response;
 public class ParticipantService {
 
 	@Autowired
-	IParticipant iParticipant;
+	private IParticipant iParticipant;
 
 	/**
 	 * Method for creating participant
