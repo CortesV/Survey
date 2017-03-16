@@ -81,5 +81,22 @@ public class ClientController {
 
 		return clientService.updateClient(client, id);
 	}
+	
+	/**
+	 * Update client's password
+	 * 
+	 * @param client
+	 *            client - all information about client that will write to
+	 *            database
+	 * @param id
+	 *            id - id of client 
+	 * 
+	 * @return return - status of execution this method
+	 */
+	@RequestMapping(value = "/password/{id}", method = RequestMethod.PUT)
+	public Response updatePassword(@RequestBody Client client, @PathVariable("id") Integer id) {
+
+		return clientService.updatePassword(client, id);
+	}
 
 }

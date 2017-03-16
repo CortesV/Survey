@@ -73,7 +73,21 @@ public class ClientService {
 		return iClient.updateClient(client, id);
 	}
 
-	
+	/**
+	 * Update client's password
+	 * 
+	 * @param client
+	 *            client - all information about client that will write to
+	 *            database
+	 * @param id
+	 *            id - id of client 
+	 * 
+	 * @return return - status of execution this method
+	 */
+	public Response updatePassword(Client client, Integer id){
+		
+		return iClient.updatePassword(client, id);
+	}
 
 	
 }
