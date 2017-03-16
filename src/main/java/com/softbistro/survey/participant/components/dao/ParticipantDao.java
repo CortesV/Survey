@@ -20,7 +20,7 @@ import com.softbistro.survey.response.Response;
 public class ParticipantDao implements IParticipant {
 
 	@Autowired
-	JdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
 	private final static String SQL_FOR_SETTING_PARTICIPANT = "INSERT INTO survey.participant "
 			+ "(survey.participant.first_name, survey.participant.last_name, survey.participant.email, survey.participant.password) VALUES (?, ?, ?, ?)";
