@@ -23,7 +23,7 @@ import com.softbistro.survey.response.Response;
 public class ParticipantInGroupController {
 
 	@Autowired
-	ParticipantInGroupService participantInGroupService;
+	private ParticipantInGroupService participantInGroupService;
 
 	/**
 	 * Method for getting all participant by group
