@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.softbistro.survey.client.manage.components.entity.AuthorityName;
+import com.softbistro.survey.client.auth.configuration.oauth2.security.AuthorityName;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.response.Response;
@@ -24,7 +24,7 @@ import com.softbistro.survey.response.Response;
 @Repository
 public class ClientDao implements IClient {
 
-	private static final String SELECT_BY_EMAIL = "SELECT * FROM survey.clients  WHERE email = ? and status != 'DELETE'";
+	private static final String SELECT_BY_EMAIL = "SELECT * FROM survey.clients  WHERE survey.clients.email = ? and survey.clients.`delete` = 0";
 	private static final String SAVE_CLIENT = "INSERT INTO survey.clients (client_name, password, email, status) VALUES(?, ?, ?, 'NEW')";
 	private static final String UPDATE_CLIENT = "UPDATE survey.clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
 	private static final String SELECT_CLIENT_ROLES = "SELECT sa.name_authority FROM survey.client_role as scr inner join survey.clients as sc on sc.id = scr.client_id "
@@ -35,10 +35,9 @@ public class ClientDao implements IClient {
 			+ "sav.attribute_id = sa.id LEFT JOIN survey.answers as answ on answ.participant_id = sp.id LEFT JOIN survey.questions as sq on "
 			+ "sq.survey_id = ss.id LEFT JOIN survey.question_sections as qs on qs.survey_id = ss.id LEFT JOIN survey.connect_group_survey as cgs on "
 			+ "cgs.survey_id = ss.id LEFT JOIN survey.client_role as cr on cr.client_id = sc.id "
-			+ "SET sc.`status` = 'DELETE', ss.`status` = 'DELETE', sg.`status` = 'DELETE', cgp.`status` = 'DELETE', sa.`status` = 'DELETE', sp.`status` = 'DELETE', "
-			+ "sav.`status` = 'DELETE', answ.`status` = 'DELETE', sq.`status` = 'DELETE', qs.`status` = 'DELETE', cgs.`status` = 'DELETE', cr.`status` = 'DELETE'"
+			+ "SET sc.`delete` = '1', ss.`delete` = '1', sg.`delete` = '1', cgp.`delete` = '1', sa.`delete` = '1', sp.`delete` = '1', "
+			+ "sav.`delete` = '1', answ.`delete` = '1', sq.`delete` = '1', qs.`delete` = '1', cgs.`delete` = '1', cr.`delete` = '1'"
 			+ " WHERE sc.id = ?";
-	private static final String WRONG_PASSWORD = "You type wrong password";
 
 	@Autowired
 	private JdbcTemplate jdbc;
@@ -72,7 +71,6 @@ public class ClientDao implements IClient {
 	@Override
 	public Response findClientByEmail(String email) {
 
-		
 		Client client = new Client();
 		try {
 
@@ -121,13 +119,13 @@ public class ClientDao implements IClient {
 	public Response deleteClient(Integer id) {
 
 		try {
-			
+
 			jdbc.update(DELETE_CLIENT, id);
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
-		
+
 		return new Response(null, HttpStatus.OK, null);
 	}
 
@@ -144,8 +142,8 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response updateClient(Client client, Integer id) {		
-		
+	public Response updateClient(Client client, Integer id) {
+
 		try {
 			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), client.getPassword(), id);
 		} catch (Exception ex) {

@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.List;
 
+import com.softbistro.survey.client.auth.configuration.oauth2.security.AuthorityName;
+
 /**
  * Simple JavaBean object that represents a Client
  * 
@@ -20,7 +22,7 @@ public class Client implements Serializable {
 	private String password;
 	private String email;
 	private String status;
-	private Boolean enabled;
+	private Boolean activated;
 	private List<AuthorityName> authorities;
 	private Date lastPasswordResetDate;
 
@@ -64,12 +66,12 @@ public class Client implements Serializable {
 		this.status = status;
 	}
 
-	public Boolean isEnabled() {
-		return enabled;
+	public Boolean isActivated() {
+		return activated;
 	}
 
-	public void setEnabled(Boolean enabled) {
-		this.enabled = enabled;
+	public void setActivated(Boolean activated) {
+		this.activated = activated;
 	}
 
 	public List<AuthorityName> getAuthorities() {
@@ -86,10 +88,6 @@ public class Client implements Serializable {
 
 	public void setLastPasswordResetDate(Date lastPasswordResetDate) {
 		this.lastPasswordResetDate = lastPasswordResetDate;
-	}
-
-	public Boolean getEnabled() {
-		return enabled;
 	}
 
 }

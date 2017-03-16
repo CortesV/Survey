@@ -31,7 +31,7 @@ public class Response {
 	}
 
 	public Integer getResponseCode() {
-		return responseStatus.value();
+		return responseCode;
 	}
 
 	public void setResponseCode(Integer responseCode) {
