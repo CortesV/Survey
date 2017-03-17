@@ -7,6 +7,7 @@ package com.survey.softbistro.notification.system.component.entity;
  *
  */
 public class RegistrationMessage {
+	private Integer clientId;
 	private String clientName;
 	private String clientEmail;
 
@@ -24,6 +25,14 @@ public class RegistrationMessage {
 
 	public void setClientEmail(String clientEmail) {
 		this.clientEmail = clientEmail;
+	}
+
+	public Integer getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(Integer clientId) {
+		this.clientId = clientId;
 	}
 
 }

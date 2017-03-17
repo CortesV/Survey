@@ -1,6 +1,6 @@
 package com.survey.softbistro.notification.system.interfacee;
 
-public interface IMessage<T> {
+public interface ICreateMessage<T> {
 	/**
 	 * Sending message on email
 	 * 
@@ -14,7 +14,7 @@ public interface IMessage<T> {
 	 * @param message
 	 * @return
 	 */
-	public String generateTextForMessage(T message);
+	public String generateTextForMessage(T message, String uuid);
 
 	/**
 	 * Generate theme of message

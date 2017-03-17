@@ -2,6 +2,7 @@ package com.survey.softbistro.notification.system.service;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
@@ -10,13 +11,14 @@ import javax.mail.Session;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.survey.softbistro.notification.system.component.entity.RegistrationMessage;
 import com.survey.softbistro.notification.system.component.interfacee.ISendingMessage;
-import com.survey.softbistro.notification.system.interfacee.IMessage;
-import com.survey.softbistro.notification.system.threads.MessageClientThread;
+import com.survey.softbistro.notification.system.interfacee.ICreateMessage;
+import com.survey.softbistro.notification.system.threads.MessageClientPasswordThread;
 
 /**
  * For createing and sending message that will contain information about changed
@@ -27,7 +29,7 @@ import com.survey.softbistro.notification.system.threads.MessageClientThread;
  */
 @Service
 @Scope("prototype")
-public class ChangePasswordMessageService implements Runnable, IMessage<RegistrationMessage> {
+public class ChangePasswordMessageService implements Runnable, ICreateMessage<RegistrationMessage> {
 
 	private Logger log = LogManager.getLogger(getClass());
 
@@ -37,33 +39,30 @@ public class ChangePasswordMessageService implements Runnable, IMessage<Registra
 	/**
 	 * Data about account that will sending messages
 	 */
-	protected static final String USERNAME = "softbistrosurvey@gmail.com";
-	protected static final String PASSWORD = "20170903";
+	@Value("${password.mail.username}")
+	protected String username;
 
-	private Properties props;
+	@Value("${password.mail.password}")
+	protected String password;
 
-	public ChangePasswordMessageService() {
-		props = new Properties();
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.socketFactory.port", "465");
-		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.port", "465");
-	}
+	@Autowired
+	private Properties propertiesPassword;
 
 	@Override
 	public void send() {
-		Session session = Session.getInstance(props, new Authenticator() {
+		Session session = Session.getInstance(propertiesPassword, new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(USERNAME, PASSWORD);
+				return new PasswordAuthentication(username, password);
 			}
 		});
 
 		List<RegistrationMessage> messages = iSendingMessage.getEmailOfNewPassword();
 
 		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
-			Thread thread = new Thread(new MessageClientThread(session, messages, emailIndex, generateThemeForMessage(),
-					generateTextForMessage(messages.get(emailIndex)), USERNAME));
+			String uuid = UUID.randomUUID().toString();
+			Thread thread = new Thread(
+					new MessageClientPasswordThread(session, messages, emailIndex, generateThemeForMessage(),
+							generateTextForMessage(messages.get(emailIndex), uuid), username, iSendingMessage, uuid));
 			thread.start();
 
 			log.info(String.format("Password email: %s", messages.get(emailIndex).getClientEmail()));
@@ -73,8 +72,8 @@ public class ChangePasswordMessageService implements Runnable, IMessage<Registra
 	}
 
 	@Override
-	public String generateTextForMessage(RegistrationMessage client) {
-		String urlForVote = String.format("http://localhost:8080/survey/client_name%s", client.getClientName());
+	public String generateTextForMessage(RegistrationMessage client, String uuid) {
+		String urlForVote = String.format("http://localhost:8080/survey/client_name%s", uuid);
 
 		String textMessage = String.format(
 				"Change password on account with name \"%s\" \n" + "For confirm click on URL :%s",

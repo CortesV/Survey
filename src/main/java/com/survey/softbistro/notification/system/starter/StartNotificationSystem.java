@@ -6,6 +6,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.survey.softbistro.notification.system.service.ChangePasswordMessageService;
@@ -29,7 +30,7 @@ public class StartNotificationSystem {
 	@Resource
 	private ApplicationContext context;
 
-	// @Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 5000)
 	public void test() {
 
 		Thread registrationThread = new Thread(context.getBean(RegistrationMessageServise.class));
@@ -40,11 +41,10 @@ public class StartNotificationSystem {
 		log.info("Registration thread" + registrationThread.getName());
 
 		surveyThread.start();
-		log.info("Survey thread" + registrationThread.getName());
+		log.info("Survey thread" + surveyThread.getName());
 
 		passwordThread.start();
-		log.info("Password thread" + registrationThread.getName());
-		System.out.println("=========================");
+		log.info("Password thread" + passwordThread.getName());
 	}
 
 }

@@ -9,20 +9,20 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import com.survey.softbistro.notification.system.component.entity.SurveyMessage;
+import com.survey.softbistro.notification.system.component.entity.RegistrationMessage;
 import com.survey.softbistro.notification.system.component.interfacee.ISendingMessage;
 import com.survey.softbistro.notification.system.interfacee.ISending;
 
 /**
- * Start thread for sending message about surveys
+ * Start thread for sending message about client
  * 
  * @author zviproject
  *
  */
-public class MessageSurveyThread implements Runnable, ISending {
+public class MessageClientEmailThread implements Runnable, ISending {
 
 	private Session session;
-	private List<SurveyMessage> messages;
+	private List<RegistrationMessage> messages;
 	private int emailIndex;
 	private String messageTheme;
 	private String messageText;
@@ -30,8 +30,8 @@ public class MessageSurveyThread implements Runnable, ISending {
 	private ISendingMessage iSendingMessage;
 	private String uuid;
 
-	public MessageSurveyThread(Session session, List<SurveyMessage> messages, int emailIndex, String messageTheme,
-			String messageText, String username, ISendingMessage iSendingMessage, String uuid) {
+	public MessageClientEmailThread(Session session, List<RegistrationMessage> messages, int emailIndex,
+			String messageTheme, String messageText, String username, ISendingMessage iSendingMessage, String uuid) {
 		this.session = session;
 		this.messages = messages;
 		this.emailIndex = emailIndex;
@@ -43,8 +43,8 @@ public class MessageSurveyThread implements Runnable, ISending {
 	}
 
 	/**
-	 * Sending message on email about survey <br>
-	 * then insert information in database about
+	 * Sending message on email abou registration<br>
+	 * then store information in database
 	 */
 	@Override
 	public void sendMessage() {
@@ -53,13 +53,13 @@ public class MessageSurveyThread implements Runnable, ISending {
 			message.setFrom(new InternetAddress(username));
 
 			message.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse(messages.get(emailIndex).getParticipantEmail()));
+					InternetAddress.parse(messages.get(emailIndex).getClientEmail()));
 
 			message.setSubject(messageTheme);
 			message.setText(messageText);
 
 			Transport.send(message);
-			iSendingMessage.insertForConfirmVote(uuid, messages.get(emailIndex).getParticipantId());
+			iSendingMessage.insertForConfirmEmail(uuid, messages.get(emailIndex).getClientId());
 
 		} catch (MessagingException e) {
 			e.printStackTrace();

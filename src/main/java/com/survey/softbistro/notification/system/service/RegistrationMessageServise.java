@@ -2,6 +2,7 @@ package com.survey.softbistro.notification.system.service;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
@@ -10,13 +11,14 @@ import javax.mail.Session;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.survey.softbistro.notification.system.component.entity.RegistrationMessage;
 import com.survey.softbistro.notification.system.component.interfacee.ISendingMessage;
-import com.survey.softbistro.notification.system.interfacee.IMessage;
-import com.survey.softbistro.notification.system.threads.MessageClientThread;
+import com.survey.softbistro.notification.system.interfacee.ICreateMessage;
+import com.survey.softbistro.notification.system.threads.MessageClientEmailThread;
 
 /**
  * For createing and sending message that will contain information about new
@@ -27,7 +29,7 @@ import com.survey.softbistro.notification.system.threads.MessageClientThread;
  */
 @Service
 @Scope("prototype")
-public class RegistrationMessageServise implements Runnable, IMessage<RegistrationMessage> {
+public class RegistrationMessageServise implements Runnable, ICreateMessage<RegistrationMessage> {
 	private Logger log = LogManager.getLogger(getClass());
 
 	@Autowired
@@ -36,34 +38,30 @@ public class RegistrationMessageServise implements Runnable, IMessage<Registrati
 	/**
 	 * Data about account that will sending messages
 	 */
-	protected static final String USERNAME = "softbistrosurvey@gmail.com";
-	protected static final String PASSWORD = "20170903";
+	@Value("${client.mail.username}")
+	protected String username;
 
-	private Properties props;
+	@Value("${client.mail.password}")
+	protected String password;
 
-	public RegistrationMessageServise() {
-		props = new Properties();
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.socketFactory.port", "465");
-		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.port", "465");
-	}
+	@Autowired
+	private Properties propertiesClient;
 
 	@Override
 	public void send() {
-		Session session = Session.getInstance(props, new Authenticator() {
+		Session session = Session.getInstance(propertiesClient, new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(USERNAME, PASSWORD);
+				return new PasswordAuthentication(username, password);
 			}
 		});
 
 		List<RegistrationMessage> messages = iSurveyMessage.getEmailOfNewClients();
 
 		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
-
-			Thread thread = new Thread(new MessageClientThread(session, messages, emailIndex, generateThemeForMessage(),
-					generateTextForMessage(messages.get(emailIndex)), USERNAME));
+			String uuid = UUID.randomUUID().toString();
+			Thread thread = new Thread(
+					new MessageClientEmailThread(session, messages, emailIndex, generateThemeForMessage(),
+							generateTextForMessage(messages.get(emailIndex), uuid), username, iSurveyMessage, uuid));
 			thread.start();
 			log.info(String.format("Register email: %s", messages.get(emailIndex).getClientEmail()));
 		}
@@ -71,8 +69,8 @@ public class RegistrationMessageServise implements Runnable, IMessage<Registrati
 	}
 
 	@Override
-	public String generateTextForMessage(RegistrationMessage client) {
-		String urlForVote = String.format("http://localhost:8080/survey/client_name%s", client.getClientName());
+	public String generateTextForMessage(RegistrationMessage client, String uuid) {
+		String urlForVote = String.format("http://localhost:8080/survey/%s", uuid);
 
 		String textMessage = String.format(
 				"Registration new account with name \"%s\" \n" + "For confirm click on URL :%s", client.getClientName(),
