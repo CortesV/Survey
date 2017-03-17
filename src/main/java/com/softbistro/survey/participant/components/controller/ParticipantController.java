@@ -22,7 +22,7 @@ import com.softbistro.survey.response.Response;
 public class ParticipantController {
 
 	@Autowired
-	privat ParticipantService participantService;
+	private ParticipantService participantService;
 
 	/**
 	 * Method to getting participant from db by id
