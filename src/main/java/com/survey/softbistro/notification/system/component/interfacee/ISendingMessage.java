@@ -50,5 +50,5 @@ public interface ISendingMessage {
 	 * @param uuid
 	 * @param surveyId
 	 */
-	public void insertForConfirmVote(String uuid, Integer surveyId);
+	public void insertForConfirmVote(String uuid, Integer participantId, Integer surveyId);
 }

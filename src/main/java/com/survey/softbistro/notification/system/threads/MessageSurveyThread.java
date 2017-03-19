@@ -59,7 +59,8 @@ public class MessageSurveyThread implements Runnable, ISending {
 			message.setText(messageText);
 
 			Transport.send(message);
-			iSendingMessage.insertForConfirmVote(uuid, messages.get(emailIndex).getParticipantId());
+			iSendingMessage.insertForConfirmVote(uuid, messages.get(emailIndex).getParticipantId(),
+					messages.get(emailIndex).getSurveyId());
 
 		} catch (MessagingException e) {
 			e.printStackTrace();

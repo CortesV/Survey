@@ -31,11 +31,13 @@ public class MessageDao implements ISendingMessage {
 	@Value("${client.url.duration.days}")
 	private int workingTimeClient;
 
+	public static final String SQL_GET_FINISH_TIME_OF_SURVEY = "SELECT finish_time FROM survey.survey WHERE survey.survey.id = ?";
+
 	private static final String SQL_INSERT_DATA_FOR_CONFIRM_PASSWORD = "INSERT INTO sending_password (sending_password.url, sending_password.client_id, sending_password.working_time ) VALUES (?, ?, ?)";
 
 	private static final String SQL_INSERT_DATA_FOR_CONFIRM_EMAIL = "INSERT INTO sending_client (sending_client.url, sending_client.client_id, sending_client.working_time) VALUES (?, ?, ?)";
 
-	private static final String SQL_INSERT_DATA_FOR_CONFIRM_VOTE = "INSERT INTO sending_survey (sending_survey.url, sending_survey.survey_id) VALUES (?, ?)";
+	private static final String SQL_INSERT_DATA_FOR_CONFIRM_VOTE = "INSERT INTO sending_survey (sending_survey.url, sending_survey.participant_id, sending_survey.survey_id, sending_survey.working_time) VALUES (?, ?, ?, ?)";
 
 	private static final String SQL_GET_LIST_ID_NEW_SURVEYS = "SELECT id FROM survey.survey WHERE status = 'NEW' LIMIT ?";
 
@@ -208,8 +210,9 @@ public class MessageDao implements ISendingMessage {
 	 * @param surveyId
 	 */
 	@Override
-	public void insertForConfirmVote(String uuid, Integer surveyId) {
-		jdbcTemplate.update(SQL_INSERT_DATA_FOR_CONFIRM_VOTE, uuid, surveyId);
+	public void insertForConfirmVote(String uuid, Integer participantId, Integer surveyId) {
+		Date finishDate = jdbcTemplate.queryForObject(SQL_GET_FINISH_TIME_OF_SURVEY, Date.class, surveyId);
+		jdbcTemplate.update(SQL_INSERT_DATA_FOR_CONFIRM_VOTE, uuid, participantId, surveyId, finishDate);
 	}
 
 }
