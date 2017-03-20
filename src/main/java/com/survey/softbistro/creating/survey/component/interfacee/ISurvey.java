@@ -25,7 +25,7 @@ public interface ISurvey {
 	 * @param surveyId
 	 *            - id of survey that will be changed
 	 */
-	public Response updateNameOfSurvey(String newNameOfSurvey, Integer surveyId);
+	public Response updateOfSurvey(Survey survey);
 
 	/**
 	 * Get all surveys from one client

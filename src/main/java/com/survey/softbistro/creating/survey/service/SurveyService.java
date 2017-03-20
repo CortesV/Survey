@@ -1,20 +1,15 @@
 package com.survey.softbistro.creating.survey.service;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.survey.softbistro.creating.survey.component.entity.Group;
 import com.survey.softbistro.creating.survey.component.entity.Survey;
 import com.survey.softbistro.creating.survey.component.interfacee.ISurvey;
 import com.survey.softbistro.response.Response;
 import com.survey.softbistro.response.Status;
-
-import net.minidev.json.JSONArray;
 
 @Service
 public class SurveyService {
@@ -50,8 +45,8 @@ public class SurveyService {
 	 * @param surveyId
 	 *            - id of survey that will be changed
 	 */
-	public Response updateNameOfSurvey(String newNameOfSurvey, Integer surveyId) {
-		return iSurvey.updateNameOfSurvey(newNameOfSurvey, surveyId);
+	public Response updateOfSurvey(Survey survey) {
+		return iSurvey.updateOfSurvey(survey);
 	}
 
 	/**
@@ -67,23 +62,11 @@ public class SurveyService {
 	/**
 	 * Adding groups that will be in survey
 	 * 
-	 * @param json
+	 * @param groups
 	 * @return
 	 */
-	public Status addGroupsToSurvey(JSONArray json) {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-
-			List<Group> groups = mapper.readValue(json.toString(), new TypeReference<List<Group>>() {
-			});
-
-			return iSurvey.addGroupsToSurvey(groups);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			return Status.ERROR;
-		}
-
+	public Status addGroupsToSurvey(List<Group> groups) {
+		return iSurvey.addGroupsToSurvey(groups);
 	}
 
 	/**

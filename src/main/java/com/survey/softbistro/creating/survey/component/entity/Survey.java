@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Survey {
 
+	@JsonProperty(value = "survey_id")
 	private Integer id;
 
 	@JsonProperty(value = "client_id")
