@@ -7,15 +7,17 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath('se.transmode.gradle:gradle-docker:1.2')
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'docker'
 
 jar {
-	baseName = 'Survey'
+	baseName = 'survey'
 	version = '0.0.1-SNAPSHOT'
 }
 
@@ -23,23 +25,37 @@ sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	maven {
+        url 'https://repo.spring.io/libs-snapshot'
+    }
 }
 
 
 dependencies {
+	compile group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.0.7.RELEASE'
+	compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.1.0.RELEASE'
+	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.16-beta2'
+	compile 'org.apache.commons:commons-lang3:3.5'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '1.5.1.RELEASE'
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.5.1.RELEASE'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.1.RELEASE'
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.1.RELEASE'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.5'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
 
 	compile group: 'javax.mail', name: 'mail', version: '1.4'
 	compile group: 'com.sun.mail', name: 'all', version: '1.5.6'
 	compile group: 'commons-codec', name: 'commons-codec', version: '1.9'
 	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.8.7'
-	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.6'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.6'	
+}
 
-	
-	
-	runtime('mysql:mysql-connector-java')
-
+task buildDocker(type: Docker, dependsOn: build) {
+  push = false
+  applicationName = jar.baseName
+  dockerfile = file('src/main/docker/Dockerfile')
+  doFirst {
+    copy {
+      from jar
+      into stageDir
+    }
+  }
 }
