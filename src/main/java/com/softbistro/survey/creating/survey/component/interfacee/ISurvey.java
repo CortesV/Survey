@@ -1,11 +1,10 @@
-package com.survey.softbistro.creating.survey.component.interfacee;
+package com.softbistro.survey.creating.survey.component.interfacee;
 
 import java.util.List;
 
-import com.survey.softbistro.creating.survey.component.entity.Group;
-import com.survey.softbistro.creating.survey.component.entity.Survey;
-import com.survey.softbistro.response.Response;
-import com.survey.softbistro.response.Status;
+import com.softbistro.survey.creating.survey.component.entity.Group;
+import com.softbistro.survey.creating.survey.component.entity.Survey;
+import com.softbistro.survey.response.Response;
 
 public interface ISurvey {
 
@@ -49,7 +48,7 @@ public interface ISurvey {
 	 * @param groups
 	 * @return
 	 */
-	public Status addGroupsToSurvey(List<Group> groups);
+	public Response addGroupsToSurvey(List<Group> groups);
 
 	/**
 	 * Get all groups that has survey
@@ -64,6 +63,6 @@ public interface ISurvey {
 	 * 
 	 * @param surveyId
 	 */
-	public Status deleteSurvey(Integer surveyId);
+	public Response deleteSurvey(Integer surveyId);
 
 }

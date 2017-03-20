@@ -1,4 +1,4 @@
-package com.survey.softbistro.creating.survey.component.dao;
+package com.softbistro.survey.creating.survey.component.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,11 +13,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.survey.softbistro.creating.survey.component.entity.Group;
-import com.survey.softbistro.creating.survey.component.entity.Survey;
-import com.survey.softbistro.creating.survey.component.interfacee.ISurvey;
-import com.survey.softbistro.response.Response;
-import com.survey.softbistro.response.Status;
+import com.softbistro.survey.creating.survey.component.entity.Group;
+import com.softbistro.survey.creating.survey.component.entity.Survey;
+import com.softbistro.survey.creating.survey.component.interfacee.ISurvey;
+import com.softbistro.survey.response.Response;
 
 @Repository
 public class SurveyDao implements ISurvey {
@@ -96,10 +95,10 @@ public class SurveyDao implements ISurvey {
 			if (keys.next()) {
 				generatedId = keys.getInt(1);
 			}
-			return new Response(generatedId, Status.DONE);
+			return new Response(null, null, null);
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return new Response(0, Status.ERROR);
+			return new Response(null, null, null);
 		}
 
 	}
@@ -114,7 +113,7 @@ public class SurveyDao implements ISurvey {
 	public Response updateOfSurvey(Survey survey) {
 		jdbcTemplate.update(SQL_UPDATE_NAME_OF_SURVEY, survey.getClientId(), survey.getSurveyName(),
 				survey.getSurveyTheme(), survey.getStartTime(), survey.getFinishTime(), survey.getId());
-		return new Response(1, Status.DONE);
+		return new Response(null, null, null);
 	}
 
 	/**
@@ -149,7 +148,7 @@ public class SurveyDao implements ISurvey {
 	 * @return
 	 */
 	@Override
-	public Status addGroupsToSurvey(List<Group> groups) {
+	public Response addGroupsToSurvey(List<Group> groups) {
 		jdbcTemplate.batchUpdate(SQL_ADD_GROUP_TO_SURVEY, new BatchPreparedStatementSetter() {
 
 			@Override
@@ -164,7 +163,7 @@ public class SurveyDao implements ISurvey {
 				return groups.size();
 			}
 		});
-		return Status.DONE;
+		return new Response(null, null, null);
 	}
 
 	/**
@@ -185,9 +184,9 @@ public class SurveyDao implements ISurvey {
 	 * @param surveyId
 	 */
 	@Override
-	public Status deleteSurvey(Integer surveyId) {
+	public Response deleteSurvey(Integer surveyId) {
 		jdbcTemplate.update(SQL_DELETE_SURVEY, surveyId);
-		return Status.DONE;
+		return new Response(null, null, null);
 	}
 
 }

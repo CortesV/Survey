@@ -1,4 +1,4 @@
-package com.survey.softbistro.creating.survey.controller;
+package com.softbistro.survey.creating.survey.controller;
 
 import java.util.List;
 
@@ -9,11 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.survey.softbistro.creating.survey.component.entity.Group;
-import com.survey.softbistro.creating.survey.component.entity.Survey;
-import com.survey.softbistro.creating.survey.service.SurveyService;
-import com.survey.softbistro.response.Response;
-import com.survey.softbistro.response.Status;
+import com.softbistro.survey.creating.survey.component.entity.Group;
+import com.softbistro.survey.creating.survey.component.entity.Survey;
+import com.softbistro.survey.creating.survey.service.SurveyService;
+import com.softbistro.survey.response.Response;
 
 @RestController
 @RequestMapping(value = "rest/survey/v1/survey")
@@ -64,7 +63,7 @@ public class SurveyController {
 	 * @return
 	 */
 	@RequestMapping(value = "/groups", method = RequestMethod.POST)
-	public Status addGroupsToSurvey(@RequestBody List<Group> groups) {
+	public Response addGroupsToSurvey(@RequestBody List<Group> groups) {
 		return surveyService.addGroupsToSurvey(groups);
 	}
 
@@ -96,7 +95,7 @@ public class SurveyController {
 	 * @param surveyId
 	 */
 	@RequestMapping(value = "/{survey_id}", method = RequestMethod.DELETE)
-	public Status deleteSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
+	public Response deleteSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
 		return surveyService.deleteSurvey(surveyId);
 	}
 

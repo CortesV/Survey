@@ -1,4 +1,4 @@
-package com.survey.softbistro.creating.survey.component.entity;
+package com.softbistro.survey.creating.survey.component.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

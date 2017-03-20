@@ -1,15 +1,14 @@
-package com.survey.softbistro.creating.survey.service;
+package com.softbistro.survey.creating.survey.service;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.survey.softbistro.creating.survey.component.entity.Group;
-import com.survey.softbistro.creating.survey.component.entity.Survey;
-import com.survey.softbistro.creating.survey.component.interfacee.ISurvey;
-import com.survey.softbistro.response.Response;
-import com.survey.softbistro.response.Status;
+import com.softbistro.survey.creating.survey.component.entity.Group;
+import com.softbistro.survey.creating.survey.component.entity.Survey;
+import com.softbistro.survey.creating.survey.component.interfacee.ISurvey;
+import com.softbistro.survey.response.Response;
 
 @Service
 public class SurveyService {
@@ -65,7 +64,7 @@ public class SurveyService {
 	 * @param groups
 	 * @return
 	 */
-	public Status addGroupsToSurvey(List<Group> groups) {
+	public Response addGroupsToSurvey(List<Group> groups) {
 		return iSurvey.addGroupsToSurvey(groups);
 	}
 
@@ -84,7 +83,7 @@ public class SurveyService {
 	 * 
 	 * @param surveyId
 	 */
-	public Status deleteSurvey(Integer surveyId) {
+	public Response deleteSurvey(Integer surveyId) {
 		return iSurvey.deleteSurvey(surveyId);
 	}
 

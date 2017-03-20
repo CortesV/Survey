@@ -1,4 +1,4 @@
-package com.survey.softbistro.run;
+package com.softbistro.survey.run;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
