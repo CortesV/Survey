@@ -23,8 +23,10 @@ public class GroupDao implements IGroup {
 	private JdbcTemplate jdbcTemplate;
 
 	private final static String SQL_FOR_SETTING_GROUP = "INSERT INTO survey.group (survey.group.client_id, survey.group.group_name) VALUES (?, ?)";
-	private final static String SQL_FOR_GETTING_GROUP_BY_ID = "SELECT g.id, g.client_id, g.group_name, g.created_date, g.modified_date FROM survey.group AS g WHERE g.id = ?";
-	private final static String SQL_FOR_GETTING_GROUP_BY_CLIENT = "SELECT g.id, g.client_id, g.group_name, g.created_date, g.modified_date FROM survey.group AS g WHERE g.client_id = ?";
+	private final static String SQL_FOR_GETTING_GROUP_BY_ID = "SELECT g.id, g.client_id, g.group_name, g.created_date, g.modified_date "
+			+ "FROM survey.group AS g WHERE g.id = ? AND g.delete != 1";
+	private final static String SQL_FOR_GETTING_GROUP_BY_CLIENT = "SELECT g.id, g.client_id, g.group_name, g.created_date, g.modified_date "
+			+ "FROM survey.group AS g WHERE g.client_id = ? AND g.delete != 1";
 	private final static String SQL_FOR_UPDATING_GROUP_BY_ID = "UPDATE survey.group AS g SET g.group_name = ? WHERE g.id = ?";
 	private final static String SQL_FOR_DELETING_GROUP_BY_ID = "UPDATE survey.group AS g LEFT JOIN survey.connect_group_participant AS cp ON cp.group_id=g.id "
 			+ "LEFT JOIN survey.connect_group_survey AS cs ON cs.group_id=g.id LEFT JOIN survey.attributes AS at ON at.group_id=g.id "

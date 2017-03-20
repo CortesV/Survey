@@ -24,13 +24,10 @@ public class ParticipantDao implements IParticipant {
 
 	private final static String SQL_FOR_SETTING_PARTICIPANT = "INSERT INTO survey.participant "
 			+ "(survey.participant.first_name, survey.participant.last_name, survey.participant.email, survey.participant.password) VALUES (?, ?, ?, ?)";
-
 	private final static String SQL_FOR_UPDATING_PARTICIPANT = "UPDATE survey.participant AS p SET p.first_name= ?, p.last_name= ?, p.email = ?, p.password= ? WHERE p.id= ?";
-
 	private final static String SQL_FOR_DELETING_PARTICIPANT = "UPDATE survey.participant AS p left join survey.connect_group_participant AS c on c.group_id=p.id "
 			+ "left join survey.attribute_values AS av on av.participant_id=p.id left join survey.answers AS a on a.participant_id=p.id "
 			+ "SET p.status = 'DELETE', c.status = 'DELETE', av.status = 'DELETE', a.status = 'DELETE' WHERE p.id = ?";
-
 	private final static String SQL_FOR_GETTING_PARTICIPANT = "SELECT * FROM survey.participant WHERE survey.participant.id= ? AND survey.participant.status != 'DELETE'";
 
 	/**
