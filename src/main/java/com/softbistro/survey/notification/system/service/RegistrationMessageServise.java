@@ -15,17 +15,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-<<<<<<< HEAD:src/main/java/com/survey/softbistro/notification/system/service/RegistrationMessageServise.java
-import com.survey.softbistro.notification.system.component.entity.RegistrationMessage;
-import com.survey.softbistro.notification.system.component.interfacee.ISendingMessage;
-import com.survey.softbistro.notification.system.interfacee.ICreateMessage;
-import com.survey.softbistro.notification.system.threads.MessageClientEmailThread;
-=======
 import com.softbistro.survey.notification.system.component.entity.RegistrationMessage;
 import com.softbistro.survey.notification.system.component.interfacee.ISendingMessage;
-import com.softbistro.survey.notification.system.interfacee.IMessage;
-import com.softbistro.survey.notification.system.threads.MessageClientThread;
->>>>>>> 61b3f919c64e2ad59f500faeec5fa96576ba436f:src/main/java/com/softbistro/survey/notification/system/service/RegistrationMessageServise.java
+import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
+import com.softbistro.survey.notification.system.threads.MessageClientEmailThread;
 
 /**
  * For createing and sending message that will contain information about new

@@ -9,13 +9,9 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-<<<<<<< HEAD:src/main/java/com/survey/softbistro/notification/system/threads/MessageSurveyThread.java
-import com.survey.softbistro.notification.system.component.entity.SurveyMessage;
-import com.survey.softbistro.notification.system.component.interfacee.ISendingMessage;
-import com.survey.softbistro.notification.system.interfacee.ISending;
-=======
 import com.softbistro.survey.notification.system.component.entity.SurveyMessage;
->>>>>>> 61b3f919c64e2ad59f500faeec5fa96576ba436f:src/main/java/com/softbistro/survey/notification/system/threads/MessageSurveyThread.java
+import com.softbistro.survey.notification.system.component.interfacee.ISendingMessage;
+import com.softbistro.survey.notification.system.interfacee.ISending;
 
 /**
  * Start thread for sending message about surveys

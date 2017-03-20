@@ -30,11 +30,7 @@ public class StartNotificationSystem {
 	@Resource
 	private ApplicationContext context;
 
-<<<<<<< HEAD:src/main/java/com/survey/softbistro/notification/system/starter/StartNotificationSystem.java
-	@Scheduled(fixedRate = 500000)
-=======
-    //@Scheduled(fixedRate = 5000)
->>>>>>> 61b3f919c64e2ad59f500faeec5fa96576ba436f:src/main/java/com/softbistro/survey/notification/system/starter/StartNotificationSystem.java
+	@Scheduled(fixedRate = 5000)
 	public void test() {
 
 		Thread registrationThread = new Thread(context.getBean(RegistrationMessageServise.class));

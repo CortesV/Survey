@@ -1,4 +1,4 @@
-package com.survey.softbistro.run;
+package com.softbistro.survey.startapp;
 
 import java.util.Properties;
 

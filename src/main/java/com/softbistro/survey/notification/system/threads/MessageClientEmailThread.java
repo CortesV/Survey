@@ -1,4 +1,4 @@
-package com.survey.softbistro.notification.system.threads;
+package com.softbistro.survey.notification.system.threads;
 
 import java.util.List;
 
@@ -9,17 +9,17 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import com.survey.softbistro.notification.system.component.entity.RegistrationMessage;
-import com.survey.softbistro.notification.system.component.interfacee.ISendingMessage;
-import com.survey.softbistro.notification.system.interfacee.ISending;
+import com.softbistro.survey.notification.system.component.entity.RegistrationMessage;
+import com.softbistro.survey.notification.system.component.interfacee.ISendingMessage;
+import com.softbistro.survey.notification.system.interfacee.ISending;
 
 /**
- * Create thread and send information about changing password
+ * Start thread for sending message about client
  * 
  * @author zviproject
  *
  */
-public class MessageClientPasswordThread implements Runnable, ISending {
+public class MessageClientEmailThread implements Runnable, ISending {
 
 	private Session session;
 	private List<RegistrationMessage> messages;
@@ -30,7 +30,7 @@ public class MessageClientPasswordThread implements Runnable, ISending {
 	private ISendingMessage iSendingMessage;
 	private String uuid;
 
-	public MessageClientPasswordThread(Session session, List<RegistrationMessage> messages, int emailIndex,
+	public MessageClientEmailThread(Session session, List<RegistrationMessage> messages, int emailIndex,
 			String messageTheme, String messageText, String username, ISendingMessage iSendingMessage, String uuid) {
 		this.session = session;
 		this.messages = messages;
@@ -43,8 +43,8 @@ public class MessageClientPasswordThread implements Runnable, ISending {
 	}
 
 	/**
-	 * Sending message on email for confirm changing password <br>
-	 * then insert information in database
+	 * Sending message on email abou registration<br>
+	 * then store information in database
 	 */
 	@Override
 	public void sendMessage() {
@@ -59,16 +59,17 @@ public class MessageClientPasswordThread implements Runnable, ISending {
 			message.setText(messageText);
 
 			Transport.send(message);
-			iSendingMessage.insertForConfirmPassword(uuid, messages.get(emailIndex).getClientId());
+			iSendingMessage.insertForConfirmEmail(uuid, messages.get(emailIndex).getClientId());
 
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
 	public void run() {
 		sendMessage();
+
 	}
+
 }

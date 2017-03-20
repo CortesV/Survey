@@ -1,4 +1,4 @@
-package com.survey.softbistro.notification.system.interfacee;
+package com.softbistro.survey.notification.system.interfacee;
 
 /**
  * For sending messages
