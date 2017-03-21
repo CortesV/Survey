@@ -32,7 +32,7 @@ public interface ISurvey {
 	 * @param clientId
 	 * @return
 	 */
-	public List<Survey> getAllSurveysOfClient(Integer clientId);
+	public Response getAllSurveysOfClient(Integer clientId);
 
 	/**
 	 * Get all groups that has client
@@ -40,7 +40,7 @@ public interface ISurvey {
 	 * @param clientId
 	 * @return
 	 */
-	public List<Group> getGroupsClient(Integer clientId);
+	public Response getGroupsClient(Integer clientId);
 
 	/**
 	 * Add groups of participant that will be in survey
@@ -55,7 +55,7 @@ public interface ISurvey {
 	 * 
 	 * @param surveyId
 	 */
-	public List<Group> getGroupsSurvey(Integer surveyId);
+	public Response getGroupsSurvey(Integer surveyId);
 
 	/**
 	 * 

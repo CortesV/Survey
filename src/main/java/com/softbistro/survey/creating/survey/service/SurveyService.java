@@ -33,7 +33,7 @@ public class SurveyService {
 	 * @param clientId
 	 * @return
 	 */
-	public List<Survey> getAllSurveysOfClient(Integer clientId) {
+	public Response getAllSurveysOfClient(Integer clientId) {
 		return iSurvey.getAllSurveysOfClient(clientId);
 	}
 
@@ -54,7 +54,7 @@ public class SurveyService {
 	 * @param clientId
 	 * @return
 	 */
-	public List<Group> getGroups(Integer clientId) {
+	public Response getGroups(Integer clientId) {
 		return iSurvey.getGroupsClient(clientId);
 	}
 
@@ -73,7 +73,7 @@ public class SurveyService {
 	 * 
 	 * @param surveyId
 	 */
-	public List<Group> getGroupsSurvey(Integer surveyId) {
+	public Response getGroupsSurvey(Integer surveyId) {
 		return iSurvey.getGroupsSurvey(surveyId);
 	}
 

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -95,10 +96,9 @@ public class SurveyDao implements ISurvey {
 			if (keys.next()) {
 				generatedId = keys.getInt(1);
 			}
-			return new Response(null, null, null);
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return new Response(null, null, null);
+			return new Response(generatedId, HttpStatus.CREATED, null);
+		} catch (Exception e) {
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 
 	}
@@ -111,9 +111,13 @@ public class SurveyDao implements ISurvey {
 	 */
 	@Override
 	public Response updateOfSurvey(Survey survey) {
-		jdbcTemplate.update(SQL_UPDATE_NAME_OF_SURVEY, survey.getClientId(), survey.getSurveyName(),
-				survey.getSurveyTheme(), survey.getStartTime(), survey.getFinishTime(), survey.getId());
-		return new Response(null, null, null);
+		try {
+			jdbcTemplate.update(SQL_UPDATE_NAME_OF_SURVEY, survey.getClientId(), survey.getSurveyName(),
+					survey.getSurveyTheme(), survey.getStartTime(), survey.getFinishTime(), survey.getId());
+			return new Response(null, HttpStatus.OK, null);
+		} catch (Exception e) {
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
 	}
 
 	/**
@@ -123,9 +127,13 @@ public class SurveyDao implements ISurvey {
 	 * @return
 	 */
 	@Override
-	public List<Survey> getAllSurveysOfClient(Integer clientId) {
-		List<Survey> surveys = jdbcTemplate.query(SQL_GET_LIST_OF_SURVEYS, new ListOfSurveys(), clientId);
-		return surveys;
+	public Response getAllSurveysOfClient(Integer clientId) {
+		try {
+			List<Survey> surveys = jdbcTemplate.query(SQL_GET_LIST_OF_SURVEYS, new ListOfSurveys(), clientId);
+			return new Response(surveys, HttpStatus.OK, null);
+		} catch (Exception e) {
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
 	}
 
 	/**
@@ -135,10 +143,14 @@ public class SurveyDao implements ISurvey {
 	 * @return
 	 */
 	@Override
-	public List<Group> getGroupsClient(Integer clientId) {
-		List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_CLIENT, new BeanPropertyRowMapper<>(Group.class),
-				clientId);
-		return groups;
+	public Response getGroupsClient(Integer clientId) {
+		try {
+			List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_CLIENT,
+					new BeanPropertyRowMapper<>(Group.class), clientId);
+			return new Response(groups, HttpStatus.OK, null);
+		} catch (Exception e) {
+			return new Response(null, null, e.getMessage());
+		}
 	}
 
 	/**
@@ -149,21 +161,25 @@ public class SurveyDao implements ISurvey {
 	 */
 	@Override
 	public Response addGroupsToSurvey(List<Group> groups) {
-		jdbcTemplate.batchUpdate(SQL_ADD_GROUP_TO_SURVEY, new BatchPreparedStatementSetter() {
+		try {
+			jdbcTemplate.batchUpdate(SQL_ADD_GROUP_TO_SURVEY, new BatchPreparedStatementSetter() {
 
-			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				Group group = groups.get(i);
-				ps.setInt(1, group.getSurveyId());
-				ps.setInt(2, group.getId());
-			}
+				@Override
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					Group group = groups.get(i);
+					ps.setInt(1, group.getSurveyId());
+					ps.setInt(2, group.getId());
+				}
 
-			@Override
-			public int getBatchSize() {
-				return groups.size();
-			}
-		});
-		return new Response(null, null, null);
+				@Override
+				public int getBatchSize() {
+					return groups.size();
+				}
+			});
+			return new Response(null, HttpStatus.OK, null);
+		} catch (Exception e) {
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
 	}
 
 	/**
@@ -172,9 +188,14 @@ public class SurveyDao implements ISurvey {
 	 * @param surveyId
 	 */
 	@Override
-	public List<Group> getGroupsSurvey(Integer surveyId) {
-		List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_SURVEY, new ListOfGroups(), surveyId);
-		return groups;
+	public Response getGroupsSurvey(Integer surveyId) {
+		try {
+			List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_SURVEY, new ListOfGroups(), surveyId);
+
+			return new Response(groups, HttpStatus.OK, null);
+		} catch (Exception e) {
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
 	}
 
 	/**
@@ -185,8 +206,13 @@ public class SurveyDao implements ISurvey {
 	 */
 	@Override
 	public Response deleteSurvey(Integer surveyId) {
-		jdbcTemplate.update(SQL_DELETE_SURVEY, surveyId);
-		return new Response(null, null, null);
+		try {
+			jdbcTemplate.update(SQL_DELETE_SURVEY, surveyId);
+			return new Response(null, HttpStatus.OK, null);
+		} catch (Exception e) {
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		}
+
 	}
 
 }

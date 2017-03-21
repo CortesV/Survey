@@ -15,7 +15,7 @@ import com.softbistro.survey.creating.survey.service.SurveyService;
 import com.softbistro.survey.response.Response;
 
 @RestController
-@RequestMapping(value = "rest/survey/v1/survey")
+@RequestMapping(value = "/rest/survey/v1/survey")
 public class SurveyController {
 
 	@Autowired
@@ -51,8 +51,8 @@ public class SurveyController {
 	 * @param clientId
 	 * @return
 	 */
-	@RequestMapping(value = "client/{client_id}", method = RequestMethod.GET)
-	public List<Survey> getAllSurveysByClient(@PathVariable(name = "client_id") Integer clientId) {
+	@RequestMapping(value = "/client/{client_id}", method = RequestMethod.GET)
+	public Response getAllSurveysByClient(@PathVariable(name = "client_id") Integer clientId) {
 		return surveyService.getAllSurveysOfClient(clientId);
 	}
 
@@ -74,7 +74,7 @@ public class SurveyController {
 	 * @return
 	 */
 	@RequestMapping(value = "/client/{client_id}/groups", method = RequestMethod.GET)
-	public List<Group> getGroups(@PathVariable(value = "client_id") Integer clientId) {
+	public Response getGroups(@PathVariable(value = "client_id") Integer clientId) {
 		return surveyService.getGroups(clientId);
 	}
 
@@ -84,8 +84,9 @@ public class SurveyController {
 	 * @param surveyId
 	 */
 	@RequestMapping(value = "/{survey_id}/groups", method = RequestMethod.GET)
-	public List<Group> getGroupsSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
-		return surveyService.getGroupsSurvey(surveyId);
+	public String getGroupsSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
+		// return surveyService.getGroupsSurvey(surveyId);
+		return "dsfdsf";
 	}
 
 	/**
