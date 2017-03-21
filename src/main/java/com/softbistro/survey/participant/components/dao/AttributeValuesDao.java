@@ -23,11 +23,14 @@ public class AttributeValuesDao implements IAttributeValues {
 	private JdbcTemplate jdbcTemplate;
 
 	private final static String SQL_FOR_SETTING_ATTRIBUTE_VALUES = "INSERT INTO survey.attribute_values "
-			+ "(survey.attribute_values.attribute_id, survey.attribute_values.participant_id, survey.attribute_values.attribute_value) VALUES (?, ?, ?)";
-	private final static String SQL_FOR_GETTING_ATTRIBUTE_VALUES_BY_ID = "SELECT * FROM survey.attribute_values WHERE survey.attribute_values.id = ? "
-			+ "AND survey.attribute_values.delete != 1";
-	private final static String SQL_FOR_UPDATING_ATTRIBUTE_VALUES_BY_ID = "UPDATE survey.attribute_values AS av SET av.attribute_value = ? WHERE av.id = ?";
-	private final static String SQL_FOR_DELETING_ATTRIBUTE_VALUES_BY_ID = "UPDATE survey.attribute_values AS av SET av.status = 'DELETE' WHERE av.id = ?";
+			+ "(survey.attribute_values.attribute_id, survey.attribute_values.participant_id, survey.attribute_values.attribute_value)"
+			+ " VALUES (?, ?, ?)";
+	private final static String SQL_FOR_GETTING_ATTRIBUTE_VALUES_BY_ID = "SELECT * FROM survey.attribute_values "
+			+ "WHERE survey.attribute_values.id = ? AND survey.attribute_values.delete != 1";
+	private final static String SQL_FOR_UPDATING_ATTRIBUTE_VALUES_BY_ID = "UPDATE survey.attribute_values AS av "
+			+ "SET av.attribute_value = ? WHERE av.id = ?";
+	private final static String SQL_FOR_DELETING_ATTRIBUTE_VALUES_BY_ID = "UPDATE survey.attribute_values AS av"
+			+ " SET av.status = 'DELETE' WHERE av.id = ?";
 	private final static String SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES = "SELECT av.attribute_value FROM survey.attribute_values AS av "
 			+ "LEFT JOIN survey.attributes AS a ON av.attribute_id=a.id LEFT JOIN survey.group AS g ON a.group_id=g.id "
 			+ "LEFT JOIN survey.connect_group_participant AS c ON g.id=c.group_id AND c.participant_id=av.participant_id "
