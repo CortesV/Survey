@@ -14,7 +14,7 @@ import com.softbistro.survey.response.Response;
 public class SurveyService {
 
 	@Autowired
-	ISurvey iSurvey;
+	private ISurvey iSurvey;
 
 	/**
 	 * Writing new survey into database.

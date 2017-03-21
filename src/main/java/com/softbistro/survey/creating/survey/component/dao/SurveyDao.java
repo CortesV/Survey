@@ -37,7 +37,7 @@ public class SurveyDao implements ISurvey {
 			+ "SET s.`delete` = 1, q.`delete` = 1, c.`delete`= 1, quest.`delete`= 1 WHERE s.id = ?";
 
 	@Autowired
-	JdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
 	private class ListOfSurveys implements RowMapper<Survey> {
 
