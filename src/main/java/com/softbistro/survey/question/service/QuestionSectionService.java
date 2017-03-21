@@ -17,7 +17,7 @@ import com.softbistro.survey.response.Response;
 public class QuestionSectionService {
 
 	@Autowired
-	IQuestionSection iQuestionSection;
+	private IQuestionSection iQuestionSection;
 
 	/**
 	 * Method for creating QuestionSection

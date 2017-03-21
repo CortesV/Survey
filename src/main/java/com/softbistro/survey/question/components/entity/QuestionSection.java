@@ -1,7 +1,6 @@
 package com.softbistro.survey.question.components.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 /**
  * 
@@ -42,16 +41,6 @@ public class QuestionSection implements Serializable {
 	 */
 	private String descriptionLong;
 
-	/**
-	 * participant created date
-	 */
-	private Date createdDate;
-
-	/**
-	 * participant modified date
-	 */
-	private Date modifiedDate;
-
 	public Integer getId() {
 		return id;
 	}
@@ -90,21 +79,5 @@ public class QuestionSection implements Serializable {
 
 	public void setDescriptionLong(String descrioptionLong) {
 		this.descriptionLong = descrioptionLong;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
 	}
 }

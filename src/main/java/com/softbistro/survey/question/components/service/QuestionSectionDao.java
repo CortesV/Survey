@@ -22,7 +22,7 @@ import com.softbistro.survey.response.Response;
 public class QuestionSectionDao implements IQuestionSection {
 
 	@Autowired
-	JdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
 	private final static String SQL_FOR_SETTING_QUESTION_SECTION = "INSERT INTO survey.question_sections "
 			+ "(survey.question_sections.survey_id, survey.question_sections.section_name, "
@@ -125,8 +125,10 @@ public class QuestionSectionDao implements IQuestionSection {
 	@Override
 	public Response getQuestionSectionBySurveyId(Integer surveyId) {
 		try {
-			return new Response((List<QuestionSection>)jdbcTemplate.query(SQL_FOR_GETTING_QUESTION_SECTION_BY_SURVEY_ID,
-					new BeanPropertyRowMapper<>(QuestionSection.class), surveyId), HttpStatus.OK, null);
+			return new Response(
+					(List<QuestionSection>) jdbcTemplate.query(SQL_FOR_GETTING_QUESTION_SECTION_BY_SURVEY_ID,
+							new BeanPropertyRowMapper<>(QuestionSection.class), surveyId),
+					HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {

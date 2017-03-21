@@ -22,7 +22,7 @@ import com.softbistro.survey.response.Response;
 public class QuestionSectionController {
 
 	@Autowired
-	QuestionSectionService questionSectionService;
+	private QuestionSectionService questionSectionService;
 
 	/**
 	 * Method for creating QuestionSection
