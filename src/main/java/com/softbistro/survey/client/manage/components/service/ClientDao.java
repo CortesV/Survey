@@ -1,16 +1,14 @@
 package com.softbistro.survey.client.manage.components.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.softbistro.survey.client.auth.configuration.oauth2.security.AuthorityName;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.response.Response;
@@ -26,9 +24,8 @@ public class ClientDao implements IClient {
 
 	private static final String SELECT_BY_EMAIL = "SELECT * FROM survey.clients  WHERE survey.clients.email = ? and survey.clients.`delete` = 0";
 	private static final String SAVE_CLIENT = "INSERT INTO survey.clients (client_name, password, email, status) VALUES(?, ?, ?, 'NEW')";
+	private static final String SAVE_SOCIAL_CLIENT = "INSERT INTO survey.clients (client_name, password, social_key, email, status) VALUES(?, ?, ?, ?, 'NEW')";
 	private static final String UPDATE_CLIENT = "UPDATE survey.clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
-	private static final String SELECT_CLIENT_ROLES = "SELECT sa.name_authority FROM survey.client_role as scr inner join survey.clients as sc on sc.id = scr.client_id "
-			+ "inner join survey.authority as sa on sa.id = scr.authority_id where sc.id = ?";
 	private static final String DELETE_CLIENT = "UPDATE survey.clients as sc LEFT JOIN survey.survey as ss on ss.client_id = sc.id LEFT JOIN survey.`group` as sg on "
 			+ "sg.client_id = sc.id LEFT JOIN survey.connect_group_participant as cgp on cgp.group_id = sg.id LEFT JOIN survey.participant as sp on "
 			+ "sp.id = cgp.participant_id LEFT JOIN survey.attributes as sa on sa.group_id = sg.id LEFT JOIN survey.attribute_values as sav on "
@@ -44,45 +41,27 @@ public class ClientDao implements IClient {
 	private JdbcTemplate jdbc;
 
 	/**
-	 * Class for geting authorities of client from database
-	 * 
-	 * @author cortes
-	 *
-	 */
-	public class GetRowMap implements RowMapper<AuthorityName> {
-
-		@Override
-		public AuthorityName mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-
-			if (resultSet.getString(1).equals("ROLE_USER")) {
-				return AuthorityName.ROLE_USER;
-			} else
-				return AuthorityName.ROLE_ADMIN;
-
-		}
-	}
-
-	/**
 	 * Find client in database by email of client
 	 * 
 	 * @param email
 	 *            email - email of client
 	 * @return return - client's information
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Response findClientByEmail(String email) {
 
-		Client client = new Client();
 		try {
 
-			client = jdbc.queryForObject(SELECT_BY_EMAIL, new BeanPropertyRowMapper<>(Client.class), email);
-			client.setAuthorities(jdbc.query(SELECT_CLIENT_ROLES, new GetRowMap(), client.getId()));
+			List<Client> clientList = jdbc.query(SELECT_BY_EMAIL, new BeanPropertyRowMapper(Client.class), email);
+
+			return clientList.isEmpty() ? new Response(null, HttpStatus.OK, "No such this client")
+					: new Response(clientList.get(0), HttpStatus.OK, null);
+
 		} catch (Exception ex) {
 
-			return new Response(client, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
-
-		return new Response(client, HttpStatus.OK, null);
 
 	}
 
@@ -98,8 +77,24 @@ public class ClientDao implements IClient {
 	public Response saveClient(Client client) {
 
 		try {
+			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+			jdbc.update(SAVE_CLIENT, client.getClientName(), md5HexPassword, client.getEmail());
+		} catch (Exception ex) {
 
-			jdbc.update(SAVE_CLIENT, client.getClientName(), client.getPassword(), client.getEmail());
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+		}
+
+		return new Response(null, HttpStatus.CREATED, null);
+
+	}
+
+	@Override
+	public Response saveSocialClient(Client client) {
+
+		try {
+			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+			jdbc.update(SAVE_SOCIAL_CLIENT, client.getEmail(), md5HexPassword, client.getSocialKey(),
+					client.getEmail());
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
@@ -146,7 +141,8 @@ public class ClientDao implements IClient {
 	public Response updateClient(Client client, Integer id) {
 
 		try {
-			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), client.getPassword(), id);
+			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), md5HexPassword, id);
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
@@ -162,7 +158,7 @@ public class ClientDao implements IClient {
 	 *            client - all information about client that will write to
 	 *            database
 	 * @param id
-	 *            id - id of client 
+	 *            id - id of client
 	 * 
 	 * @return return - status of execution this method
 	 */
@@ -170,7 +166,8 @@ public class ClientDao implements IClient {
 	public Response updatePassword(Client client, Integer id) {
 
 		try {
-			jdbc.update(UPDATE_CLIENT_PASSWORD, client.getPassword(), id);
+			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+			jdbc.update(UPDATE_CLIENT_PASSWORD, md5HexPassword, id);
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
