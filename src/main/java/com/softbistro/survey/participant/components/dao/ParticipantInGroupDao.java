@@ -24,10 +24,14 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private final static String SQL_FOR_ADDING_PARTICIPANT_IN_GROUP = "INSERT INTO survey.connect_group_participant (survey.connect_group_participant.group_id, survey.connect_group_participant.participant_id) VALUES (?, ?)";
-	private final static String SQL_FOR_DELETING_PARTICIPANT_IN_GROUP = "UPDATE survey.connect_group_participant AS c SET c.status = 'DELETE' WHERE c.group_id = ? AND c.participant_id = ?";
-	private final static String SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID = "SELECT * FROM survey.participant AS p LEFT JOIN survey.connect_group_participant AS c ON c.participant_id=p.id WHERE p.id= ?  AND p.delete != 1";
-	private final static String SQL_FOR_GETTING_PARTICIPANT_GROUPS = "SELECT * FROM survey.group AS g LEFT JOIN survey.connect_group_participant AS c ON g.id=c.group_id WHERE g.id = ? AND g.delete != 1";
+	private final static String SQL_FOR_ADDING_PARTICIPANT_IN_GROUP = "INSERT INTO survey.connect_group_participant "
+			+ "(survey.connect_group_participant.group_id, survey.connect_group_participant.participant_id) VALUES (?, ?)";
+	private final static String SQL_FOR_DELETING_PARTICIPANT_IN_GROUP = "UPDATE survey.connect_group_participant AS c "
+			+ "SET c.status = 'DELETE' WHERE c.group_id = ? AND c.participant_id = ?";
+	private final static String SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID = "SELECT * FROM survey.participant AS p "
+			+ "LEFT JOIN survey.connect_group_participant AS c ON c.participant_id=p.id WHERE p.id= ?  AND p.delete != 1";
+	private final static String SQL_FOR_GETTING_PARTICIPANT_GROUPS = "SELECT * FROM survey.group AS g "
+			+ "LEFT JOIN survey.connect_group_participant AS c ON g.id=c.group_id WHERE g.id = ? AND g.delete != 1";
 
 	/**
 	 * Method for getting all participant by group
