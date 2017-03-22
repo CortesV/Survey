@@ -44,6 +44,9 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Regi
 	@Value("${client.mail.password}")
 	protected String password;
 
+	@Value("${client.text.for.sending.url}")
+	String url;
+
 	@Autowired
 	private Properties propertiesClient;
 
@@ -70,7 +73,7 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Regi
 
 	@Override
 	public String generateTextForMessage(RegistrationMessage client, String uuid) {
-		String urlForVote = String.format("http://localhost:8080/survey/%s", uuid);
+		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
 				"Registration new account with name \"%s\" \n" + "For confirm click on URL :%s", client.getClientName(),

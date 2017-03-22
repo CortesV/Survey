@@ -44,6 +44,9 @@ public class SurveyMessageService implements Runnable, ICreateMessage<SurveyMess
 	@Value("${survey.mail.password}")
 	protected String password;
 
+	@Value("${survey.text.for.sending.url}")
+	protected String url;
+
 	@Autowired
 	private Properties propertiesSurvey;
 
@@ -77,8 +80,7 @@ public class SurveyMessageService implements Runnable, ICreateMessage<SurveyMess
 
 	@Override
 	public String generateTextForMessage(SurveyMessage message, String uuid) {
-		String urlForVote = String.format("http://localhost:8080/survey/survey_id%d/participant_id%d",
-				message.getSurveyId(), message.getParticipantId());
+		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
 				"Survey with name \"%s\" by \"%s\" was created.\n Survey will be from \" %tD \" to \" %tD \" \n"
