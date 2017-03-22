@@ -18,7 +18,7 @@ import com.softbistro.survey.response.Response;
  *
  */
 @RestController
-@RequestMapping("/rest/survey/v1/attributeValue")
+@RequestMapping("/rest/survey/v1/attribute_value")
 public class AttributeValuesController {
 
 	@Autowired
@@ -41,9 +41,9 @@ public class AttributeValuesController {
 	 * @param attributeValuesId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/{attributeValuesId}", method = RequestMethod.GET)
-	public Response getAttributevaluesById(@PathVariable Integer attributeValuesId) {
-		return attributeValuesService.getAttributeValuesById(attributeValuesId);
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public Response getAttributevaluesById(@PathVariable Integer id) {
+		return attributeValuesService.getAttributeValuesById(id);
 	}
 
 	/**
@@ -63,9 +63,9 @@ public class AttributeValuesController {
 	 * @param attributeValuesId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/{attributeValuesId}", method = RequestMethod.DELETE)
-	public Response deleteAttributeValuesById(@PathVariable Integer attributeValuesId) {
-		return attributeValuesService.deleteAttributeValuesById(attributeValuesId);
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public Response deleteAttributeValuesById(@PathVariable Integer id) {
+		return attributeValuesService.deleteAttributeValuesById(id);
 	}
 
 	/**
@@ -75,8 +75,9 @@ public class AttributeValuesController {
 	 * @param participantId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/{groupId}/{participantId}", method = RequestMethod.GET)
-	public Response getParticipantAttributeValuesInGroup(@PathVariable Integer groupId, Integer participantId) {
+	@RequestMapping(value = "/{group_id}/{participant_id}", method = RequestMethod.GET)
+	public Response getParticipantAttributeValuesInGroup(@PathVariable("group_id") Integer groupId,
+			@PathVariable("participant_id") Integer participantId) {
 		return attributeValuesService.getParticipantAttributesInGroup(groupId, participantId);
 	}
 }

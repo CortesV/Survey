@@ -41,8 +41,8 @@ public class AttributesController {
 	 * @param attributesId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/{attributesId}", method = RequestMethod.GET)
-	public Response getAttributesById(@PathVariable Integer attributesId) {
+	@RequestMapping(value = "/{attributes_id}", method = RequestMethod.GET)
+	public Response getAttributesById(@PathVariable("attributes_id") Integer attributesId) {
 		return attributesService.getAttributeById(attributesId);
 	}
 
@@ -52,8 +52,8 @@ public class AttributesController {
 	 * @param groupId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/group/{groupId}", method = RequestMethod.GET)
-	public Response getAttributesByGroupId(@PathVariable Integer groupId) {
+	@RequestMapping(value = "/group/{group_id}", method = RequestMethod.GET)
+	public Response getAttributesByGroupId(@PathVariable("group_id") Integer groupId) {
 		return attributesService.getAttributesByGroupId(groupId);
 	}
 
@@ -74,8 +74,8 @@ public class AttributesController {
 	 * @param attributesId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/{attributesId}", method = RequestMethod.DELETE)
-	public Response deleteAttributesById(@PathVariable Integer attributesId) {
+	@RequestMapping(value = "/{attributes_id}", method = RequestMethod.DELETE)
+	public Response deleteAttributesById(@PathVariable("attributes_id") Integer attributesId) {
 		return attributesService.deleteAttributesById(attributesId);
 	}
 }

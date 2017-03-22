@@ -41,9 +41,9 @@ public class GroupController {
 	 * @param groupId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/{groupId}", method = RequestMethod.GET)
-	public Response getGroupById(@PathVariable Integer groupId) {
-		return groupService.getGroupById(groupId);
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public Response getGroupById(@PathVariable Integer id) {
+		return groupService.getGroupById(id);
 	}
 
 	/**
@@ -52,9 +52,9 @@ public class GroupController {
 	 * @param clientId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/client/{clientId}", method = RequestMethod.GET)
-	public Response getGroupByClientId(@PathVariable Integer clientId) {
-		return (Response) groupService.getGroupsByClient(clientId);
+	@RequestMapping(value = "/client/{id}", method = RequestMethod.GET)
+	public Response getGroupByClientId(@PathVariable Integer id) {
+		return (Response) groupService.getGroupsByClient(id);
 	}
 
 	/**
@@ -74,8 +74,8 @@ public class GroupController {
 	 * @param groupId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/{groupId}", method = RequestMethod.DELETE)
-	public Response deleteGroupById(@PathVariable Integer groupId) {
-		return groupService.deleteGroupById(groupId);
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	public Response deleteGroupById(@PathVariable Integer id) {
+		return groupService.deleteGroupById(id);
 	}
 }

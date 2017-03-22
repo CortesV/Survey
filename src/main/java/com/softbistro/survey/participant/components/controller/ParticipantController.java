@@ -42,8 +42,9 @@ public class ParticipantController {
 	 *            clientid
 	 * @return Response
 	 */
-	@RequestMapping(value = "email/{email}/{clientId}", method = RequestMethod.GET)
-	public Response getParticipantByEmailAndClientId(@PathVariable String email, Integer clientid) {
+	@RequestMapping(value = "email/{email}/{client_id}", method = RequestMethod.GET)
+	public Response getParticipantByEmailAndClientId(@PathVariable("email") String email,
+			@PathVariable("client_id") Integer clientid) {
 		return participantService.getParticipantByEmailAndClientId(email, clientid);
 	}
 
@@ -54,8 +55,9 @@ public class ParticipantController {
 	 *            attribute value
 	 * @return Response
 	 */
-	@RequestMapping(value = "attribute/{attributeId}/{attributeValue}", method = RequestMethod.GET)
-	public Response getParticipantByAttributeValue(@PathVariable Integer attributeId, String attributeValue) {
+	@RequestMapping(value = "attribute/{attribute_id}/{attribute_value}", method = RequestMethod.GET)
+	public Response getParticipantByAttributeValue(@PathVariable("attribute_id") Integer attributeId,
+			@PathVariable("attribute_id") String attributeValue) {
 		return participantService.getParticipantByAttributeValue(attributeId, attributeValue);
 	}
 

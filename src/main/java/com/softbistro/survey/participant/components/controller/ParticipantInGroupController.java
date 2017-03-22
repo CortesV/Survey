@@ -19,7 +19,7 @@ import com.softbistro.survey.response.Response;
  *
  */
 @RestController
-@RequestMapping("/rest/survey/v1/participantInGroup")
+@RequestMapping("/rest/survey/v1/participant_in_group")
 public class ParticipantInGroupController {
 
 	@Autowired
@@ -31,8 +31,8 @@ public class ParticipantInGroupController {
 	 * @param groupId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/group/{groupId}", method = RequestMethod.GET)
-	public Response getParticipantsByGroupId(@PathVariable Integer groupId) {
+	@RequestMapping(value = "/group/{group_d}", method = RequestMethod.GET)
+	public Response getParticipantsByGroupId(@PathVariable("group_d") Integer groupId) {
 		return participantInGroupService.getParticipantsByGroupId(groupId);
 	}
 
@@ -55,8 +55,9 @@ public class ParticipantInGroupController {
 	 * @param participantId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/{groupId}/{participantId}", method = RequestMethod.DELETE)
-	public Response deletingParticipantfromGroup(@PathVariable Integer groupId, Participant participantId) {
+	@RequestMapping(value = "/{group_id}/{participant_id}", method = RequestMethod.DELETE)
+	public Response deletingParticipantfromGroup(@PathVariable("group_id") Integer groupId,
+			@PathVariable("participant_id") Participant participantId) {
 		return participantInGroupService.deletingParticipantfromGroup(groupId, participantId);
 	}
 
@@ -66,8 +67,8 @@ public class ParticipantInGroupController {
 	 * @param participantId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/participant/{participantId}", method = RequestMethod.GET)
-	public Response getParticipantGroups(Integer participantId) {
+	@RequestMapping(value = "/participant/{participant_id}", method = RequestMethod.GET)
+	public Response getParticipantGroups(@PathVariable("participant_id") Integer participantId) {
 		return participantInGroupService.getParticipantGroups(participantId);
 	}
 }
