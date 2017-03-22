@@ -1,5 +1,7 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -32,7 +34,7 @@ public class ParticipantDao implements IParticipant {
 			+ "left join survey.attribute_values AS av on av.participant_id=p.id left join survey.answers AS a on a.participant_id=p.id "
 			+ "SET p.status = 'DELETE', c.status = 'DELETE', av.status = 'DELETE', a.status = 'DELETE' WHERE p.id = ?";
 	private final static String SQL_FOR_GETTING_PARTICIPANT = "SELECT * FROM survey.participant WHERE survey.participant.id= ? "
-			+ "AND survey.participant.status != 'DELETE'";
+			+ "AND survey.participant.delete = 0";
 
 	/**
 	 * Method for creating participant
@@ -99,8 +101,10 @@ public class ParticipantDao implements IParticipant {
 	@Override
 	public Response getParticipantById(Integer participantId) {
 		try {
-			return new Response(jdbcTemplate.queryForObject(SQL_FOR_GETTING_PARTICIPANT,
-					new BeanPropertyRowMapper<>(Participant.class), participantId), HttpStatus.OK, null);
+			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT,
+					new BeanPropertyRowMapper<>(Participant.class), participantId);
+
+			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element") : new Response(list, HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {

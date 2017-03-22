@@ -1,7 +1,6 @@
 package com.softbistro.survey.participant.components.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 /**
  * Class that represent attribute values entity
@@ -36,16 +35,6 @@ public class AttributeValues implements Serializable {
 	 */
 	private String value;
 
-	/**
-	 * attribute values created date
-	 */
-	private Date createdDate;
-
-	/**
-	 * attribute values modified date
-	 */
-	private Date modifiedDate;
-
 	public Integer getId() {
 		return id;
 	}
@@ -76,21 +65,5 @@ public class AttributeValues implements Serializable {
 
 	public void setValue(String value) {
 		this.value = value;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
 	}
 }
