@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.mysql.cj.api.jdbc.Statement;
+import com.mysql.jdbc.Statement;
 import com.softbistro.survey.creating.survey.component.entity.Group;
 import com.softbistro.survey.creating.survey.component.entity.Survey;
 import com.softbistro.survey.creating.survey.component.interfacee.ISurvey;

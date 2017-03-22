@@ -3,9 +3,8 @@ package com.softbistro.survey.response;
 import org.springframework.http.HttpStatus;
 
 /**
- * Response template <<<<<<< HEAD
+ * Response template
  * 
- * ======= >>>>>>> develop
  * 
  * @author cortes
  *
