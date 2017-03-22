@@ -22,7 +22,8 @@ public class GroupDao implements IGroup {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private final static String SQL_FOR_SETTING_GROUP = "INSERT INTO survey.group (survey.group.client_id, survey.group.group_name) VALUES (?, ?)";
+	private final static String SQL_FOR_SETTING_GROUP = "INSERT INTO survey.group (survey.group.client_id, survey.group.group_name) "
+			+ "VALUES (?, ?)";
 	private final static String SQL_FOR_GETTING_GROUP_BY_ID = "SELECT g.id, g.client_id, g.group_name, g.created_date, g.modified_date "
 			+ "FROM survey.group AS g WHERE g.id = ? AND g.delete != 1";
 	private final static String SQL_FOR_GETTING_GROUP_BY_CLIENT = "SELECT g.id, g.client_id, g.group_name, g.created_date, g.modified_date "

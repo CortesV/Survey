@@ -1,10 +1,7 @@
 package com.softbistro.survey.client.manage.components.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.util.List;
-
-import com.softbistro.survey.client.auth.configuration.oauth2.security.AuthorityName;
 
 /**
  * Simple JavaBean object that represents a Client
@@ -18,13 +15,12 @@ public class Client implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+	private String socialKey;
 	private String clientName;
 	private String password;
 	private String email;
-	private String status;
 	private Boolean activated;
 	private List<AuthorityName> authorities;
-	private Date lastPasswordResetDate;
 
 	public Long getId() {
 		return id;
@@ -58,14 +54,6 @@ public class Client implements Serializable {
 		this.email = email;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	public Boolean isActivated() {
 		return activated;
 	}
@@ -82,12 +70,15 @@ public class Client implements Serializable {
 		this.authorities = authorities;
 	}
 
-	public Date getLastPasswordResetDate() {
-		return lastPasswordResetDate;
+	public String getSocialKey() {
+		return socialKey;
 	}
 
-	public void setLastPasswordResetDate(Date lastPasswordResetDate) {
-		this.lastPasswordResetDate = lastPasswordResetDate;
+	public void setSocialKey(String socialKey) {
+		this.socialKey = socialKey;
 	}
 
+	public Boolean getActivated() {
+		return activated;
+	}
 }

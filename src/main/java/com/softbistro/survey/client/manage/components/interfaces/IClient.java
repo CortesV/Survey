@@ -57,4 +57,6 @@ public interface IClient {
 	 * @return return - status of execution this method
 	 */
 	public Response updatePassword(Client client, Integer id);
+	
+	public Response saveSocialClient(Client client);
 }
