@@ -4,14 +4,31 @@ import org.springframework.http.HttpStatus;
 
 /**
  * Response template
+ * 
+ * 
  * @author cortes
  *
  */
 public class Response {
 
+	/**
+	 * Object which work in request
+	 */
 	private Object data;
+
+	/**
+	 * Return http code from WEB page
+	 */
 	private Integer responseCode;
+
+	/**
+	 * Status operation on request
+	 */
 	private HttpStatus responseStatus;
+
+	/**
+	 * Return discription for operation or return error when operation field
+	 */
 	private String responseDescription;
 
 	public Response(Object data, HttpStatus responseStatus, String responseDescription) {

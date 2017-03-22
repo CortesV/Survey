@@ -42,6 +42,9 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage<Re
 	@Value("${password.mail.username}")
 	protected String username;
 
+	@Value("${password.text.for.sending.url}")
+	String url;
+
 	@Value("${password.mail.password}")
 	protected String password;
 
@@ -73,7 +76,7 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage<Re
 
 	@Override
 	public String generateTextForMessage(RegistrationMessage client, String uuid) {
-		String urlForVote = String.format("http://localhost:8080/survey/client_name%s", uuid);
+		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
 				"Change password on account with name \"%s\" \n" + "For confirm click on URL :%s",
