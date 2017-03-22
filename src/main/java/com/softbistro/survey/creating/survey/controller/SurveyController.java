@@ -84,9 +84,8 @@ public class SurveyController {
 	 * @param surveyId
 	 */
 	@RequestMapping(value = "/{survey_id}/groups", method = RequestMethod.GET)
-	public String getGroupsSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
-		// return surveyService.getGroupsSurvey(surveyId);
-		return "dsfdsf";
+	public Response getGroupsSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
+		return surveyService.getGroupsSurvey(surveyId);
 	}
 
 	/**
