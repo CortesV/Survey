@@ -5,7 +5,6 @@ import java.util.UUID;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +25,8 @@ public class AuthorizationService {
 	private static final String EMPTY_PASSWORD = "";
 	private static final String EXIST_CLIENT = "Wrong password or email";
 	
-	//@Value("${redis.life.token}")
-	private static Integer timeValidKey = 10;
+	@Value("${redis.life.token}")
+	private Integer timeValidKey;
 
 	@Autowired
 	private AuthorizedClientService authorizedClientService;
