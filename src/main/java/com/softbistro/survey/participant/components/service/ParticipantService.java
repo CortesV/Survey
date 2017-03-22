@@ -58,4 +58,26 @@ public class ParticipantService {
 	public Response getParticipantById(Integer participantId) {
 		return iParticipant.getParticipantById(participantId);
 	}
+
+	/**
+	 * Method to getting participant from db by email and client Id
+	 * 
+	 * @param email,
+	 *            clientid
+	 * @return Response
+	 */
+	public Response getParticipantByEmailAndClientId(String email, Integer clientid) {
+		return iParticipant.getParticipantByEmailAndClientId(email, clientid);
+	}
+
+	/**
+	 * Method to getting participant from db by attribute value
+	 * 
+	 * @param attributeId,
+	 *            attribute value
+	 * @return Response
+	 */
+	public Response getParticipantByAttributeValue(Integer attributeId, String attributeValue) {
+		return iParticipant.getParticipantByAttributeValue(attributeId, attributeValue);
+	}
 }

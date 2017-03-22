@@ -36,6 +36,32 @@ public class ParticipantController {
 	}
 
 	/**
+	 * Method to getting participant from db by email and client Id
+	 * 
+	 * @param email,
+	 *            clientid
+	 * @return Response
+	 */
+	@RequestMapping(value = "email/{email}/{client_id}", method = RequestMethod.GET)
+	public Response getParticipantByEmailAndClientId(@PathVariable("email") String email,
+			@PathVariable("client_id") Integer clientid) {
+		return participantService.getParticipantByEmailAndClientId(email, clientid);
+	}
+
+	/**
+	 * Method to getting participant from db by attribute value
+	 * 
+	 * @param attributeId,
+	 *            attribute value
+	 * @return Response
+	 */
+	@RequestMapping(value = "attribute/{attribute_id}/{attribute_value}", method = RequestMethod.GET)
+	public Response getParticipantByAttributeValue(@PathVariable("attribute_id") Integer attributeId,
+			@PathVariable("attribute_id") String attributeValue) {
+		return participantService.getParticipantByAttributeValue(attributeId, attributeValue);
+	}
+
+	/**
 	 * Method for creating participant
 	 * 
 	 * @param participant
