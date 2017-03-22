@@ -44,12 +44,12 @@ public interface IParticipant {
 	public Response getParticipantById(Integer participantId);
 
 	/**
-	 * Method to getting participant from db by email
+	 * Method to getting participant from db by email and client Id
 	 * 
-	 * @param email
+	 * @param email, clientId
 	 * @return Response
 	 */
-	public Response getParticipantByEmail(String email);
+	public Response getParticipantByEmailAndClientId(String email, Integer cliectId);
 	
 	/**
 	 * Method to getting participant from db by attribute value

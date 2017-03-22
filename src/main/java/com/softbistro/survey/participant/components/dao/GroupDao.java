@@ -1,5 +1,7 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -25,14 +27,14 @@ public class GroupDao implements IGroup {
 	private final static String SQL_FOR_SETTING_GROUP = "INSERT INTO survey.group (survey.group.client_id, survey.group.group_name) "
 			+ "VALUES (?, ?)";
 	private final static String SQL_FOR_GETTING_GROUP_BY_ID = "SELECT g.id, g.client_id, g.group_name, g.created_date, g.modified_date "
-			+ "FROM survey.group AS g WHERE g.id = ? AND g.delete != 1";
+			+ "FROM survey.group AS g WHERE g.id = ? AND g.delete = 0";
 	private final static String SQL_FOR_GETTING_GROUP_BY_CLIENT = "SELECT g.id, g.client_id, g.group_name, g.created_date, g.modified_date "
-			+ "FROM survey.group AS g WHERE g.client_id = ? AND g.delete != 1";
+			+ "FROM survey.group AS g WHERE g.client_id = ? AND g.delete = 0";
 	private final static String SQL_FOR_UPDATING_GROUP_BY_ID = "UPDATE survey.group AS g SET g.group_name = ? WHERE g.id = ?";
 	private final static String SQL_FOR_DELETING_GROUP_BY_ID = "UPDATE survey.group AS g LEFT JOIN survey.connect_group_participant AS cp ON cp.group_id=g.id "
 			+ "LEFT JOIN survey.connect_group_survey AS cs ON cs.group_id=g.id LEFT JOIN survey.attributes AS at ON at.group_id=g.id "
 			+ "LEFT JOIN survey.attribute_values AS av ON av.attribute_id=at.id "
-			+ "SET g.status = 'DELETE', cp.status = 'DELETE', cs.status = 'DELETE', at.status = 'DELETE', av.status = 'DELETE'WHERE g.id = ?";
+			+ "SET g.delete = 1, cp.delete = 1, cs.delete = 1, at.delete = 1, av.delete = 1 WHERE g.id = ?";
 
 	/**
 	 * Method to create group
@@ -61,8 +63,11 @@ public class GroupDao implements IGroup {
 	@Override
 	public Response getGroupByid(Integer groupId) {
 		try {
-			return new Response(jdbcTemplate.queryForObject(SQL_FOR_GETTING_GROUP_BY_ID,
-					new BeanPropertyRowMapper<>(Group.class), groupId), HttpStatus.OK, null);
+			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_ID, new BeanPropertyRowMapper<>(Group.class),
+					groupId);
+
+			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
+					: new Response(list.get(0), HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {
@@ -79,8 +84,11 @@ public class GroupDao implements IGroup {
 	@Override
 	public Response getGroupsByClient(Integer clientId) {
 		try {
-			return new Response(jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT,
-					new BeanPropertyRowMapper<>(Group.class), clientId), HttpStatus.OK, null);
+			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT,
+					new BeanPropertyRowMapper<>(Group.class), clientId);
+
+			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
+					: new Response(list, HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {
