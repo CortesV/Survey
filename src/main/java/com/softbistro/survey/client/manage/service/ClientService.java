@@ -89,5 +89,9 @@ public class ClientService {
 		return iClient.updatePassword(client, id);
 	}
 
+	public Response saveSocialClient(Client client){
+	
+		return iClient.saveSocialClient(client);
+	}
 	
 }

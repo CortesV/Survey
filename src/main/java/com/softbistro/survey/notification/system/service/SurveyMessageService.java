@@ -2,6 +2,7 @@ package com.softbistro.survey.notification.system.service;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
@@ -10,12 +11,13 @@ import javax.mail.Session;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.notification.system.component.entity.SurveyMessage;
 import com.softbistro.survey.notification.system.component.interfacee.ISendingMessage;
-import com.softbistro.survey.notification.system.interfacee.IMessage;
+import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
 import com.softbistro.survey.notification.system.threads.MessageSurveyThread;
 
 /**
@@ -27,7 +29,7 @@ import com.softbistro.survey.notification.system.threads.MessageSurveyThread;
  */
 @Service
 @Scope("prototype")
-public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
+public class SurveyMessageService implements Runnable, ICreateMessage<SurveyMessage> {
 	private static final Logger log = LogManager.getLogger(SurveyMessageService.class);
 
 	@Autowired
@@ -36,19 +38,17 @@ public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
 	/**
 	 * Data about account that will sending messages
 	 */
-	protected static final String USERNAME = "softbistrosurvey@gmail.com";
-	protected static final String PASSWORD = "20170903";
+	@Value("${survey.mail.username}")
+	protected String username;
 
-	private Properties props;
+	@Value("${survey.mail.password}")
+	protected String password;
 
-	public SurveyMessageService() {
-		props = new Properties();
-		props.put("mail.smtp.host", "smtp.gmail.com");
-		props.put("mail.smtp.socketFactory.port", "465");
-		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.port", "465");
-	}
+	@Value("${survey.text.for.sending.url}")
+	protected String url;
+
+	@Autowired
+	private Properties propertiesSurvey;
 
 	/**
 	 * Sending message from main accaunt to email of users
@@ -58,18 +58,18 @@ public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
 	 */
 	public void send() {
 
-		Session session = Session.getInstance(props, new Authenticator() {
+		Session session = Session.getInstance(propertiesSurvey, new Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(USERNAME, PASSWORD);
+				return new PasswordAuthentication(username, password);
 			}
 		});
 
 		List<SurveyMessage> messages = iSendingMessage.getEmailsForSending();
-
 		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
 
+			String uuid = UUID.randomUUID().toString();
 			Thread thread = new Thread(new MessageSurveyThread(session, messages, emailIndex, generateThemeForMessage(),
-					generateTextForMessage(messages.get(emailIndex)), USERNAME));
+					generateTextForMessage(messages.get(emailIndex), uuid), username, iSendingMessage, uuid));
 			thread.start();
 
 			log.info(String.format("Survey email: %s", messages.get(emailIndex).getParticipantEmail()));
@@ -79,9 +79,8 @@ public class SurveyMessageService implements Runnable, IMessage<SurveyMessage> {
 	}
 
 	@Override
-	public String generateTextForMessage(SurveyMessage message) {
-		String urlForVote = String.format("http://localhost:8080/survey/survey_id%d/participant_id%d",
-				message.getSurveyId(), message.getParticipantId());
+	public String generateTextForMessage(SurveyMessage message, String uuid) {
+		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
 				"Survey with name \"%s\" by \"%s\" was created.\n Survey will be from \" %tD \" to \" %tD \" \n"

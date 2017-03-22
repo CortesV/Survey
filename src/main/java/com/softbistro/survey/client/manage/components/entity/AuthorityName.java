@@ -1,4 +1,4 @@
-package com.softbistro.survey.client.auth.configuration.oauth2.security;
+package com.softbistro.survey.client.manage.components.entity;
 
 /**
  * Enum for user's roles

@@ -27,4 +27,28 @@ public interface ISendingMessage {
 	 * @return
 	 */
 	public List<RegistrationMessage> getEmailOfNewPassword();
+
+	/**
+	 * Insert information for confirm change password
+	 * 
+	 * @param uuid
+	 * @param clientd
+	 */
+	public void insertForConfirmPassword(String uuid, Integer clientd);
+
+	/**
+	 * Insert information for confirm email new user
+	 * 
+	 * @param uuid
+	 * @param clientd
+	 */
+	public void insertForConfirmEmail(String uuid, Integer clientId);
+
+	/**
+	 * Insert information for confirm vote in survey
+	 * 
+	 * @param uuid
+	 * @param surveyId
+	 */
+	public void insertForConfirmVote(String uuid, Integer participantId, Integer surveyId);
 }

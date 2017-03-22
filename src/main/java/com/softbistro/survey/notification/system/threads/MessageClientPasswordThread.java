@@ -9,20 +9,20 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import com.softbistro.survey.notification.system.component.entity.SurveyMessage;
+import com.softbistro.survey.notification.system.component.entity.RegistrationMessage;
 import com.softbistro.survey.notification.system.component.interfacee.ISendingMessage;
 import com.softbistro.survey.notification.system.interfacee.ISending;
 
 /**
- * Start thread for sending message about surveys
+ * Create thread and send information about changing password
  * 
  * @author zviproject
  *
  */
-public class MessageSurveyThread implements Runnable, ISending {
+public class MessageClientPasswordThread implements Runnable, ISending {
 
 	private Session session;
-	private List<SurveyMessage> messages;
+	private List<RegistrationMessage> messages;
 	private int emailIndex;
 	private String messageTheme;
 	private String messageText;
@@ -30,8 +30,8 @@ public class MessageSurveyThread implements Runnable, ISending {
 	private ISendingMessage iSendingMessage;
 	private String uuid;
 
-	public MessageSurveyThread(Session session, List<SurveyMessage> messages, int emailIndex, String messageTheme,
-			String messageText, String username, ISendingMessage iSendingMessage, String uuid) {
+	public MessageClientPasswordThread(Session session, List<RegistrationMessage> messages, int emailIndex,
+			String messageTheme, String messageText, String username, ISendingMessage iSendingMessage, String uuid) {
 		this.session = session;
 		this.messages = messages;
 		this.emailIndex = emailIndex;
@@ -43,8 +43,8 @@ public class MessageSurveyThread implements Runnable, ISending {
 	}
 
 	/**
-	 * Sending message on email about survey <br>
-	 * then insert information in database about
+	 * Sending message on email for confirm changing password <br>
+	 * then insert information in database
 	 */
 	@Override
 	public void sendMessage() {
@@ -53,24 +53,22 @@ public class MessageSurveyThread implements Runnable, ISending {
 			message.setFrom(new InternetAddress(username));
 
 			message.setRecipients(Message.RecipientType.TO,
-					InternetAddress.parse(messages.get(emailIndex).getParticipantEmail()));
+					InternetAddress.parse(messages.get(emailIndex).getClientEmail()));
 
 			message.setSubject(messageTheme);
 			message.setText(messageText);
 
 			Transport.send(message);
-			iSendingMessage.insertForConfirmVote(uuid, messages.get(emailIndex).getParticipantId(),
-					messages.get(emailIndex).getSurveyId());
+			iSendingMessage.insertForConfirmPassword(uuid, messages.get(emailIndex).getClientId());
 
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	@Override
 	public void run() {
 		sendMessage();
-
 	}
-
 }
