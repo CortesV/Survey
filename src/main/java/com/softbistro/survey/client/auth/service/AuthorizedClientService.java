@@ -12,7 +12,7 @@ import com.softbistro.survey.client.auth.components.interfaces.IAuthorizedClient
 public class AuthorizedClientService {
 
 	@Autowired
-	IAuthorizedClientRepository iAuthorizedClientRepository;
+	private IAuthorizedClientRepository iAuthorizedClientRepository;
 
 	/**
 	 * Method that save info about authorized client

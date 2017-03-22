@@ -62,11 +62,7 @@ public class ClientController {
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public Response saveClient(@RequestBody Client client, @RequestHeader String token) {
 
-		if (!authorizationService.checkAccess(token)) {
-
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
-		}
-
+		
 		return clientService.saveClient(client);
 	}
 
