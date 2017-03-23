@@ -3,6 +3,7 @@ package com.softbistro.survey.client.manage.components.service;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -23,8 +24,12 @@ import com.softbistro.survey.response.Response;
 public class ClientDao implements IClient {
 
 	private static final String SELECT_BY_EMAIL = "SELECT * FROM survey.clients  WHERE survey.clients.email = ? and survey.clients.`delete` = 0";
-	private static final String SAVE_CLIENT = "INSERT INTO survey.clients (client_name, password, email, status) VALUES(?, ?, ?, 'NEW')";
-	private static final String SAVE_SOCIAL_CLIENT = "INSERT INTO survey.clients (client_name, password, social_key, email, status) VALUES(?, ?, ?, ?, 'NEW')";
+	private static final String FIND_CLIENT = "SELECT * FROM survey.clients  WHERE survey.clients.email = ? or survey.clients.client_name = ? and survey.clients.`delete` = 0";
+	private static final String SAVE_CLIENT = "INSERT INTO survey.clients (client_name, password, email, status) VALUES(?, ?, ?, 'NEW') ON DUPLICATE KEY UPDATE  email = email";
+	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO survey.clients (client_name, password, facebook_id, email, status) VALUES(?, ?, ?, ?, 'NEW')"
+			+ "ON DUPLICATE KEY UPDATE facebook_id = ?";
+	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO survey.clients (client_name, password, google_id, email, status) VALUES(?, ?, ?, ?, 'NEW')"
+			+ "ON DUPLICATE KEY UPDATE google_id = ?";
 	private static final String UPDATE_CLIENT = "UPDATE survey.clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
 	private static final String DELETE_CLIENT = "UPDATE survey.clients as sc LEFT JOIN survey.survey as ss on ss.client_id = sc.id LEFT JOIN survey.`group` as sg on "
 			+ "sg.client_id = sc.id LEFT JOIN survey.connect_group_participant as cgp on cgp.group_id = sg.id LEFT JOIN survey.participant as sp on "
@@ -36,6 +41,13 @@ public class ClientDao implements IClient {
 			+ "sav.`delete` = '1', answ.`delete` = '1', sq.`delete` = '1', qs.`delete` = '1', cgs.`delete` = '1', cr.`delete` = '1'"
 			+ " WHERE sc.id = ?";
 	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE survey.clients SET password = ? WHERE id = ?";
+	private static final String DESCRIPTION_SAVE = "Client successfully saved";
+	private static final String DESCRIPTION_SOC_SAVE = "Client from social network successfully saved";
+	private static final String NOT_FOUND_CLIENT = "Client with this email isn't found";
+	private static final String EXIST_CLIENT = "Dyplicate client name or email.";
+	private static final String EXIST_SOC_CLIENT = "This email has already exist";
+	private static final String FACEBOOK = "facebook";
+	private static final String GOOGLE = "google";
 
 	@Autowired
 	private JdbcTemplate jdbc;
@@ -55,7 +67,7 @@ public class ClientDao implements IClient {
 
 			List<Client> clientList = jdbc.query(SELECT_BY_EMAIL, new BeanPropertyRowMapper(Client.class), email);
 
-			return clientList.isEmpty() ? new Response(null, HttpStatus.OK, "No such this client")
+			return clientList.isEmpty() ? new Response(null, HttpStatus.OK, NOT_FOUND_CLIENT)
 					: new Response(clientList.get(0), HttpStatus.OK, null);
 
 		} catch (Exception ex) {
@@ -77,14 +89,22 @@ public class ClientDao implements IClient {
 	public Response saveClient(Client client) {
 
 		try {
+
+			List<Client> clientList = (List<Client>) findClientByLoginAndEmail(client).getData();
+
+			if (clientList != null) {
+
+				return new Response(null, HttpStatus.OK, EXIST_CLIENT);
+			}
+
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 			jdbc.update(SAVE_CLIENT, client.getClientName(), md5HexPassword, client.getEmail());
+			return new Response(null, HttpStatus.CREATED, DESCRIPTION_SAVE);
+
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
-
-		return new Response(null, HttpStatus.CREATED, null);
 
 	}
 
@@ -93,14 +113,30 @@ public class ClientDao implements IClient {
 
 		try {
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
-			jdbc.update(SAVE_SOCIAL_CLIENT, client.getEmail(), md5HexPassword, client.getSocialKey(),
-					client.getEmail());
+
+			Client resultFindClient = (Client) findClientByEmail(client.getEmail()).getData();
+
+			if (client.getFlag().equals(FACEBOOK) && StringUtils.isBlank(resultFindClient.getFacebookId())) {
+
+				jdbc.update(SAVE_FACEBOOK_CLIENT, client.getEmail(), md5HexPassword, client.getFacebookId(),
+						client.getEmail(), client.getFacebookId());
+				return new Response(null, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+			}
+
+			if (client.getFlag().equals(GOOGLE) && StringUtils.isBlank(resultFindClient.getGoogleId())) {
+
+				jdbc.update(SAVE_GOOGLE_CLIENT, client.getEmail(), md5HexPassword, client.getGoogleId(),
+						client.getEmail(), client.getGoogleId());
+				return new Response(null, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+			}
+
+			
+			return new Response(null, HttpStatus.OK, EXIST_SOC_CLIENT);
+
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
-
-		return new Response(null, HttpStatus.CREATED, null);
 
 	}
 
@@ -174,6 +210,24 @@ public class ClientDao implements IClient {
 		}
 
 		return new Response(null, HttpStatus.OK, null);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public Response findClientByLoginAndEmail(Client client) {
+
+		try {
+
+			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper(Client.class),
+					client.getEmail(), client.getClientName());
+
+			return clientList.isEmpty() ? new Response(null, HttpStatus.OK, NOT_FOUND_CLIENT)
+					: new Response(clientList, HttpStatus.OK, null);
+
+		} catch (Exception ex) {
+
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+		}
 	}
 
 }
