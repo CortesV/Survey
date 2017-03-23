@@ -23,8 +23,9 @@ import com.softbistro.survey.response.Response;
 public class AuthorizationService {
 
 	private static final String EMPTY_PASSWORD = "";
-	private static final String EXIST_CLIENT = "Wrong password or email";
-	
+	private static final String NOT_FOUND_CLIENT = "Wrong password or email";
+	private static final String NOT_FOUND_SOC_CLIENT = "Client with entered credentials isn't exist in database";
+
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
 
@@ -51,7 +52,7 @@ public class AuthorizationService {
 
 			if (resultFindClient.getId() == null && !resultFindClient.getPassword().equals(md5HexPassword)) {
 
-				return new Response(resultFindClient, HttpStatus.OK, EXIST_CLIENT);
+				return new Response(resultFindClient, HttpStatus.OK, NOT_FOUND_CLIENT);
 			}
 
 			String uniqueKey = UUID.randomUUID().toString();
@@ -83,9 +84,15 @@ public class AuthorizationService {
 
 			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
 
-			if (resultFindClient.getId() == null) {
+			if (resultFindClient == null) {
 
-				return new Response(resultFindClient, HttpStatus.OK, EXIST_CLIENT);
+				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
+			}
+
+			if (!resultFindClient.getFacebookId().equals(client.getFacebookId())
+					&& !resultFindClient.getGoogleId().equals(client.getGoogleId())) {
+
+				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
 			}
 
 			String uniqueKey = UUID.randomUUID().toString();
