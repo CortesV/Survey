@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.creating.survey.component.entity.Group;
 import com.softbistro.survey.creating.survey.component.entity.Survey;
 import com.softbistro.survey.creating.survey.component.interfacee.ISurvey;
@@ -87,7 +86,7 @@ public class SurveyDao implements ISurvey {
 		try {
 			Connection connection = jdbcTemplate.getDataSource().getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_INFORMATION_ABOUT_SURVEY,
-					Statement.RETURN_GENERATED_KEYS);
+					com.mysql.cj.api.jdbc.Statement.RETURN_GENERATED_KEYS);
 			preparedStatement.setInt(1, survey.getClientId());
 			preparedStatement.setString(2, survey.getSurveyName());
 			preparedStatement.setString(3, survey.getSurveyTheme());
