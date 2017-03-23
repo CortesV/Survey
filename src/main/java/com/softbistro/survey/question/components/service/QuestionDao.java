@@ -22,13 +22,13 @@ import com.softbistro.survey.response.Response;
 @Repository
 public class QuestionDao implements IQuestion {
 
-	private static final String SELECT_QUESTION_BY_ID = "SELECT * FROM survey.questions  WHERE id = ? AND `delete` = 0";
-	private static final String SAVE_QUESTION = "INSERT INTO survey.questions (survey_id, question, description_short, description_long, question_section_id, answer_type, "
+	private static final String SELECT_QUESTION_BY_ID = "SELECT * FROM questions  WHERE id = ? AND `delete` = 0";
+	private static final String SAVE_QUESTION = "INSERT INTO questions (survey_id, question, description_short, description_long, question_section_id, answer_type, "
 			+ "question_choices, required) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-	private static final String UPDATE_QUESTION = "UPDATE survey.questions SET survey_id = ?, question = ?, description_short = ?, description_long = ?, question_section_id = ?, "
+	private static final String UPDATE_QUESTION = "UPDATE questions SET survey_id = ?, question = ?, description_short = ?, description_long = ?, question_section_id = ?, "
 			+ "answer_type = ?, question_choices = ?, required = ? WHERE id = ?";
 	
-	private static final String DELETE_QUESTION = "UPDATE survey.questions SET `delete` = 1 WHERE id = ?";
+	private static final String DELETE_QUESTION = "UPDATE questions SET `delete` = 1 WHERE id = ?";
 
 	@Autowired
 	private JdbcTemplate jdbc;

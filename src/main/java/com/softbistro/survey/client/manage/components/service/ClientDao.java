@@ -23,24 +23,24 @@ import com.softbistro.survey.response.Response;
 @Repository
 public class ClientDao implements IClient {
 
-	private static final String SELECT_BY_EMAIL = "SELECT * FROM survey.clients  WHERE survey.clients.email = ? and survey.clients.`delete` = 0";
-	private static final String FIND_CLIENT = "SELECT * FROM survey.clients  WHERE survey.clients.email = ? or survey.clients.client_name = ? and survey.clients.`delete` = 0";
-	private static final String SAVE_CLIENT = "INSERT INTO survey.clients (client_name, password, email, status) VALUES(?, ?, ?, 'NEW') ON DUPLICATE KEY UPDATE  email = email";
-	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO survey.clients (client_name, password, facebook_id, email, status) VALUES(?, ?, ?, ?, 'NEW')"
+	private static final String SELECT_BY_EMAIL = "SELECT * FROM clients  WHERE clients.email = ? and clients.`delete` = 0";
+	private static final String FIND_CLIENT = "SELECT * FROM clients  WHERE clients.email = ? or clients.client_name = ? and clients.`delete` = 0";
+	private static final String SAVE_CLIENT = "INSERT INTO clients (client_name, password, email) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE  email = email";
+	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO clients (client_name, password, facebook_id, email) VALUES(?, ?, ?, ?)"
 			+ "ON DUPLICATE KEY UPDATE facebook_id = ?";
-	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO survey.clients (client_name, password, google_id, email, status) VALUES(?, ?, ?, ?, 'NEW')"
+	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, password, google_id, email, status) VALUES(?, ?, ?, ?, 'NEW')"
 			+ "ON DUPLICATE KEY UPDATE google_id = ?";
-	private static final String UPDATE_CLIENT = "UPDATE survey.clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
-	private static final String DELETE_CLIENT = "UPDATE survey.clients as sc LEFT JOIN survey.survey as ss on ss.client_id = sc.id LEFT JOIN survey.`group` as sg on "
-			+ "sg.client_id = sc.id LEFT JOIN survey.connect_group_participant as cgp on cgp.group_id = sg.id LEFT JOIN survey.participant as sp on "
-			+ "sp.id = cgp.participant_id LEFT JOIN survey.attributes as sa on sa.group_id = sg.id LEFT JOIN survey.attribute_values as sav on "
-			+ "sav.attribute_id = sa.id LEFT JOIN survey.answers as answ on answ.participant_id = sp.id LEFT JOIN survey.questions as sq on "
-			+ "sq.survey_id = ss.id LEFT JOIN survey.question_sections as qs on qs.survey_id = ss.id LEFT JOIN survey.connect_group_survey as cgs on "
-			+ "cgs.survey_id = ss.id LEFT JOIN survey.client_role as cr on cr.client_id = sc.id "
+	private static final String UPDATE_CLIENT = "UPDATE clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
+	private static final String DELETE_CLIENT = "UPDATE clients as sc LEFT JOIN survey as ss on ss.client_id = sc.id LEFT JOIN `group` as sg on "
+			+ "sg.client_id = sc.id LEFT JOIN connect_group_participant as cgp on cgp.group_id = sg.id LEFT JOIN participant as sp on "
+			+ "sp.id = cgp.participant_id LEFT JOIN attributes as sa on sa.group_id = sg.id LEFT JOIN attribute_values as sav on "
+			+ "sav.attribute_id = sa.id LEFT JOIN answers as answ on answ.participant_id = sp.id LEFT JOIN questions as sq on "
+			+ "sq.survey_id = ss.id LEFT JOIN question_sections as qs on qs.survey_id = ss.id LEFT JOIN connect_group_survey as cgs on "
+			+ "cgs.survey_id = ss.id LEFT JOIN client_role as cr on cr.client_id = sc.id "
 			+ "SET sc.`delete` = '1', ss.`delete` = '1', sg.`delete` = '1', cgp.`delete` = '1', sa.`delete` = '1', sp.`delete` = '1', "
 			+ "sav.`delete` = '1', answ.`delete` = '1', sq.`delete` = '1', qs.`delete` = '1', cgs.`delete` = '1', cr.`delete` = '1'"
 			+ " WHERE sc.id = ?";
-	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE survey.clients SET password = ? WHERE id = ?";
+	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE clients SET password = ? WHERE id = ?";
 	private static final String DESCRIPTION_SAVE = "Client successfully saved";
 	private static final String DESCRIPTION_SOC_SAVE = "Client from social network successfully saved";
 	private static final String NOT_FOUND_CLIENT = "Client with this email isn't found";
