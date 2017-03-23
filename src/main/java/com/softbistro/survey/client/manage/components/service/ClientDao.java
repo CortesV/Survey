@@ -28,7 +28,7 @@ public class ClientDao implements IClient {
 	private static final String SAVE_CLIENT = "INSERT INTO clients (client_name, password, email) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE  email = email";
 	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO clients (client_name, password, facebook_id, email) VALUES(?, ?, ?, ?)"
 			+ "ON DUPLICATE KEY UPDATE facebook_id = ?";
-	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, password, google_id, email, status) VALUES(?, ?, ?, ?, 'NEW')"
+	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, password, google_id, email) VALUES(?, ?, ?, ?)"
 			+ "ON DUPLICATE KEY UPDATE google_id = ?";
 	private static final String UPDATE_CLIENT = "UPDATE clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
 	private static final String DELETE_CLIENT = "UPDATE clients as sc LEFT JOIN survey as ss on ss.client_id = sc.id LEFT JOIN `group` as sg on "
