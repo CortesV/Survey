@@ -79,7 +79,7 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage<Re
 		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
-				"Change password on account with name \"%s\" \n" + "For confirm click on URL :%s",
+				"Change password on account with name \"%s\" \n" + "For confirm click on URL : %s",
 				client.getClientName(), urlForVote);
 		return textMessage;
 	}

@@ -31,7 +31,7 @@ public class MessageDao implements ISendingMessage {
 	@Value("${client.url.duration.days}")
 	private int workingTimeClient;
 
-	public static final String SQL_GET_FINISH_TIME_OF_SURVEY = "SELECT finish_time FROM survey.survey WHERE survey.survey.id = ?";
+	private static final String SQL_GET_FINISH_TIME_OF_SURVEY = "SELECT finish_time FROM survey WHERE survey.id = ?";
 
 	private static final String SQL_INSERT_DATA_FOR_CONFIRM_PASSWORD = "INSERT INTO sending_password (sending_password.url, sending_password.client_id, sending_password.working_time ) VALUES (?, ?, ?)";
 
@@ -39,9 +39,9 @@ public class MessageDao implements ISendingMessage {
 
 	private static final String SQL_INSERT_DATA_FOR_CONFIRM_VOTE = "INSERT INTO sending_survey (sending_survey.url, sending_survey.participant_id, sending_survey.survey_id, sending_survey.working_time) VALUES (?, ?, ?, ?)";
 
-	private static final String SQL_GET_LIST_ID_NEW_SURVEYS = "SELECT id FROM survey.survey WHERE status = 'NEW' LIMIT ?";
+	private static final String SQL_GET_LIST_ID_NEW_SURVEYS = "SELECT id FROM survey WHERE status = 'NEW' LIMIT ?";
 
-	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey`.`survey` SET `status`= 'DONE' WHERE status = 'NEW' LIMIT ?";
+	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey` SET `status`= 'DONE' WHERE status = 'NEW' LIMIT ?";
 
 	private static final String SQL_GET_LIST_EMAIL_OF_USERS_IN_SURVEY = "SELECT p.email , survey.name, c.client_name, p.id AS participant_id, survey.id AS survey_id, survey.start_time, survey.finish_time "
 			+ "FROM participant AS p "
@@ -49,8 +49,7 @@ public class MessageDao implements ISendingMessage {
 			+ "INNER JOIN `group` AS g ON connect.group_id = g.id "
 			+ "INNER JOIN connect_group_survey ON connect_group_survey.group_id = g.id "
 			+ "INNER JOIN survey AS participantSurvey ON  connect_group_survey.survey_id = participantSurvey.id, "
-			+ "survey.survey, survey.clients AS c "
-			+ "INNER JOIN survey AS surveyClient ON surveyClient.client_id = c.id "
+			+ "survey, clients AS c " + "INNER JOIN survey AS surveyClient ON surveyClient.client_id = c.id "
 			+ "WHERE  participantSurvey.id = ? AND survey.id=? AND surveyClient.id=? GROUP BY email";
 
 	private static final String SQL_GET_LIST_EMAIL_NEW_CLIENTS = "SELECT clients.client_name, clients.email , clients.id FROM clients "
