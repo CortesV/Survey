@@ -19,6 +19,10 @@ public class Client implements Serializable {
 	private String password;
 	private String email;
 	/**
+	 * This field that represent authorization token
+	 */
+	private String token;
+	/**
 	 * This field identify of network from which client is authorized
 	 */
 	private String flag;
@@ -77,6 +81,14 @@ public class Client implements Serializable {
 
 	public void setFlag(String flag) {
 		this.flag = flag;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }

@@ -45,6 +45,7 @@ public class AuthorizationService {
 	public Response simpleAthorization(Client client) {
 
 		AuthorizedClient authorizedClient;
+		Client responseClient;
 		try {
 
 			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
@@ -58,12 +59,17 @@ public class AuthorizationService {
 			String uniqueKey = UUID.randomUUID().toString();
 			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
 			authorizedClientService.saveClient(authorizedClient);
+			responseClient = new Client();
+			responseClient.setId(resultFindClient.getId());
+			responseClient.setClientName(resultFindClient.getClientName());
+			responseClient.setEmail(resultFindClient.getEmail());
+			responseClient.setToken(authorizedClient.getUniqueKey());
 
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
-		return new Response(authorizedClient.getUniqueKey(), HttpStatus.OK, null);
+		return new Response(responseClient, HttpStatus.OK, null);
 	}
 
 	/**
@@ -77,6 +83,7 @@ public class AuthorizationService {
 	public Response socialAuthorization(Client client) {
 
 		AuthorizedClient authorizedClient;
+		Client responseClient;
 		try {
 
 			client.setPassword(EMPTY_PASSWORD);
@@ -98,12 +105,17 @@ public class AuthorizationService {
 			String uniqueKey = UUID.randomUUID().toString();
 			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
 			authorizedClientService.saveClient(authorizedClient);
+			responseClient = new Client();
+			responseClient.setId(resultFindClient.getId());
+			responseClient.setClientName(resultFindClient.getClientName());
+			responseClient.setEmail(resultFindClient.getEmail());
+			responseClient.setToken(authorizedClient.getUniqueKey());
 
 		} catch (Exception ex) {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
-		return new Response(authorizedClient.getUniqueKey(), HttpStatus.OK, null);
+		return new Response(responseClient, HttpStatus.OK, null);
 	}
 
 	/**
