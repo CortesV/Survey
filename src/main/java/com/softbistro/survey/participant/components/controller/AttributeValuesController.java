@@ -1,12 +1,15 @@
 package com.softbistro.survey.participant.components.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.participant.components.entity.AttributeValues;
 import com.softbistro.survey.participant.components.service.AttributeValuesService;
 import com.softbistro.survey.response.Response;
@@ -21,6 +24,11 @@ import com.softbistro.survey.response.Response;
 @RequestMapping("/rest/survey/v1/attribute_value")
 public class AttributeValuesController {
 
+	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
+
+	@Autowired
+	private AuthorizationService authorizationService;
+
 	@Autowired
 	private AttributeValuesService attributeValuesService;
 
@@ -31,7 +39,13 @@ public class AttributeValuesController {
 	 * @return Response
 	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public Response setAttributeValues(@RequestBody AttributeValues attributeValues) {
+	public Response setAttributeValues(@RequestBody AttributeValues attributeValues, @RequestHeader String token) {
+		
+		if (!authorizationService.checkAccess(token)) {
+
+			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+		}
+		
 		return attributeValuesService.setAttributeValues(attributeValues);
 	}
 
@@ -42,7 +56,13 @@ public class AttributeValuesController {
 	 * @return Response
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Response getAttributevaluesById(@PathVariable Integer id) {
+	public Response getAttributevaluesById(@PathVariable Integer id, @RequestHeader String token) {
+		
+		if (!authorizationService.checkAccess(token)) {
+
+			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+		}
+		
 		return attributeValuesService.getAttributeValuesById(id);
 	}
 
@@ -53,7 +73,13 @@ public class AttributeValuesController {
 	 * @return Response
 	 */
 	@RequestMapping(method = RequestMethod.PUT)
-	public Response updateAttributeValuesById(@RequestBody AttributeValues attributeValues) {
+	public Response updateAttributeValuesById(@RequestBody AttributeValues attributeValues, @RequestHeader String token) {
+		
+		if (!authorizationService.checkAccess(token)) {
+
+			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+		}
+		
 		return attributeValuesService.updateAttributeValuesById(attributeValues);
 	}
 
@@ -64,7 +90,13 @@ public class AttributeValuesController {
 	 * @return Response
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public Response deleteAttributeValuesById(@PathVariable Integer id) {
+	public Response deleteAttributeValuesById(@PathVariable Integer id, @RequestHeader String token) {
+		
+		if (!authorizationService.checkAccess(token)) {
+
+			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+		}
+		
 		return attributeValuesService.deleteAttributeValuesById(id);
 	}
 
@@ -77,7 +109,13 @@ public class AttributeValuesController {
 	 */
 	@RequestMapping(value = "/{group_id}/{participant_id}", method = RequestMethod.GET)
 	public Response getParticipantAttributeValuesInGroup(@PathVariable("group_id") Integer groupId,
-			@PathVariable("participant_id") Integer participantId) {
+			@PathVariable("participant_id") Integer participantId, @RequestHeader String token) {
+		
+		if (!authorizationService.checkAccess(token)) {
+
+			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+		}
+		
 		return attributeValuesService.getParticipantAttributesInGroup(groupId, participantId);
 	}
 }
