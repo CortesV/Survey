@@ -1,4 +1,4 @@
-package com.softbistro.survey.confirm.survey.component.interfacee;
+package com.softbistro.survey.confirm.url.component.interfacee;
 
 import com.softbistro.survey.response.Response;
 

@@ -1,4 +1,4 @@
-package com.softbistro.survey.confirm.survey.component.entity;
+package com.softbistro.survey.confirm.url.component.entity;
 
 /**
  * Contain information

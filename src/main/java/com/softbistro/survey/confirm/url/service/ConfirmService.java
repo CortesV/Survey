@@ -1,9 +1,9 @@
-package com.softbistro.survey.confirm.survey.service;
+package com.softbistro.survey.confirm.url.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.softbistro.survey.confirm.survey.component.interfacee.IConfirm;
+import com.softbistro.survey.confirm.url.component.interfacee.IConfirm;
 import com.softbistro.survey.response.Response;
 
 @Service

@@ -1,8 +1,8 @@
-package com.softbistro.survey.confirm.survey.component.interfacee;
+package com.softbistro.survey.confirm.url.component.interfacee;
 
 import java.util.List;
 
-import com.softbistro.survey.confirm.survey.component.entity.Answer;
+import com.softbistro.survey.confirm.url.component.entity.Answer;
 import com.softbistro.survey.response.Response;
 
 /**

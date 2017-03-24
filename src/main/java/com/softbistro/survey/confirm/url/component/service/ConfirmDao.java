@@ -1,4 +1,4 @@
-package com.softbistro.survey.confirm.survey.component.dao;
+package com.softbistro.survey.confirm.url.component.service;
 
 import java.sql.Date;
 
@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.softbistro.survey.confirm.survey.component.interfacee.IConfirm;
+import com.softbistro.survey.confirm.url.component.interfacee.IConfirm;
 import com.softbistro.survey.response.Response;
 
 /**

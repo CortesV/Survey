@@ -1,4 +1,4 @@
-package com.softbistro.survey.confirm.survey.controller;
+package com.softbistro.survey.confirm.url.controller;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.softbistro.survey.confirm.survey.component.entity.Answer;
-import com.softbistro.survey.confirm.survey.service.VoteService;
+import com.softbistro.survey.confirm.url.component.entity.Answer;
+import com.softbistro.survey.confirm.url.service.VoteService;
 import com.softbistro.survey.response.Response;
 
 /**

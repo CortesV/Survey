@@ -1,4 +1,4 @@
-package com.softbistro.survey.confirm.survey.component.dao;
+package com.softbistro.survey.confirm.url.component.service;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -13,9 +13,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.softbistro.survey.confirm.survey.component.entity.Answer;
-import com.softbistro.survey.confirm.survey.component.entity.UuidInformation;
-import com.softbistro.survey.confirm.survey.component.interfacee.IVote;
+import com.softbistro.survey.confirm.url.component.entity.Answer;
+import com.softbistro.survey.confirm.url.component.entity.UuidInformation;
+import com.softbistro.survey.confirm.url.component.interfacee.IVote;
 import com.softbistro.survey.response.Response;
 
 @Repository
