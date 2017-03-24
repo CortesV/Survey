@@ -24,9 +24,13 @@ public class VoteDao implements IVote {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private static final String SQL_GET_UUID_INFORMATION = "SELECT survey_id, participant_id FROM sending_survey WHERE url=? AND working_time > ?";
+	private static final String SQL_GET_UUID_INFORMATION = "SELECT survey_id, participant_id FROM sending_survey WHERE url=? AND working_time > ? AND answer_status='NEW'";
 
 	private static final String SQL_INSERT_ANSWERS = "INSERT INTO answers (question_id, participant_id, answer_type, answer_value, `comment`) VALUES(?,?,?,?,?)";
+
+	private static final String SQL_UPDATE_STATUS_SENDING_SURVEY = "UPDATE sending_survey SET answer_status= ? WHERE url = ?";
+
+	private final String statusForUpdate = "VOTED";
 
 	private class GetInformationFromUuid implements RowMapper<UuidInformation> {
 
@@ -72,6 +76,9 @@ public class VoteDao implements IVote {
 					return answers.size();
 				}
 			});
+
+			jdbcTemplate.update(SQL_UPDATE_STATUS_SENDING_SURVEY, statusForUpdate, uuid);
+
 			return new Response(null, HttpStatus.OK, null);
 		} catch (Exception e) {
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
