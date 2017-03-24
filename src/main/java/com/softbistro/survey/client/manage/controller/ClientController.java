@@ -60,7 +60,7 @@ public class ClientController {
 	 * @return return - status of execution this method
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public Response saveClient(@RequestBody Client client, @RequestHeader String token) {
+	public Response saveClient(@RequestBody Client client) {
 
 		
 		return clientService.saveClient(client);
