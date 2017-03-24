@@ -42,4 +42,20 @@ public interface IParticipant {
 	 * @return Response
 	 */
 	public Response getParticipantById(Integer participantId);
+
+	/**
+	 * Method to getting participant from db by email and client Id
+	 * 
+	 * @param email, clientId
+	 * @return Response
+	 */
+	public Response getParticipantByEmailAndClientId(String email, Integer cliectId);
+	
+	/**
+	 * Method to getting participant from db by attribute value
+	 * 
+	 * @param attributeId, attribute value
+	 * @return Response
+	 */
+	public Response getParticipantByAttributeValue(Integer attributeId, String attributeValue);
 }

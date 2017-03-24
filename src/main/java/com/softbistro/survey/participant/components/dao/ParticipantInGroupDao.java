@@ -1,5 +1,7 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -29,9 +31,9 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	private final static String SQL_FOR_DELETING_PARTICIPANT_IN_GROUP = "UPDATE survey.connect_group_participant AS c "
 			+ "SET c.status = 'DELETE' WHERE c.group_id = ? AND c.participant_id = ?";
 	private final static String SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID = "SELECT * FROM survey.participant AS p "
-			+ "LEFT JOIN survey.connect_group_participant AS c ON c.participant_id=p.id WHERE p.id= ?  AND p.delete != 1";
+			+ "LEFT JOIN survey.connect_group_participant AS c ON c.participant_id=p.id WHERE p.id= ?  AND p.delete = 0";
 	private final static String SQL_FOR_GETTING_PARTICIPANT_GROUPS = "SELECT * FROM survey.group AS g "
-			+ "LEFT JOIN survey.connect_group_participant AS c ON g.id=c.group_id WHERE g.id = ? AND g.delete != 1";
+			+ "LEFT JOIN survey.connect_group_participant AS c ON g.id=c.group_id WHERE g.id = ? AND g.delete = 0";
 
 	/**
 	 * Method for getting all participant by group
@@ -42,8 +44,11 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	@Override
 	public Response getParticipantsByGroup(Integer groupId) {
 		try {
-			return new Response(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
-					new BeanPropertyRowMapper<>(Participant.class), groupId), HttpStatus.OK, null);
+			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
+					new BeanPropertyRowMapper<>(Group.class), groupId);
+
+			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such elements")
+					: new Response(list, HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {
@@ -98,10 +103,12 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 */
 	@Override
 	public Response getParticipantGroups(Integer participantId) {
-
 		try {
-			return new Response(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_GROUPS,
-					new BeanPropertyRowMapper<>(Group.class), participantId), HttpStatus.OK, null);
+			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_GROUPS,
+					new BeanPropertyRowMapper<>(Group.class), participantId);
+
+			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such elements")
+					: new Response(list, HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {

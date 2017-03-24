@@ -1,5 +1,7 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -23,11 +25,11 @@ public class AttributesDao implements IAttributes {
 	private JdbcTemplate jdbcTemplate;
 
 	private final String SQL_FOR_SETTING_ATTRIBUTES = "INSERT INTO survey.attributes (survey.attributes.group_id, survey.attributes.attribute) VALUES (?, ?)";
-	private final String SQL_FOR_GETTING_ATTRIBUTES_BY_ID = "SELECT * FROM survey.attributes AS at WHERE at.id = ? AND at.delete != 1";
+	private final String SQL_FOR_GETTING_ATTRIBUTES_BY_ID = "SELECT * FROM survey.attributes AS at WHERE at.id = ? AND at.delete = 0";
 	private final String SQL_FOR_UPDATING__ATTRIBUTES_BY_ID = "UPDATE survey.attributes AS at SET at.group_id = ?, at.attribute = ? WHERE at.id=?";
 	private final String SQL_FOR_DELETING_ATTRIBUTES = "UPDATE survey.attributes AS at LEFT JOIN survey.attribute_values AS av ON  av.attribute_id=at.id "
 			+ "SET at.status = 'DELETE', av.status = 'DELETE' WHERE at.id = ? ";
-	private final String SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP = "SELECT * FROM survey.attributes WHERE survey.attributes.group_id = ? AND survey.attributes.delete != 1";
+	private final String SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP = "SELECT * FROM survey.attributes WHERE survey.attributes.group_id = ? AND survey.attributes.delete = 0";
 
 	/**
 	 * Method for creating the attribute value
@@ -58,9 +60,11 @@ public class AttributesDao implements IAttributes {
 	public Response getAttributeById(Integer attributesId) {
 
 		try {
-			return new Response(jdbcTemplate.queryForObject(SQL_FOR_GETTING_ATTRIBUTES_BY_ID,
-					new BeanPropertyRowMapper<>(Attributes.class), attributesId), HttpStatus.OK, null);
+			List<Attributes> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_ID,
+					new BeanPropertyRowMapper<>(Attributes.class), attributesId);
 
+			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
+					: new Response(list, HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {
@@ -117,8 +121,11 @@ public class AttributesDao implements IAttributes {
 	public Response getAttributesByGroup(Integer groupId) {
 
 		try {
-			return new Response(jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP,
-					new BeanPropertyRowMapper<>(Attributes.class), groupId), HttpStatus.OK, null);
+			List<Attributes> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP,
+					new BeanPropertyRowMapper<>(Attributes.class), groupId);
+
+			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
+					: new Response(list, HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {

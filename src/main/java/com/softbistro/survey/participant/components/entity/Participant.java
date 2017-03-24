@@ -1,7 +1,6 @@
 package com.softbistro.survey.participant.components.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 /**
  * Class that represent participant entity
@@ -36,21 +35,6 @@ public class Participant implements Serializable {
 	 */
 	private String eMail;
 
-	/**
-	 * participant password
-	 */
-	private String password;
-
-	/**
-	 * participant created date
-	 */
-	private Date createdDate;
-
-	/**
-	 * participant modified date
-	 */
-	private Date modifiedDate;
-
 	public Integer getId() {
 		return id;
 	}
@@ -81,29 +65,5 @@ public class Participant implements Serializable {
 
 	public void seteMail(String eMail) {
 		this.eMail = eMail;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
 	}
 }

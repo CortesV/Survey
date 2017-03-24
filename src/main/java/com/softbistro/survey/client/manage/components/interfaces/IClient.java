@@ -45,6 +45,7 @@ public interface IClient {
 	 * @return return - status of execution this method
 	 */
 	public Response updateClient(Client client, Integer id);
+
 	/**
 	 * Update client's password
 	 * 
@@ -52,11 +53,26 @@ public interface IClient {
 	 *            client - all information about client that will write to
 	 *            database
 	 * @param id
-	 *            id - id of client 
+	 *            id - id of client
 	 * 
 	 * @return return - status of execution this method
 	 */
 	public Response updatePassword(Client client, Integer id);
-	
+
+	/**
+	 * Save information about client that authorized with help of social
+	 * networks
+	 * 
+	 * @param client
+	 * @return
+	 */
 	public Response saveSocialClient(Client client);
+	
+	/**
+	 * Find client by email and client name
+	 * 
+	 * @param client
+	 * @return
+	 */
+	public Response findClientByLoginAndEmail(Client client);
 }

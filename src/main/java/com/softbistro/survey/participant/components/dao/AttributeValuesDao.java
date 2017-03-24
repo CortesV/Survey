@@ -1,5 +1,7 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -26,15 +28,15 @@ public class AttributeValuesDao implements IAttributeValues {
 			+ "(survey.attribute_values.attribute_id, survey.attribute_values.participant_id, survey.attribute_values.attribute_value)"
 			+ " VALUES (?, ?, ?)";
 	private final static String SQL_FOR_GETTING_ATTRIBUTE_VALUES_BY_ID = "SELECT * FROM survey.attribute_values "
-			+ "WHERE survey.attribute_values.id = ? AND survey.attribute_values.delete != 1";
+			+ "WHERE survey.attribute_values.id = ? AND survey.attribute_values.delete = 0";
 	private final static String SQL_FOR_UPDATING_ATTRIBUTE_VALUES_BY_ID = "UPDATE survey.attribute_values AS av "
 			+ "SET av.attribute_value = ? WHERE av.id = ?";
 	private final static String SQL_FOR_DELETING_ATTRIBUTE_VALUES_BY_ID = "UPDATE survey.attribute_values AS av"
-			+ " SET av.status = 'DELETE' WHERE av.id = ?";
+			+ " SET av.delete = 0 WHERE av.id = ?";
 	private final static String SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES = "SELECT av.attribute_value FROM survey.attribute_values AS av "
 			+ "LEFT JOIN survey.attributes AS a ON av.attribute_id=a.id LEFT JOIN survey.group AS g ON a.group_id=g.id "
 			+ "LEFT JOIN survey.connect_group_participant AS c ON g.id=c.group_id AND c.participant_id=av.participant_id "
-			+ "LEFT JOIN survey.participant AS p ON c.participant_id=p.id WHERE g.id= ? and p.id= ? AND p.delete != 1";
+			+ "LEFT JOIN survey.participant AS p ON c.participant_id=p.id WHERE g.id= ? and p.id= ? AND p.delete = 0";
 
 	/**
 	 * Method for creating attribute values
@@ -64,16 +66,16 @@ public class AttributeValuesDao implements IAttributeValues {
 	@Override
 	public Response getAttributeValuesById(Integer attributeValuesId) {
 		try {
-			return new Response(
-					jdbcTemplate.queryForObject(SQL_FOR_GETTING_ATTRIBUTE_VALUES_BY_ID,
-							new BeanPropertyRowMapper<>(AttributeValues.class), attributeValuesId),
-					HttpStatus.OK, null);
+			List<AttributeValues> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTE_VALUES_BY_ID,
+					new BeanPropertyRowMapper<>(AttributeValues.class), attributeValuesId);
+
+			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
+					: new Response(list.get(0), HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
-
 	}
 
 	/**
@@ -122,12 +124,12 @@ public class AttributeValuesDao implements IAttributeValues {
 	 */
 	@Override
 	public Response getParticipantAttributesInGroup(Integer groupId, Integer participantId) {
-
 		try {
-			return new Response(
-					jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES,
-							new BeanPropertyRowMapper<>(AttributeValues.class), groupId, participantId),
-					HttpStatus.OK, null);
+			List<AttributeValues> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES,
+					new BeanPropertyRowMapper<>(AttributeValues.class), groupId, participantId);
+
+			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such elements")
+					: new Response(list, HttpStatus.OK, null);
 		}
 
 		catch (Exception e) {
