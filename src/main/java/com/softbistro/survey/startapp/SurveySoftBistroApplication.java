@@ -11,7 +11,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.softbistro.survey" })
+@ComponentScan({"com.softbistro.survey"})
 @PropertySource("classpath:application.properties")
 public class SurveySoftBistroApplication {
 

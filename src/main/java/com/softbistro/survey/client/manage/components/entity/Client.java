@@ -2,6 +2,9 @@ package com.softbistro.survey.client.manage.components.entity;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Simple JavaBean object that represents a Client
  * 
@@ -9,9 +12,10 @@ import java.io.Serializable;
  * @version 1.0
  *
  */
-@SuppressWarnings("serial")
+@JsonInclude(Include.NON_NULL)
 public class Client implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String facebookId;
 	private String googleId;

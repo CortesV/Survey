@@ -3,6 +3,7 @@ package com.softbistro.survey.client.auth.service;
 import java.util.UUID;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,8 @@ public class AuthorizationService {
 	private static final String EMPTY_PASSWORD = "";
 	private static final String NOT_FOUND_CLIENT = "Wrong password or email";
 	private static final String NOT_FOUND_SOC_CLIENT = "Client with entered credentials isn't exist in database";
+	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
+	private static final String AUTHORIZED_CLIENT = "Client is authorized";
 
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
@@ -51,9 +54,9 @@ public class AuthorizationService {
 			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 
-			if (resultFindClient.getId() == null && !resultFindClient.getPassword().equals(md5HexPassword)) {
+			if (resultFindClient == null || !resultFindClient.getPassword().equals(md5HexPassword)) {
 
-				return new Response(resultFindClient, HttpStatus.OK, NOT_FOUND_CLIENT);
+				return new Response(null, HttpStatus.OK, NOT_FOUND_CLIENT);
 			}
 
 			String uniqueKey = UUID.randomUUID().toString();
@@ -86,7 +89,6 @@ public class AuthorizationService {
 		Client responseClient;
 		try {
 
-			client.setPassword(EMPTY_PASSWORD);
 			Response saveResponse = clientService.saveSocialClient(client);
 
 			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
@@ -96,8 +98,15 @@ public class AuthorizationService {
 				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
 			}
 
-			if (!resultFindClient.getFacebookId().equals(client.getFacebookId())
-					&& !resultFindClient.getGoogleId().equals(client.getGoogleId())) {
+			if (resultFindClient.getFacebookId() != null
+					&& !resultFindClient.getFacebookId().equals(client.getFacebookId())
+					&& StringUtils.isNotBlank(client.getFacebookId())) {
+
+				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
+			}
+
+			if (resultFindClient.getGoogleId() != null && !resultFindClient.getGoogleId().equals(client.getGoogleId())
+					&& StringUtils.isNotBlank(client.getGoogleId())) {
 
 				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
 			}
@@ -137,6 +146,22 @@ public class AuthorizationService {
 		authorizedClient.setTimeValidKey(authorizedClient.getTimeValidKey());
 		authorizedClientService.saveClient(authorizedClient);
 		return true;
+	}
+
+	/**
+	 * Method for checking exist this token in redis or not
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public Response checkToken(String token) {
+
+		if (!checkAccess(token)) {
+
+			return new Response(false, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+		}
+
+		return new Response(true, HttpStatus.OK, AUTHORIZED_CLIENT);
 	}
 
 }
