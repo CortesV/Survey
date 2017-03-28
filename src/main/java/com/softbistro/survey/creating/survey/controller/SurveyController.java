@@ -39,10 +39,10 @@ public class SurveyController {
 	@RequestMapping(method = RequestMethod.POST)
 	public Response create(@RequestBody Survey survey, @RequestHeader String token) {
 
-		if (!authorizationService.checkAccess(token)) {
+		// if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
-		}
+		// return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+		// }
 
 		return surveyService.createSurvey(survey);
 	}
