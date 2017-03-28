@@ -12,10 +12,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * @version 1.0
  *
  */
-@SuppressWarnings("serial")
 @JsonInclude(Include.NON_NULL)
 public class Client implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String facebookId;
 	private String googleId;
