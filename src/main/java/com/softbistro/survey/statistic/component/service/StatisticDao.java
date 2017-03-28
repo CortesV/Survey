@@ -24,7 +24,9 @@ public class StatisticDao implements IStatistic {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private static final String SQL_GET_SURVEY_STATISTIC_SHORT = "SELECT s.id, s.name, s.start_time, s.finish_time, COUNT(ss.id) AS participant_count "
+	private static final String SQL_GET_SURVEY_STATISTIC_SHORT = "SELECT s.id, s.name, s.start_time, s.finish_time, COUNT(ss.id) AS participant_count ,"
+			+ " (SELECT COUNT(ss.id) AS voted_count  FROM sending_survey AS ss "
+			+ "WHERE ss.answer_status = 'VOTED' AND ss.survey_id = ? ) AS voted_count "
 			+ "FROM survey AS s , sending_survey AS ss WHERE s.id = ? AND ss.survey_id = ?";
 
 	private static final String SQL_GET_COUNT_VOTES_OF_SURVEY = "SELECT COUNT(ss.id) AS voted_count  FROM sending_survey AS ss "
@@ -49,19 +51,14 @@ public class StatisticDao implements IStatistic {
 						shortSurvey.setName(rs.getString(2));
 						shortSurvey.setStartTimeOfSurvey(rs.getDate(3));
 						shortSurvey.setFinishTimeOfSurvey(rs.getDate(4));
+						shortSurvey.setParticipantCount(rs.getInt(5));
+						shortSurvey.setParticipantVoted(rs.getInt(6));
 
-						Integer countParticipantOfSurvey = rs.getInt(5);
-
-						Integer countVotesParticipant = jdbcTemplate.queryForObject(SQL_GET_COUNT_VOTES_OF_SURVEY,
-								Integer.class, surveyId);
-
-						shortSurvey.setParticipantCount(countParticipantOfSurvey);
-						shortSurvey.setParticipantVoted(countVotesParticipant);
-						shortSurvey.setParticipanNotVoted(countParticipantOfSurvey - countVotesParticipant);
+						shortSurvey.setParticipanNotVoted(rs.getInt(5) - rs.getInt(6));
 						return shortSurvey;
 					}
 
-				}, surveyId, surveyId);
+				}, surveyId, surveyId, surveyId);
 
 		return new Response(surveyStatistikShort, HttpStatus.OK, null);
 	}
