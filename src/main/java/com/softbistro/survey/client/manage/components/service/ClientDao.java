@@ -59,7 +59,6 @@ public class ClientDao implements IClient {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Response findClientByEmail(String email) {
 
@@ -85,7 +84,6 @@ public class ClientDao implements IClient {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Response saveClient(Client client) {
 
@@ -216,7 +214,6 @@ public class ClientDao implements IClient {
 	 * @param client
 	 * @return
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Response findClientByLoginAndEmail(Client client) {
 
