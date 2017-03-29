@@ -1,6 +1,7 @@
 package com.softbistro.survey.response;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 
 /**
  * Response template
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
  * @author cortes
  *
  */
+@Component
 public class Response {
 
 	/**

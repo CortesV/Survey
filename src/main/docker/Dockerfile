@@ -35,8 +35,6 @@ RUN set -x \
 && [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
 
-
-
 VOLUME /tmp
 ADD survey-0.0.1-SNAPSHOT.jar app.jar
 RUN sh -c 'touch /app.jar'
