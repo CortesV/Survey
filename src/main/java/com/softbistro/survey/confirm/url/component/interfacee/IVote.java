@@ -20,4 +20,12 @@ public interface IVote {
 	 * @return
 	 */
 	public Response answerOnSurvey(String uuid, List<Answer> answers);
+
+	/**
+	 * Response for site with information about questions
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	public Response getVotePage(String uuid);
 }
