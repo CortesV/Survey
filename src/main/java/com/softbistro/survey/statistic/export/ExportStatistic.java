@@ -24,11 +24,11 @@ public class ExportStatistic {
 																				// value.
 
 		// How the input data should be interpreted.
-		String valueInputOption = "String"; // TODO: Update placeholder value.
+		String valueInputOption = "RAW"; // TODO: Update placeholder value.
 
 		// The new values to apply to the spreadsheet.
 		List<ValueRange> data = new ArrayList<>(); // TODO: Update placeholder
-													// value.
+		data.add("Hello world");// value.
 
 		// TODO: Assign values to desired fields of `requestBody`:
 		BatchUpdateValuesRequest requestBody = new BatchUpdateValuesRequest();
