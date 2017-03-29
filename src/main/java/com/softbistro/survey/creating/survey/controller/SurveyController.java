@@ -25,7 +25,7 @@ public class SurveyController {
 
 	@Autowired
 	private AuthorizationService authorizationService;
-	
+
 	@Autowired
 	private SurveyService surveyService;
 
@@ -43,7 +43,7 @@ public class SurveyController {
 
 			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
 		}
-		
+
 		return surveyService.createSurvey(survey);
 	}
 
@@ -61,7 +61,7 @@ public class SurveyController {
 
 			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
 		}
-		
+
 		return surveyService.updateOfSurvey(survey);
 	}
 
@@ -72,13 +72,14 @@ public class SurveyController {
 	 * @return
 	 */
 	@RequestMapping(value = "/client/{client_id}", method = RequestMethod.GET)
-	public Response getAllSurveysByClient(@PathVariable(name = "client_id") Integer clientId, @RequestHeader String token) {
+	public Response getAllSurveysByClient(@PathVariable(name = "client_id") Integer clientId,
+			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
 			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
 		}
-		
+
 		return surveyService.getAllSurveysOfClient(clientId);
 	}
 
@@ -95,7 +96,7 @@ public class SurveyController {
 
 			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
 		}
-		
+
 		return surveyService.addGroupsToSurvey(groups);
 	}
 
@@ -112,7 +113,7 @@ public class SurveyController {
 
 			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
 		}
-		
+
 		return surveyService.getGroups(clientId);
 	}
 
@@ -128,7 +129,7 @@ public class SurveyController {
 
 			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
 		}
-		
+
 		return surveyService.getGroupsSurvey(surveyId);
 	}
 
@@ -145,7 +146,7 @@ public class SurveyController {
 
 			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
 		}
-		
+
 		return surveyService.deleteSurvey(surveyId);
 	}
 

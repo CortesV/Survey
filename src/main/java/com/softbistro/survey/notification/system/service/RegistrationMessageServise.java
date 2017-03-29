@@ -76,8 +76,8 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Regi
 		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
-				"Registration new account with name \"%s\" \n" + "For confirm click on URL :%s", client.getClientName(),
-				urlForVote);
+				"Registration new account with name \"%s\" \n" + "For confirm click on URL : %s",
+				client.getClientName(), urlForVote);
 		return textMessage;
 	}
 

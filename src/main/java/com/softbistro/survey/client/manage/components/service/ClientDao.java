@@ -26,9 +26,9 @@ public class ClientDao implements IClient {
 	private static final String SELECT_BY_EMAIL = "SELECT * FROM clients  WHERE clients.email = ? and clients.`delete` = 0";
 	private static final String FIND_CLIENT = "SELECT * FROM clients  WHERE clients.email = ? or clients.client_name = ? and clients.`delete` = 0";
 	private static final String SAVE_CLIENT = "INSERT INTO clients (client_name, password, email) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE  email = email";
-	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO clients (client_name, password, facebook_id, email) VALUES(?, ?, ?, ?)"
+	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO clients (client_name, facebook_id, email) VALUES(?, ?, ?)"
 			+ "ON DUPLICATE KEY UPDATE facebook_id = ?";
-	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, password, google_id, email) VALUES(?, ?, ?, ?)"
+	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, google_id, email) VALUES(?, ?, ?)"
 			+ "ON DUPLICATE KEY UPDATE google_id = ?";
 	private static final String UPDATE_CLIENT = "UPDATE clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
 	private static final String DELETE_CLIENT = "UPDATE clients as sc LEFT JOIN survey as ss on ss.client_id = sc.id LEFT JOIN `group` as sg on "
@@ -59,7 +59,6 @@ public class ClientDao implements IClient {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Response findClientByEmail(String email) {
 
@@ -108,30 +107,27 @@ public class ClientDao implements IClient {
 
 	}
 
+	/**
+	 * Save information about client that authorized with help of social
+	 * networks
+	 * 
+	 * @param client
+	 * @return
+	 */
 	@Override
 	public Response saveSocialClient(Client client) {
 
 		try {
-			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 
 			Client resultFindClient = (Client) findClientByEmail(client.getEmail()).getData();
 
-			if (client.getFlag().equals(FACEBOOK) && StringUtils.isBlank(resultFindClient.getFacebookId())) {
+			if (resultFindClient == null) {
 
-				jdbc.update(SAVE_FACEBOOK_CLIENT, client.getEmail(), md5HexPassword, client.getFacebookId(),
-						client.getEmail(), client.getFacebookId());
-				return new Response(null, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+				return socialSaveClientNotExist(client);
+			} else {
+
+				return socialSaveClientExist(client, resultFindClient);
 			}
-
-			if (client.getFlag().equals(GOOGLE) && StringUtils.isBlank(resultFindClient.getGoogleId())) {
-
-				jdbc.update(SAVE_GOOGLE_CLIENT, client.getEmail(), md5HexPassword, client.getGoogleId(),
-						client.getEmail(), client.getGoogleId());
-				return new Response(null, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
-			}
-
-			
-			return new Response(null, HttpStatus.OK, EXIST_SOC_CLIENT);
 
 		} catch (Exception ex) {
 
@@ -212,7 +208,12 @@ public class ClientDao implements IClient {
 		return new Response(null, HttpStatus.OK, null);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	/**
+	 * Find client by email and client name
+	 * 
+	 * @param client
+	 * @return
+	 */
 	@Override
 	public Response findClientByLoginAndEmail(Client client) {
 
@@ -228,6 +229,59 @@ public class ClientDao implements IClient {
 
 			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
+	}
+
+	/**
+	 * Update some fields in client when client authorized with help of social
+	 * networks
+	 * 
+	 * @param client
+	 * @return
+	 */
+	private Response socialSaveClientNotExist(Client client) {
+
+		if (client.getFlag().equals(FACEBOOK)) {
+
+			jdbc.update(SAVE_FACEBOOK_CLIENT, client.getEmail(), client.getFacebookId(), client.getEmail(),
+					client.getFacebookId());
+			return new Response(client, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+		}
+
+		if (client.getFlag().equals(GOOGLE)) {
+
+			jdbc.update(SAVE_GOOGLE_CLIENT, client.getEmail(), client.getGoogleId(), client.getEmail(),
+					client.getGoogleId());
+			return new Response(client, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+		}
+
+		return new Response(client, HttpStatus.OK, EXIST_SOC_CLIENT);
+	}
+
+	/**
+	 * Save information about client that authorized with help of social
+	 * networks when this client is exist in database
+	 * 
+	 * @param client
+	 * @param resultFindClient
+	 * @return
+	 */
+	private Response socialSaveClientExist(Client client, Client resultFindClient) {
+
+		if (client.getFlag().equals(FACEBOOK) && StringUtils.isBlank(resultFindClient.getFacebookId())) {
+
+			jdbc.update(SAVE_FACEBOOK_CLIENT, client.getEmail(), client.getFacebookId(), client.getEmail(),
+					client.getFacebookId());
+			return new Response(client, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+		}
+
+		if (client.getFlag().equals(GOOGLE) && StringUtils.isBlank(resultFindClient.getGoogleId())) {
+
+			jdbc.update(SAVE_GOOGLE_CLIENT, client.getEmail(), client.getGoogleId(), client.getEmail(),
+					client.getGoogleId());
+			return new Response(client, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+		}
+
+		return new Response(client, HttpStatus.OK, EXIST_SOC_CLIENT);
 	}
 
 }
