@@ -22,6 +22,13 @@ public class StatisticController {
 	@Autowired
 	private GoogleSheetsService googleSheetsService;
 
+	/**
+	 * Get answers on question from survey
+	 * 
+	 * @param surveyId
+	 *            - survey id for getting information
+	 * @return
+	 */
 	@RequestMapping(value = "/{survey_id}", method = RequestMethod.GET)
 	public Response surveyStatistic(@PathVariable(value = "survey_id") Integer surveyId) {
 		return statisticService.surveyStatistic(surveyId);
@@ -31,6 +38,17 @@ public class StatisticController {
 	public String exportStatistic() throws IOException {
 		googleSheetsService.testing();
 		return "DONE";
+	}
+
+	/**
+	 * Export statistic about survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@RequestMapping(value = "/{survey_id}/get")
+	public Response exportSurveyStatistic(@PathVariable("survey_id") Integer surveyId) {
+		return statisticService.exportSurveyStatistic(surveyId);
 	}
 
 }

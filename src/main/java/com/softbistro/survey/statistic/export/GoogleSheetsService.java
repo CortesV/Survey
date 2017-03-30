@@ -108,13 +108,14 @@ public class GoogleSheetsService {
 				// Print columns A and E, which correspond to indices 0 and 4.
 				System.out.printf("%s, %s\n", row.get(0), row.get(4));
 			}
-			ExportStatistic exportStatistic = new ExportStatistic();
+			ExportStatisticInSheets exportStatistic = new ExportStatisticInSheets();
 			try {
-				exportStatistic.exportStatistikToSheets();
+				exportStatistic.start();
 			} catch (GeneralSecurityException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 		}
 	}
 

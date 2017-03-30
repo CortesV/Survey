@@ -21,4 +21,14 @@ public class StatisticService {
 	public Response surveyStatistic(Integer surveyId) {
 		return statisticDao.surveyStatistic(surveyId);
 	}
+
+	/**
+	 * Export statistic about survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	public Response exportSurveyStatistic(Integer surveyId) {
+		return statisticDao.exportSurveyStatistic(surveyId);
+	}
 }

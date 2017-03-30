@@ -18,4 +18,12 @@ public interface IStatistic {
 	 * @return
 	 */
 	public Response surveyStatistic(Integer surveyId);
+
+	/**
+	 * Export statistic about survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	public Response exportSurveyStatistic(Integer surveyId);
 }
