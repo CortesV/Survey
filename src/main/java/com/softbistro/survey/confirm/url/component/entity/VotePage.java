@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class VotePage {
-	@JsonProperty(value = "question_name")
+	@JsonProperty(value = "name")
 	private String questionName;
 
 	private Integer required;
