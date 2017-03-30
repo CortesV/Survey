@@ -23,4 +23,14 @@ public class VoteService {
 	public Response answerOnSurvey(String uuid, List<Answer> answers) {
 		return iVote.answerOnSurvey(uuid, answers);
 	}
+
+	/**
+	 * Response for site with information about questions
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	public Response getVotePage(String uuid) {
+		return iVote.getVotePage(uuid);
+	}
 }
