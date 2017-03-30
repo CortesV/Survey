@@ -7,15 +7,15 @@ package com.softbistro.survey.confirm.url.component.entity;
  *
  */
 public class UuidInformation {
-	private Integer questionId;
+	private Integer surveyId;
 	private Integer partisipantId;
 
-	public Integer getQuestionId() {
-		return questionId;
+	public Integer getSurveyId() {
+		return surveyId;
 	}
 
-	public void setQuestionId(Integer questionId) {
-		this.questionId = questionId;
+	public void setSurveyId(Integer questionId) {
+		this.surveyId = questionId;
 	}
 
 	public Integer getPartisipantId() {

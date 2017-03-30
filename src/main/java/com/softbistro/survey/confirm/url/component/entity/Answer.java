@@ -9,6 +9,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class Answer {
+
+	@JsonProperty(value = "question_id")
+	private Integer questionId;
+
 	@JsonProperty(value = "answer_type")
 	private String answerType;
 
@@ -40,6 +44,14 @@ public class Answer {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public Integer getQuestionId() {
+		return questionId;
+	}
+
+	public void setQuestionId(Integer questionId) {
+		this.questionId = questionId;
 	}
 
 }

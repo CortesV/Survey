@@ -26,9 +26,26 @@ public class VoteController {
 	@Autowired
 	private VoteService voteService;
 
+	/**
+	 * Writing answers to questions in the database
+	 * 
+	 * @param uuid
+	 * @return
+	 */
 	@RequestMapping(value = "/{uuid}", method = RequestMethod.POST)
 	public Response vote(@PathVariable(value = "uuid") String uuid, @RequestBody List<Answer> answers) {
 		return voteService.answerOnSurvey(uuid, answers);
+	}
+
+	/**
+	 * Response for site with information about questions
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	@RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
+	public Response getVotePage(@PathVariable(value = "uuid") String uuid) {
+		return voteService.getVotePage(uuid);
 	}
 
 }
