@@ -91,7 +91,7 @@ public class AuthorizationService {
 		Client responseClient;
 		try {
 
-			if (!checkFlag(client.getFlag())) {
+			if (!checkFlag(client)) {
 
 				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
 			}
@@ -177,9 +177,10 @@ public class AuthorizationService {
 	 * @param flag
 	 * @return
 	 */
-	private boolean checkFlag(String flag) {
+	private boolean checkFlag(Client client) {
 
-		return FACEBOOK.equals(flag) || GOOGLE.equals(flag);
+		return StringUtils.isNotBlank(client.getGoogleId()) && client.getFlag().equals(GOOGLE)
+				|| StringUtils.isNotBlank(client.getFacebookId()) && client.getFlag().equals(FACEBOOK);
 	}
 
 }

@@ -2,9 +2,11 @@ package com.softbistro.survey.question.components.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -27,7 +29,7 @@ public class QuestionDao implements IQuestion {
 			+ "question_choices, required) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 	private static final String UPDATE_QUESTION = "UPDATE questions SET survey_id = ?, question = ?, description_short = ?, description_long = ?, question_section_id = ?, "
 			+ "answer_type = ?, question_choices = ?, required = ? WHERE id = ?";
-	
+
 	private static final String DELETE_QUESTION = "UPDATE questions SET `delete` = 1 WHERE id = ?";
 
 	@Autowired
@@ -67,16 +69,18 @@ public class QuestionDao implements IQuestion {
 	@Override
 	public Response findQuestionById(Long id) {
 
-		Question question = new Question();
 		try {
 
-			question = jdbc.queryForObject(SELECT_QUESTION_BY_ID, new WorkingWithRowMap(), id);
+			List<Question> questionList = jdbc.query(SELECT_QUESTION_BY_ID, new BeanPropertyRowMapper(Question.class),
+					id);
+
+			return questionList.isEmpty() ? new Response(null, HttpStatus.OK, null)
+					: new Response(questionList.get(0), HttpStatus.OK, null);
+
 		} catch (Exception ex) {
 
-			return new Response(question, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
 		}
-
-		return new Response(question, HttpStatus.OK, null);
 
 	}
 
