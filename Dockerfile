@@ -11,8 +11,6 @@ FROM alpine:3.5
 #  2. Compiling OpenJDK also requires the JDK to be installed, and it gets
 #       really hairy.
 
-# Default to UTF-8 file.encoding
-ENV LANG C.UTF-8
 
 # add a simple script that can auto-detect the appropriate JAVA_HOME value
 # based on whether the JDK or only the JRE is installed
@@ -23,22 +21,25 @@ RUN { \
 		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
 	} > /usr/local/bin/docker-java-home \
 	&& chmod +x /usr/local/bin/docker-java-home
-ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
-ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
-
-ENV JAVA_VERSION 8u121
-ENV JAVA_ALPINE_VERSION 8.121.13-r0
-
+	
+ENV LANG=C.UTF-8 \ 
+	JAVA_OPTS="" \
+	JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk \ 
+	PATH=$PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin \ 
+	JAVA_VERSION=8u121 \
+	JAVA_ALPINE_VERSION=8.121.13-r0 \
+	APP_JAR=survey-0.0.1-SNAPSHOT.jar
+	
 RUN set -x \
 	&& apk add --no-cache \
 		openjdk8="$JAVA_ALPINE_VERSION" \
 	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
-
-
-
 VOLUME /tmp
-ADD survey-0.0.1-SNAPSHOT.jar app.jar
-RUN sh -c 'touch /app.jar'
-ENV JAVA_OPTS=""
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar" ]
+ADD $APP_JAR $APP_JAR
+RUN sh -c 'touch /$APP_JAR'
+
+RUN pwd
+RUN ls -a 
+
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /$APP_JAR" ]
