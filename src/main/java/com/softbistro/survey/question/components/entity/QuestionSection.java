@@ -22,9 +22,9 @@ public class QuestionSection implements Serializable {
 	private Integer id;
 
 	/**
-	 * survey id
+	 * client id
 	 */
-	private Integer surveyId;
+	private Integer clientId;
 
 	/**
 	 * section name
@@ -49,12 +49,12 @@ public class QuestionSection implements Serializable {
 		this.id = id;
 	}
 
-	public Integer getSurveyId() {
-		return surveyId;
+	public Integer getClientId() {
+		return clientId;
 	}
 
-	public void setSurveyId(Integer surveyId) {
-		this.surveyId = surveyId;
+	public void setClientId(Integer clientId) {
+		this.clientId = clientId;
 	}
 
 	public String getSectionName() {

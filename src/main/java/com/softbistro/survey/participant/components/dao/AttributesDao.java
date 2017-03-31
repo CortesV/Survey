@@ -24,12 +24,11 @@ public class AttributesDao implements IAttributes {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private final String SQL_FOR_SETTING_ATTRIBUTES = "INSERT INTO survey.attributes (survey.attributes.group_id, survey.attributes.attribute) VALUES (?, ?)";
-	private final String SQL_FOR_GETTING_ATTRIBUTES_BY_ID = "SELECT * FROM survey.attributes AS at WHERE at.id = ? AND at.delete = 0";
-	private final String SQL_FOR_UPDATING__ATTRIBUTES_BY_ID = "UPDATE survey.attributes AS at SET at.group_id = ?, at.attribute = ? WHERE at.id=?";
-	private final String SQL_FOR_DELETING_ATTRIBUTES = "UPDATE survey.attributes AS at LEFT JOIN survey.attribute_values AS av ON  av.attribute_id=at.id "
-			+ "SET at.status = 'DELETE', av.status = 'DELETE' WHERE at.id = ? ";
-	private final String SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP = "SELECT * FROM survey.attributes WHERE survey.attributes.group_id = ? AND survey.attributes.delete = 0";
+	private final static String SQL_FOR_SETTING_ATTRIBUTES = "INSERT INTO attributes (attributes.group_id, attributes.attribute) VALUES (?, ?)";
+	private final static String SQL_FOR_GETTING_ATTRIBUTES_BY_ID = "SELECT * FROM attributes AS at WHERE at.id = ? AND at.delete = 0";
+	private final static String SQL_FOR_UPDATING__ATTRIBUTES_BY_ID = "UPDATE attributes AS at SET at.group_id = ?, at.attribute = ? WHERE at.id = ?";
+	private final static String SQL_FOR_DELETING_ATTRIBUTES = "UPDATE attributes AS at SET at.delete = 1, WHERE at.id = ?";
+	private final static String SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP = "SELECT * FROM attributes WHERE attributes.group_id = ? AND attributes.delete = 0";
 
 	/**
 	 * Method for creating the attribute value

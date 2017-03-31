@@ -111,6 +111,25 @@ public class QuestionSectionController {
 	}
 
 	/**
+	 * Method to getting QuestionSection from db by clientId
+	 * 
+	 * @param clientId
+	 * @return ResponseEntity
+	 */
+	@ApiOperation(value = "Get QuestionSection By Client", notes = "Get question section instanse by client id", tags = "Question Section")
+	@RequestMapping(value = "/client/{id}", method = RequestMethod.GET)
+	public ResponseEntity<List<QuestionSection>> getQuestionSectionByClientId(@PathVariable Integer id,
+			@RequestHeader String token) {
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<List<QuestionSection>>(HttpStatus.UNAUTHORIZED);
+		}
+
+		return questionSectionService.getQuestionSectionByClientId(id);
+	}
+
+	/**
 	 * Method to getting QuestionSection from db by surveyId
 	 * 
 	 * @param surveyId
@@ -127,5 +146,45 @@ public class QuestionSectionController {
 		}
 
 		return questionSectionService.getQuestionSectionBySurveyId(id);
+	}
+
+	/**
+	 * Method for adding QuestionSection to survey
+	 * 
+	 * @param questionSection
+	 *            id, survey id
+	 * @return ResponseEntity
+	 */
+	@ApiOperation(value = "Adding Question Section to Survey", notes = "Add question section to survey by question section id and survey id", tags = "Question Section")
+	@RequestMapping(value = "/{questionSection_id}/{survey_id}", method = RequestMethod.POST)
+	public ResponseEntity<Object> addQuestionSectionToSurvey(
+			@PathVariable("questionSection_id") Integer questionSectionId,
+			@PathVariable("questionSection_id") Integer surveyId, @RequestHeader String token) {
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+		}
+
+		return questionSectionService.addQuestionSectionToSurvey(questionSectionId, surveyId);
+	}
+
+	/**
+	 * Method for deleting QuestionSection from survey
+	 * 
+	 * @param questionSectionId,
+	 *            survey id
+	 * @return ResponseEntity
+	 */
+	@ApiOperation(value = "Delete QuestionSection from Survey", notes = "Delete question section from survey by question section id and survey id", tags = "Question Section")
+	@RequestMapping(value = "/{questionSection_id}/{survey_id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Object> deleteQuestionSectionFromSurvey(
+			@PathVariable("questionSection_id") Integer questionSectionId,
+			@PathVariable("questionSection_id") Integer surveyId, @RequestHeader String token) {
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+		}
+
+		return questionSectionService.deleteQuestionSectionFromSurvey(questionSectionId, surveyId);
 	}
 }

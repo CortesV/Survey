@@ -94,7 +94,7 @@ public class GroupController {
 	 * @param group
 	 * @return ResponseEntity
 	 */
-	@ApiOperation(value = "Update Group By Id", notes = "Update group instanse by group name and group id", tags = "Participant Group")
+	@ApiOperation(value = "Update Group Name By Id", notes = "Update group instanse by group name and group id", tags = "Participant Group")
 	@RequestMapping(method = RequestMethod.PUT)
 	public ResponseEntity<Object> updateGroup(@PathVariable Integer id, @RequestBody Group group,
 			@RequestHeader String token) {
