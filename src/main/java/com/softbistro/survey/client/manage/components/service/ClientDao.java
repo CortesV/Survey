@@ -31,15 +31,7 @@ public class ClientDao implements IClient {
 	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, google_id, email) VALUES(?, ?, ?)"
 			+ "ON DUPLICATE KEY UPDATE google_id = ?";
 	private static final String UPDATE_CLIENT = "UPDATE clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
-	private static final String DELETE_CLIENT = "UPDATE clients as sc LEFT JOIN survey as ss on ss.client_id = sc.id LEFT JOIN `group` as sg on "
-			+ "sg.client_id = sc.id LEFT JOIN connect_group_participant as cgp on cgp.group_id = sg.id LEFT JOIN participant as sp on "
-			+ "sp.id = cgp.participant_id LEFT JOIN attributes as sa on sa.group_id = sg.id LEFT JOIN attribute_values as sav on "
-			+ "sav.attribute_id = sa.id LEFT JOIN answers as answ on answ.participant_id = sp.id LEFT JOIN questions as sq on "
-			+ "sq.survey_id = ss.id LEFT JOIN question_sections as qs on qs.survey_id = ss.id LEFT JOIN connect_group_survey as cgs on "
-			+ "cgs.survey_id = ss.id LEFT JOIN client_role as cr on cr.client_id = sc.id "
-			+ "SET sc.`delete` = '1', ss.`delete` = '1', sg.`delete` = '1', cgp.`delete` = '1', sa.`delete` = '1', sp.`delete` = '1', "
-			+ "sav.`delete` = '1', answ.`delete` = '1', sq.`delete` = '1', qs.`delete` = '1', cgs.`delete` = '1', cr.`delete` = '1'"
-			+ " WHERE sc.id = ?";
+	private static final String DELETE_CLIENT = "UPDATE clients as sc SET sc.`delete` = '1' WHERE sc.id = ?";
 	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE clients SET password = ? WHERE id = ?";
 	private static final String DESCRIPTION_SAVE = "Client successfully saved";
 	private static final String DESCRIPTION_SOC_SAVE = "Client from social network successfully saved";

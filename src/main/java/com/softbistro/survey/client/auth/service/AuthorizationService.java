@@ -25,9 +25,11 @@ public class AuthorizationService {
 
 	private static final String EMPTY_PASSWORD = "";
 	private static final String NOT_FOUND_CLIENT = "Wrong password or email";
-	private static final String NOT_FOUND_SOC_CLIENT = "Client with entered credentials isn't exist in database";
+	private static final String NOT_FOUND_SOC_CLIENT = "Bad credentials";
 	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
 	private static final String AUTHORIZED_CLIENT = "Client is authorized";
+	private static final String FACEBOOK = "facebook";
+	private static final String GOOGLE = "google";
 
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
@@ -88,6 +90,11 @@ public class AuthorizationService {
 		AuthorizedClient authorizedClient;
 		Client responseClient;
 		try {
+
+			if (!checkFlag(client)) {
+
+				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
+			}
 
 			Response saveResponse = clientService.saveSocialClient(client);
 
@@ -162,6 +169,18 @@ public class AuthorizationService {
 		}
 
 		return new Response(true, HttpStatus.OK, AUTHORIZED_CLIENT);
+	}
+
+	/**
+	 * Method for checking if got flag equals standart flags
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	private boolean checkFlag(Client client) {
+
+		return StringUtils.isNotBlank(client.getGoogleId()) && client.getFlag().equals(GOOGLE)
+				|| StringUtils.isNotBlank(client.getFacebookId()) && client.getFlag().equals(FACEBOOK);
 	}
 
 }
