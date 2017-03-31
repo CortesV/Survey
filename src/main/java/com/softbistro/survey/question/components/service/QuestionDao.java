@@ -2,10 +2,12 @@ package com.softbistro.survey.question.components.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -67,17 +69,18 @@ public class QuestionDao implements IQuestion {
 	@Override
 	public ResponseEntity<Question> findQuestionById(Long id) {
 
-		Question question = new Question();
 		try {
 
-			question = jdbc.queryForObject(SELECT_QUESTION_BY_ID, new WorkingWithRowMap(), id);
+			List<Question> questionList = jdbc.query(SELECT_QUESTION_BY_ID, new BeanPropertyRowMapper(Question.class),
+					id);
+
+			return questionList.isEmpty() ? new ResponseEntity<Question>(HttpStatus.OK)
+					: new ResponseEntity<Question>(questionList.get(0), HttpStatus.OK);
+
 		} catch (Exception ex) {
 
 			return new ResponseEntity<Question>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		return new ResponseEntity<Question>(question, HttpStatus.OK);
-
 	}
 
 	/**

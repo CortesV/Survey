@@ -2,7 +2,10 @@ package com.softbistro.survey.confirm.url.component.interfacee;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import com.softbistro.survey.confirm.url.component.entity.Answer;
+import com.softbistro.survey.confirm.url.component.entity.VotePage;
 
 /**
  * Using for vote operations
@@ -18,5 +21,13 @@ public interface IVote {
 	 * @param uuid
 	 * @return
 	 */
-	public org.springframework.http.ResponseEntity<Object> answerOnSurvey(String uuid, List<Answer> answers);
+	public ResponseEntity<Object> answerOnSurvey(String uuid, List<Answer> answers);
+
+	/**
+	 * Response for site with information about questions
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	public ResponseEntity<List<VotePage>> getVotePage(String uuid);
 }

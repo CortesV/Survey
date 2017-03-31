@@ -23,6 +23,9 @@ import com.softbistro.survey.client.manage.service.ClientService;
 @Service
 public class AuthorizationService {
 
+	private static final String FACEBOOK = "facebook";
+	private static final String GOOGLE = "google";
+
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
 
@@ -84,6 +87,11 @@ public class AuthorizationService {
 		try {
 
 			clientService.saveSocialClient(client);
+
+			if (!checkFlag(client)) {
+
+				return new ResponseEntity<Client>(HttpStatus.OK);
+			}
 
 			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getBody();
 
@@ -156,6 +164,18 @@ public class AuthorizationService {
 		}
 
 		return new ResponseEntity<Object>(true, HttpStatus.OK);
+	}
+
+	/**
+	 * Method for checking if got flag equals standart flags
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	private boolean checkFlag(Client client) {
+
+		return StringUtils.isNotBlank(client.getGoogleId()) && client.getFlag().equals(GOOGLE)
+				|| StringUtils.isNotBlank(client.getFacebookId()) && client.getFlag().equals(FACEBOOK);
 	}
 
 }
