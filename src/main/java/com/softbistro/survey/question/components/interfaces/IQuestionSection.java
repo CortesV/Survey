@@ -1,7 +1,10 @@
 package com.softbistro.survey.question.components.interfaces;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
 import com.softbistro.survey.question.components.entity.QuestionSection;
-import com.softbistro.survey.response.Response;
 
 /**
  * Interface for question section entity
@@ -15,47 +18,39 @@ public interface IQuestionSection {
 	 * Method for creating QuestionSection
 	 * 
 	 * @param questionSection
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response setQuestionSection(QuestionSection questionSection);
+	public ResponseEntity<Object> setQuestionSection(QuestionSection questionSection);
 
 	/**
 	 * Method for updating QuestionSection
 	 * 
 	 * @param questionSection
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response updateQuestionSection(QuestionSection questionSection, Integer questionSectionId);
+	public ResponseEntity<Object> updateQuestionSection(QuestionSection questionSection, Integer questionSectionId);
 
 	/**
 	 * Method for deleting QuestionSection from db by id
 	 * 
 	 * @param questionSectionId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deleteQuestionSection(Integer questionSectionId);
+	public ResponseEntity<Object> deleteQuestionSection(Integer questionSectionId);
 
 	/**
 	 * Method to getting QuestionSection from db by id
 	 * 
 	 * @param questionSectionId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getQuestionSectionById(Integer questionSectionId);
+	public ResponseEntity<QuestionSection> getQuestionSectionById(Integer questionSectionId);
 
 	/**
 	 * Method to getting QuestionSection from db by surveyId
 	 * 
 	 * @param surveyId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getQuestionSectionBySurveyId(Integer surveyId);
-
-	/**
-	 * Method to getting QuestionSection from db by section name
-	 * 
-	 * @param name
-	 * @return Response
-	 */
-	public Response getQuestionSectionByName(String name);
+	public ResponseEntity<List<QuestionSection>> getQuestionSectionBySurveyId(Integer surveyId);
 }

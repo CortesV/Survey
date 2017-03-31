@@ -1,10 +1,10 @@
 package com.softbistro.survey.confirm.url.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.confirm.url.component.interfacee.IConfirm;
-import com.softbistro.survey.response.Response;
 
 @Service
 public class ConfirmService {
@@ -17,7 +17,7 @@ public class ConfirmService {
 	 * @param uuid
 	 * @return
 	 */
-	public Response confirmPassword(String uuid) {
+	public ResponseEntity<Object> confirmPassword(String uuid) {
 		return iConfirm.confirmPassword(uuid);
 	}
 
@@ -27,7 +27,7 @@ public class ConfirmService {
 	 * @param uuid
 	 * @return
 	 */
-	public Response confirmEmail(String uuid) {
+	public ResponseEntity<Object> confirmEmail(String uuid) {
 		return iConfirm.confirmEmail(uuid);
 	}
 }

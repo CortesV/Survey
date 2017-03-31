@@ -1,7 +1,10 @@
 package com.softbistro.survey.question.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -12,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.question.components.entity.QuestionSection;
 import com.softbistro.survey.question.service.QuestionSectionService;
-import com.softbistro.survey.response.Response;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Controller for QuestionSectionController
@@ -23,9 +27,7 @@ import com.softbistro.survey.response.Response;
 @RestController
 @RequestMapping("/rest/survey/v1/questionSection")
 public class QuestionSectionController {
-	
-	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
-	
+
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -36,16 +38,18 @@ public class QuestionSectionController {
 	 * Method for creating QuestionSection
 	 * 
 	 * @param questionSection
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Create new QuestionSection", notes = "Create new question section instanse by survey id, section name, short description, long description", tags = "Question Section")
 	@RequestMapping(method = RequestMethod.POST)
-	public Response setQuestionSection(@RequestBody QuestionSection questionSection, @RequestHeader String token) {
-		
+	public ResponseEntity<Object> setQuestionSection(@RequestBody QuestionSection questionSection,
+			@RequestHeader String token) {
+
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
-		
+
 		return questionSectionService.setQuestionSection(questionSection);
 	}
 
@@ -53,17 +57,18 @@ public class QuestionSectionController {
 	 * Method for updating QuestionSection
 	 * 
 	 * @param questionSection
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Update QuestionSection", notes = "Update question section instanse by survey id, section name, short description, long description and question section id", tags = "Question Section")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public Response updateQuestionSection(@RequestBody QuestionSection questionSection,
+	public ResponseEntity<Object> updateQuestionSection(@RequestBody QuestionSection questionSection,
 			@PathVariable("id") Integer questionSectionId, @RequestHeader String token) {
-		
+
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
-		
+
 		return questionSectionService.updateQuestionSection(questionSection, questionSectionId);
 	}
 
@@ -71,16 +76,18 @@ public class QuestionSectionController {
 	 * Method for deleting QuestionSection from db by id
 	 * 
 	 * @param questionSectionId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Delete QuestionSection", notes = "Delete question section instanse by question section id", tags = "Question Section")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public Response deleteQuestionSection(@PathVariable("id") Integer questionSectionId, @RequestHeader String token) {
-		
+	public ResponseEntity<Object> deleteQuestionSection(@PathVariable("id") Integer questionSectionId,
+			@RequestHeader String token) {
+
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
-		
+
 		return questionSectionService.deleteQuestionSection(questionSectionId);
 	}
 
@@ -88,16 +95,18 @@ public class QuestionSectionController {
 	 * Method to getting QuestionSection from db by id
 	 * 
 	 * @param questionSectionId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Get QuestionSection By Id", notes = "Get question section instanse by question section id", tags = "Question Section")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Response getQuestionSectionById(@PathVariable Integer id, @RequestHeader String token) {
-		
+	public ResponseEntity<QuestionSection> getQuestionSectionById(@PathVariable Integer id,
+			@RequestHeader String token) {
+
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<QuestionSection>(HttpStatus.UNAUTHORIZED);
 		}
-		
+
 		return questionSectionService.getQuestionSectionById(id);
 	}
 
@@ -105,33 +114,18 @@ public class QuestionSectionController {
 	 * Method to getting QuestionSection from db by surveyId
 	 * 
 	 * @param surveyId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Get QuestionSection By Survey", notes = "Get question section instanse by survey id", tags = "Question Section")
 	@RequestMapping(value = "/survey/{id}", method = RequestMethod.GET)
-	public Response getQuestionSectionBySurveyId(@PathVariable Integer id, @RequestHeader String token) {
-		
+	public ResponseEntity<List<QuestionSection>> getQuestionSectionBySurveyId(@PathVariable Integer id,
+			@RequestHeader String token) {
+
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<List<QuestionSection>>(HttpStatus.UNAUTHORIZED);
 		}
-		
+
 		return questionSectionService.getQuestionSectionBySurveyId(id);
-	}
-
-	/**
-	 * Method to getting QuestionSection from db by section name
-	 * 
-	 * @param name
-	 * @return Response
-	 */
-	@RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
-	public Response getQuestionSectionById(@PathVariable String name, @RequestHeader String token) {
-		
-		if (!authorizationService.checkAccess(token)) {
-
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
-		}
-		
-		return questionSectionService.getQuestionSectionByName(name);
 	}
 }

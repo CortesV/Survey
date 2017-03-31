@@ -1,7 +1,8 @@
 package com.softbistro.survey.client.manage.components.interfaces;
 
+import org.springframework.http.ResponseEntity;
+
 import com.softbistro.survey.client.manage.components.entity.Client;
-import com.softbistro.survey.response.Response;
 
 public interface IClient {
 
@@ -12,7 +13,7 @@ public interface IClient {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	public Response findClientByEmail(String email);
+	public ResponseEntity<Client> findClientByEmail(String email);
 
 	/**
 	 * Save client to database
@@ -22,7 +23,7 @@ public interface IClient {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public Response saveClient(Client client);
+	public ResponseEntity<Object> saveClient(Client client);
 
 	/**
 	 * Delete client from database by email of client
@@ -31,7 +32,7 @@ public interface IClient {
 	 *            id - id of client
 	 * @return return - status of execution this method
 	 */
-	public Response deleteClient(Integer id);
+	public ResponseEntity<Object> deleteClient(Integer id);
 
 	/**
 	 * Update information of client
@@ -44,7 +45,7 @@ public interface IClient {
 	 * 
 	 * @return return - status of execution this method
 	 */
-	public Response updateClient(Client client, Integer id);
+	public ResponseEntity<Object> updateClient(Client client, Integer id);
 
 	/**
 	 * Update client's password
@@ -57,7 +58,7 @@ public interface IClient {
 	 * 
 	 * @return return - status of execution this method
 	 */
-	public Response updatePassword(Client client, Integer id);
+	public ResponseEntity<Object> updatePassword(Client client, Integer id);
 
 	/**
 	 * Save information about client that authorized with help of social
@@ -66,7 +67,7 @@ public interface IClient {
 	 * @param client
 	 * @return
 	 */
-	public Response saveSocialClient(Client client);
+	public ResponseEntity<Object> saveSocialClient(Client client);
 	
 	/**
 	 * Find client by email and client name
@@ -74,5 +75,5 @@ public interface IClient {
 	 * @param client
 	 * @return
 	 */
-	public Response findClientByLoginAndEmail(Client client);
+	public ResponseEntity<Client> findClientByLoginAndEmail(Client client);
 }

@@ -6,13 +6,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
-import com.softbistro.survey.response.Response;
 
 /**
  * CRUD for entity Client
@@ -33,11 +33,6 @@ public class ClientDao implements IClient {
 	private static final String UPDATE_CLIENT = "UPDATE clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
 	private static final String DELETE_CLIENT = "UPDATE clients as sc SET sc.`delete` = '1' WHERE sc.id = ?";
 	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE clients SET password = ? WHERE id = ?";
-	private static final String DESCRIPTION_SAVE = "Client successfully saved";
-	private static final String DESCRIPTION_SOC_SAVE = "Client from social network successfully saved";
-	private static final String NOT_FOUND_CLIENT = "Client with this email isn't found";
-	private static final String EXIST_CLIENT = "Dyplicate client name or email.";
-	private static final String EXIST_SOC_CLIENT = "This email has already exist";
 	private static final String FACEBOOK = "facebook";
 	private static final String GOOGLE = "google";
 
@@ -52,18 +47,18 @@ public class ClientDao implements IClient {
 	 * @return return - client's information
 	 */
 	@Override
-	public Response findClientByEmail(String email) {
+	public ResponseEntity<Client> findClientByEmail(String email) {
 
 		try {
 
 			List<Client> clientList = jdbc.query(SELECT_BY_EMAIL, new BeanPropertyRowMapper(Client.class), email);
 
-			return clientList.isEmpty() ? new Response(null, HttpStatus.OK, NOT_FOUND_CLIENT)
-					: new Response(clientList.get(0), HttpStatus.OK, null);
+			return clientList.isEmpty() ? new ResponseEntity<Client>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<Client>(clientList.get(0), HttpStatus.OK);
 
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
@@ -77,24 +72,22 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response saveClient(Client client) {
+	public ResponseEntity<Object> saveClient(Client client) {
 
 		try {
 
-			List<Client> clientList = (List<Client>) findClientByLoginAndEmail(client).getData();
+			if (findClientByLoginAndEmail(client).getBody() != null) {
 
-			if (clientList != null) {
-
-				return new Response(null, HttpStatus.OK, EXIST_CLIENT);
+				return new ResponseEntity<Object>(HttpStatus.OK);
 			}
 
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 			jdbc.update(SAVE_CLIENT, client.getClientName(), md5HexPassword, client.getEmail());
-			return new Response(null, HttpStatus.CREATED, DESCRIPTION_SAVE);
+			return new ResponseEntity<Object>(HttpStatus.CREATED);
 
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
@@ -107,11 +100,11 @@ public class ClientDao implements IClient {
 	 * @return
 	 */
 	@Override
-	public Response saveSocialClient(Client client) {
+	public ResponseEntity<Object> saveSocialClient(Client client) {
 
 		try {
 
-			Client resultFindClient = (Client) findClientByEmail(client.getEmail()).getData();
+			Client resultFindClient = (Client) findClientByEmail(client.getEmail()).getBody();
 
 			if (resultFindClient == null) {
 
@@ -123,7 +116,7 @@ public class ClientDao implements IClient {
 
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
@@ -136,17 +129,17 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response deleteClient(Integer id) {
+	public ResponseEntity<Object> deleteClient(Integer id) {
 
 		try {
 
 			jdbc.update(DELETE_CLIENT, id);
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new Response(null, HttpStatus.OK, null);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -162,17 +155,17 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response updateClient(Client client, Integer id) {
+	public ResponseEntity<Object> updateClient(Client client, Integer id) {
 
 		try {
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), md5HexPassword, id);
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new Response(null, HttpStatus.OK, null);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -187,17 +180,17 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response updatePassword(Client client, Integer id) {
+	public ResponseEntity<Object> updatePassword(Client client, Integer id) {
 
 		try {
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 			jdbc.update(UPDATE_CLIENT_PASSWORD, md5HexPassword, id);
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new Response(null, HttpStatus.OK, null);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -207,19 +200,19 @@ public class ClientDao implements IClient {
 	 * @return
 	 */
 	@Override
-	public Response findClientByLoginAndEmail(Client client) {
+	public ResponseEntity<Client> findClientByLoginAndEmail(Client client) {
 
 		try {
 
 			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper(Client.class),
 					client.getEmail(), client.getClientName());
 
-			return clientList.isEmpty() ? new Response(null, HttpStatus.OK, NOT_FOUND_CLIENT)
-					: new Response(clientList, HttpStatus.OK, null);
+			return clientList.isEmpty() ? new ResponseEntity<Client>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<Client>(clientList.get(0), HttpStatus.OK);
 
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -230,23 +223,23 @@ public class ClientDao implements IClient {
 	 * @param client
 	 * @return
 	 */
-	private Response socialSaveClientNotExist(Client client) {
+	private ResponseEntity<Object> socialSaveClientNotExist(Client client) {
 
 		if (client.getFlag().equals(FACEBOOK)) {
 
 			jdbc.update(SAVE_FACEBOOK_CLIENT, client.getEmail(), client.getFacebookId(), client.getEmail(),
 					client.getFacebookId());
-			return new Response(client, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		if (client.getFlag().equals(GOOGLE)) {
 
 			jdbc.update(SAVE_GOOGLE_CLIENT, client.getEmail(), client.getGoogleId(), client.getEmail(),
 					client.getGoogleId());
-			return new Response(client, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
-		return new Response(client, HttpStatus.OK, EXIST_SOC_CLIENT);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -257,23 +250,22 @@ public class ClientDao implements IClient {
 	 * @param resultFindClient
 	 * @return
 	 */
-	private Response socialSaveClientExist(Client client, Client resultFindClient) {
+	private ResponseEntity<Object> socialSaveClientExist(Client client, Client resultFindClient) {
 
 		if (client.getFlag().equals(FACEBOOK) && StringUtils.isBlank(resultFindClient.getFacebookId())) {
 
 			jdbc.update(SAVE_FACEBOOK_CLIENT, client.getEmail(), client.getFacebookId(), client.getEmail(),
 					client.getFacebookId());
-			return new Response(client, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		if (client.getFlag().equals(GOOGLE) && StringUtils.isBlank(resultFindClient.getGoogleId())) {
 
 			jdbc.update(SAVE_GOOGLE_CLIENT, client.getEmail(), client.getGoogleId(), client.getEmail(),
 					client.getGoogleId());
-			return new Response(client, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
-		return new Response(client, HttpStatus.OK, EXIST_SOC_CLIENT);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
-
 }

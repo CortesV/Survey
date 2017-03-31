@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.interfaces.IParticipant;
-import com.softbistro.survey.response.Response;
 
 /**
  * Data access object for participant entity
@@ -46,18 +46,18 @@ public class ParticipantDao implements IParticipant {
 	 * Method for creating participant
 	 * 
 	 * @param participant
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response setParticipant(Participant participant) {
+	public ResponseEntity<Object> setParticipant(Participant participant) {
 		try {
 			jdbcTemplate.update(SQL_FOR_SETTING_PARTICIPANT, participant.getFirstName(), participant.getLastName(),
 					participant.geteMail());
-			return new Response(null, HttpStatus.CREATED, null);
+			return new ResponseEntity<Object>(HttpStatus.CREATED);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -65,18 +65,18 @@ public class ParticipantDao implements IParticipant {
 	 * Method for updating participant
 	 * 
 	 * @param participant
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response updateParticipant(Participant participant) {
+	public ResponseEntity<Object> updateParticipant(Participant participant, Integer id) {
 		try {
 			jdbcTemplate.update(SQL_FOR_UPDATING_PARTICIPANT, participant.getFirstName(), participant.getLastName(),
-					participant.geteMail(), participant.getId());
-			return new Response(null, HttpStatus.OK, null);
+					participant.geteMail(), id);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -84,17 +84,17 @@ public class ParticipantDao implements IParticipant {
 	 * Method for deleting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response deleteParticipantById(Integer participantId) {
+	public ResponseEntity<Object> deleteParticipantById(Integer participantId) {
 		try {
 			jdbcTemplate.update(SQL_FOR_DELETING_PARTICIPANT, participantId);
-			return new Response(null, HttpStatus.OK, null);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -102,20 +102,20 @@ public class ParticipantDao implements IParticipant {
 	 * Method to getting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getParticipantById(Integer participantId) {
+	public ResponseEntity<Participant> getParticipantById(Integer participantId) {
 		try {
 			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ID,
 					new BeanPropertyRowMapper<>(Participant.class), participantId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
-					: new Response(list, HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<Participant>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<Participant>(list.get(0), HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Participant>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -124,20 +124,20 @@ public class ParticipantDao implements IParticipant {
 	 * 
 	 * @param email,
 	 *            clientId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getParticipantByEmailAndClientId(String email, Integer clientId) {
+	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(String email, Integer clientId) {
 		try {
 			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_EMAIL_AND_CLIENT_ID,
 					new BeanPropertyRowMapper<>(Participant.class), email, clientId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
-					: new Response(list.get(0), HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<List<Participant>>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<List<Participant>>(list, HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<List<Participant>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -146,20 +146,21 @@ public class ParticipantDao implements IParticipant {
 	 * 
 	 * @param attributeId,
 	 *            attributeValue
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getParticipantByAttributeValue(Integer attributeId, String attributeValue) {
+	public ResponseEntity<List<Participant>> getParticipantByAttributeValue(Integer attributeId,
+			String attributeValue) {
 		try {
 			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE,
 					new BeanPropertyRowMapper<>(Participant.class), attributeId, attributeValue);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such elements")
-					: new Response(list, HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<List<Participant>>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<List<Participant>>(list, HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<List<Participant>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

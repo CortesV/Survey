@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,6 @@ import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.entity.ParticipantInGroup;
 import com.softbistro.survey.participant.components.interfaces.IParticipantInGroup;
-import com.softbistro.survey.response.Response;
 
 /**
  * Data access object for participant in group
@@ -39,20 +39,20 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 * Method for getting all participant by group
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getParticipantsByGroup(Integer groupId) {
+	public ResponseEntity<List<Participant>> getParticipantsByGroup(Integer groupId) {
 		try {
-			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
-					new BeanPropertyRowMapper<>(Group.class), groupId);
+			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
+					new BeanPropertyRowMapper<>(Participant.class), groupId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such elements")
-					: new Response(list, HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<List<Participant>>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<List<Participant>>(list, HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<List<Participant>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -61,18 +61,18 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 * 
 	 * @param groupId
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response addParticipantInGroup(ParticipantInGroup participantInGoup) {
+	public ResponseEntity<Object> addParticipantInGroup(ParticipantInGroup participantInGoup) {
 		try {
 			jdbcTemplate.update(SQL_FOR_ADDING_PARTICIPANT_IN_GROUP, participantInGoup.getGroupId(),
 					participantInGoup.getParticipantId());
-			return new Response(null, HttpStatus.OK, null);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -81,17 +81,17 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 * 
 	 * @param groupId
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response deletingParticipantfromGroup(Integer groupId, Participant participantId) {
+	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Participant participantId) {
 		try {
 			jdbcTemplate.update(SQL_FOR_DELETING_PARTICIPANT_IN_GROUP, groupId, participantId);
-			return new Response(null, HttpStatus.OK, null);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -99,20 +99,20 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 * Method for getting all participant groups
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getParticipantGroups(Integer participantId) {
+	public ResponseEntity<List<Group>> getParticipantGroups(Integer participantId) {
 		try {
 			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_GROUPS,
 					new BeanPropertyRowMapper<>(Group.class), participantId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such elements")
-					: new Response(list, HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<List<Group>>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<List<Group>>(list, HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<List<Group>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

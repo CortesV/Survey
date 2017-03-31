@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.interfaces.IGroup;
-import com.softbistro.survey.response.Response;
 
 /**
  * Data access object for group entity
@@ -40,17 +40,17 @@ public class GroupDao implements IGroup {
 	 * Method to create group
 	 * 
 	 * @param group
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response setGroup(Group group) {
+	public ResponseEntity<Object> setGroup(Group group) {
 		try {
 			jdbcTemplate.update(SQL_FOR_SETTING_GROUP, group.getClientId(), group.getGroupName());
-			return new Response(null, HttpStatus.CREATED, null);
+			return new ResponseEntity<Object>(HttpStatus.CREATED);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -58,20 +58,20 @@ public class GroupDao implements IGroup {
 	 * Method to get group from db
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getGroupByid(Integer groupId) {
+	public ResponseEntity<Group> getGroupByid(Integer groupId) {
 		try {
 			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_ID, new BeanPropertyRowMapper<>(Group.class),
 					groupId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
-					: new Response(list.get(0), HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<Group>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<Group>(list.get(0), HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Group>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -79,20 +79,20 @@ public class GroupDao implements IGroup {
 	 * Method to get all clients in group
 	 * 
 	 * @param clientId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getGroupsByClient(Integer clientId) {
+	public ResponseEntity<List<Group>> getGroupsByClient(Integer clientId) {
 		try {
 			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT,
 					new BeanPropertyRowMapper<>(Group.class), clientId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
-					: new Response(list, HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<List<Group>>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<List<Group>>(list, HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<List<Group>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -100,17 +100,17 @@ public class GroupDao implements IGroup {
 	 * Method to update group
 	 * 
 	 * @param group
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response updateGroupById(Group group) {
+	public ResponseEntity<Object> updateGroupById(Group group, Integer id) {
 		try {
-			jdbcTemplate.update(SQL_FOR_UPDATING_GROUP_BY_ID, group.getGroupName(), group.getId());
-			return new Response(null, HttpStatus.OK, null);
+			jdbcTemplate.update(SQL_FOR_UPDATING_GROUP_BY_ID, group.getGroupName(), id);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -118,17 +118,17 @@ public class GroupDao implements IGroup {
 	 * Method for deleting group by id
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response deleteGroupById(Integer groupId) {
+	public ResponseEntity<Object> deleteGroupById(Integer groupId) {
 		try {
 			jdbcTemplate.update(SQL_FOR_DELETING_GROUP_BY_ID, groupId);
-			return new Response(null, HttpStatus.OK, null);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

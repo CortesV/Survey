@@ -2,9 +2,10 @@ package com.softbistro.survey.creating.survey.component.interfacee;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+
 import com.softbistro.survey.creating.survey.component.entity.Group;
 import com.softbistro.survey.creating.survey.component.entity.Survey;
-import com.softbistro.survey.response.Response;
 
 public interface ISurvey {
 
@@ -13,9 +14,9 @@ public interface ISurvey {
 	 * 
 	 * @param survey
 	 *            - parsed JSON with information about survey.
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response createSurvey(Survey survey);
+	public ResponseEntity<Integer> createSurvey(Survey survey);
 
 	/**
 	 * Update name of survey in database
@@ -24,7 +25,7 @@ public interface ISurvey {
 	 * @param surveyId
 	 *            - id of survey that will be changed
 	 */
-	public Response updateOfSurvey(Survey survey);
+	public ResponseEntity<Object> updateOfSurvey(Survey survey);
 
 	/**
 	 * Get all surveys from one client
@@ -32,7 +33,7 @@ public interface ISurvey {
 	 * @param clientId
 	 * @return
 	 */
-	public Response getAllSurveysOfClient(Integer clientId);
+	public ResponseEntity<List<Survey>> getAllSurveysOfClient(Integer clientId);
 
 	/**
 	 * Get all groups that has client
@@ -40,7 +41,7 @@ public interface ISurvey {
 	 * @param clientId
 	 * @return
 	 */
-	public Response getGroupsClient(Integer clientId);
+	public ResponseEntity<List<Group>> getGroupsClient(Integer clientId);
 
 	/**
 	 * Add groups of participant that will be in survey
@@ -48,14 +49,14 @@ public interface ISurvey {
 	 * @param groups
 	 * @return
 	 */
-	public Response addGroupsToSurvey(List<Group> groups);
+	public ResponseEntity<Object> addGroupsToSurvey(List<Group> groups);
 
 	/**
 	 * Get all groups that has survey
 	 * 
 	 * @param surveyId
 	 */
-	public Response getGroupsSurvey(Integer surveyId);
+	public ResponseEntity<List<Group>> getGroupsSurvey(Integer surveyId);
 
 	/**
 	 * 
@@ -63,6 +64,6 @@ public interface ISurvey {
 	 * 
 	 * @param surveyId
 	 */
-	public Response deleteSurvey(Integer surveyId);
+	public ResponseEntity<Object> deleteSurvey(Integer surveyId);
 
 }

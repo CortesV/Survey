@@ -3,12 +3,12 @@ package com.softbistro.survey.creating.survey.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.creating.survey.component.entity.Group;
 import com.softbistro.survey.creating.survey.component.entity.Survey;
 import com.softbistro.survey.creating.survey.component.interfacee.ISurvey;
-import com.softbistro.survey.response.Response;
 
 @Service
 public class SurveyService {
@@ -21,9 +21,9 @@ public class SurveyService {
 	 * 
 	 * @param survey
 	 *            - parsed JSON with information about survey.
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response createSurvey(Survey survey) {
+	public ResponseEntity<Integer> createSurvey(Survey survey) {
 		return iSurvey.createSurvey(survey);
 	}
 
@@ -33,7 +33,7 @@ public class SurveyService {
 	 * @param clientId
 	 * @return
 	 */
-	public Response getAllSurveysOfClient(Integer clientId) {
+	public ResponseEntity<List<Survey>> getAllSurveysOfClient(Integer clientId) {
 		return iSurvey.getAllSurveysOfClient(clientId);
 	}
 
@@ -44,7 +44,7 @@ public class SurveyService {
 	 * @param surveyId
 	 *            - id of survey that will be changed
 	 */
-	public Response updateOfSurvey(Survey survey) {
+	public ResponseEntity<Object> updateOfSurvey(Survey survey) {
 		return iSurvey.updateOfSurvey(survey);
 	}
 
@@ -54,7 +54,7 @@ public class SurveyService {
 	 * @param clientId
 	 * @return
 	 */
-	public Response getGroups(Integer clientId) {
+	public ResponseEntity<List<Group>> getGroups(Integer clientId) {
 		return iSurvey.getGroupsClient(clientId);
 	}
 
@@ -64,7 +64,7 @@ public class SurveyService {
 	 * @param groups
 	 * @return
 	 */
-	public Response addGroupsToSurvey(List<Group> groups) {
+	public ResponseEntity<Object> addGroupsToSurvey(List<Group> groups) {
 		return iSurvey.addGroupsToSurvey(groups);
 	}
 
@@ -73,7 +73,7 @@ public class SurveyService {
 	 * 
 	 * @param surveyId
 	 */
-	public Response getGroupsSurvey(Integer surveyId) {
+	public ResponseEntity<List<Group>> getGroupsSurvey(Integer surveyId) {
 		return iSurvey.getGroupsSurvey(surveyId);
 	}
 
@@ -83,7 +83,7 @@ public class SurveyService {
 	 * 
 	 * @param surveyId
 	 */
-	public Response deleteSurvey(Integer surveyId) {
+	public ResponseEntity<Object> deleteSurvey(Integer surveyId) {
 		return iSurvey.deleteSurvey(surveyId);
 	}
 

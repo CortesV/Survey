@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,7 +19,6 @@ import com.softbistro.survey.confirm.url.component.entity.Answer;
 import com.softbistro.survey.confirm.url.component.entity.UuidInformation;
 import com.softbistro.survey.confirm.url.component.entity.VotePage;
 import com.softbistro.survey.confirm.url.component.interfacee.IVote;
-import com.softbistro.survey.response.Response;
 
 @Repository
 public class VoteDao implements IVote {
@@ -57,7 +57,7 @@ public class VoteDao implements IVote {
 	 * @return
 	 */
 	@Override
-	public Response answerOnSurvey(String uuid, List<Answer> answers) {
+	public ResponseEntity<Object> answerOnSurvey(String uuid, List<Answer> answers) {
 		try {
 			Date date = new Date(System.currentTimeMillis());
 			UuidInformation uuidInformation = jdbcTemplate.queryForObject(SQL_GET_UUID_INFORMATION,
@@ -84,9 +84,9 @@ public class VoteDao implements IVote {
 
 			jdbcTemplate.update(SQL_UPDATE_STATUS_SENDING_SURVEY, statusForUpdate, uuid);
 
-			return new Response(null, HttpStatus.OK, null);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class VoteDao implements IVote {
 	 * @return
 	 */
 	@Override
-	public Response getVotePage(String uuid) {
+	public ResponseEntity<List<VotePage>> getVotePage(String uuid) {
 		try {
 			Date date = new Date(System.currentTimeMillis());
 			UuidInformation uuidInformation = jdbcTemplate.queryForObject(SQL_GET_UUID_INFORMATION,
@@ -128,9 +128,9 @@ public class VoteDao implements IVote {
 						}
 
 					}, uuidInformation.getSurveyId());
-			return new Response(votePages, HttpStatus.OK, null);
+			return new ResponseEntity<List<VotePage>>(votePages, HttpStatus.OK);
 		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<List<VotePage>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
