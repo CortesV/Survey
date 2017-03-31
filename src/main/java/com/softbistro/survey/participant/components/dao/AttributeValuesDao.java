@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.participant.components.entity.AttributeValues;
 import com.softbistro.survey.participant.components.interfaces.IAttributeValues;
-import com.softbistro.survey.response.Response;
 
 /**
  * Data access object for attribute values entity
@@ -42,18 +42,18 @@ public class AttributeValuesDao implements IAttributeValues {
 	 * Method for creating attribute values
 	 * 
 	 * @param attributeValues
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response setAttributeValues(AttributeValues attributeValues) {
+	public ResponseEntity<Object> setAttributeValues(AttributeValues attributeValues) {
 		try {
 			jdbcTemplate.update(SQL_FOR_SETTING_ATTRIBUTE_VALUES, attributeValues.getAttributeId(),
 					attributeValues.getParticipantId(), attributeValues.getValue());
-			return new Response(null, HttpStatus.CREATED, null);
+			return new ResponseEntity<Object>(HttpStatus.CREATED);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -61,20 +61,21 @@ public class AttributeValuesDao implements IAttributeValues {
 	 * Method for getting attribute values form the db
 	 * 
 	 * @param attributeValuesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getAttributeValuesById(Integer attributeValuesId) {
+	public ResponseEntity<AttributeValues> getAttributeValuesById(Integer attributeValuesId) {
 		try {
-			List<AttributeValues> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTE_VALUES_BY_ID,
-					new BeanPropertyRowMapper<>(AttributeValues.class), attributeValuesId);
+			List<AttributeValues> list = (List<AttributeValues>) jdbcTemplate.query(
+					SQL_FOR_GETTING_ATTRIBUTE_VALUES_BY_ID, new BeanPropertyRowMapper<>(AttributeValues.class),
+					attributeValuesId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
-					: new Response(list.get(0), HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<AttributeValues>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<AttributeValues>(list.get(0), HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<AttributeValues>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -82,18 +83,18 @@ public class AttributeValuesDao implements IAttributeValues {
 	 * Method for updating attribute values
 	 * 
 	 * @param attributeValues
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response updateAttributeValuesById(AttributeValues attributeValues) {
+	public ResponseEntity<Object> updateAttributeValuesById(AttributeValues attributeValues, Integer id) {
 		try {
 			jdbcTemplate.update(SQL_FOR_UPDATING_ATTRIBUTE_VALUES_BY_ID, attributeValues.getAttributeId(),
-					attributeValues.getParticipantId(), attributeValues.getValue(), attributeValues.getId());
-			return new Response(null, HttpStatus.OK, null);
+					attributeValues.getParticipantId(), attributeValues.getValue(), id);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -101,17 +102,17 @@ public class AttributeValuesDao implements IAttributeValues {
 	 * Method for deleting attribute values by id
 	 * 
 	 * @param attributeValuesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response deleteAttributeValuesById(Integer attributeValuesId) {
+	public ResponseEntity<Object> deleteAttributeValuesById(Integer attributeValuesId) {
 		try {
 			jdbcTemplate.update(SQL_FOR_DELETING_ATTRIBUTE_VALUES_BY_ID, attributeValuesId);
-			return new Response(null, HttpStatus.OK, null);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -120,20 +121,21 @@ public class AttributeValuesDao implements IAttributeValues {
 	 * 
 	 * @param groupId
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getParticipantAttributesInGroup(Integer groupId, Integer participantId) {
+	public ResponseEntity<List<AttributeValues>> getParticipantAttributesInGroup(Integer groupId,
+			Integer participantId) {
 		try {
 			List<AttributeValues> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES,
 					new BeanPropertyRowMapper<>(AttributeValues.class), groupId, participantId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such elements")
-					: new Response(list, HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<List<AttributeValues>>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<List<AttributeValues>>(list, HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<List<AttributeValues>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

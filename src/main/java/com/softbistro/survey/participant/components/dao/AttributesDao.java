@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.participant.components.entity.Attributes;
 import com.softbistro.survey.participant.components.interfaces.IAttributes;
-import com.softbistro.survey.response.Response;
 
 /**
  * Data access object for attributes entity
@@ -35,18 +35,18 @@ public class AttributesDao implements IAttributes {
 	 * Method for creating the attribute value
 	 * 
 	 * @param Attributes
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response setAttribute(Attributes attributes) {
+	public ResponseEntity<Object> setAttribute(Attributes attributes) {
 
 		try {
 			jdbcTemplate.update(SQL_FOR_SETTING_ATTRIBUTES, attributes.getGroupId(), attributes.getAttribute());
-			return new Response(null, HttpStatus.CREATED, null);
+			return new ResponseEntity<Object>(HttpStatus.CREATED);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -54,21 +54,21 @@ public class AttributesDao implements IAttributes {
 	 * Method for getting attribute by id
 	 * 
 	 * @param attributesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getAttributeById(Integer attributesId) {
+	public ResponseEntity<Attributes> getAttributeById(Integer attributesId) {
 
 		try {
 			List<Attributes> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_ID,
 					new BeanPropertyRowMapper<>(Attributes.class), attributesId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
-					: new Response(list, HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<Attributes>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<Attributes>(list.get(0), HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Attributes>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -76,19 +76,19 @@ public class AttributesDao implements IAttributes {
 	 * Method for updating attribute
 	 * 
 	 * @param Attributes
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response updateAttributes(Attributes attributes) {
+	public ResponseEntity<Object> updateAttributes(Attributes attributes, Integer attributesId) {
 
 		try {
 			jdbcTemplate.update(SQL_FOR_UPDATING__ATTRIBUTES_BY_ID, attributes.getGroupId(), attributes.getAttribute(),
-					attributes.getId());
-			return new Response(null, HttpStatus.OK, null);
+					attributesId);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -96,18 +96,18 @@ public class AttributesDao implements IAttributes {
 	 * Method for deleting attributes by id
 	 * 
 	 * @param attributesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response deleteAttributes(Integer attributesId) {
+	public ResponseEntity<Object> deleteAttributes(Integer attributesId) {
 
 		try {
 			jdbcTemplate.update(SQL_FOR_DELETING_ATTRIBUTES, attributesId);
-			return new Response(null, HttpStatus.OK, null);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -115,21 +115,21 @@ public class AttributesDao implements IAttributes {
 	 * Method to getting all attributes in group
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response getAttributesByGroup(Integer groupId) {
+	public ResponseEntity<List<Attributes>> getAttributesByGroup(Integer groupId) {
 
 		try {
 			List<Attributes> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP,
 					new BeanPropertyRowMapper<>(Attributes.class), groupId);
 
-			return list.isEmpty() ? new Response(null, HttpStatus.OK, "No such element")
-					: new Response(list, HttpStatus.OK, null);
+			return list.isEmpty() ? new ResponseEntity<List<Attributes>>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<List<Attributes>>(list, HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			return new ResponseEntity<List<Attributes>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }

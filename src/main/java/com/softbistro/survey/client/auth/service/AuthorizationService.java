@@ -7,12 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.auth.components.entities.AuthorizedClient;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
-import com.softbistro.survey.response.Response;
 
 /**
  * Service for authorization of client
@@ -22,12 +22,6 @@ import com.softbistro.survey.response.Response;
  */
 @Service
 public class AuthorizationService {
-
-	private static final String EMPTY_PASSWORD = "";
-	private static final String NOT_FOUND_CLIENT = "Wrong password or email";
-	private static final String NOT_FOUND_SOC_CLIENT = "Client with entered credentials isn't exist in database";
-	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
-	private static final String AUTHORIZED_CLIENT = "Client is authorized";
 
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
@@ -45,18 +39,18 @@ public class AuthorizationService {
 	 *            client - information about client
 	 * @return return - status of execution this method
 	 */
-	public Response simpleAthorization(Client client) {
+	public ResponseEntity<Client> simpleAthorization(Client client) {
 
 		AuthorizedClient authorizedClient;
 		Client responseClient;
 		try {
 
-			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
+			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getBody();
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 
 			if (resultFindClient == null || !resultFindClient.getPassword().equals(md5HexPassword)) {
 
-				return new Response(null, HttpStatus.OK, NOT_FOUND_CLIENT);
+				return new ResponseEntity<Client>(HttpStatus.NO_CONTENT);
 			}
 
 			String uniqueKey = UUID.randomUUID().toString();
@@ -70,9 +64,9 @@ public class AuthorizationService {
 
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new Response(responseClient, HttpStatus.OK, null);
+		return new ResponseEntity<Client>(responseClient, HttpStatus.OK);
 	}
 
 	/**
@@ -83,32 +77,32 @@ public class AuthorizationService {
 	 *            client - information about client
 	 * @return return - status of execution this method
 	 */
-	public Response socialAuthorization(Client client) {
+	public ResponseEntity<Client> socialAuthorization(Client client) {
 
 		AuthorizedClient authorizedClient;
 		Client responseClient;
 		try {
 
-			Response saveResponse = clientService.saveSocialClient(client);
+			clientService.saveSocialClient(client);
 
-			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
+			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getBody();
 
 			if (resultFindClient == null) {
 
-				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
+				return new ResponseEntity<Client>(HttpStatus.OK);
 			}
 
 			if (resultFindClient.getFacebookId() != null
 					&& !resultFindClient.getFacebookId().equals(client.getFacebookId())
 					&& StringUtils.isNotBlank(client.getFacebookId())) {
 
-				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
+				return new ResponseEntity<Client>(HttpStatus.OK);
 			}
 
 			if (resultFindClient.getGoogleId() != null && !resultFindClient.getGoogleId().equals(client.getGoogleId())
 					&& StringUtils.isNotBlank(client.getGoogleId())) {
 
-				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
+				return new ResponseEntity<Client>(HttpStatus.OK);
 			}
 
 			String uniqueKey = UUID.randomUUID().toString();
@@ -122,9 +116,9 @@ public class AuthorizationService {
 
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new Response(responseClient, HttpStatus.OK, null);
+		return new ResponseEntity<Client>(responseClient, HttpStatus.OK);
 	}
 
 	/**
@@ -154,14 +148,14 @@ public class AuthorizationService {
 	 * @param token
 	 * @return
 	 */
-	public Response checkToken(String token) {
+	public ResponseEntity<Object> checkToken(String token) {
 
 		if (!checkAccess(token)) {
 
-			return new Response(false, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<Object>(false, HttpStatus.UNAUTHORIZED);
 		}
 
-		return new Response(true, HttpStatus.OK, AUTHORIZED_CLIENT);
+		return new ResponseEntity<Object>(true, HttpStatus.OK);
 	}
 
 }

@@ -3,11 +3,11 @@ package com.softbistro.survey.confirm.url.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.confirm.url.component.entity.Answer;
 import com.softbistro.survey.confirm.url.component.interfacee.IVote;
-import com.softbistro.survey.response.Response;
 
 @Service
 public class VoteService {
@@ -20,7 +20,7 @@ public class VoteService {
 	 * @param uuid
 	 * @return
 	 */
-	public Response answerOnSurvey(String uuid, List<Answer> answers) {
+	public ResponseEntity<Object> answerOnSurvey(String uuid, List<Answer> answers) {
 		return iVote.answerOnSurvey(uuid, answers);
 	}
 }

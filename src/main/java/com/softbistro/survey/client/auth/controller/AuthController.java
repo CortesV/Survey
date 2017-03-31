@@ -2,6 +2,7 @@ package com.softbistro.survey.client.auth.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.client.auth.service.AuthorizedClientService;
 import com.softbistro.survey.client.manage.components.entity.Client;
-import com.softbistro.survey.response.Response;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Controller for authorization of Client
@@ -23,8 +25,6 @@ import com.softbistro.survey.response.Response;
 @RequestMapping(value = "/rest/survey/v1/")
 public class AuthController {
 
-	private static final String LOGOUT_SUCCESSFUL = "Logout is successful";
-	
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -38,8 +38,9 @@ public class AuthController {
 	 *            client - information about client
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "auth/simple", method = RequestMethod.POST)
-	public Response simpleAuth(@RequestBody Client client) {
+	@ApiOperation(value = "Simple Authorization", notes = "Do simple authorization of client by client email and password", tags = "Authorization")
+	@RequestMapping(value = "auth/simple", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Client> simpleAuth(@RequestBody Client client) {
 
 		return authorizationService.simpleAthorization(client);
 	}
@@ -52,8 +53,9 @@ public class AuthController {
 	 *            client - information about client
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "auth/social", method = RequestMethod.POST)
-	public Response socialAuth(@RequestBody Client client) {
+	@ApiOperation(value = "Social Network Authorization", notes = "do authorization with help of information from social networks", tags = "Authorization")
+	@RequestMapping(value = "auth/social", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Client> socialAuth(@RequestBody Client client) {
 
 		return authorizationService.socialAuthorization(client);
 	}
@@ -65,22 +67,16 @@ public class AuthController {
 	 *            token - token of some client
 	 * @return
 	 */
-	@RequestMapping(value = "logout", method = RequestMethod.POST)
-	public Response logout(@RequestHeader String token) {
+	@ApiOperation(value = "Logout Client", notes = "Logout the client by client token", tags = "Authorization")
+	@RequestMapping(value = "logout", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Object> logout(@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, "Unauthorized client");
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 		authorizedClientService.deleteClients(token);
 
-		return new Response(null, HttpStatus.OK, LOGOUT_SUCCESSFUL);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
-
-	@RequestMapping(value = "/cash2", method = RequestMethod.GET)
-	public Response setClient1(@RequestHeader String token) {
-
-		return new Response(authorizedClientService.findClient(token), HttpStatus.OK, "OK");
-	}
-
 }

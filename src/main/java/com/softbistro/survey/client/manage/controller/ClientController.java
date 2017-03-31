@@ -2,6 +2,7 @@ package com.softbistro.survey.client.manage.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -13,7 +14,8 @@ import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.entity.SearchingTemplate;
 import com.softbistro.survey.client.manage.service.ClientService;
-import com.softbistro.survey.response.Response;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Controller for CRUD of Client
@@ -24,8 +26,6 @@ import com.softbistro.survey.response.Response;
 @RestController
 @RequestMapping(value = "/rest/survey/v1/client")
 public class ClientController {
-	
-	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
 
 	@Autowired
 	private ClientService clientService;
@@ -40,12 +40,14 @@ public class ClientController {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public Response findClientByEmail(@RequestBody SearchingTemplate template, @RequestHeader String token) {
+	@ApiOperation(value = "Get Client By Email", notes = "Get Client instanse by client email", tags = "Client")
+	@RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Client> findClientByEmail(@RequestBody SearchingTemplate template,
+			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<Client>(HttpStatus.UNAUTHORIZED);
 		}
 
 		return clientService.findClientByEmail(template.getEmail());
@@ -59,10 +61,10 @@ public class ClientController {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public Response saveClient(@RequestBody Client client) {
+	@ApiOperation(value = "Create new Client", notes = "Create new Client instanse by client name, password, email", tags = "Client")
+	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Object> saveClient(@RequestBody Client client) {
 
-		
 		return clientService.saveClient(client);
 	}
 
@@ -73,12 +75,13 @@ public class ClientController {
 	 *            email - email of client
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public Response deleteClient(@PathVariable("id") Integer id, @RequestHeader String token) {
+	@ApiOperation(value = "Delete Client By Email", notes = "Delete Client instanse by client email", tags = "Client")
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
+	public ResponseEntity<Object> deleteClient(@PathVariable("id") Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
 		return clientService.deleteClient(id);
@@ -96,13 +99,14 @@ public class ClientController {
 	 *            password - email of client that used for authorization
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public Response updateClient(@RequestBody Client client, @PathVariable("id") Integer id,
+	@ApiOperation(value = "Update Client By Id", notes = "Update Client instanse by client name, password, email and client id", tags = "Client")
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<Object> updateClient(@RequestBody Client client, @PathVariable("id") Integer id,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
 		return clientService.updateClient(client, id);
@@ -119,16 +123,16 @@ public class ClientController {
 	 * 
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "/password/{id}", method = RequestMethod.PUT)
-	public Response updatePassword(@RequestBody Client client, @PathVariable("id") Integer id,
+	@ApiOperation(value = "Update Client Password By Id", notes = "Update Client password by client id", tags = "Client")
+	@RequestMapping(value = "/password/{id}", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<Object> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
 		return clientService.updatePassword(client, id);
 	}
-
 }
