@@ -11,6 +11,6 @@ public interface ISurvey {
 	 * @param survey
 	 * @return Integer status of saving
 	 */
-	public Response saveSurvay(Survey survey);
+	public Response saveSurvey(Survey survey);
 	
 }

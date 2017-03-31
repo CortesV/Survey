@@ -1,17 +1,16 @@
 package com.softbistro.survey.imports.system.components.entities;
 
-import java.util.List;
-
-import com.softbistro.survey.imports.system.components.enums.TypeQuestion;
-
 public class Question {
 
 	private Long id;
-	private String value;
-	private String type;
-	private String[] answers;
+	private Long survey_id;
+	private Long question_section_id;
+	private String question;
+	private String answer_type;
+	private String[] answersList;
+	private String question_choices;
 	private Boolean required;
-	private Boolean comment;
+	private Boolean required_comment;
 
 	public Long getId() {
 		return id;
@@ -21,28 +20,52 @@ public class Question {
 		this.id = id;
 	}
 
-	public String getValue() {
-		return value;
+	public Long getSurvey_id() {
+		return survey_id;
 	}
 
-	public void setValue(String value) {
-		this.value = value;
+	public void setSurvey_id(Long survey_id) {
+		this.survey_id = survey_id;
 	}
 
-	public String getType() {
-		return type;
+	public Long getQuestion_section_id() {
+		return question_section_id;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setQuestion_section_id(Long question_section_id) {
+		this.question_section_id = question_section_id;
 	}
 
-	public String[] getAnswers() {
-		return answers;
+	public String getQuestion() {
+		return question;
 	}
 
-	public void setAnswers(String[] answers) {
-		this.answers = answers;
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public String getAnswer_type() {
+		return answer_type;
+	}
+
+	public void setAnswer_type(String answer_type) {
+		this.answer_type = answer_type;
+	}
+
+	public String[] getAnswersList() {
+		return answersList;
+	}
+
+	public void setAnswersList(String[] answersList) {
+		this.answersList = answersList;
+	}
+
+	public String getQuestion_choices() {
+		return question_choices;
+	}
+
+	public void setQuestion_choices(String question_choices) {
+		this.question_choices = question_choices;
 	}
 
 	public Boolean getRequired() {
@@ -53,12 +76,12 @@ public class Question {
 		this.required = required;
 	}
 
-	public Boolean getComment() {
-		return comment;
+	public Boolean getRequired_comment() {
+		return required_comment;
 	}
 
-	public void setComment(Boolean comment) {
-		this.comment = comment;
+	public void setRequired_comment(Boolean required_comment) {
+		this.required_comment = required_comment;
 	}
 
 }

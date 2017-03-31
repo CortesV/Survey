@@ -10,5 +10,5 @@ public interface IImportSurvey {
 	 * @param importFileName
 	 * @return
 	 */
-	public Response importSyrveyCSV(String importFileName, String titleSurvey, Long clientId);
+	public Response importSyrveyCSV(String fileName, String surveyName, Long clientId);
 }
