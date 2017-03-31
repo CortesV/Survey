@@ -47,10 +47,35 @@ public interface IQuestionSection {
 	public ResponseEntity<QuestionSection> getQuestionSectionById(Integer questionSectionId);
 
 	/**
+	 * Method to getting QuestionSection from db by clientId
+	 * 
+	 * @param clientId
+	 * @return ResponseEntity
+	 */
+	public ResponseEntity<List<QuestionSection>> getQuestionSectionByClientId(Integer clientId);
+	
+	/**
 	 * Method to getting QuestionSection from db by surveyId
 	 * 
 	 * @param surveyId
 	 * @return ResponseEntity
 	 */
 	public ResponseEntity<List<QuestionSection>> getQuestionSectionBySurveyId(Integer surveyId);
+	
+	/**
+	 * Method for adding QuestionSection to survey
+	 * 
+	 * @param questionSection id, survey id
+	 * @return ResponseEntity
+	 */
+	public ResponseEntity<Object> addQuestionSectionToSurvey(Integer questionSectionId, Integer surveyId);
+	
+
+	/**
+	 * Method for deleting QuestionSection from survey
+	 * 
+	 * @param questionSectionId, survey id
+	 * @return ResponseEntity
+	 */
+	public ResponseEntity<Object> deleteQuestionSectionFromSurvey(Integer questionSectionId, Integer surveyId);
 }

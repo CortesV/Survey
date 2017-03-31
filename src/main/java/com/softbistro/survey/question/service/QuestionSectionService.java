@@ -62,6 +62,16 @@ public class QuestionSectionService {
 	}
 
 	/**
+	 * Method to getting QuestionSection from db by clientId
+	 * 
+	 * @param clientId
+	 * @return ResponseEntity
+	 */
+	public ResponseEntity<List<QuestionSection>> getQuestionSectionByClientId(Integer clientId) {
+		return iQuestionSection.getQuestionSectionByClientId(clientId);
+	}
+	
+	/**
 	 * Method to getting QuestionSection from db by surveyId
 	 * 
 	 * @param surveyId
@@ -69,5 +79,26 @@ public class QuestionSectionService {
 	 */
 	public ResponseEntity<List<QuestionSection>> getQuestionSectionBySurveyId(Integer surveyId) {
 		return iQuestionSection.getQuestionSectionBySurveyId(surveyId);
+	}
+	
+	/**
+	 * Method for adding QuestionSection to survey
+	 * 
+	 * @param questionSection id, survey id
+	 * @return ResponseEntity
+	 */
+	public ResponseEntity<Object> addQuestionSectionToSurvey(Integer questionSectionId, Integer surveyId){
+		return iQuestionSection.addQuestionSectionToSurvey(questionSectionId, surveyId);
+	}
+	
+
+	/**
+	 * Method for deleting QuestionSection from survey
+	 * 
+	 * @param questionSectionId, survey id
+	 * @return ResponseEntity
+	 */
+	public ResponseEntity<Object> deleteQuestionSectionFromSurvey(Integer questionSectionId, Integer surveyId){
+		return iQuestionSection.deleteQuestionSectionFromSurvey(questionSectionId, surveyId);
 	}
 }
