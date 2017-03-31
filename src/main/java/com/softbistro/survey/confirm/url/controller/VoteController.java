@@ -47,6 +47,7 @@ public class VoteController {
 	 * @param uuid
 	 * @return
 	 */
+	@ApiOperation(value = "Information about questions", notes = "Response for site with information about questions by uuid", tags = "Answer")
 	@RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
 	public ResponseEntity<List<VotePage>> getVotePage(@PathVariable(value = "uuid") String uuid) {
 		return voteService.getVotePage(uuid);
