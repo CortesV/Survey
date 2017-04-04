@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.softbistro.survey.client.auth.components.entities.AuthorizedClient;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
+import com.softbistro.survey.client.manage.service.FindClientService;
 import com.softbistro.survey.response.Response;
 
 /**
@@ -23,7 +24,6 @@ import com.softbistro.survey.response.Response;
 @Service
 public class AuthorizationService {
 
-	private static final String EMPTY_PASSWORD = "";
 	private static final String NOT_FOUND_CLIENT = "Wrong password or email";
 	private static final String NOT_FOUND_SOC_CLIENT = "Bad credentials";
 	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
@@ -40,12 +40,15 @@ public class AuthorizationService {
 	@Autowired
 	private ClientService clientService;
 
+	@Autowired
+	FindClientService findClientService;
+
 	/**
 	 * Method that do simple authorization of client
 	 * 
 	 * @param client
 	 *            client - information about client
-	 * @return return - status of execution this method
+	 * @return return - information about client that is authorized
 	 */
 	public Response simpleAthorization(Client client) {
 
@@ -53,7 +56,7 @@ public class AuthorizationService {
 		Client responseClient;
 		try {
 
-			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
+			Client resultFindClient = findClientService.findClient(client);
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 
 			if (resultFindClient == null || !resultFindClient.getPassword().equals(md5HexPassword)) {
@@ -70,9 +73,9 @@ public class AuthorizationService {
 			responseClient.setEmail(resultFindClient.getEmail());
 			responseClient.setToken(authorizedClient.getUniqueKey());
 
-		} catch (Exception ex) {
+		} catch (Exception e) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 		return new Response(responseClient, HttpStatus.OK, null);
 	}
@@ -83,7 +86,7 @@ public class AuthorizationService {
 	 * 
 	 * @param client
 	 *            client - information about client
-	 * @return return - status of execution this method
+	 * @return return - information about client that is authorized
 	 */
 	public Response socialAuthorization(Client client) {
 
@@ -96,9 +99,9 @@ public class AuthorizationService {
 				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
 			}
 
-			Response saveResponse = clientService.saveSocialClient(client);
+			clientService.saveSocialClient(client);
 
-			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
+			Client resultFindClient = findClientService.findClient(client);
 
 			if (resultFindClient == null) {
 
@@ -117,19 +120,26 @@ public class AuthorizationService {
 
 				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
 			}
+			
+			if (resultFindClient.getEmail() != null && !resultFindClient.getEmail().equals(client.getEmail())
+					&& StringUtils.isNotBlank(client.getEmail())) {
+
+				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
+			}
 
 			String uniqueKey = UUID.randomUUID().toString();
 			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
 			authorizedClientService.saveClient(authorizedClient);
+
 			responseClient = new Client();
 			responseClient.setId(resultFindClient.getId());
 			responseClient.setClientName(resultFindClient.getClientName());
 			responseClient.setEmail(resultFindClient.getEmail());
 			responseClient.setToken(authorizedClient.getUniqueKey());
 
-		} catch (Exception ex) {
+		} catch (Exception e) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 		return new Response(responseClient, HttpStatus.OK, null);
 	}
@@ -181,6 +191,25 @@ public class AuthorizationService {
 
 		return StringUtils.isNotBlank(client.getGoogleId()) && client.getFlag().equals(GOOGLE)
 				|| StringUtils.isNotBlank(client.getFacebookId()) && client.getFlag().equals(FACEBOOK);
+	}
+
+	public Response addSocialInfo(Client socialClient) {
+
+		Client updateClient = (Client) clientService.findClient(socialClient.getId()).getData();
+		if (StringUtils.isNotBlank(socialClient.getFacebookId()) && StringUtils.isBlank(socialClient.getGoogleId())) {
+
+			updateClient.setFacebookId(socialClient.getFacebookId());
+			clientService.updateClient(updateClient, updateClient.getId());
+			return new Response(null, HttpStatus.OK, null);
+		}
+
+		if (StringUtils.isNotBlank(socialClient.getGoogleId()) && StringUtils.isBlank(socialClient.getFacebookId())) {
+
+			updateClient.setGoogleId(socialClient.getGoogleId());
+			clientService.updateClient(updateClient, updateClient.getId());
+			return new Response(null, HttpStatus.OK, null);
+		}
+		return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
 	}
 
 }

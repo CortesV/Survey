@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class Client implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Long id;
+	private Integer id;
 	private String facebookId;
 	private String googleId;
 	private String clientName;
@@ -31,11 +31,11 @@ public class Client implements Serializable {
 	 */
 	private String flag;
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

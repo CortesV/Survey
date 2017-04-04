@@ -40,15 +40,15 @@ public class ClientController {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public Response findClientByEmail(@RequestBody SearchingTemplate template, @RequestHeader String token) {
+	@RequestMapping(value = "/search/{id}", method = RequestMethod.POST)
+	public Response findClientByEmail(@PathVariable("id") Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
 			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
 		}
 
-		return clientService.findClientByEmail(template.getEmail());
+		return clientService.findClient(id);
 	}
 
 	/**

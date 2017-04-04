@@ -25,9 +25,9 @@ public class ClientService {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	public Response findClientByEmail(String email) {
+	public Response findClient(Integer id) {
 		
-		return iClient.findClientByEmail(email);
+		return iClient.findClient(id);
 	}
 
 	/**
@@ -92,6 +92,20 @@ public class ClientService {
 	public Response saveSocialClient(Client client){
 	
 		return iClient.saveSocialClient(client);
+	}
+	
+	/**
+	 * Find client by email, facebookId or googleId
+	 * 
+	 * @param template
+	 *            template - email, facebookId or googleId
+	 * @param value
+	 *            value - value of template
+	 * @return return - information about of client
+	 */
+	public Response findByTemplate(String template, String value){
+		
+		return iClient.findByTemplate(template, value);
 	}
 	
 }

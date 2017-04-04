@@ -12,7 +12,7 @@ public interface IClient {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	public Response findClientByEmail(String email);
+	public Response findClient(Integer id);
 
 	/**
 	 * Save client to database
@@ -20,7 +20,7 @@ public interface IClient {
 	 * @param client
 	 *            client - all information about client that will write to
 	 *            database
-	 * @return return - status of execution this method
+	 * @return return - information about of client
 	 */
 	public Response saveClient(Client client);
 
@@ -29,7 +29,7 @@ public interface IClient {
 	 * 
 	 * @param id
 	 *            id - id of client
-	 * @return return - status of execution this method
+	 * @return return - information about of client
 	 */
 	public Response deleteClient(Integer id);
 
@@ -42,7 +42,7 @@ public interface IClient {
 	 * @param id
 	 *            id - id of client
 	 * 
-	 * @return return - status of execution this method
+	 * @return return - information about of client
 	 */
 	public Response updateClient(Client client, Integer id);
 
@@ -55,7 +55,7 @@ public interface IClient {
 	 * @param id
 	 *            id - id of client
 	 * 
-	 * @return return - status of execution this method
+	 * @return return - information about of client
 	 */
 	public Response updatePassword(Client client, Integer id);
 
@@ -67,7 +67,7 @@ public interface IClient {
 	 * @return
 	 */
 	public Response saveSocialClient(Client client);
-	
+
 	/**
 	 * Find client by email and client name
 	 * 
@@ -75,4 +75,15 @@ public interface IClient {
 	 * @return
 	 */
 	public Response findClientByLoginAndEmail(Client client);
+
+	/**
+	 * Find client by email, facebookId or googleId
+	 * 
+	 * @param template
+	 *            template - email, facebookId or googleId
+	 * @param value
+	 *            value - value of template
+	 * @return return - information about of client
+	 */
+	public Response findByTemplate(String template, String value);
 }

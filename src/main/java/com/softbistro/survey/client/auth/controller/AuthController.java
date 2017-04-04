@@ -24,6 +24,7 @@ import com.softbistro.survey.response.Response;
 public class AuthController {
 
 	private static final String LOGOUT_SUCCESSFUL = "Logout is successful";
+	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
 	
 	@Autowired
 	private AuthorizationService authorizationService;
@@ -77,10 +78,20 @@ public class AuthController {
 		return new Response(null, HttpStatus.OK, LOGOUT_SUCCESSFUL);
 	}
 
-	@RequestMapping(value = "/cash2", method = RequestMethod.GET)
-	public Response setClient1(@RequestHeader String token) {
+	/**
+	 * Controller that add social data from social networks to exist client
+	 * @param token
+	 * @return
+	 */
+	@RequestMapping(value = "/add/social", method = RequestMethod.POST)
+	public Response setClient1(@RequestHeader String token, @RequestBody Client client) {
 
-		return new Response(authorizedClientService.findClient(token), HttpStatus.OK, "OK");
+		if (!authorizationService.checkAccess(token)) {
+
+			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+		}
+		
+		return authorizationService.addSocialInfo(client);
 	}
 
 }
