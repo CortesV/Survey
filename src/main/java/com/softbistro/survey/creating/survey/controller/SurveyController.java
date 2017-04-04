@@ -151,12 +151,34 @@ public class SurveyController {
 	@RequestMapping(value = "/{survey_id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<Object> deleteSurvey(@PathVariable(value = "survey_id") Integer surveyId,
 			@RequestHeader String token) {
-
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-		}
+		//
+		// if (!authorizationService.checkAccess(token)) {
+		//
+		// return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+		// }
 
 		return surveyService.deleteSurvey(surveyId);
+	}
+
+	/**
+	 * Start survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@RequestMapping(value = "/{survey_id}/start", method = RequestMethod.PUT)
+	public ResponseEntity<Object> startSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
+		return surveyService.startSurvey(surveyId);
+	}
+
+	/**
+	 * Stop survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@RequestMapping(value = "/{survey_id}/stop", method = RequestMethod.PUT)
+	public ResponseEntity<Object> stopSurvey(@PathVariable(value = "survey_id") Integer surveyId) {
+		return surveyService.stopSurvey(surveyId);
 	}
 }
