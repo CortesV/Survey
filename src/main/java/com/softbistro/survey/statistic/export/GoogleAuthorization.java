@@ -3,12 +3,8 @@ package com.softbistro.survey.statistic.export;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.springframework.stereotype.Service;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -22,13 +18,14 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.SheetsScopes;
-import com.google.api.services.sheets.v4.model.Sheet;
-import com.google.api.services.sheets.v4.model.SheetProperties;
-import com.google.api.services.sheets.v4.model.Spreadsheet;
-import com.google.api.services.sheets.v4.model.SpreadsheetProperties;
 
-@Service
-public class SheetsService {
+/**
+ * Authorization for working with google API
+ * 
+ * @author zviproject
+ *
+ */
+public class GoogleAuthorization {
 
 	/** Application name. */
 	private static final String APPLICATION_NAME = "Survey SoftBistro";
@@ -65,43 +62,6 @@ public class SheetsService {
 	}
 
 	/**
-	 * Creating and configure new sheets
-	 * 
-	 * @return
-	 * @throws IOException
-	 * @throws GeneralSecurityException
-	 */
-	public Spreadsheet create() throws IOException, GeneralSecurityException {
-		Spreadsheet requestBody = new Spreadsheet();
-		Sheets sheetsService = createSheetsService();
-
-		String title = new java.util.Date().toString();
-		// ----------configure file---------
-		SpreadsheetProperties sp = new SpreadsheetProperties();
-		sp.setTitle(title);
-
-		requestBody.setProperties(sp);
-		Sheet sheet = new Sheet();
-
-		SheetProperties sheetProperties = new SheetProperties();
-
-		sheetProperties.setTitle("Statstic of survey");
-
-		sheet.setProperties(sheetProperties);
-		List<Sheet> sheets = new ArrayList<>();
-		sheets.add(sheet);
-		// -----------------------------------------------
-		requestBody.setSheets(sheets);
-
-		Sheets.Spreadsheets.Create request = sheetsService.spreadsheets().create(requestBody);
-
-		Spreadsheet response = request.execute();
-		// insertData(response);
-
-		return response;
-	}
-
-	/**
 	 * Creates an authorized Credential object.
 	 * 
 	 * @return an authorized Credential object.
@@ -118,4 +78,15 @@ public class SheetsService {
 		return credential;
 	}
 
+	/**
+	 * Build and return an authorized Sheets API client service.
+	 * 
+	 * @return an authorized Sheets API client service
+	 * @throws IOException
+	 */
+	public static Sheets getSheetsService() throws IOException {
+		Credential credential = authorize();
+		return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME)
+				.build();
+	}
 }

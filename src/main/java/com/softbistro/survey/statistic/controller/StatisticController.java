@@ -1,7 +1,6 @@
 package com.softbistro.survey.statistic.controller;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.gdata.util.ServiceException;
 import com.softbistro.survey.response.Response;
 import com.softbistro.survey.statistic.export.ExportStatisticInSheets;
@@ -46,14 +44,8 @@ public class StatisticController {
 	}
 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public Spreadsheet exportStatistic() throws IOException {
-		try {
-			return sheetsService.create();
-		} catch (GeneralSecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
+	public void exportStatistic() throws IOException {
+		sheetsService.insertData();
 	}
 
 	/**
