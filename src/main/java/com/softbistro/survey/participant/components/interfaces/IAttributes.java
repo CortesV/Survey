@@ -1,7 +1,10 @@
 package com.softbistro.survey.participant.components.interfaces;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
 import com.softbistro.survey.participant.components.entity.Attributes;
-import com.softbistro.survey.response.Response;
 
 /**
  * Interface for attributes value
@@ -15,39 +18,39 @@ public interface IAttributes {
 	 * Method for creating the attribute value
 	 * 
 	 * @param Attributes
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response setAttribute(Attributes atributes);
+	public ResponseEntity<Object> setAttribute(Attributes atributes);
 
 	/**
 	 * Method for getting attribute by id
 	 * 
 	 * @param attributesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getAttributeById(Integer attributesId);
+	public ResponseEntity<Attributes> getAttributeById(Integer attributesId);
 
 	/**
 	 * Method for updating attribute
 	 * 
-	 * @param Attributes
-	 * @return Response
+	 * @param Attributes, attributesId
+	 * @return ResponseEntity
 	 */
-	public Response updateAttributes(Attributes attributes);
+	public ResponseEntity<Object> updateAttributes(Attributes attributes, Integer attributesId);
 
 	/**
 	 * Method for deleting attributes by id
 	 * 
 	 * @param attributesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deleteAttributes(Integer attributesId);
+	public ResponseEntity<Object> deleteAttributes(Integer attributesId);
 
 	/**
 	 * Method to getting all attributes in group
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getAttributesByGroup(Integer groupId);
+	public ResponseEntity<List<Attributes>> getAttributesByGroup(Integer groupId);
 }

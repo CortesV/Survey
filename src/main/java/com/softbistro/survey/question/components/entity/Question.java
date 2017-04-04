@@ -17,6 +17,7 @@ public class Question {
 	private String answerType;
 	private String questionChoices;
 	private Boolean required;
+	private Boolean requiredComment;
 
 	public Long getId() {
 		return id;
@@ -90,4 +91,11 @@ public class Question {
 		this.required = required;
 	}
 
+	public Boolean isRequiredComment() {
+		return requiredComment;
+	}
+
+	public void setRequiredComment(Boolean requiredComment) {
+		this.requiredComment = requiredComment;
+	}
 }

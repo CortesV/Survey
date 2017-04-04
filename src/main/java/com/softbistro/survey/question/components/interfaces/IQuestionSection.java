@@ -1,7 +1,10 @@
 package com.softbistro.survey.question.components.interfaces;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
 import com.softbistro.survey.question.components.entity.QuestionSection;
-import com.softbistro.survey.response.Response;
 
 /**
  * Interface for question section entity
@@ -15,47 +18,64 @@ public interface IQuestionSection {
 	 * Method for creating QuestionSection
 	 * 
 	 * @param questionSection
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response setQuestionSection(QuestionSection questionSection);
+	public ResponseEntity<Object> setQuestionSection(QuestionSection questionSection);
 
 	/**
 	 * Method for updating QuestionSection
 	 * 
 	 * @param questionSection
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response updateQuestionSection(QuestionSection questionSection, Integer questionSectionId);
+	public ResponseEntity<Object> updateQuestionSection(QuestionSection questionSection, Integer questionSectionId);
 
 	/**
 	 * Method for deleting QuestionSection from db by id
 	 * 
 	 * @param questionSectionId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deleteQuestionSection(Integer questionSectionId);
+	public ResponseEntity<Object> deleteQuestionSection(Integer questionSectionId);
 
 	/**
 	 * Method to getting QuestionSection from db by id
 	 * 
 	 * @param questionSectionId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getQuestionSectionById(Integer questionSectionId);
+	public ResponseEntity<QuestionSection> getQuestionSectionById(Integer questionSectionId);
 
+	/**
+	 * Method to getting QuestionSection from db by clientId
+	 * 
+	 * @param clientId
+	 * @return ResponseEntity
+	 */
+	public ResponseEntity<List<QuestionSection>> getQuestionSectionByClientId(Integer clientId);
+	
 	/**
 	 * Method to getting QuestionSection from db by surveyId
 	 * 
 	 * @param surveyId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getQuestionSectionBySurveyId(Integer surveyId);
+	public ResponseEntity<List<QuestionSection>> getQuestionSectionBySurveyId(Integer surveyId);
+	
+	/**
+	 * Method for adding QuestionSection to survey
+	 * 
+	 * @param questionSection id, survey id
+	 * @return ResponseEntity
+	 */
+	public ResponseEntity<Object> addQuestionSectionToSurvey(Integer questionSectionId, Integer surveyId);
+	
 
 	/**
-	 * Method to getting QuestionSection from db by section name
+	 * Method for deleting QuestionSection from survey
 	 * 
-	 * @param name
-	 * @return Response
+	 * @param questionSectionId, survey id
+	 * @return ResponseEntity
 	 */
-	public Response getQuestionSectionByName(String name);
+	public ResponseEntity<Object> deleteQuestionSectionFromSurvey(Integer questionSectionId, Integer surveyId);
 }

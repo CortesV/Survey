@@ -1,11 +1,13 @@
 package com.softbistro.survey.participant.components.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.participant.components.entity.Attributes;
 import com.softbistro.survey.participant.components.interfaces.IAttributes;
-import com.softbistro.survey.response.Response;
 
 /**
  * Service for attribute entity
@@ -23,9 +25,9 @@ public class AttributesService {
 	 * Method for creating the attribute value
 	 * 
 	 * @param Attributes
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response setAttribute(Attributes attributes) {
+	public ResponseEntity<Object> setAttribute(Attributes attributes) {
 		return iAttributes.setAttribute(attributes);
 	}
 
@@ -33,29 +35,31 @@ public class AttributesService {
 	 * Method for getting attribute by id
 	 * 
 	 * @param attributesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getAttributeById(Integer attributesId) {
+	public ResponseEntity<Attributes> getAttributeById(Integer attributesId) {
 		return iAttributes.getAttributeById(attributesId);
 	}
 
 	/**
 	 * Method for updating attribute
 	 * 
+	 * @param attributesId
+	 * 
 	 * @param Attributes
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response updateAttributes(Attributes attributes) {
-		return iAttributes.updateAttributes(attributes);
+	public ResponseEntity<Object> updateAttributes(Attributes attributes, Integer attributesId) {
+		return iAttributes.updateAttributes(attributes, attributesId);
 	}
 
 	/**
 	 * Method for deleting attributes by id
 	 * 
 	 * @param attributesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deleteAttributesById(Integer attributesId) {
+	public ResponseEntity<Object> deleteAttributesById(Integer attributesId) {
 		return iAttributes.deleteAttributes(attributesId);
 	}
 
@@ -63,9 +67,9 @@ public class AttributesService {
 	 * Method to getting all attributes by group
 	 * 
 	 * @param groupId
-	 * @Response
+	 * @ResponseEntity
 	 */
-	public Response getAttributesByGroupId(Integer groupId) {
+	public ResponseEntity<List<Attributes>> getAttributesByGroupId(Integer groupId) {
 		return iAttributes.getAttributesByGroup(groupId);
 	}
 }
