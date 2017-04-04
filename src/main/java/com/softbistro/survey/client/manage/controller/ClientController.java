@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.client.manage.components.entity.Client;
-import com.softbistro.survey.client.manage.components.entity.SearchingTemplate;
 import com.softbistro.survey.client.manage.service.ClientService;
 import com.softbistro.survey.response.Response;
 

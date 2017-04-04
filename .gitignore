@@ -4,6 +4,7 @@
 !gradle/wrapper/gradle-wrapper.jar
 /gradle/
 /bin/
+/.metadata/
 
 ### STS ###
 .apt_generated
