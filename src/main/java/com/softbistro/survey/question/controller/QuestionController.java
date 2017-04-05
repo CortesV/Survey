@@ -59,8 +59,9 @@ public class QuestionController {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	@ApiOperation(value = "Create new Question", notes = "Create question instanse by survey_id, question, description_short,"
-			+ " description_long, question_section_id, answer_type, question_choices, required, required comment", tags = "Question")
+	@ApiOperation(value = "Create new Question", notes = "Create question instanse by survey id, question, description short,"
+			+ " description Long, questionSection Id, answer Type, question Choices, required, required Comment. "
+			+ "Field answerType can have value such as: RATE1-10, RATE1-5, RATE1-3, BOOLEAN, LIST, MULTILIST, INPUT, MEMO", tags = "Question")
 	@RequestMapping(value = "/", method = RequestMethod.POST)
 	public ResponseEntity<Object> saveQuestion(@RequestBody Question question, @RequestHeader String token) {
 
@@ -101,8 +102,9 @@ public class QuestionController {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
-	@ApiOperation(value = "Update Question By Id", notes = "Update question instanse by survey_id, question, description_short,"
-			+ " description_long, question_section_id, answer_type, question_choices, required and question id", tags = "Question")
+	@ApiOperation(value = "Update Question By Id", notes = "Update question instanse by survey id, question, description short,"
+			+ " description Long, questionSection Id, answer Type, question Choices, required, required Comment and question id. "
+			+ "Field answerType can have value such as: RATE1-10, RATE1-5, RATE1-3, BOOLEAN, LIST, MULTILIST, INPUT, MEMO", tags = "Question")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> updateQuestion(@RequestBody Question question, @PathVariable("id") Long id,
 			@RequestHeader String token) {

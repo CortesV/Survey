@@ -96,7 +96,7 @@ public class AttributesController {
 	 * @param attributes
 	 * @return ResponseEntity
 	 */
-	@ApiOperation(value = "Update Attribute", notes = "Update attribute instanse by attribute naming, group id and attribute id", tags = "Attribute")
+	@ApiOperation(value = "Update Attribute", notes = "Update attribute instanse (group id and attribute) by attribute naming, group id and attribute id", tags = "Attribute")
 	@RequestMapping(value = "/{attributes_id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<Object> updateAttributesById(@PathVariable("attributes_id") Integer attributesId,
 			@RequestBody Attributes attributes, @RequestHeader String token) {

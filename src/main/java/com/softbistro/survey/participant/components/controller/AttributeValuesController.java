@@ -41,7 +41,7 @@ public class AttributeValuesController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Create new Attribute Value", notes = "Create new attribute value instanse by attribute id, participant id, value", tags = "Attribute Value")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> setAttributeValues(@RequestBody AttributeValues attributeValues,
 			@RequestHeader String token) {
 
@@ -60,7 +60,7 @@ public class AttributeValuesController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Get Attribute Value By Id", notes = "Get attribute value instanse by attribute value id", tags = "Attribute Value")
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<AttributeValues> getAttributevaluesById(@PathVariable Integer id,
 			@RequestHeader String token) {
 
@@ -78,8 +78,8 @@ public class AttributeValuesController {
 	 * @param attributeValues
 	 * @return ResponseEntity
 	 */
-	@ApiOperation(value = "Update Attribute Value By Id", notes = "Get attribute value instanse by attribute value id", tags = "Attribute Value")
-	@RequestMapping(method = RequestMethod.PUT)
+	@ApiOperation(value = "Update Attribute Value By Id", notes = "Update attribute value instanse by attribute value id", tags = "Attribute Value")
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<Object> updateAttributeValuesById(@PathVariable Integer id,
 			@RequestBody AttributeValues attributeValues, @RequestHeader String token) {
 
@@ -98,7 +98,7 @@ public class AttributeValuesController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Get Attribute Value By Id", notes = "Get attribute value instanse by attribute value id", tags = "Attribute Value")
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<Object> deleteAttributeValuesById(@PathVariable Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
@@ -117,7 +117,7 @@ public class AttributeValuesController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Get Attribute Values By Participant in Group", notes = "Get all attribute values of participant in group by group id and participant id", tags = "Attribute Value")
-	@RequestMapping(value = "/{group_id}/{participant_id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{group_id}/{participant_id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<AttributeValues>> getParticipantAttributeValuesInGroup(
 			@PathVariable("group_id") Integer groupId, @PathVariable("participant_id") Integer participantId,
 			@RequestHeader String token) {

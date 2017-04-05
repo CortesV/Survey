@@ -43,7 +43,7 @@ public class ParticipantInGroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Get Participants By Group", notes = "Get participants by group id", tags = "Participant")
-	@RequestMapping(value = "/group/{group_id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/group/{group_id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Participant>> getParticipantsByGroupId(@PathVariable("group_id") Integer groupId,
 			@RequestHeader String token) {
 
@@ -63,7 +63,7 @@ public class ParticipantInGroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Add Participant in Group", notes = "Add participant in group by group id and group id", tags = "Participant")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> addParticipantInGroup(@RequestBody ParticipantInGroup participantInGoup,
 			@RequestHeader String token) {
 
@@ -83,9 +83,9 @@ public class ParticipantInGroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Delete Participants from Group", notes = "Delete participants from group by group id and participant id", tags = "Participant")
-	@RequestMapping(value = "/{group_id}/{participant_id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{group_id}/{participant_id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<Object> deletingParticipantfromGroup(@PathVariable("group_id") Integer groupId,
-			@PathVariable("participant_id") Participant participantId, @RequestHeader String token) {
+			@PathVariable("participant_id") Integer participantId, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
@@ -102,7 +102,7 @@ public class ParticipantInGroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Get Participant Groups", notes = "Get participant groups by participant id", tags = "Participant")
-	@RequestMapping(value = "/participant/{participant_id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/participant/{participant_id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Group>> getParticipantGroups(@PathVariable("participant_id") Integer participantId,
 			@RequestHeader String token) {
 

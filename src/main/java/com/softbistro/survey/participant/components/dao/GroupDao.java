@@ -24,11 +24,11 @@ public class GroupDao implements IGroup {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private final static String SQL_FOR_SETTING_GROUP = "INSERT INTO group (group.client_id, group.group_name) VALUES (?, ?)";
-	private final static String SQL_FOR_GETTING_GROUP_BY_ID = "SELECT * FROM group AS g WHERE g.id = ? AND g.delete = 0";
-	private final static String SQL_FOR_GETTING_GROUP_BY_CLIENT = "SELECT * FROM survey.group AS g WHERE g.client_id = ? AND g.delete = 0";
-	private final static String SQL_FOR_UPDATING_GROUP_BY_ID = "UPDATE group AS g SET g.group_name = ? WHERE g.id = ?";
-	private final static String SQL_FOR_DELETING_GROUP_BY_ID = "UPDATE survey.group AS g SET g.delete = 1 WHERE g.id = ?";
+	private final static String SQL_FOR_SETTING_GROUP = "INSERT INTO `group` (`group`.client_id, `group`.group_name) VALUES (?, ?)";
+	private final static String SQL_FOR_GETTING_GROUP_BY_ID = "SELECT * FROM `group` AS g WHERE g.id = ? AND g.`delete` = 0";
+	private final static String SQL_FOR_GETTING_GROUP_BY_CLIENT = "SELECT * FROM `group` AS g WHERE g.client_id = ? AND g.`delete` = 0";
+	private final static String SQL_FOR_UPDATING_GROUP_BY_ID = "UPDATE `group` AS g SET g.group_name = ? WHERE g.id = ?";
+	private final static String SQL_FOR_DELETING_GROUP_BY_ID = "UPDATE `group` AS g SET g.delete = 1 WHERE g.id = ?";
 
 	/**
 	 * Method to create group

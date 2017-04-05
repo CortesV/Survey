@@ -123,7 +123,7 @@ public class ClientController {
 	 * 
 	 * @return return - status of execution this method
 	 */
-	@ApiOperation(value = "Update Client Password By Id", notes = "Update Client password by client id", tags = "Client")
+	@ApiOperation(value = "Update Client Password By Id", notes = "Update Client password by password and client id", tags = "Client")
 	@RequestMapping(value = "/password/{id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<Object> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id,
 			@RequestHeader String token) {
