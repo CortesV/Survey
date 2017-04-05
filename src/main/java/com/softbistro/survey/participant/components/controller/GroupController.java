@@ -41,13 +41,13 @@ public class GroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Create new Group", notes = "Create new group instanse by client id and group name", tags = "Participant Group")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> setGroup(@RequestBody Group group, @RequestHeader String token) {
 
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-		}
+//		if (!authorizationService.checkAccess(token)) {
+//
+//			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+//		}
 
 		return groupService.setGroup(group);
 	}

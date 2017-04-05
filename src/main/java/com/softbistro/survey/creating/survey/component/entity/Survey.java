@@ -3,7 +3,6 @@ package com.softbistro.survey.creating.survey.component.entity;
 import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Entity for survey. <br>
@@ -14,23 +13,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Survey {
 
-	@JsonProperty(value = "survey_id")
 	private Integer id;
 
-	@JsonProperty(value = "client_id")
 	private Integer clientId;
 
-	@JsonProperty(value = "survey_name")
 	private String surveyName;
 
-	@JsonProperty(value = "survey_theme")
 	private String surveyTheme;
 
-	@JsonProperty(value = "start_time")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
 	private Date startTime;
 
-	@JsonProperty(value = "finish_time")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
 	private Date finishTime;
 

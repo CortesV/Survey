@@ -103,10 +103,10 @@ public class ParticipantController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Object> setParticipant(@RequestBody Participant participant, @RequestHeader String token) {
 
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-		}
+//		if (!authorizationService.checkAccess(token)) {
+//
+//			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+//		}
 
 		return participantService.setParticipant(participant);
 	}
