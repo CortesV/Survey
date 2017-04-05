@@ -10,6 +10,8 @@ import java.util.List;
  */
 public class VotePage {
 
+	private Integer id;
+
 	private String questionName;
 
 	private Integer required;
@@ -59,4 +61,16 @@ public class VotePage {
 	public void setRequiredComment(Integer required_comment) {
 		this.requiredComment = required_comment;
 	}
+<<<<<<< HEAD
+=======
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+>>>>>>> develop
 }
