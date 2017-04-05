@@ -61,8 +61,6 @@ public class VotePage {
 	public void setRequiredComment(Integer required_comment) {
 		this.requiredComment = required_comment;
 	}
-<<<<<<< HEAD
-=======
 
 	public Integer getId() {
 		return id;
@@ -71,6 +69,4 @@ public class VotePage {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
->>>>>>> develop
 }

@@ -82,7 +82,7 @@ public class ParticipantController {
 	@ApiOperation(value = "Get Participant By Attribute Value", notes = "Get participant instanse by attribute id and attribute value", tags = "Participant")
 	@RequestMapping(value = "attribute/{attribute_id}/{attribute_value}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Participant>> getParticipantByAttributeValue(
-			@PathVariable("attribute_id") Integer attributeId, @PathVariable("attribute_id") String attributeValue,
+			@PathVariable("attribute_id") Integer attributeId, @PathVariable("attribute_value") String attributeValue,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
@@ -103,10 +103,10 @@ public class ParticipantController {
 	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> setParticipant(@RequestBody Participant participant, @RequestHeader String token) {
 
-		// if (!authorizationService.checkAccess(token)) {
-		//
-		// return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-		// }
+		 if (!authorizationService.checkAccess(token)) {
+		
+		 return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+		 }
 
 		return participantService.setParticipant(participant);
 	}

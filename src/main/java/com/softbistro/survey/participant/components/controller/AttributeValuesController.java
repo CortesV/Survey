@@ -78,7 +78,7 @@ public class AttributeValuesController {
 	 * @param attributeValues
 	 * @return ResponseEntity
 	 */
-	@ApiOperation(value = "Update Attribute Value By Id", notes = "Get attribute value instanse by attribute value id", tags = "Attribute Value")
+	@ApiOperation(value = "Update Attribute Value By Id", notes = "Update attribute value instanse by attribute value id", tags = "Attribute Value")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<Object> updateAttributeValuesById(@PathVariable Integer id,
 			@RequestBody AttributeValues attributeValues, @RequestHeader String token) {

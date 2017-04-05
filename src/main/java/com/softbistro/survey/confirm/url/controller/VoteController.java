@@ -36,7 +36,7 @@ public class VoteController {
 	 * @return
 	 */
 	@ApiOperation(value = "Write the Answer", notes = "Write answer to data base by uuid and answer list"
-			+ "(Array of Answer etitys contains : survey id, question, description short,"
+			+ "(Answer etitys contains : survey id, question, description short,"
 			+ " description Long, questionSection Id, answer Type, question Choices, required, required Comment. "
 			+ "Field answerType can have value such as: RATE1-10, RATE1-5, RATE1-3, BOOLEAN, LIST, MULTILIST, INPUT, MEMO)"
 	, tags = "Answer")
