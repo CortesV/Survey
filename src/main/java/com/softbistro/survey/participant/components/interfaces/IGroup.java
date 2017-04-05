@@ -1,7 +1,10 @@
 package com.softbistro.survey.participant.components.interfaces;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
 import com.softbistro.survey.participant.components.entity.Group;
-import com.softbistro.survey.response.Response;
 
 /**
  * Interface for Group entity
@@ -11,37 +14,37 @@ import com.softbistro.survey.response.Response;
  */
 public interface IGroup {
 
-	public Response setGroup(Group group);
+	public ResponseEntity<Object> setGroup(Group group);
 
 	/**
 	 * Method to create group
 	 * 
 	 * @param group
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getGroupByid(Integer groupId);
+	public ResponseEntity<Group> getGroupByid(Integer groupId);
 
 	/**
 	 * Method to get all clients in group
 	 * 
 	 * @param clientId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getGroupsByClient(Integer clientId);
+	public ResponseEntity<List<Group>> getGroupsByClient(Integer clientId);
 
 	/**
 	 * Method to update group
 	 * 
 	 * @param group
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response updateGroupById(Group group);
+	public ResponseEntity<Object> updateGroupById(Group group, Integer id);
 
 	/**
 	 * Method for deleting group by id
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deleteGroupById(Integer groupId);
+	public ResponseEntity<Object> deleteGroupById(Integer groupId);
 }

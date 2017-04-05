@@ -1,11 +1,11 @@
 package com.softbistro.survey.client.manage.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
-import com.softbistro.survey.response.Response;
 
 /**
  * Service for CRUD of Client
@@ -25,7 +25,7 @@ public class ClientService {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	public Response findClientByEmail(String email) {
+	public ResponseEntity<Client> findClientByEmail(String email) {
 		
 		return iClient.findClientByEmail(email);
 	}
@@ -38,7 +38,7 @@ public class ClientService {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public Response saveClient(Client client) {
+	public ResponseEntity<Object> saveClient(Client client) {
 		
 		return iClient.saveClient(client);
 	}
@@ -50,7 +50,7 @@ public class ClientService {
 	 *            email - email of client
 	 * @return return - status of execution this method
 	 */
-	public Response deleteClient(Integer id) {
+	public ResponseEntity<Object> deleteClient(Integer id) {
 		
 		return iClient.deleteClient(id);
 
@@ -68,7 +68,7 @@ public class ClientService {
 	 *            password - email of client that used for authorization
 	 * @return return - status of execution this method
 	 */
-	public Response updateClient(Client client, Integer id) {
+	public ResponseEntity<Object> updateClient(Client client, Integer id) {
 
 		return iClient.updateClient(client, id);
 	}
@@ -84,10 +84,14 @@ public class ClientService {
 	 * 
 	 * @return return - status of execution this method
 	 */
-	public Response updatePassword(Client client, Integer id){
+	public ResponseEntity<Object> updatePassword(Client client, Integer id){
 		
 		return iClient.updatePassword(client, id);
 	}
 
+	public ResponseEntity<Object> saveSocialClient(Client client){
+	
+		return iClient.saveSocialClient(client);
+	}
 	
 }
