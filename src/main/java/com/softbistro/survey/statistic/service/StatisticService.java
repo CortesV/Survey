@@ -35,7 +35,7 @@ public class StatisticService {
 		try {
 			SheetsService sheetsService = new SheetsService();
 
-			sheetsService.create(statisticDao.exportSurveyStatistic(surveyId));
+			sheetsService.sendGoogleSheets(statisticDao.exportSurveyStatistic(surveyId));
 
 			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (Exception e) {
