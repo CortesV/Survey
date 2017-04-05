@@ -11,6 +11,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class VotePage {
+
+	private Integer id;
+
 	@JsonProperty(value = "name")
 	private String questionName;
 
@@ -63,6 +66,14 @@ public class VotePage {
 
 	public void setRequiredComment(Integer required_comment) {
 		this.requiredComment = required_comment;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 }

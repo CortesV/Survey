@@ -23,7 +23,7 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo metadata() {
-		return new ApiInfoBuilder().title("Survey API").description("Documentation for Survey API").version("0.0.9").
+		return new ApiInfoBuilder().title("Survey API").description("Documentation for Survey API").version("0.0.9")
 				.build();
 	}
 }
