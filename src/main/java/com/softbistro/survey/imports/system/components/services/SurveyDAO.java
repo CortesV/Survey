@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -20,16 +21,23 @@ import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.imports.system.components.entities.GroupQuestions;
 import com.softbistro.survey.imports.system.components.entities.Question;
 import com.softbistro.survey.imports.system.components.entities.Survey;
-import com.softbistro.survey.imports.system.components.interfaces.ISurvey;
-import com.softbistro.survey.response.Response;
+import com.softbistro.survey.imports.system.components.interfaces.ISurveyDAO;
 
+/**
+ * Save survey into db
+ *  
+ * @author olegnovatskiy
+ */
 @Repository
-public class SurveyDAO implements ISurvey {
+public class SurveyDAO implements ISurveyDAO {
 
-	private static final String INSERT_SURVEY = " INSERT INTO survey (client_id, name) VALUES ( ?, ?); ";
-	private static final String INSERT_GROUP = " INSERT INTO question_sections (section_name) VALUES ( ? ) ";
-	private static final String INSERT_CONNECT_SECTION_QUESTION_SURVEY = " INSERT INTO connect_question_section_survey (question_section_id, survey_id) VALUES ( ?, ? ) ";
-	private static final String INSERT_QUESTION = " INSERT INTO questions (survey_id, question, question_section_id, answer_type, question_choices, required, required_comment) VALUES (:survey_id, :question, :question_section_id, :answer_type, :question_choices, :required, :required_comment) ";
+	private static final String INSERT_SURVEY = "INSERT INTO survey (client_id, name) VALUES (?,?);";
+	
+	private static final String INSERT_GROUP = "INSERT INTO question_sections (section_name) VALUES (?);";
+	
+	private static final String INSERT_CONNECT_SECTION_QUESTION_SURVEY = "INSERT INTO connect_question_section_survey (question_section_id, survey_id) VALUES (?,?);";
+	
+	private static final String INSERT_QUESTION = "INSERT INTO questions (survey_id, question, question_section_id, answer_type, question_choices, required, required_comment) VALUES (:surveyId, :text, :questionSectionId, :answerType, :questionChoices, :required, :requiredComment);";
 
 	private static Logger log = Logger.getLogger(SurveyDAO.class);
 
@@ -44,7 +52,7 @@ public class SurveyDAO implements ISurvey {
 	 *            survey
 	 * @return Response
 	 */
-	public Response saveSurvey(Survey survey) {
+	public ResponseEntity<Object> saveSurvey(Survey savedSurvey) {
 
 		Connection connection = null;
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = null;
@@ -54,42 +62,20 @@ public class SurveyDAO implements ISurvey {
 			namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbc.getDataSource());
 			connection.setAutoCommit(false);
 
-			// Save survey to db and set generate id for survey
-			survey.setId(executeStatement(INSERT_SURVEY, new Object[] { survey.getClienId(), survey.getTitle() },
-					connection));
+			savedSurvey.setId(executeStatement(INSERT_SURVEY, new Object[] { savedSurvey.getClienId(), savedSurvey.getTitle() }, connection));
 
-			for (GroupQuestions group : survey.getGroupQuestions()) {
-
-				// Save group to db and set generate id for current group.
-				group.setId(executeStatement(INSERT_GROUP, new Object[] { group.getTitle() }, connection));
-
-				// Save connection between survey and current group.
-				jdbc.update(INSERT_CONNECT_SECTION_QUESTION_SURVEY, new Object[] { group.getId(), survey.getId() });
-
-				// Begin saving question of current group to db.
-				List<Question> batchQuestions = new ArrayList<>();
-				for (Question question : group.getQuestions()) {
-
-					question.setSurvey_id(survey.getId());
-					question.setQuestion_section_id(group.getId());
-					batchQuestions.add(question);
-				}
-
-				SqlParameterSource[] sqlBatchQuestions = SqlParameterSourceUtils.createBatch(batchQuestions.toArray());
-				namedParameterJdbcTemplate.batchUpdate(INSERT_QUESTION, sqlBatchQuestions);
-				// End saving question.
-			}
+			saveQuestions(savedSurvey, namedParameterJdbcTemplate, connection);
 
 			connection.commit();
 			connection.close();
 
-			return new Response(survey.getTitle(), HttpStatus.CREATED, "Survey is saved");
+			return new ResponseEntity<Object>(HttpStatus.OK);
 
 		} catch (SQLException e) {
 
 			log.error(e.getMessage());
 
-			return new Response(null, HttpStatus.FAILED_DEPENDENCY, "Survey don't save");
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 
 		} finally {
 
@@ -106,12 +92,42 @@ public class SurveyDAO implements ISurvey {
 	}
 
 	/**
+	 * Save batch of questions into db.
+	 * 
+	 * @param savedSurvey
+	 * @param namedParameterJdbcTemplate
+	 * @param connection
+	 * @throws SQLException
+	 */
+	private void saveQuestions(Survey savedSurvey, NamedParameterJdbcTemplate namedParameterJdbcTemplate , Connection connection) throws SQLException{
+		
+		for (GroupQuestions group : savedSurvey.getGroupQuestions()) {
+
+			group.setId(executeStatement(INSERT_GROUP, new Object[] { group.getTitle() }, connection));
+
+			jdbc.update(INSERT_CONNECT_SECTION_QUESTION_SURVEY, new Object[] { group.getId(), savedSurvey.getId() });
+
+			List<Question> batchQuestions = new ArrayList<>();
+			for (Question question : group.getQuestions()) {
+
+				question.setSurveyId(savedSurvey.getId());
+				question.setQuestionSectionId(group.getId());
+				batchQuestions.add(question);
+			}
+
+			SqlParameterSource[] sqlBatchQuestions = SqlParameterSourceUtils.createBatch(batchQuestions.toArray());
+			namedParameterJdbcTemplate.batchUpdate(INSERT_QUESTION, sqlBatchQuestions);
+		}
+		
+	}
+	
+	/**
 	 * Execute statement and return generated Id.
 	 * 
 	 * @param preparedStatement
 	 * @return Long
 	 */
-	public Long executeStatement(String query, Object[] attributes, Connection connection) throws SQLException {
+	private Long executeStatement(String query, Object[] attributes, Connection connection) throws SQLException {
 
 		PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
@@ -119,22 +135,22 @@ public class SurveyDAO implements ISurvey {
 
 			Object object = attributes[numberAttribute];
 
-			if (object.getClass().equals(String.class)) {
+			if (object instanceof String) {
 				preparedStatement.setString(numberAttribute + 1, String.valueOf(object));
 				continue;
 			}
 
-			if (object.getClass().equals(Long.class)) {
+			if (object instanceof Long) {
 				preparedStatement.setLong(numberAttribute + 1, (Long) object);
 				continue;
 			}
 
-			if (object.getClass().equals(Integer.class)) {
+			if (object instanceof Integer) {
 				preparedStatement.setInt(numberAttribute + 1, (Integer) object);
 				continue;
 			}
 
-			if (object.getClass().equals(Boolean.class)) {
+			if (object instanceof Boolean) {
 				preparedStatement.setBoolean(numberAttribute + 1, (Boolean) object);
 				continue;
 			}
@@ -155,22 +171,3 @@ public class SurveyDAO implements ISurvey {
 	}
 
 }
-
-/*
- * preparedStatement = connection.prepareStatement(INSERT_SURVEY,
- * Statement.RETURN_GENERATED_KEYS); preparedStatement.setLong(1,
- * survey.getClienId()); preparedStatement.setString(2, survey.getTitle());
- * survey.setId(executeStatement(preparedStatement));
- */
-/*
- * preparedStatement = connection.prepareStatement(INSERT_GROUP,
- * Statement.RETURN_GENERATED_KEYS); preparedStatement.setString(1,
- * group.getTitle()); group.setId(executeStatement(preparedStatement));
- */
-
-/*
- * preparedStatement = connection.prepareStatement(
- * INSERT_CONNECT_SECTION_QUESTION_SURVEY, Statement.RETURN_GENERATED_KEYS);
- * preparedStatement.setLong(1, group.getId()); preparedStatement.setLong(2,
- * survey.getId()); preparedStatement.executeUpdate();
- */

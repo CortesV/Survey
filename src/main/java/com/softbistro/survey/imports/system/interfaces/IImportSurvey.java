@@ -1,7 +1,14 @@
 package com.softbistro.survey.imports.system.interfaces;
 
-import com.softbistro.survey.response.Response;
+import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.http.ResponseEntity;
+
+/**
+ * Importing survey from file
+ * 
+ * @author olegnovatskiy
+ */
 public interface IImportSurvey {
 
 	/**
@@ -10,5 +17,5 @@ public interface IImportSurvey {
 	 * @param importFileName
 	 * @return
 	 */
-	public Response importSyrveyCSV(String fileName, String surveyName, Long clientId);
+	public ResponseEntity<Object> importSyrveyCSV(HttpServletRequest request, Long clientId);
 }

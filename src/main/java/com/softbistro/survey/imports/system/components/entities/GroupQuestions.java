@@ -5,7 +5,9 @@ import java.util.List;
 public class GroupQuestions {
 
 	private Long id;
+	
 	private String title;
+	
 	private List<Question> questions;
 
 	public Long getId() {

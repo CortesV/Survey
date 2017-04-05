@@ -5,31 +5,44 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.TypeConstraintException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvReader;
 import com.softbistro.survey.imports.system.components.entities.GroupQuestions;
 import com.softbistro.survey.imports.system.components.entities.Question;
 import com.softbistro.survey.imports.system.components.entities.Survey;
-import com.softbistro.survey.imports.system.components.enums.TypeQuestion;
-import com.softbistro.survey.imports.system.components.interfaces.ISurvey;
+import com.softbistro.survey.imports.system.components.interfaces.ISurveyDAO;
 import com.softbistro.survey.imports.system.interfaces.IImportSurvey;
-import com.softbistro.survey.response.Response;
 
+/**
+ * Importing survey from file
+ * 
+ * @author olegnovatskiy
+ */
 @Service
 public class ImportSurvey implements IImportSurvey {
 
 	private static final String SOURCE_IMPORT_FILES = "src/main/resources/importing_files/";
+
 	private static final String TRUE_VALUE_FROM_FILE = "Y";
 
 	private static Logger log = Logger.getLogger(ImportSurvey.class);
 
 	@Autowired
-	private ISurvey iSurvey;
+	private ISurveyDAO iSurveyDAO;
+
+	@Autowired
+	private UploadFiles uploadFiles;
 
 	/**
 	 * Import survey from file of CSV format.
@@ -38,21 +51,39 @@ public class ImportSurvey implements IImportSurvey {
 	 * @return
 	 */
 	@Override
-	public Response importSyrveyCSV(String fileName, String surveyName, Long clientId) {
+	public ResponseEntity<Object> importSyrveyCSV(HttpServletRequest request, Long clientId) {
 
+		Map<String, String> attributes;
+
+		try {
+
+			attributes = uploadFiles.uploadCSV(request);
+
+		} catch (TypeConstraintException | ServletException | IOException e1) {
+
+			log.error(e1.getMessage());
+
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		}
+
+		String fileName = attributes.get("fileName");
+		String surveyName = attributes.get("surveyName");
+
+		System.out.println(fileName + surveyName);
+		
 		try {
 
 			Survey survey = importDate(fileName);
 			survey.setTitle(surveyName);
 			survey.setClienId(clientId);
 
-			return iSurvey.saveSurvey(survey);
+			return iSurveyDAO.saveSurvey(survey);
 
 		} catch (IOException e) {
 
 			log.error(e.getMessage());
 
-			return new Response(e.getMessage(), HttpStatus.FAILED_DEPENDENCY, "");
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 		} finally {
 
 			deleteImportFile(fileName);
@@ -71,20 +102,20 @@ public class ImportSurvey implements IImportSurvey {
 		CsvReader csvReader = null;
 
 		try {
-
 			File importFile = new File(String.format("%s%s", SOURCE_IMPORT_FILES, fileName));
+
 			List<GroupQuestions> listGroupQuestions = new ArrayList<>();
 			GroupQuestions groupQuestions = new GroupQuestions();
 			List<Question> questions = new ArrayList<>();
 			csvReader = new CsvReader(new FileReader(importFile));
-			csvReader.readHeaders();
 			Survey survey = new Survey();
+
+			csvReader.readHeaders();
 
 			while (csvReader.readRecord()) {
 
 				String currentGroup = csvReader.get("Group");
 
-				// If statement for first visitation of group
 				if (groupQuestions.getTitle() == null) {
 
 					groupQuestions.setTitle(csvReader.get("Group"));
@@ -92,28 +123,28 @@ public class ImportSurvey implements IImportSurvey {
 
 				if (currentGroup.equals(groupQuestions.getTitle())) {
 
-					Response responseReadQuestion = readRecord(csvReader);
-					if (responseReadQuestion.getResponseStatus() == HttpStatus.CREATED) {
+					ResponseEntity<Question> responseReadQuestion = readRecord(csvReader);
+					if (responseReadQuestion.getStatusCode() == HttpStatus.OK) {
 
-						questions.add((Question) responseReadQuestion.getData());
+						questions.add((Question) responseReadQuestion.getBody());
 					}
 
 				} else {
 
 					groupQuestions.setQuestions(questions);
 					listGroupQuestions.add(groupQuestions);
-					questions.clear();
+					questions = new ArrayList<>();
+					groupQuestions = new GroupQuestions();
 					groupQuestions.setTitle(csvReader.get("Group"));
 
-					Response responseReadQuestion = readRecord(csvReader);
-					if (responseReadQuestion.getResponseStatus() == HttpStatus.CREATED) {
+					ResponseEntity<Question> responseReadQuestion = readRecord(csvReader);
+					if (responseReadQuestion.getStatusCode() == HttpStatus.OK) {
 
-						questions.add((Question) responseReadQuestion.getData());
+						questions.add((Question) responseReadQuestion.getBody());
 					}
-
 				}
-
 			}
+			
 			groupQuestions.setQuestions(questions);
 			listGroupQuestions.add(groupQuestions);
 			survey.setGroupQuestions(listGroupQuestions);
@@ -125,7 +156,6 @@ public class ImportSurvey implements IImportSurvey {
 			if (csvReader != null)
 				csvReader.close();
 		}
-
 	}
 
 	/**
@@ -134,16 +164,15 @@ public class ImportSurvey implements IImportSurvey {
 	 * @param csvReader
 	 * @return Response response
 	 */
-	private Response readRecord(CsvReader csvReader) {
+	private ResponseEntity<Question> readRecord(CsvReader csvReader) {
 
 		try {
-
 			String required = csvReader.get("Required");
 			String type = csvReader.get("Answers");
 			String commentRequired = csvReader.get("Comment");
 			Question question = new Question();
-			question.setQuestion(csvReader.get("Questions"));// set value of
-																// question
+			question.setText(csvReader.get("Questions"));// set value of
+															// question
 
 			if (required.equals(TRUE_VALUE_FROM_FILE)) {
 				question.setRequired(true);
@@ -152,30 +181,25 @@ public class ImportSurvey implements IImportSurvey {
 			}
 
 			if (commentRequired.equals(TRUE_VALUE_FROM_FILE)) {
-				question.setRequired_comment(true);
+				question.setRequiredComment(true);
 			} else {
-				question.setRequired_comment(false);
+				question.setRequiredComment(false);
 			}
 
 			if (type.equals("yes|no") || type.equals("boolean")) {
 				type = "boolean";
 			}
 
-			question.setAnswer_type(type);
-			question.setQuestion_choices(csvReader.get("Value"));
-			if (question.getAnswer_type().equals(TypeQuestion.LIST.getValue())
-					|| question.getAnswer_type().equals(TypeQuestion.MULTILIST.getValue())) {
+			question.setAnswerType(type);
+			question.setQuestionChoices(csvReader.get("Value"));
 
-				String[] mas = csvReader.get("Value").split("\\|");
-				question.setAnswersList(mas);
-			}
-
-			return new Response(question, HttpStatus.CREATED, null);
+			return new ResponseEntity<Question>(question, HttpStatus.OK);
 
 		} catch (IOException e) {
 
 			log.error(e.getMessage());
-			return new Response(e.getMessage(), HttpStatus.NOT_EXTENDED, null);
+			
+			return new ResponseEntity<Question>(HttpStatus.BAD_REQUEST);
 		}
 	}
 

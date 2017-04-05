@@ -5,9 +5,12 @@ import java.util.List;
 public class Survey {
 
 	private Long id;
-	private String title;
-	private List<GroupQuestions> groupQuestions;
+
 	private Long clienId;
+
+	private String title;
+
+	private List<GroupQuestions> groupQuestions;
 
 	public Long getClienId() {
 		return clienId;
