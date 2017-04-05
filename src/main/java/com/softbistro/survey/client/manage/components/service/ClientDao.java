@@ -51,7 +51,7 @@ public class ClientDao implements IClient {
 
 		try {
 
-			List<Client> clientList = jdbc.query(SELECT_BY_EMAIL, new BeanPropertyRowMapper(Client.class), email);
+			List<Client> clientList = jdbc.query(SELECT_BY_EMAIL, new BeanPropertyRowMapper<>(Client.class), email);
 
 			return clientList.isEmpty() ? new ResponseEntity<Client>(HttpStatus.NO_CONTENT)
 					: new ResponseEntity<Client>(clientList.get(0), HttpStatus.OK);
@@ -204,7 +204,7 @@ public class ClientDao implements IClient {
 
 		try {
 
-			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper(Client.class),
+			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper<>(Client.class),
 					client.getEmail(), client.getClientName());
 
 			return clientList.isEmpty() ? new ResponseEntity<Client>(HttpStatus.NO_CONTENT)

@@ -51,7 +51,7 @@ public class ParticipantInGroupService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Participant participantId) {
+	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Integer participantId) {
 		return iparticipantInGroup.deletingParticipantfromGroup(groupId, participantId);
 	}
 
