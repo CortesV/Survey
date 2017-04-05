@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
-import com.softbistro.survey.statistic.export.SheetsService;
 import com.softbistro.survey.statistic.service.StatisticService;
 
 @RestController
@@ -17,9 +16,6 @@ public class StatisticController {
 
 	@Autowired
 	private StatisticService statisticService;
-
-	@Autowired
-	private SheetsService sheetsService;
 
 	/**
 	 * Get answers on question from survey

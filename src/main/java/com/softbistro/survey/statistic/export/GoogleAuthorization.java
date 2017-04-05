@@ -52,7 +52,7 @@ public class GoogleAuthorization {
 	 * If modifying these scopes, delete your previously saved credentials at
 	 * ~/.credentials/sheets.googleapis.com-java-quickstart
 	 */
-	private static final List<String> SCOPES = Arrays.asList(SheetsScopes.SPREADSHEETS);
+	private final List<String> SCOPES = Arrays.asList(SheetsScopes.SPREADSHEETS);
 
 	static {
 		try {
@@ -70,7 +70,7 @@ public class GoogleAuthorization {
 	 * @return an authorized Credential object.
 	 * @throws IOException
 	 */
-	public static Credential authorize() throws IOException {
+	public Credential authorize() throws IOException {
 		InputStream in = SheetsService.class.getResourceAsStream("/client_secret.json");
 		GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
@@ -87,7 +87,7 @@ public class GoogleAuthorization {
 	 * @return an authorized Sheets API client service
 	 * @throws IOException
 	 */
-	public static Sheets getSheetsService() throws IOException {
+	public Sheets getSheetsService() throws IOException {
 		Credential credential = authorize();
 		return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME)
 				.build();
