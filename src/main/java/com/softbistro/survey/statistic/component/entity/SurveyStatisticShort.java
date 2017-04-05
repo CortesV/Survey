@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author zviproject
  *
  */
-public class SurveyStatistikShort {
+public class SurveyStatisticShort {
 
 	private Integer id;
 

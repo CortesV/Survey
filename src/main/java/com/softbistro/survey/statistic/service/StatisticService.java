@@ -1,10 +1,13 @@
 package com.softbistro.survey.statistic.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.softbistro.survey.response.Response;
+import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
 import com.softbistro.survey.statistic.component.service.StatisticDao;
+import com.softbistro.survey.statistic.export.SheetsService;
 
 @Service
 public class StatisticService {
@@ -18,7 +21,7 @@ public class StatisticService {
 	 *            - survey id for getting information
 	 * @return
 	 */
-	public Response surveyStatistic(Integer surveyId) {
+	public ResponseEntity<SurveyStatisticShort> surveyStatistic(Integer surveyId) {
 		return statisticDao.surveyStatistic(surveyId);
 	}
 
@@ -28,7 +31,16 @@ public class StatisticService {
 	 * @param surveyId
 	 * @return
 	 */
-	public Response exportSurveyStatistic(Integer surveyId) {
-		return statisticDao.exportSurveyStatistic(surveyId);
+	public ResponseEntity<Object> exportSurveyStatistic(Integer surveyId) {
+		try {
+			SheetsService sheetsService = new SheetsService();
+
+			sheetsService.create(statisticDao.exportSurveyStatistic(surveyId));
+
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 }

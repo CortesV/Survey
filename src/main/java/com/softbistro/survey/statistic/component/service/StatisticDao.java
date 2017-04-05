@@ -7,14 +7,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.softbistro.survey.response.Response;
 import com.softbistro.survey.statistic.component.entity.ParticipantAttributes;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
-import com.softbistro.survey.statistic.component.entity.SurveyStatistikShort;
+import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
 import com.softbistro.survey.statistic.component.interfacee.IStatistic;
 
 /**
@@ -53,13 +53,13 @@ public class StatisticDao implements IStatistic {
 	 * @return
 	 */
 	@Override
-	public Response surveyStatistic(Integer surveyId) {
-		SurveyStatistikShort surveyStatistikShort = jdbcTemplate.queryForObject(SQL_GET_SURVEY_STATISTIC_SHORT,
-				new RowMapper<SurveyStatistikShort>() {
+	public ResponseEntity<SurveyStatisticShort> surveyStatistic(Integer surveyId) {
+		SurveyStatisticShort surveyStatisticShort = jdbcTemplate.queryForObject(SQL_GET_SURVEY_STATISTIC_SHORT,
+				new RowMapper<SurveyStatisticShort>() {
 
 					@Override
-					public SurveyStatistikShort mapRow(ResultSet rs, int rowNum) throws SQLException {
-						SurveyStatistikShort shortSurvey = new SurveyStatistikShort();
+					public SurveyStatisticShort mapRow(ResultSet rs, int rowNum) throws SQLException {
+						SurveyStatisticShort shortSurvey = new SurveyStatisticShort();
 						shortSurvey.setId(rs.getInt(1));
 						shortSurvey.setName(rs.getString(2));
 						shortSurvey.setStartTimeOfSurvey(rs.getDate(3));
@@ -73,7 +73,7 @@ public class StatisticDao implements IStatistic {
 
 				}, surveyId, surveyId, surveyId);
 
-		return new Response(surveyStatistikShort, HttpStatus.OK, null);
+		return new ResponseEntity<SurveyStatisticShort>(surveyStatisticShort, HttpStatus.OK);
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class StatisticDao implements IStatistic {
 	 * @return
 	 */
 	@Override
-	public Response exportSurveyStatistic(Integer surveyId) {
+	public List<SurveyStatisticExport> exportSurveyStatistic(Integer surveyId) {
 		List<SurveyStatisticExport> surveyStatisticExport = new ArrayList<>();
 
 		surveyStatisticExport = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT,
@@ -121,7 +121,7 @@ public class StatisticDao implements IStatistic {
 					}
 				}, surveyId);
 
-		return new Response(surveyStatisticExport, HttpStatus.OK, null);
+		return surveyStatisticExport;
 	}
 
 }
