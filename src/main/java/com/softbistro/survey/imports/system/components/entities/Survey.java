@@ -2,6 +2,12 @@ package com.softbistro.survey.imports.system.components.entities;
 
 import java.util.List;
 
+/**
+ * Entity of survey.
+ * 
+ * @author olegnovatskiy
+ *
+ */
 public class Survey {
 
 	private Long id;

@@ -2,6 +2,12 @@ package com.softbistro.survey.imports.system.components.entities;
 
 import java.util.List;
 
+/**
+ * Entity for group of questions.
+ * 
+ * @author olegnovatskiy
+ *
+ */
 public class GroupQuestions {
 
 	private Long id;

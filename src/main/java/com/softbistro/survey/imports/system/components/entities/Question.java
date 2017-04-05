@@ -1,5 +1,12 @@
 package com.softbistro.survey.imports.system.components.entities;
 
+/**
+ * Entity for structure of question.
+ * 
+ * @author olegnovatskiy
+ *
+ */
+
 public class Question {
 
 	private Long id;
