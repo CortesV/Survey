@@ -1,12 +1,15 @@
 package com.softbistro.survey.participant.components.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.entity.ParticipantInGroup;
 import com.softbistro.survey.participant.components.interfaces.IParticipantInGroup;
-import com.softbistro.survey.response.Response;
 
 /**
  * Service for ParticipantInGroup entity
@@ -24,9 +27,9 @@ public class ParticipantInGroupService {
 	 * Method for getting all participant by group
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantsByGroupId(Integer groupId) {
+	public ResponseEntity<List<Participant>> getParticipantsByGroupId(Integer groupId) {
 		return iparticipantInGroup.getParticipantsByGroup(groupId);
 	}
 
@@ -35,9 +38,9 @@ public class ParticipantInGroupService {
 	 * 
 	 * @param groupId
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response addParticipantInGroup(ParticipantInGroup participantInGoup) {
+	public ResponseEntity<Object> addParticipantInGroup(ParticipantInGroup participantInGoup) {
 		return iparticipantInGroup.addParticipantInGroup(participantInGoup);
 	}
 
@@ -46,9 +49,9 @@ public class ParticipantInGroupService {
 	 * 
 	 * @param groupId
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deletingParticipantfromGroup(Integer groupId, Participant participantId) {
+	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Participant participantId) {
 		return iparticipantInGroup.deletingParticipantfromGroup(groupId, participantId);
 	}
 
@@ -56,9 +59,9 @@ public class ParticipantInGroupService {
 	 * Method for getting all participant groups
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantGroups(Integer participantId) {
+	public ResponseEntity<List<Group>> getParticipantGroups(Integer participantId) {
 		return iparticipantInGroup.getParticipantGroups(participantId);
 	}
 }

@@ -1,19 +1,18 @@
 package com.softbistro.survey.client.manage.components.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.softbistro.survey.client.auth.configuration.oauth2.security.AuthorityName;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
-import com.softbistro.survey.response.Response;
 
 /**
  * CRUD for entity Client
@@ -24,43 +23,21 @@ import com.softbistro.survey.response.Response;
 @Repository
 public class ClientDao implements IClient {
 
-	private static final String SELECT_BY_EMAIL = "SELECT * FROM survey.clients  WHERE survey.clients.email = ? and survey.clients.`delete` = 0";
-	private static final String SAVE_CLIENT = "INSERT INTO survey.clients (client_name, password, email, status) VALUES(?, ?, ?, 'NEW')";
-	private static final String UPDATE_CLIENT = "UPDATE survey.clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
-	private static final String SELECT_CLIENT_ROLES = "SELECT sa.name_authority FROM survey.client_role as scr inner join survey.clients as sc on sc.id = scr.client_id "
-			+ "inner join survey.authority as sa on sa.id = scr.authority_id where sc.id = ?";
-	private static final String DELETE_CLIENT = "UPDATE survey.clients as sc LEFT JOIN survey.survey as ss on ss.client_id = sc.id LEFT JOIN survey.`group` as sg on "
-			+ "sg.client_id = sc.id LEFT JOIN survey.connect_group_participant as cgp on cgp.group_id = sg.id LEFT JOIN survey.participant as sp on "
-			+ "sp.id = cgp.participant_id LEFT JOIN survey.attributes as sa on sa.group_id = sg.id LEFT JOIN survey.attribute_values as sav on "
-			+ "sav.attribute_id = sa.id LEFT JOIN survey.answers as answ on answ.participant_id = sp.id LEFT JOIN survey.questions as sq on "
-			+ "sq.survey_id = ss.id LEFT JOIN survey.question_sections as qs on qs.survey_id = ss.id LEFT JOIN survey.connect_group_survey as cgs on "
-			+ "cgs.survey_id = ss.id LEFT JOIN survey.client_role as cr on cr.client_id = sc.id "
-			+ "SET sc.`delete` = '1', ss.`delete` = '1', sg.`delete` = '1', cgp.`delete` = '1', sa.`delete` = '1', sp.`delete` = '1', "
-			+ "sav.`delete` = '1', answ.`delete` = '1', sq.`delete` = '1', qs.`delete` = '1', cgs.`delete` = '1', cr.`delete` = '1'"
-			+ " WHERE sc.id = ?";
-	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE survey.clients SET password = ? WHERE id = ?";
+	private static final String SELECT_BY_EMAIL = "SELECT * FROM clients  WHERE clients.email = ? and clients.`delete` = 0";
+	private static final String FIND_CLIENT = "SELECT * FROM clients  WHERE clients.email = ? or clients.client_name = ? and clients.`delete` = 0";
+	private static final String SAVE_CLIENT = "INSERT INTO clients (client_name, password, email) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE  email = email";
+	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO clients (client_name, facebook_id, email) VALUES(?, ?, ?)"
+			+ "ON DUPLICATE KEY UPDATE facebook_id = ?";
+	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, google_id, email) VALUES(?, ?, ?)"
+			+ "ON DUPLICATE KEY UPDATE google_id = ?";
+	private static final String UPDATE_CLIENT = "UPDATE clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
+	private static final String DELETE_CLIENT = "UPDATE clients as sc SET sc.`delete` = '1' WHERE sc.id = ?";
+	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE clients SET password = ? WHERE id = ?";
+	private static final String FACEBOOK = "facebook";
+	private static final String GOOGLE = "google";
 
 	@Autowired
 	private JdbcTemplate jdbc;
-
-	/**
-	 * Class for geting authorities of client from database
-	 * 
-	 * @author cortes
-	 *
-	 */
-	public class GetRowMap implements RowMapper<AuthorityName> {
-
-		@Override
-		public AuthorityName mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-
-			if (resultSet.getString(1).equals("ROLE_USER")) {
-				return AuthorityName.ROLE_USER;
-			} else
-				return AuthorityName.ROLE_ADMIN;
-
-		}
-	}
 
 	/**
 	 * Find client in database by email of client
@@ -70,19 +47,19 @@ public class ClientDao implements IClient {
 	 * @return return - client's information
 	 */
 	@Override
-	public Response findClientByEmail(String email) {
+	public ResponseEntity<Client> findClientByEmail(String email) {
 
-		Client client = new Client();
 		try {
 
-			client = jdbc.queryForObject(SELECT_BY_EMAIL, new BeanPropertyRowMapper<>(Client.class), email);
-			client.setAuthorities(jdbc.query(SELECT_CLIENT_ROLES, new GetRowMap(), client.getId()));
+			List<Client> clientList = jdbc.query(SELECT_BY_EMAIL, new BeanPropertyRowMapper(Client.class), email);
+
+			return clientList.isEmpty() ? new ResponseEntity<Client>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<Client>(clientList.get(0), HttpStatus.OK);
+
 		} catch (Exception ex) {
 
-			return new Response(client, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-
-		return new Response(client, HttpStatus.OK, null);
 
 	}
 
@@ -95,17 +72,52 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response saveClient(Client client) {
+	public ResponseEntity<Object> saveClient(Client client) {
 
 		try {
 
-			jdbc.update(SAVE_CLIENT, client.getClientName(), client.getPassword(), client.getEmail());
+			if (findClientByLoginAndEmail(client).getBody() != null) {
+
+				return new ResponseEntity<Object>(HttpStatus.OK);
+			}
+
+			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+			jdbc.update(SAVE_CLIENT, client.getClientName(), md5HexPassword, client.getEmail());
+			return new ResponseEntity<Object>(HttpStatus.CREATED);
+
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new Response(null, HttpStatus.CREATED, null);
+	}
+
+	/**
+	 * Save information about client that authorized with help of social
+	 * networks
+	 * 
+	 * @param client
+	 * @return
+	 */
+	@Override
+	public ResponseEntity<Object> saveSocialClient(Client client) {
+
+		try {
+
+			Client resultFindClient = (Client) findClientByEmail(client.getEmail()).getBody();
+
+			if (resultFindClient == null) {
+
+				return socialSaveClientNotExist(client);
+			} else {
+
+				return socialSaveClientExist(client, resultFindClient);
+			}
+
+		} catch (Exception ex) {
+
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 	}
 
@@ -117,17 +129,17 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response deleteClient(Integer id) {
+	public ResponseEntity<Object> deleteClient(Integer id) {
 
 		try {
 
 			jdbc.update(DELETE_CLIENT, id);
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new Response(null, HttpStatus.OK, null);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -143,16 +155,17 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response updateClient(Client client, Integer id) {
+	public ResponseEntity<Object> updateClient(Client client, Integer id) {
 
 		try {
-			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), client.getPassword(), id);
+			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), md5HexPassword, id);
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new Response(null, HttpStatus.OK, null);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -162,21 +175,97 @@ public class ClientDao implements IClient {
 	 *            client - all information about client that will write to
 	 *            database
 	 * @param id
-	 *            id - id of client 
+	 *            id - id of client
 	 * 
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response updatePassword(Client client, Integer id) {
+	public ResponseEntity<Object> updatePassword(Client client, Integer id) {
 
 		try {
-			jdbc.update(UPDATE_CLIENT_PASSWORD, client.getPassword(), id);
+			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+			jdbc.update(UPDATE_CLIENT_PASSWORD, md5HexPassword, id);
 		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
-		return new Response(null, HttpStatus.OK, null);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
+	/**
+	 * Find client by email and client name
+	 * 
+	 * @param client
+	 * @return
+	 */
+	@Override
+	public ResponseEntity<Client> findClientByLoginAndEmail(Client client) {
+
+		try {
+
+			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper(Client.class),
+					client.getEmail(), client.getClientName());
+
+			return clientList.isEmpty() ? new ResponseEntity<Client>(HttpStatus.NO_CONTENT)
+					: new ResponseEntity<Client>(clientList.get(0), HttpStatus.OK);
+
+		} catch (Exception ex) {
+
+			return new ResponseEntity<Client>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * Update some fields in client when client authorized with help of social
+	 * networks
+	 * 
+	 * @param client
+	 * @return
+	 */
+	private ResponseEntity<Object> socialSaveClientNotExist(Client client) {
+
+		if (client.getFlag().equals(FACEBOOK)) {
+
+			jdbc.update(SAVE_FACEBOOK_CLIENT, client.getEmail(), client.getFacebookId(), client.getEmail(),
+					client.getFacebookId());
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		}
+
+		if (client.getFlag().equals(GOOGLE)) {
+
+			jdbc.update(SAVE_GOOGLE_CLIENT, client.getEmail(), client.getGoogleId(), client.getEmail(),
+					client.getGoogleId());
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Object>(HttpStatus.OK);
+	}
+
+	/**
+	 * Save information about client that authorized with help of social
+	 * networks when this client is exist in database
+	 * 
+	 * @param client
+	 * @param resultFindClient
+	 * @return
+	 */
+	private ResponseEntity<Object> socialSaveClientExist(Client client, Client resultFindClient) {
+
+		if (client.getFlag().equals(FACEBOOK) && StringUtils.isBlank(resultFindClient.getFacebookId())) {
+
+			jdbc.update(SAVE_FACEBOOK_CLIENT, client.getEmail(), client.getFacebookId(), client.getEmail(),
+					client.getFacebookId());
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		}
+
+		if (client.getFlag().equals(GOOGLE) && StringUtils.isBlank(resultFindClient.getGoogleId())) {
+
+			jdbc.update(SAVE_GOOGLE_CLIENT, client.getEmail(), client.getGoogleId(), client.getEmail(),
+					client.getGoogleId());
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Object>(HttpStatus.OK);
+	}
 }

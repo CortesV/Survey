@@ -10,6 +10,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.softbistro.survey.notification.system.component.entity.RegistrationMessage;
+import com.softbistro.survey.notification.system.component.interfacee.ISendingMessage;
+import com.softbistro.survey.notification.system.interfacee.ISending;
 
 /**
  * Start thread for sending message about client
@@ -17,7 +19,7 @@ import com.softbistro.survey.notification.system.component.entity.RegistrationMe
  * @author zviproject
  *
  */
-public class MessageClientThread implements Runnable {
+public class MessageClientEmailThread implements Runnable, ISending {
 
 	private Session session;
 	private List<RegistrationMessage> messages;
@@ -25,20 +27,26 @@ public class MessageClientThread implements Runnable {
 	private String messageTheme;
 	private String messageText;
 	private String username;
+	private ISendingMessage iSendingMessage;
+	private String uuid;
 
-	public MessageClientThread(Session session, List<RegistrationMessage> messages, int emailIndex, String messageTheme,
-			String messageText, String username) {
+	public MessageClientEmailThread(Session session, List<RegistrationMessage> messages, int emailIndex,
+			String messageTheme, String messageText, String username, ISendingMessage iSendingMessage, String uuid) {
 		this.session = session;
 		this.messages = messages;
 		this.emailIndex = emailIndex;
 		this.messageTheme = messageTheme;
 		this.messageText = messageText;
 		this.username = username;
+		this.iSendingMessage = iSendingMessage;
+		this.uuid = uuid;
 	}
 
 	/**
-	 * Sending message on email
+	 * Sending message on email abou registration<br>
+	 * then store information in database
 	 */
+	@Override
 	public void sendMessage() {
 		try {
 			Message message = new MimeMessage(session);
@@ -51,6 +59,7 @@ public class MessageClientThread implements Runnable {
 			message.setText(messageText);
 
 			Transport.send(message);
+			iSendingMessage.insertForConfirmEmail(uuid, messages.get(emailIndex).getClientId());
 
 		} catch (MessagingException e) {
 			e.printStackTrace();

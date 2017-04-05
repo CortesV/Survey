@@ -1,7 +1,6 @@
 package com.softbistro.survey.participant.components.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
 
 /**
  * Class that represent group entity
@@ -31,16 +30,6 @@ public class Group implements Serializable {
 	 */
 	private String groupName;
 
-	/**
-	 * group created date
-	 */
-	private Date createdDate;
-
-	/**
-	 * group modified date
-	 */
-	private Date modifiedDate;
-
 	public Integer getId() {
 		return id;
 	}
@@ -63,21 +52,5 @@ public class Group implements Serializable {
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
-	}
-
-	public Date getCreatedDate() {
-		return createdDate;
-	}
-
-	public void setCreatedDate(Date createdDate) {
-		this.createdDate = createdDate;
-	}
-
-	public Date getModifiedDate() {
-		return modifiedDate;
-	}
-
-	public void setModifiedDate(Date modifiedDate) {
-		this.modifiedDate = modifiedDate;
 	}
 }

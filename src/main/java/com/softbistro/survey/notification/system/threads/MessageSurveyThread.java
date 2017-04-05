@@ -10,6 +10,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.softbistro.survey.notification.system.component.entity.SurveyMessage;
+import com.softbistro.survey.notification.system.component.interfacee.ISendingMessage;
+import com.softbistro.survey.notification.system.interfacee.ISending;
 
 /**
  * Start thread for sending message about surveys
@@ -17,7 +19,7 @@ import com.softbistro.survey.notification.system.component.entity.SurveyMessage;
  * @author zviproject
  *
  */
-public class MessageSurveyThread implements Runnable {
+public class MessageSurveyThread implements Runnable, ISending {
 
 	private Session session;
 	private List<SurveyMessage> messages;
@@ -25,20 +27,26 @@ public class MessageSurveyThread implements Runnable {
 	private String messageTheme;
 	private String messageText;
 	private String username;
+	private ISendingMessage iSendingMessage;
+	private String uuid;
 
 	public MessageSurveyThread(Session session, List<SurveyMessage> messages, int emailIndex, String messageTheme,
-			String messageText, String username) {
+			String messageText, String username, ISendingMessage iSendingMessage, String uuid) {
 		this.session = session;
 		this.messages = messages;
 		this.emailIndex = emailIndex;
 		this.messageTheme = messageTheme;
 		this.messageText = messageText;
 		this.username = username;
+		this.iSendingMessage = iSendingMessage;
+		this.uuid = uuid;
 	}
 
 	/**
-	 * Sending message on email
+	 * Sending message on email about survey <br>
+	 * then insert information in database about
 	 */
+	@Override
 	public void sendMessage() {
 		try {
 			Message message = new MimeMessage(session);
@@ -51,6 +59,8 @@ public class MessageSurveyThread implements Runnable {
 			message.setText(messageText);
 
 			Transport.send(message);
+			iSendingMessage.insertForConfirmVote(uuid, messages.get(emailIndex).getParticipantId(),
+					messages.get(emailIndex).getSurveyId());
 
 		} catch (MessagingException e) {
 			e.printStackTrace();
