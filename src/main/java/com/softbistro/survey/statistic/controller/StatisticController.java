@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.softbistro.survey.response.Response;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
 import com.softbistro.survey.statistic.export.SheetsService;
 import com.softbistro.survey.statistic.service.StatisticService;
@@ -41,7 +40,7 @@ public class StatisticController {
 	 * @return
 	 */
 	@RequestMapping(value = "/{survey_id}/get")
-	public Response exportSurveyStatistic(@PathVariable("survey_id") Integer surveyId) {
+	public ResponseEntity<Object> exportSurveyStatistic(@PathVariable("survey_id") Integer surveyId) {
 		return statisticService.exportSurveyStatistic(surveyId);
 	}
 

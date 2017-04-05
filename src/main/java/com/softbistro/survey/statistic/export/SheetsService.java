@@ -69,13 +69,13 @@ public class SheetsService {
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	public Spreadsheet sendGoogleSheets(List<SurveyStatisticExport> statistc)
+	public Spreadsheet sendGoogleSheets(List<SurveyStatisticExport> statistic)
 			throws IOException, GeneralSecurityException {
 		Spreadsheet requestBody = new Spreadsheet();
 
 		Sheets sheetsService = googleAuthorization.getSheetsService();
 
-		String title = statistc.get(0).getName() + new java.util.Date().toString();
+		String title = statistic.get(0).getName() + new java.util.Date().toString();
 
 		// ----------configure file---------
 		SpreadsheetProperties sp = new SpreadsheetProperties();
