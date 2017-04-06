@@ -2,8 +2,6 @@ package com.softbistro.survey.confirm.url.component.entity;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Response for site with information about question in survey
  * 
@@ -11,18 +9,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class VotePage {
-	@JsonProperty(value = "name")
+
+	private Integer id;
+
 	private String questionName;
 
 	private Integer required;
 
-	@JsonProperty(value = "answers")
 	private List<String> questionAnswers;
 
-	@JsonProperty(value = "answer_type")
 	private String answerType;
 
-	@JsonProperty(value = "required_comment")
 	private Integer requiredComment;
 
 	public String getQuestionName() {
@@ -65,4 +62,11 @@ public class VotePage {
 		this.requiredComment = required_comment;
 	}
 
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 }

@@ -35,7 +35,11 @@ public class VoteController {
 	 * @param uuid
 	 * @return
 	 */
-	@ApiOperation(value = "Write the Answer", notes = "Write answer to data base by uuid and answer list", tags = "Answer")
+	@ApiOperation(value = "Write the Answer", notes = "Write answer to data base by uuid and answer list"
+			+ "(Answer etitys contains : survey id, question, description short,"
+			+ " description Long, questionSection Id, answer Type, question Choices, required, required Comment. "
+			+ "Field answerType can have value such as: RATE1-10, RATE1-5, RATE1-3, BOOLEAN, LIST, MULTILIST, INPUT, MEMO)"
+	, tags = "Answer")
 	@RequestMapping(value = "/{uuid}", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> vote(@PathVariable(value = "uuid") String uuid, @RequestBody List<Answer> answers) {
 		return voteService.answerOnSurvey(uuid, answers);

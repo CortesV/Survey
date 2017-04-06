@@ -41,7 +41,7 @@ public class GroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Create new Group", notes = "Create new group instanse by client id and group name", tags = "Participant Group")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> setGroup(@RequestBody Group group, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
@@ -59,7 +59,7 @@ public class GroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Get Group By Id", notes = "Get group instanse by group id", tags = "Participant Group")
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Group> getGroupById(@PathVariable Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
@@ -77,7 +77,7 @@ public class GroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Get Group By Client", notes = "Get group instanse by group id", tags = "Participant Group")
-	@RequestMapping(value = "/client/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/client/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Group>> getGroupByClientId(@PathVariable Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
@@ -95,7 +95,7 @@ public class GroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Update Group Name By Id", notes = "Update group instanse by group name and group id", tags = "Participant Group")
-	@RequestMapping(method = RequestMethod.PUT)
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
 	public ResponseEntity<Object> updateGroup(@PathVariable Integer id, @RequestBody Group group,
 			@RequestHeader String token) {
 
@@ -114,7 +114,7 @@ public class GroupController {
 	 * @return ResponseEntity
 	 */
 	@ApiOperation(value = "Delete Group By Id", notes = "Delete group instanse by group id", tags = "Participant Group")
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
 	public ResponseEntity<Object> deleteGroupById(@PathVariable Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {

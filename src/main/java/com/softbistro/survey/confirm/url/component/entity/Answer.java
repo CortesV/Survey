@@ -1,7 +1,5 @@
 package com.softbistro.survey.confirm.url.component.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Contain information about answer
  * 
@@ -10,16 +8,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Answer {
 
-	@JsonProperty(value = "question_id")
 	private Integer questionId;
 
-	@JsonProperty(value = "answer_type")
 	private String answerType;
 
-	@JsonProperty(value = "answer_value")
 	private String answerValue;
 
-	@JsonProperty(value = "comment")
 	private String comment;
 
 	public String getAnswerType() {
@@ -53,5 +47,4 @@ public class Answer {
 	public void setQuestionId(Integer questionId) {
 		this.questionId = questionId;
 	}
-
 }

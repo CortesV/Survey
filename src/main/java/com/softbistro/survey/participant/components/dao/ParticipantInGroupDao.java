@@ -31,9 +31,9 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	private final static String SQL_FOR_DELETING_PARTICIPANT_IN_GROUP = "UPDATE connect_group_participant AS c "
 			+ "SET c.delete = 1 WHERE c.group_id = ? AND c.participant_id = ?";
 	private final static String SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID = "SELECT * FROM participant AS p "
-			+ "LEFT JOIN connect_group_participant AS c ON c.participant_id=p.id WHERE p.id= ?  AND p.delete = 0";
-	private final static String SQL_FOR_GETTING_PARTICIPANT_GROUPS = "SELECT * FROM group AS g "
-			+ "LEFT JOIN connect_group_participant AS c ON g.id=c.group_id WHERE g.id = ? AND g.delete = 0";
+			+ "LEFT JOIN connect_group_participant AS c ON c.participant_id=p.id WHERE c.group_id = ?  AND p.delete = 0";
+	private final static String SQL_FOR_GETTING_PARTICIPANT_GROUPS = "SELECT g.id, g.client_id, group_name FROM `group` AS g "
+			+ "LEFT JOIN connect_group_participant AS c ON g.id=c.group_id WHERE c.participant_id = ? AND g.delete = 0";
 
 	/**
 	 * Method for getting all participant by group
@@ -84,7 +84,7 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Participant participantId) {
+	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Integer participantId) {
 		try {
 			jdbcTemplate.update(SQL_FOR_DELETING_PARTICIPANT_IN_GROUP, groupId, participantId);
 			return new ResponseEntity<Object>(HttpStatus.OK);

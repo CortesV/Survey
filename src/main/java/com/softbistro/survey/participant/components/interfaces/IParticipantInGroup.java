@@ -32,7 +32,7 @@ public interface IParticipantInGroup {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Participant participantId);
+	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Integer participantId);
 
 	/**
 	 * Method for getting all participant by group

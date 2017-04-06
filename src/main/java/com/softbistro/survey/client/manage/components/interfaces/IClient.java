@@ -68,7 +68,7 @@ public interface IClient {
 	 * @return
 	 */
 	public ResponseEntity<Object> saveSocialClient(Client client);
-	
+
 	/**
 	 * Find client by email and client name
 	 * 
