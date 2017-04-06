@@ -3,18 +3,17 @@ package com.softbistro.survey.creating.survey.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.creating.survey.component.entity.Group;
 import com.softbistro.survey.creating.survey.component.entity.Survey;
-import com.softbistro.survey.creating.survey.component.interfacee.ISurvey;
+import com.softbistro.survey.creating.survey.component.interfacee.ISurveyDao;
 
 @Service
 public class SurveyService {
 
 	@Autowired
-	private ISurvey iSurvey;
+	private ISurveyDao iSurveyDao;
 
 	/**
 	 * Writing new survey into database.
@@ -23,8 +22,8 @@ public class SurveyService {
 	 *            - parsed JSON with information about survey.
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Integer> createSurvey(Survey survey) {
-		return iSurvey.createSurvey(survey);
+	public Integer create(Survey survey) {
+		return iSurveyDao.create(survey);
 	}
 
 	/**
@@ -33,8 +32,8 @@ public class SurveyService {
 	 * @param clientId
 	 * @return
 	 */
-	public ResponseEntity<List<Survey>> getAllSurveysOfClient(Integer clientId) {
-		return iSurvey.getAllSurveysOfClient(clientId);
+	public List<Survey> getAllSurveysByClient(Integer clientId) {
+		return iSurveyDao.getAllSurveysByClient(clientId);
 	}
 
 	/**
@@ -44,8 +43,8 @@ public class SurveyService {
 	 * @param surveyId
 	 *            - id of survey that will be changed
 	 */
-	public ResponseEntity<Object> updateOfSurvey(Survey survey) {
-		return iSurvey.updateOfSurvey(survey);
+	public void update(Survey survey) {
+		iSurveyDao.update(survey);
 	}
 
 	/**
@@ -54,8 +53,8 @@ public class SurveyService {
 	 * @param clientId
 	 * @return
 	 */
-	public ResponseEntity<List<Group>> getGroups(Integer clientId) {
-		return iSurvey.getGroupsClient(clientId);
+	public List<Group> getGroupsClient(Integer clientId) {
+		return iSurveyDao.getGroupsClient(clientId);
 	}
 
 	/**
@@ -64,8 +63,8 @@ public class SurveyService {
 	 * @param groups
 	 * @return
 	 */
-	public ResponseEntity<Object> addGroupsToSurvey(List<Group> groups) {
-		return iSurvey.addGroupsToSurvey(groups);
+	public void addGroups(List<Group> groups) {
+		iSurveyDao.addGroups(groups);
 	}
 
 	/**
@@ -73,8 +72,8 @@ public class SurveyService {
 	 * 
 	 * @param surveyId
 	 */
-	public ResponseEntity<List<Group>> getGroupsSurvey(Integer surveyId) {
-		return iSurvey.getGroupsSurvey(surveyId);
+	public List<Group> getGroupsSurvey(Integer surveyId) {
+		return iSurveyDao.getGroupsSurvey(surveyId);
 	}
 
 	/**
@@ -83,28 +82,28 @@ public class SurveyService {
 	 * 
 	 * @param surveyId
 	 */
-	public ResponseEntity<Object> deleteSurvey(Integer surveyId) {
-		return iSurvey.deleteSurvey(surveyId);
+	public void delete(Integer surveyId) {
+		iSurveyDao.delete(surveyId);
 	}
 
 	/**
-	 * Start survey
+	 * Start working time URL for vote and functions of survey
 	 * 
 	 * @param surveyId
 	 * @return
 	 */
-	public ResponseEntity<Object> startSurvey(Integer surveyId) {
-		return iSurvey.startSurvey(surveyId);
+	public void start(Integer surveyId) {
+		iSurveyDao.start(surveyId);
 	}
 
 	/**
-	 * Stop survey
+	 * Stop working time URL for vote and functions of survey
 	 * 
 	 * @param surveyId
 	 * @return
 	 */
-	public ResponseEntity<Object> stopSurvey(Integer surveyId) {
-		return iSurvey.stopSurvey(surveyId);
+	public void stop(Integer surveyId) {
+		iSurveyDao.stop(surveyId);
 	}
 
 }
