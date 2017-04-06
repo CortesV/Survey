@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.api.services.sheets.v4.Sheets;
@@ -19,6 +21,7 @@ import com.google.gdata.client.spreadsheet.FeedURLFactory;
 import com.google.gdata.client.spreadsheet.SpreadsheetService;
 import com.google.gdata.data.spreadsheet.CellEntry;
 import com.google.gdata.data.spreadsheet.CellFeed;
+import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
@@ -30,6 +33,8 @@ public class SheetsService {
 	@Autowired
 	private GoogleAuthorization googleAuthorization;
 
+	private static Logger log = Logger.getLogger(SheetsService.class);
+
 	/**
 	 * Creating and configure new sheets
 	 * 
@@ -37,17 +42,15 @@ public class SheetsService {
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	public Spreadsheet sendGoogleSheets(List<SurveyStatisticExport> statistic)
-			throws IOException, GeneralSecurityException {
+	public Spreadsheet send(List<SurveyStatisticExport> statistic) throws IOException, GeneralSecurityException {
 
 		Sheets sheetsService = googleAuthorization.getSheetsService();
 
-		Sheets.Spreadsheets.Create request = sheetsService.spreadsheets()
-				.create(createSheets(statistic, sheetsService));
+		Sheets.Spreadsheets.Create request = sheetsService.spreadsheets().create(create(statistic, sheetsService));
 
 		Spreadsheet response = request.execute();
 
-		insertMainRows(response.getSpreadsheetId());
+		insertData(response.getSpreadsheetId(), statistic);
 
 		return response;
 
@@ -60,7 +63,7 @@ public class SheetsService {
 	 * @param sheetsService
 	 * @return
 	 */
-	public Spreadsheet createSheets(List<SurveyStatisticExport> statistic, Sheets sheetsService) {
+	public Spreadsheet create(List<SurveyStatisticExport> statistic, Sheets sheetsService) {
 		String title = statistic.get(0).getName() + new java.util.Date().toString();
 
 		Spreadsheet requestBody = new Spreadsheet();
@@ -80,7 +83,6 @@ public class SheetsService {
 		sheets.add(sheet);
 
 		requestBody.setSheets(sheets);
-
 		return requestBody;
 	}
 
@@ -89,59 +91,100 @@ public class SheetsService {
 	 * 
 	 * @param key
 	 */
-	public void insertMainRows(String key) {
+	public void insertData(String key, List<SurveyStatisticExport> statistic) {
 		try {
 
-			SpreadsheetService service1 = new SpreadsheetService("Survey Softbistro");
+			SpreadsheetService spreadsheetService = new SpreadsheetService("SurveySoftbistro");
 
-			service1.setOAuth2Credentials(googleAuthorization.authorize());
+			spreadsheetService.setOAuth2Credentials(googleAuthorization.authorize());
 
-			service1.setProtocolVersion(SpreadsheetService.Versions.V3);
+			spreadsheetService.setProtocolVersion(SpreadsheetService.Versions.V3);
 
 			URL url = FeedURLFactory.getDefault().getWorksheetFeedUrl(key, "private", "full");
 
 			WorksheetEntry worksheetEntry;
-			worksheetEntry = service1.getFeed(url, WorksheetFeed.class).getEntries().get(0);
+			worksheetEntry = spreadsheetService.getFeed(url, WorksheetFeed.class).getEntries().get(0);
 
 			URL celledUrl = worksheetEntry.getCellFeedUrl();
 
-			CellFeed cellFeed = service1.getFeed(celledUrl, CellFeed.class);
+			CellFeed cellFeed = spreadsheetService.getFeed(celledUrl, CellFeed.class);
 
-			CellEntry cellEntry = new CellEntry(1, 1, "Survey id");
-			cellFeed.insert(cellEntry);
+			List<String> arrHeadersColumn = generateHeadersColumn(cellFeed);
 
-			cellEntry = new CellEntry(1, 2, "Survey name");
-			cellFeed.insert(cellEntry);
+			ListEntry newRow = new ListEntry();
 
-			cellEntry = new CellEntry(1, 3, "Participant id");
-			cellFeed.insert(cellEntry);
+			int column = 0;
+			for (int numberOfRecord = 0; numberOfRecord < statistic.size(); numberOfRecord++) {
 
-			cellEntry = new CellEntry(1, 4, "First name");
-			cellFeed.insert(cellEntry);
+				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getId().toString());
+				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getName());
+				fillValue(newRow, arrHeadersColumn.get(column++),
+						statistic.get(numberOfRecord).getParticipantId().toString());
+				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getFirstName());
+				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getLastName());
 
-			cellEntry = new CellEntry(1, 5, "Last name");
-			cellFeed.insert(cellEntry);
+				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getGroupName());
+				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getQuestionName());
+				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getAnswer());
 
-			cellEntry = new CellEntry(1, 6, "Group name");
-			cellFeed.insert(cellEntry);
+				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getComment());
+				fillValue(newRow, arrHeadersColumn.get(column),
+						statistic.get(numberOfRecord).getAnswerDateTime().toString());
+				spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
 
-			cellEntry = new CellEntry(1, 7, "Question name");
-			cellFeed.insert(cellEntry);
+				column = 0;
+			}
 
-			cellEntry = new CellEntry(1, 8, "Answer");
-			cellFeed.insert(cellEntry);
-
-			cellEntry = new CellEntry(1, 9, "Comment");
-			cellFeed.insert(cellEntry);
-
-			cellEntry = new CellEntry(1, 10, "Answer data");
-			cellFeed.insert(cellEntry);
-
+			log.info("************* Finish sending statistic on the google sheets");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
+
+	}
+
+	private void fillValue(ListEntry newRow, String name, String value) {
+		if (value != null) {
+			newRow.getCustomElements().setValueLocal(name, value);
+		} else {
+			newRow.getCustomElements().setValueLocal(name, " - ");
+		}
+
+	}
+
+	public List<String> generateHeadersColumn(CellFeed cellFeed) {
+		List<String> arrNames = new LinkedList<>();
+
+		try {
+			arrNames.add("SurveyId");
+			arrNames.add("SurveyName");
+			arrNames.add("ParticipantId");
+			arrNames.add("FirstName");
+			arrNames.add("LastName");
+			arrNames.add("GroupName");
+			arrNames.add("QuestionName");
+			arrNames.add("Answer");
+			arrNames.add("Comment");
+			arrNames.add("AnswerData");
+
+			CellEntry cellEntry;
+
+			int cell = 1;
+			for (String name : arrNames) {
+
+				cellEntry = new CellEntry(1, cell++, name);
+				cellFeed.insert(cellEntry);
+			}
+
+		} catch (ServiceException | IOException e) {
+			log.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return arrNames;
+	}
+
+	public void insertStatistic() {
 
 	}
 

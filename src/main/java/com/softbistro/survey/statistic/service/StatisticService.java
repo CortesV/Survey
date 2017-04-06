@@ -39,7 +39,7 @@ public class StatisticService {
 		SheetsService sheetsService = new SheetsService();
 
 		try {
-			sheetsService.sendGoogleSheets(statisticDao.exportSurveyStatistic(surveyId));
+			sheetsService.send(statisticDao.exportSurveyStatistic(surveyId));
 		} catch (IOException | GeneralSecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

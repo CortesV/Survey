@@ -24,7 +24,7 @@ public class StatisticController {
 	 *            - survey id for getting information
 	 * @return
 	 */
-	@RequestMapping(value = "/{survey_id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{survey_id}/get", method = RequestMethod.GET)
 	public ResponseEntity<SurveyStatisticShort> surveyStatistic(@PathVariable(value = "survey_id") Integer surveyId) {
 		return statisticService.surveyStatistic(surveyId);
 	}
@@ -35,7 +35,7 @@ public class StatisticController {
 	 * @param surveyId
 	 * @return
 	 */
-	@RequestMapping(value = "/{survey_id}/get")
+	@RequestMapping(value = "/{survey_id}/")
 	public ResponseEntity<Object> exportSurveyStatistic(@PathVariable("survey_id") Integer surveyId) {
 		return statisticService.exportSurveyStatistic(surveyId);
 	}
