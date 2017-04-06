@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.softbistro.survey.imports.system.interfaces.IImportSurvey;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import springfox.documentation.annotations.ApiIgnore;
+
 /**
  * Controller for import survey
  * 
@@ -22,7 +26,7 @@ public class ImportSurveyController {
 
 	@Autowired
 	private IImportSurvey iImportSurvey;
-	
+
 	/**
 	 * Importing survey from selected file of csv type to datadase.
 	 * 
@@ -30,12 +34,14 @@ public class ImportSurveyController {
 	 * @param clientId
 	 * @return Response
 	 */
-	@RequestMapping(value = "/import", method = RequestMethod.POST)
-	public ResponseEntity<Object> importSurvey(HttpServletRequest request, @RequestParam(name = "clientId") Long clientId) {
+	@ApiIgnore
+	@ApiOperation(value = "Import Survey", notes = "Import survey from csv file", tags = "Import")
+	@RequestMapping(value = "/import", method = RequestMethod.POST, produces = "application/json")
+	@ApiImplicitParam(dataType = "HttpServletRequest")
+	public ResponseEntity<Object> importSurvey(HttpServletRequest request,
+			@RequestParam(name = "clientId") Long clientId) {
 
 		return iImportSurvey.importSyrveyCSV(request, clientId);
 	}
-
-	
 
 }
