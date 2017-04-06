@@ -71,7 +71,7 @@ public class QuestionDao implements IQuestion {
 
 		try {
 
-			List<Question> questionList = jdbc.query(SELECT_QUESTION_BY_ID, new BeanPropertyRowMapper(Question.class),
+			List<Question> questionList = jdbc.query(SELECT_QUESTION_BY_ID, new BeanPropertyRowMapper<>(Question.class),
 					id);
 
 			return questionList.isEmpty() ? new ResponseEntity<>(HttpStatus.OK)

@@ -26,7 +26,7 @@ import com.softbistro.survey.client.manage.service.FindClientService;
 public class ClientDao implements IClient {
 
 	private static final Logger LOGGER = Logger.getLogger(ClientDao.class);
-	
+
 	private static final String SELECT_CLIENT_FIRST_PART = "SELECT * FROM clients  WHERE clients.";
 	private static final String SELECT_CLIENT_SECOND_PART = " = ? and clients.`delete` = 0";
 	private static final String FIND_CLIENT_BY_ID = "SELECT * FROM clients  WHERE clients.id = ? and clients.`delete` = 0";
@@ -213,7 +213,7 @@ public class ClientDao implements IClient {
 
 		try {
 
-			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper(Client.class),
+			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper<>(Client.class),
 					client.getEmail(), client.getClientName());
 
 			return clientList.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)

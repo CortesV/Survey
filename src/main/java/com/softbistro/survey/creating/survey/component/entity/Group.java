@@ -1,19 +1,19 @@
 package com.softbistro.survey.creating.survey.component.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+/**
+ * Class that represent group entity
+ * 
+ * @author af150416
+ *
+ */
 public class Group {
 
-	@JsonProperty(value = "group_id")
 	private Integer id;
 
-	@JsonProperty(value = "client_id")
 	private Integer clientId;
 
-	@JsonProperty(value = "survey_id")
 	private Integer surveyId;
 
-	@JsonProperty(value = "group_name")
 	private String groupName;
 
 	public Integer getId() {

@@ -70,6 +70,7 @@ public interface IClient {
 	 */
 	public ResponseEntity<Client> saveSocialClient(Client client);
 	
+
 	/**
 	 * Find client by email and client name
 	 * 

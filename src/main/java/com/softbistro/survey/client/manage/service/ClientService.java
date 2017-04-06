@@ -30,6 +30,7 @@ public class ClientService {
 	public ResponseEntity<Client> findClient(Integer id) {
 
 		return iClient.findClient(id);
+
 	}
 
 	/**

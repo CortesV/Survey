@@ -32,7 +32,7 @@ public class VoteDao implements IVote {
 
 	private static final String SQL_UPDATE_STATUS_SENDING_SURVEY = "UPDATE sending_survey SET answer_status= ? WHERE url = ?";
 
-	private static final String SQL_GET_INFORMATION_ABOUT_QUESTIONS = "SELECT question, required, question_choices, answer_type, required_comment FROM questions "
+	private static final String SQL_GET_INFORMATION_ABOUT_QUESTIONS = "SELECT question, required, question_choices, answer_type, required_comment, id FROM questions "
 			+ "WHERE survey_id = ? AND `delete` = 0";
 
 	private final String statusForUpdate = "VOTED";
@@ -123,6 +123,7 @@ public class VoteDao implements IVote {
 							votePage.setQuestionAnswers(choiseForQuestion);
 							votePage.setAnswerType(rs.getString(4));
 							votePage.setRequiredComment(rs.getInt(5));
+							votePage.setId(rs.getInt(6));
 
 							return votePage;
 						}
