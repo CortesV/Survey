@@ -28,7 +28,7 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/rest/survey/v1/client")
 public class ClientController {
 
-	private static final Logger LOGGER = Logger.getLogger(AuthController.class);
+	private static final Logger LOGGER = Logger.getLogger(ClientController.class);
 
 	@Autowired
 	private ClientService clientService;
@@ -53,7 +53,14 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return clientService.findClient(id);
+		try {
+
+			return new ResponseEntity<>(clientService.findClient(id), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.debug(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -66,9 +73,17 @@ public class ClientController {
 	 */
 	@ApiOperation(value = "Create new Client", notes = "Create new Client instanse by client name, password, email", tags = "Client")
 	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<Object> saveClient(@RequestBody Client client) {
+	public ResponseEntity<Client> saveClient(@RequestBody Client client) {
 
-		return clientService.saveClient(client);
+		try {
+
+			clientService.saveClient(client);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.debug(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -80,14 +95,22 @@ public class ClientController {
 	 */
 	@ApiOperation(value = "Delete Client By id", notes = "Delete Client instanse by client id", tags = "Client")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
-	public ResponseEntity<Object> deleteClient(@PathVariable("id") Integer id, @RequestHeader String token) {
+	public ResponseEntity<Client> deleteClient(@PathVariable("id") Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return clientService.deleteClient(id);
+		try {
+
+			clientService.deleteClient(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.debug(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -104,7 +127,7 @@ public class ClientController {
 	 */
 	@ApiOperation(value = "Update Client By Id", notes = "Update Client instanse by client name, password, email and client id", tags = "Client")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Object> updateClient(@RequestBody Client client, @PathVariable("id") Integer id,
+	public ResponseEntity<Client> updateClient(@RequestBody Client client, @PathVariable("id") Integer id,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
@@ -112,7 +135,15 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return clientService.updateClient(client, id);
+		try {
+
+			clientService.updateClient(client, id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.debug(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -128,7 +159,7 @@ public class ClientController {
 	 */
 	@ApiOperation(value = "Update Client Password By Id", notes = "Update Client password by password and client id", tags = "Client")
 	@RequestMapping(value = "/password/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Object> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id,
+	public ResponseEntity<Client> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
@@ -136,6 +167,14 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return clientService.updatePassword(client, id);
+		try {
+
+			clientService.updatePassword(client, id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.debug(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

@@ -30,7 +30,7 @@ public class FindClientService {
 	 *            client - information that get by http request
 	 * @return return - information about client from database
 	 */
-	public ResponseEntity<Client> findClient(Client client) {
+	public Client findClient(Client client) {
 
 		String credential = null;
 		String template = null;
@@ -53,7 +53,7 @@ public class FindClientService {
 	 * @param client
 	 * @return
 	 */
-	public ResponseEntity<Client> findByEmail(Client client) {
+	public Client findByEmail(Client client) {
 
 		String credential = null;
 		String template = null;

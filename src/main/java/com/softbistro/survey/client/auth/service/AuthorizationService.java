@@ -29,7 +29,7 @@ public class AuthorizationService {
 	private static final Logger LOGGER = Logger.getLogger(AuthorizationService.class);
 	private static final String FACEBOOK = "facebook";
 	private static final String GOOGLE = "google";
-	
+
 	private static final String WRONG_PASS_OR_CLIENT_EXIST = "Simple auth answer --- Wrong password or this client doesn't exist in database";
 	private static final String SIMPLE_AUTH = "Simple auth answer --- ";
 	private static final String SOCIAL_AUTH = "Social auth answer --- ";
@@ -61,26 +61,26 @@ public class AuthorizationService {
 	 *            client - information about client
 	 * @return return - information about client that is authorized
 	 */
-	public ResponseEntity<Client> simpleAthorization(Client requestClient) {
+	public Client simpleAthorization(Client requestClient) {
 
 		AuthorizedClient authorizedClient;
 		Client responseClient;
 		try {
 
-			Client resultFindClient = findClientService.findByEmail(requestClient).getBody();
+			Client resultFindClient = findClientService.findByEmail(requestClient);
 
 			String md5HexPassword = DigestUtils.md5Hex(requestClient.getPassword());
 
 			if (resultFindClient == null || !resultFindClient.getPassword().equals(md5HexPassword)) {
 
 				LOGGER.info(WRONG_PASS_OR_CLIENT_EXIST);
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return null;
 			}
 
 			String uniqueKey = UUID.randomUUID().toString();
 			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
 			authorizedClientService.saveClient(authorizedClient);
-			
+
 			responseClient = new Client();
 			responseClient.setId(resultFindClient.getId());
 			responseClient.setClientName(resultFindClient.getClientName());
@@ -88,12 +88,12 @@ public class AuthorizationService {
 			responseClient.setToken(authorizedClient.getUniqueKey());
 
 			LOGGER.info(SIMPLE_AUTH + responseClient.toString());
-			return new ResponseEntity<>(responseClient, HttpStatus.OK);
+			return responseClient;
 
 		} catch (Exception e) {
 
 			LOGGER.debug(SIMPLE_AUTH_EXCEPTION, e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return null;
 		}
 
 	}
@@ -106,7 +106,7 @@ public class AuthorizationService {
 	 *            client - information about client
 	 * @return return - information about client that is authorized
 	 */
-	public ResponseEntity<Client> socialAuthorization(Client requestClient) {
+	public Client socialAuthorization(Client requestClient) {
 
 		AuthorizedClient authorizedClient;
 		Client responseClient;
@@ -117,17 +117,17 @@ public class AuthorizationService {
 			if (!checkFlag(requestClient)) {
 
 				LOGGER.info(SOCIAL_AUTH + BAD_FLAG);
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return null;
 			}
 
 			clientService.saveSocialClient(requestClient);
 
-			Client resultFindClient = findClientService.findClient(requestClient).getBody();
+			Client resultFindClient = findClientService.findClient(requestClient);
 
 			if (resultFindClient == null) {
 
 				LOGGER.info(SOCIAL_AUTH + NOT_EXIST_IN_DB);
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return null;
 			}
 
 			if (resultFindClient.getFacebookId() != null
@@ -135,21 +135,22 @@ public class AuthorizationService {
 					&& StringUtils.isNotBlank(requestClient.getFacebookId())) {
 
 				LOGGER.info(SOCIAL_AUTH + WRONG_FACEBOOK);
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return null;
 			}
 
-			if (resultFindClient.getGoogleId() != null && !resultFindClient.getGoogleId().equals(requestClient.getGoogleId())
+			if (resultFindClient.getGoogleId() != null
+					&& !resultFindClient.getGoogleId().equals(requestClient.getGoogleId())
 					&& StringUtils.isNotBlank(requestClient.getGoogleId())) {
 
 				LOGGER.info(SOCIAL_AUTH + WRONG_GOOGLE);
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return null;
 			}
 
 			if (resultFindClient.getEmail() != null && !resultFindClient.getEmail().equals(requestClient.getEmail())
 					&& StringUtils.isNotBlank(requestClient.getEmail())) {
 
 				LOGGER.info(SOCIAL_AUTH + WRONG_EMAIL);
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+				return null;
 			}
 
 			String uniqueKey = UUID.randomUUID().toString();
@@ -163,12 +164,12 @@ public class AuthorizationService {
 			responseClient.setToken(authorizedClient.getUniqueKey());
 
 			LOGGER.info(SOCIAL_AUTH + responseClient.toString());
-			return new ResponseEntity<>(responseClient, HttpStatus.OK);
+			return responseClient;
 
 		} catch (Exception e) {
 
 			LOGGER.debug(SOCIAL_AUTH_EXCEPTION, e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return null;
 		}
 
 	}
@@ -200,14 +201,9 @@ public class AuthorizationService {
 	 * @param token
 	 * @return
 	 */
-	public ResponseEntity<Object> checkToken(String token) {
+	public boolean checkToken(String token) {
 
-		if (!checkAccess(token)) {
-
-			return new ResponseEntity<>(false, HttpStatus.UNAUTHORIZED);
-		}
-
-		return new ResponseEntity<>(true, HttpStatus.OK);
+		return !checkAccess(token) ? false : true;
 	}
 
 	/**
@@ -222,16 +218,16 @@ public class AuthorizationService {
 				|| StringUtils.isNotBlank(client.getFacebookId()) && client.getFlag().equals(FACEBOOK);
 	}
 
-	public ResponseEntity<Client> addSocialInfo(Client socialClient) {
+	public Client addSocialInfo(Client socialClient) {
 
-		Client updateClient = clientService.findClient(socialClient.getId()).getBody();
-		
+		Client updateClient = clientService.findClient(socialClient.getId());
+
 		if (StringUtils.isNotBlank(socialClient.getFacebookId()) && StringUtils.isBlank(socialClient.getGoogleId())) {
 
 			updateClient.setFacebookId(socialClient.getFacebookId());
 			clientService.updateClient(updateClient, updateClient.getId());
 			LOGGER.info(ADD_SOC_INFO);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return null;
 		}
 
 		if (StringUtils.isNotBlank(socialClient.getGoogleId()) && StringUtils.isBlank(socialClient.getFacebookId())) {
@@ -239,10 +235,10 @@ public class AuthorizationService {
 			updateClient.setGoogleId(socialClient.getGoogleId());
 			clientService.updateClient(updateClient, updateClient.getId());
 			LOGGER.info(ADD_SOC_INFO);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return null;
 		}
-		
-		return new ResponseEntity<>(HttpStatus.OK);
+
+		return null;
 	}
 
 }

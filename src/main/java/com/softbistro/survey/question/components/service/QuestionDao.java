@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.softbistro.survey.client.manage.components.service.ClientDao;
 import com.softbistro.survey.question.components.entity.Question;
 import com.softbistro.survey.question.components.interfaces.IQuestion;
 
@@ -23,6 +25,8 @@ import com.softbistro.survey.question.components.interfaces.IQuestion;
  */
 @Repository
 public class QuestionDao implements IQuestion {
+
+	private static final Logger LOGGER = Logger.getLogger(QuestionDao.class);
 
 	private static final String SELECT_QUESTION_BY_ID = "SELECT * FROM questions  WHERE id = ? AND `delete` = 0";
 	private static final String SAVE_QUESTION = "INSERT INTO questions (survey_id, question, description_short, description_long, question_section_id, answer_type, "
@@ -67,19 +71,19 @@ public class QuestionDao implements IQuestion {
 	 * @return return - all information about question
 	 */
 	@Override
-	public ResponseEntity<Question> findQuestionById(Long id) {
+	public Question findQuestionById(Long id) {
 
 		try {
 
 			List<Question> questionList = jdbc.query(SELECT_QUESTION_BY_ID, new BeanPropertyRowMapper<>(Question.class),
 					id);
 
-			return questionList.isEmpty() ? new ResponseEntity<>(HttpStatus.OK)
-					: new ResponseEntity<>(questionList.get(0), HttpStatus.OK);
+			return questionList.isEmpty() ? null : questionList.get(0);
 
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			LOGGER.debug(e.getMessage());
+			return null;
 		}
 	}
 
@@ -92,7 +96,7 @@ public class QuestionDao implements IQuestion {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public ResponseEntity<Object> saveQuestion(Question question) {
+	public void saveQuestion(Question question) {
 
 		try {
 
@@ -101,10 +105,8 @@ public class QuestionDao implements IQuestion {
 					question.getQuestionChoices(), question.isRequired(), question.isRequiredComment());
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			LOGGER.debug(e.getMessage());
 		}
-
-		return new ResponseEntity<>(HttpStatus.CREATED);
 
 	}
 
@@ -116,17 +118,16 @@ public class QuestionDao implements IQuestion {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public ResponseEntity<Object> deleteQuestion(Long id) {
+	public void deleteQuestion(Long id) {
 
 		try {
 
 			jdbc.update(DELETE_QUESTION, id);
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			LOGGER.debug(e.getMessage());
 		}
 
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -140,7 +141,7 @@ public class QuestionDao implements IQuestion {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public ResponseEntity<Object> updateQuestion(Question question, Long id) {
+	public void updateQuestion(Question question, Long id) {
 
 		try {
 			jdbc.update(UPDATE_QUESTION, question.getSurveyId(), question.getQuestion(), question.getDescriptionShort(),
@@ -148,10 +149,8 @@ public class QuestionDao implements IQuestion {
 					question.getQuestionChoices(), question.isRequired(), question.isRequiredComment(), id);
 		} catch (Exception e) {
 
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			LOGGER.debug(e.getMessage());
 		}
-
-		return new ResponseEntity<>(HttpStatus.OK);
 
 	}
 
