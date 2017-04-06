@@ -35,8 +35,8 @@ public class ParticipantDao implements IParticipant {
 			+ "LEFT JOIN attribute_values AS av ON av.participant_id=p.id LEFT JOIN attributes AS at "
 			+ "ON at.id=av.attribute_id WHERE at.id = ? AND av.attribute_value = ? AND p.delete = 0 AND av.delete = 0 AND at.delete = 0";
 	private final static String SQL_FOR_GETTING_PARTICIPANT_BY_CLIENT_ID = "SELECT p.id, p.email, p.first_name, p.last_name"
-			+ " FROM participant AS p LEFT JOIN connect_group_participant AS c ON c.participant_id=p.id LEFT "
-			+ "JOIN `group` AS g ON g.id=c.group_id WHERE g.client_id = ? AND p.delete = 0";
+			+ " FROM participant AS p LEFT JOIN connect_group_participant AS cgp ON cgp.participant_id=p.id LEFT "
+			+ "JOIN `group` AS g ON g.id=cgp.group_id WHERE g.client_id = ? AND p.delete = 0";
 
 	/**
 	 * Method for creating participant
