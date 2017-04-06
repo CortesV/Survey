@@ -2,6 +2,7 @@ package com.softbistro.survey.client.manage.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
@@ -29,11 +30,11 @@ public class FindClientService {
 	 *            client - information that get by http request
 	 * @return return - information about client from database
 	 */
-	public Client findClient(Client client) {
+	public ResponseEntity<Client> findClient(Client client) {
 
 		String credential = null;
 		String template = null;
-		
+
 		if (StringUtils.isNotBlank(client.getFacebookId())) {
 
 			credential = client.getFacebookId();
@@ -43,12 +44,16 @@ public class FindClientService {
 			template = GOOGLE_ID;
 		}
 
-		return (Client) clientService.findByTemplate(template, credential).getData();
+		return clientService.findByTemplate(template, credential);
 
 	}
-	
-	public Client findByEmail(Client client){
-		
+
+	/**
+	 * Method that find client by email
+	 * @param client
+	 * @return
+	 */
+	public ResponseEntity<Client> findByEmail(Client client) {
 
 		String credential = null;
 		String template = null;
@@ -57,8 +62,8 @@ public class FindClientService {
 
 			credential = client.getEmail();
 			template = EMAIL;
-		} 
-		
-		return (Client) clientService.findByTemplate(template, credential).getData();
+		}
+
+		return clientService.findByTemplate(template, credential);
 	}
 }

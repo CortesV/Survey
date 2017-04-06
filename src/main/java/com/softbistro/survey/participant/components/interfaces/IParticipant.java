@@ -1,7 +1,10 @@
 package com.softbistro.survey.participant.components.interfaces;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
 import com.softbistro.survey.participant.components.entity.Participant;
-import com.softbistro.survey.response.Response;
 
 /**
  * Interface for participant entity
@@ -15,47 +18,47 @@ public interface IParticipant {
 	 * Method for creating participant
 	 * 
 	 * @param participant
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response setParticipant(Participant participant);
+	public ResponseEntity<Object> setParticipant(Participant participant);
 
 	/**
 	 * Method for updating participant
 	 * 
 	 * @param participant
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response updateParticipant(Participant participant);
+	public ResponseEntity<Object> updateParticipant(Participant participant, Integer id);
 
 	/**
 	 * Method for deleting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deleteParticipantById(Integer participantId);
+	public ResponseEntity<Object> deleteParticipantById(Integer participantId);
 
 	/**
 	 * Method to getting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantById(Integer participantId);
+	public ResponseEntity<Participant> getParticipantById(Integer participantId);
 
 	/**
 	 * Method to getting participant from db by email and client Id
 	 * 
 	 * @param email, clientId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantByEmailAndClientId(String email, Integer cliectId);
+	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(String email, Integer cliectId);
 	
 	/**
 	 * Method to getting participant from db by attribute value
 	 * 
 	 * @param attributeId, attribute value
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantByAttributeValue(Integer attributeId, String attributeValue);
+	public ResponseEntity<List<Participant>> getParticipantByAttributeValue(Integer attributeId, String attributeValue);
 }

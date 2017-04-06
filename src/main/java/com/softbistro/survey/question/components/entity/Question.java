@@ -9,14 +9,24 @@ package com.softbistro.survey.question.components.entity;
 public class Question {
 	
 	private Long id;
+	
 	private Long surveyId;
+	
 	private String question;
+	
 	private String descriptionShort;
+	
 	private String descriptionLong;
+	
 	private Long questionSectionId;
+	
 	private String answerType;
+	
 	private String questionChoices;
+	
 	private Boolean required;
+	
+	private Boolean requiredComment;
 
 	public Long getId() {
 		return id;
@@ -90,4 +100,11 @@ public class Question {
 		this.required = required;
 	}
 
+	public Boolean isRequiredComment() {
+		return requiredComment;
+	}
+
+	public void setRequiredComment(Boolean requiredComment) {
+		this.requiredComment = requiredComment;
+	}
 }

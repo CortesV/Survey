@@ -4,11 +4,11 @@ import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.confirm.url.component.interfacee.IConfirm;
-import com.softbistro.survey.response.Response;
 
 /**
  * Input information about operation from message in database
@@ -47,14 +47,14 @@ public class ConfirmDao implements IConfirm {
 	 * @return
 	 */
 	@Override
-	public Response confirmPassword(String uuid) {
+	public ResponseEntity<Object> confirmPassword(String uuid) {
 		try {
 			Integer clientId = jdbcTemplate.queryForObject(SQL_GET_INFORMATION_BY_USING_UUID_PASSWORD, Integer.class,
 					uuid, date);
 			jdbcTemplate.update(SQL_UPDATE_STATUS_FOR_CONFIRMING_CLIENT_OPERATIONS, statusForConfirmPassword, clientId);
-			return new Response(null, HttpStatus.OK, null);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, null);
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -65,14 +65,14 @@ public class ConfirmDao implements IConfirm {
 	 * @return
 	 */
 	@Override
-	public Response confirmEmail(String uuid) {
+	public ResponseEntity<Object> confirmEmail(String uuid) {
 		try {
 			Integer clientId = jdbcTemplate.queryForObject(SQL_GET_INFORMATION_BY_USING_UUID_CLIENT, Integer.class,
 					uuid, date);
 			jdbcTemplate.update(SQL_UPDATE_STATUS_FOR_CONFIRMING_CLIENT_OPERATIONS, statusForConfirmClient, clientId);
-			return new Response(null, HttpStatus.OK, null);
+			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, null);
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

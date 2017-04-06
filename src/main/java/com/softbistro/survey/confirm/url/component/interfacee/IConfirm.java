@@ -1,6 +1,6 @@
 package com.softbistro.survey.confirm.url.component.interfacee;
 
-import com.softbistro.survey.response.Response;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Using for confirm operations from notification system
@@ -16,7 +16,7 @@ public interface IConfirm {
 	 * @param uuid
 	 * @return
 	 */
-	public Response confirmPassword(String uuid);
+	public ResponseEntity<Object> confirmPassword(String uuid);
 
 	/**
 	 * Confirming email new client by using update status in database
@@ -24,5 +24,5 @@ public interface IConfirm {
 	 * @param uuid
 	 * @return
 	 */
-	public Response confirmEmail(String uuid);
+	public ResponseEntity<Object> confirmEmail(String uuid);
 }
