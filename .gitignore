@@ -11,7 +11,6 @@
 .project
 .settings
 .springBeans
-.metadata
 
 ### IntelliJ IDEA ###
 .idea
@@ -27,3 +26,4 @@ dist/
 nbdist/
 .nb-gradle/
 /bin/
+/.gradle/
