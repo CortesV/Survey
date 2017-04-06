@@ -2,12 +2,10 @@ package com.softbistro.survey.creating.survey.component.interfacee;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.softbistro.survey.creating.survey.component.entity.Group;
 import com.softbistro.survey.creating.survey.component.entity.Survey;
 
-public interface ISurvey {
+public interface ISurveyDao {
 
 	/**
 	 * Writing new survey into database.
@@ -16,7 +14,7 @@ public interface ISurvey {
 	 *            - parsed JSON with information about survey.
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Integer> createSurvey(Survey survey);
+	public Integer create(Survey survey);
 
 	/**
 	 * Update name of survey in database
@@ -25,7 +23,7 @@ public interface ISurvey {
 	 * @param surveyId
 	 *            - id of survey that will be changed
 	 */
-	public ResponseEntity<Object> updateOfSurvey(Survey survey);
+	public void update(Survey survey);
 
 	/**
 	 * Get all surveys from one client
@@ -33,7 +31,7 @@ public interface ISurvey {
 	 * @param clientId
 	 * @return
 	 */
-	public ResponseEntity<List<Survey>> getAllSurveysOfClient(Integer clientId);
+	public List<Survey> getAllSurveysByClient(Integer clientId);
 
 	/**
 	 * Get all groups that has client
@@ -41,7 +39,7 @@ public interface ISurvey {
 	 * @param clientId
 	 * @return
 	 */
-	public ResponseEntity<List<Group>> getGroupsClient(Integer clientId);
+	public List<Group> getGroupsClient(Integer clientId);
 
 	/**
 	 * Add groups of participant that will be in survey
@@ -49,14 +47,14 @@ public interface ISurvey {
 	 * @param groups
 	 * @return
 	 */
-	public ResponseEntity<Object> addGroupsToSurvey(List<Group> groups);
+	public void addGroups(List<Group> groups);
 
 	/**
 	 * Get all groups that has survey
 	 * 
 	 * @param surveyId
 	 */
-	public ResponseEntity<List<Group>> getGroupsSurvey(Integer surveyId);
+	public List<Group> getGroupsSurvey(Integer surveyId);
 
 	/**
 	 * 
@@ -64,22 +62,22 @@ public interface ISurvey {
 	 * 
 	 * @param surveyId
 	 */
-	public ResponseEntity<Object> deleteSurvey(Integer surveyId);
+	public void delete(Integer surveyId);
 
 	/**
-	 * Start survey
+	 * Start working time URL for vote and functions of survey
 	 * 
 	 * @param surveyId
 	 * @return
 	 */
-	public ResponseEntity<Object> startSurvey(Integer surveyId);
+	public void start(Integer surveyId);
 
 	/**
-	 * Start survey
+	 * Stop working time URL for vote and functions of survey
 	 * 
 	 * @param surveyId
 	 * @return
 	 */
-	public ResponseEntity<Object> stopSurvey(Integer surveyId);
+	public void stop(Integer surveyId);
 
 }
