@@ -87,4 +87,24 @@ public class SurveyService {
 		return iSurvey.deleteSurvey(surveyId);
 	}
 
+	/**
+	 * Start survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	public ResponseEntity<Object> startSurvey(Integer surveyId) {
+		return iSurvey.startSurvey(surveyId);
+	}
+
+	/**
+	 * Stop survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	public ResponseEntity<Object> stopSurvey(Integer surveyId) {
+		return iSurvey.stopSurvey(surveyId);
+	}
+
 }

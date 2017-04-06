@@ -159,4 +159,38 @@ public class SurveyController {
 
 		return surveyService.deleteSurvey(surveyId);
 	}
+
+	/**
+	 * Start survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@ApiOperation(value = "Start Survey By Id", notes = "Start survey by survey id", tags = "Survey")
+	@RequestMapping(value = "/{survey_id}/start", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<Object> startSurvey(@PathVariable(value = "survey_id") Integer surveyId,
+			@RequestHeader String token) {
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+		}
+		return surveyService.startSurvey(surveyId);
+	}
+
+	/**
+	 * Stop survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@ApiOperation(value = "Stop Survey By Id", notes = "Stop survey  by survey id", tags = "Survey")
+	@RequestMapping(value = "/{survey_id}/stop", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<Object> stopSurvey(@PathVariable(value = "survey_id") Integer surveyId,
+			@RequestHeader String token) {
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+		}
+		return surveyService.stopSurvey(surveyId);
+	}
 }
