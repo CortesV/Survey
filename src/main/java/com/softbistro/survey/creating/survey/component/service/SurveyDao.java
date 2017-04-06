@@ -1,9 +1,11 @@
 package com.softbistro.survey.creating.survey.component.service;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +34,15 @@ public class SurveyDao implements ISurvey {
 	private static final String SQL_ADD_GROUP_TO_SURVEY = "INSERT INTO connect_group_survey (survey_id, group_id) VALUES(?,?) ";
 	private static final String SQL_GET_LIST_OF_GROUPS_SURVEY = "SELECT g.id, g.client_id, g.group_name FROM `group` AS g INNER JOIN connect_group_survey AS c "
 			+ "ON c.group_id = g.id INNER JOIN survey AS s ON s.id= c.survey_id WHERE s.id=? AND s.delete = 0";
-	private static final String SQL_DELETE_SURVEY = "UPDATE survey AS s "
-			+ "LEFT JOIN connect_group_survey AS c ON c.survey_id = s.id LEFT JOIN question_sections AS q "
-			+ "ON q.survey_id = s.id LEFT JOIN questions AS quest ON quest.survey_id = s.id "
-			+ "SET s.`delete` = 1, q.`delete` = 1, c.`delete`= 1, quest.`delete`= 1 WHERE s.id = ?";
+	private static final String SQL_DELETE_SURVEY = "UPDATE sending_survey ,`survey` AS s "
+			+ "LEFT JOIN connect_group_survey AS c ON c.survey_id = s.id "
+			+ "LEFT JOIN questions AS quest ON quest.survey_id = s.id "
+			+ "SET s.`delete` = 1, c.`delete`= 1, quest.`delete`= 1, "
+			+ "sending_survey.answer_status= 'STOPPED'  WHERE s.id = ? AND sending_survey.survey_id = ?";
 
+	private static final String SQL_UPDATE_STATUS_OF_STARTED_SURVEY = "UPDATE survey SET `status`= 'NEW', start_time = ? WHERE survey.id = ?";
+
+	private static final String SQL_UPDATE_STATUS_OF_STOPPED_SURVEY = "UPDATE sending_survey SET answer_status = 'STOPPED' WHERE survey_id = ?";
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -208,12 +214,48 @@ public class SurveyDao implements ISurvey {
 	@Override
 	public ResponseEntity<Object> deleteSurvey(Integer surveyId) {
 		try {
-			jdbcTemplate.update(SQL_DELETE_SURVEY, surveyId);
+			jdbcTemplate.update(SQL_DELETE_SURVEY, surveyId, surveyId);
 			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
+	}
+
+	/**
+	 * Start survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@Override
+	public ResponseEntity<Object> startSurvey(Integer surveyId) {
+		try {
+			Calendar cal = Calendar.getInstance();
+			Date date = new Date(cal.getTimeInMillis());
+			jdbcTemplate.update(SQL_UPDATE_STATUS_OF_STARTED_SURVEY, date, surveyId);
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		}
+	}
+
+	/**
+	 * Stop survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@Override
+	public ResponseEntity<Object> stopSurvey(Integer surveyId) {
+		try {
+
+			jdbcTemplate.update(SQL_UPDATE_STATUS_OF_STOPPED_SURVEY, surveyId);
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		}
 	}
 
 }

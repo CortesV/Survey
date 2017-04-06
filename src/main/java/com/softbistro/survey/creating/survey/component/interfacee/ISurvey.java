@@ -66,4 +66,20 @@ public interface ISurvey {
 	 */
 	public ResponseEntity<Object> deleteSurvey(Integer surveyId);
 
+	/**
+	 * Start survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	public ResponseEntity<Object> startSurvey(Integer surveyId);
+
+	/**
+	 * Start survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	public ResponseEntity<Object> stopSurvey(Integer surveyId);
+
 }
