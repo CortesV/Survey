@@ -27,7 +27,7 @@ public class ParticipantDao implements IParticipant {
 	private final static String SQL_FOR_SETTING_PARTICIPANT = "INSERT INTO participant (participant.first_name, "
 			+ "participant.last_name, participant.email) VALUES (?, ?, ?)";
 	private final static String SQL_FOR_UPDATING_PARTICIPANT = "UPDATE participant AS p "
-			+ "SET p.first_name= ?, p.last_name= ?, p.email = ?, WHERE p.id= ?";
+			+ "SET p.first_name= ?, p.last_name= ?, p.email = ? WHERE p.id= ?";
 	private final static String SQL_FOR_DELETING_PARTICIPANT = "UPDATE participant AS p SET p.delete = 1 WHERE p.id = ?";
 	private final static String SQL_FOR_GETTING_PARTICIPANT_BY_ID = "SELECT * FROM participant WHERE participant.id= ? "
 			+ "AND participant.delete = 0";

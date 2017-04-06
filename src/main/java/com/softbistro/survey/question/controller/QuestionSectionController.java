@@ -159,7 +159,7 @@ public class QuestionSectionController {
 	@RequestMapping(value = "/{questionSection_id}/{survey_id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> addQuestionSectionToSurvey(
 			@PathVariable("questionSection_id") Integer questionSectionId,
-			@PathVariable("questionSection_id") Integer surveyId, @RequestHeader String token) {
+			@PathVariable("survey_id") Integer surveyId, @RequestHeader String token) {
 		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
@@ -179,7 +179,7 @@ public class QuestionSectionController {
 	@RequestMapping(value = "/{questionSection_id}/{survey_id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> deleteQuestionSectionFromSurvey(
 			@PathVariable("questionSection_id") Integer questionSectionId,
-			@PathVariable("questionSection_id") Integer surveyId, @RequestHeader String token) {
+			@PathVariable("survey_id") Integer surveyId, @RequestHeader String token) {
 		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);

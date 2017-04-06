@@ -52,6 +52,9 @@ dependencies {
 	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
 	
+	compile group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
+	compile group: 'commons-io', name: 'commons-io', version: '2.5'
+	
 }
 
 task buildDocker(type: Docker, dependsOn: build) {

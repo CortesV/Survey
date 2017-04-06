@@ -9,6 +9,7 @@ import com.softbistro.survey.client.manage.components.interfaces.IClient;
 
 /**
  * Service for CRUD of Client
+ * 
  * @author cortes
  *
  */
@@ -26,7 +27,7 @@ public class ClientService {
 	 * @return return - client's information
 	 */
 	public ResponseEntity<Client> findClientByEmail(String email) {
-		
+
 		return iClient.findClientByEmail(email);
 	}
 
@@ -39,7 +40,7 @@ public class ClientService {
 	 * @return return - status of execution this method
 	 */
 	public ResponseEntity<Object> saveClient(Client client) {
-		
+
 		return iClient.saveClient(client);
 	}
 
@@ -51,7 +52,7 @@ public class ClientService {
 	 * @return return - status of execution this method
 	 */
 	public ResponseEntity<Object> deleteClient(Integer id) {
-		
+
 		return iClient.deleteClient(id);
 
 	}
@@ -80,18 +81,18 @@ public class ClientService {
 	 *            client - all information about client that will write to
 	 *            database
 	 * @param id
-	 *            id - id of client 
+	 *            id - id of client
 	 * 
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> updatePassword(Client client, Integer id){
-		
+	public ResponseEntity<Object> updatePassword(Client client, Integer id) {
+
 		return iClient.updatePassword(client, id);
 	}
 
-	public ResponseEntity<Object> saveSocialClient(Client client){
-	
+	public ResponseEntity<Object> saveSocialClient(Client client) {
+
 		return iClient.saveSocialClient(client);
 	}
-	
+
 }

@@ -25,8 +25,6 @@ public class ConfirmDao implements IConfirm {
 
 	private String statusForConfirmClient = "DONE";
 
-	private String statusForConfirmSurvey = "DONE";
-
 	/**
 	 * Current time for comparison with working time of url
 	 */
