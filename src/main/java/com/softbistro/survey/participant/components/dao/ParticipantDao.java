@@ -34,9 +34,9 @@ public class ParticipantDao implements IParticipant {
 	private final static String SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE = "SELECT * FROM participant AS p "
 			+ "LEFT JOIN attribute_values AS av ON av.participant_id=p.id LEFT JOIN attributes AS at "
 			+ "ON at.id=av.attribute_id WHERE at.id = ? AND av.attribute_value = ? AND p.delete = 0 AND av.delete = 0 AND at.delete = 0";
-	private final static String SQL_FOR_GETTING_PARTICIPANT_BY_EMAIL_AND_CLIENT_ID = "SELECT * FROM participant AS p "
-			+ "LEFT JOIN connect_group_participant AS c ON c.participant_id=p.id LEFT JOIN group AS g ON g.id=c.group_id "
-			+ "WHERE p.email= ? AND g.client_id = ? AND p.delete = 0";
+	private final static String SQL_FOR_GETTING_PARTICIPANT_BY_CLIENT_ID = "SELECT p.id, p.email, p.first_name, p.last_name"
+			+ " FROM participant AS p LEFT JOIN connect_group_participant AS c ON c.participant_id=p.id LEFT "
+			+ "JOIN `group` AS g ON g.id=c.group_id WHERE g.client_id = ? AND p.delete = 0";
 
 	/**
 	 * Method for creating participant
@@ -116,17 +116,16 @@ public class ParticipantDao implements IParticipant {
 	}
 
 	/**
-	 * Method to getting participant from db by email and client id
+	 * Method to getting participant from db client id
 	 * 
-	 * @param email,
-	 *            clientId
+	 * @param clientId
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(String email, Integer clientId) {
+	public ResponseEntity<List<Participant>> getParticipantByClientId(Integer clientId) {
 		try {
-			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_EMAIL_AND_CLIENT_ID,
-					new BeanPropertyRowMapper<>(Participant.class), email, clientId);
+			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_CLIENT_ID,
+					new BeanPropertyRowMapper<>(Participant.class), clientId);
 
 			return list.isEmpty() ? new ResponseEntity<List<Participant>>(HttpStatus.NO_CONTENT)
 					: new ResponseEntity<List<Participant>>(list, HttpStatus.OK);

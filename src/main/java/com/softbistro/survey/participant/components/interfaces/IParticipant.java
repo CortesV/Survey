@@ -47,12 +47,12 @@ public interface IParticipant {
 	public ResponseEntity<Participant> getParticipantById(Integer participantId);
 
 	/**
-	 * Method to getting participant from db by email and client Id
+	 * Method to getting participant from db by client Id
 	 * 
-	 * @param email, clientId
+	 * @param clientId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(String email, Integer cliectId);
+	public ResponseEntity<List<Participant>> getParticipantByClientId(Integer cliectId);
 	
 	/**
 	 * Method to getting participant from db by attribute value

@@ -53,15 +53,15 @@ public class ParticipantController {
 	}
 
 	/**
-	 * Method to getting participant from db by email and client Id
+	 * Method to getting participant from db by client Id
 	 * 
 	 * @param email,
 	 *            clientid
 	 * @return ResponseEntity
 	 */
-	@ApiOperation(value = "Get Participants By Client", notes = "Get participant instanse by participant email and client id", tags = "Participant")
-	@RequestMapping(value = "email/{email}/{client_id}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(@PathVariable("email") String email,
+	@ApiOperation(value = "Get Participants By Client", notes = "Get participant instanse by participant client id", tags = "Participant")
+	@RequestMapping(value = "client/{client_id}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(
 			@PathVariable("client_id") Integer clientid, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
@@ -69,7 +69,7 @@ public class ParticipantController {
 			return new ResponseEntity<List<Participant>>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantService.getParticipantByEmailAndClientId(email, clientid);
+		return participantService.getParticipantByClientId(clientid);
 	}
 
 	/**
