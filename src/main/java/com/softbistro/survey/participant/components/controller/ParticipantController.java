@@ -200,7 +200,7 @@ public class ParticipantController {
 		}
 	}
 
-	@ApiOperation(value = "Get client's participant by client id", notes = "Get client's participant by client id", tags = "Participant")
+	@ApiOperation(value = "Get client's participants by client id", notes = "Get client's participant by client id", tags = "Participant")
 	@RequestMapping(value = "/all/{clientId}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<Participant>> selectClientAllParticipants(@PathVariable("clientId") Integer clientId,
 			@RequestHeader String token) {
