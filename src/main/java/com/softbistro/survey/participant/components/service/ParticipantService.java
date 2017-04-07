@@ -27,8 +27,9 @@ public class ParticipantService {
 	 * @param participant
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> setParticipant(Participant participant) {
-		return iParticipant.setParticipant(participant);
+	public void setParticipant(Participant participant) {
+
+		iParticipant.setParticipant(participant);
 	}
 
 	/**
@@ -37,8 +38,9 @@ public class ParticipantService {
 	 * @param participant
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> updateParticipant(Participant participant, Integer id) {
-		return iParticipant.updateParticipant(participant, id);
+	public void updateParticipant(Participant participant, Integer id) {
+
+		iParticipant.updateParticipant(participant, id);
 	}
 
 	/**
@@ -47,8 +49,9 @@ public class ParticipantService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deleteParticipantById(Integer participantId) {
-		return iParticipant.deleteParticipantById(participantId);
+	public void deleteParticipantById(Integer participantId) {
+
+		iParticipant.deleteParticipantById(participantId);
 	}
 
 	/**
@@ -57,7 +60,8 @@ public class ParticipantService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Participant> getParticipantById(Integer participantId) {
+	public Participant getParticipantById(Integer participantId) {
+
 		return iParticipant.getParticipantById(participantId);
 	}
 
@@ -68,7 +72,8 @@ public class ParticipantService {
 	 *            clientid
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(String email, Integer clientid) {
+	public List<Participant> getParticipantByEmailAndClientId(String email, Integer clientid) {
+
 		return iParticipant.getParticipantByEmailAndClientId(email, clientid);
 	}
 
@@ -79,8 +84,19 @@ public class ParticipantService {
 	 *            attribute value
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Participant>> getParticipantByAttributeValue(Integer attributeId,
-			String attributeValue) {
+	public List<Participant> getParticipantByAttributeValue(Integer attributeId, String attributeValue) {
+
 		return iParticipant.getParticipantByAttributeValue(attributeId, attributeValue);
+	}
+	
+	/**
+	 * Method to getting participant from database by client id
+	 * 
+	 * @param clientId
+	 * @return 
+	 */
+	public List<Participant> selectClientAllParticipants(Integer clientId) {
+
+		return iParticipant.selectClientAllParticipants(clientId);
 	}
 }

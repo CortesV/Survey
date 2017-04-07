@@ -18,47 +18,55 @@ public interface IParticipant {
 	 * Method for creating participant
 	 * 
 	 * @param participant
-	 * @return ResponseEntity
+	 * @return 
 	 */
-	public ResponseEntity<Object> setParticipant(Participant participant);
+	public void setParticipant(Participant participant);
 
 	/**
 	 * Method for updating participant
 	 * 
 	 * @param participant
-	 * @return ResponseEntity
+	 * @return 
 	 */
-	public ResponseEntity<Object> updateParticipant(Participant participant, Integer id);
+	public void updateParticipant(Participant participant, Integer id);
 
 	/**
 	 * Method for deleting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return ResponseEntity
+	 * @return 
 	 */
-	public ResponseEntity<Object> deleteParticipantById(Integer participantId);
+	public void deleteParticipantById(Integer participantId);
 
 	/**
 	 * Method to getting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return ResponseEntity
+	 * @return 
 	 */
-	public ResponseEntity<Participant> getParticipantById(Integer participantId);
+	public Participant getParticipantById(Integer participantId);
 
 	/**
 	 * Method to getting participant from db by email and client Id
 	 * 
 	 * @param email, clientId
-	 * @return ResponseEntity
+	 * @return 
 	 */
-	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(String email, Integer cliectId);
+	public List<Participant> getParticipantByEmailAndClientId(String email, Integer cliectId);
 	
 	/**
 	 * Method to getting participant from db by attribute value
 	 * 
 	 * @param attributeId, attribute value
-	 * @return ResponseEntity
+	 * @return 
 	 */
-	public ResponseEntity<List<Participant>> getParticipantByAttributeValue(Integer attributeId, String attributeValue);
+	public List<Participant> getParticipantByAttributeValue(Integer attributeId, String attributeValue);
+	
+	/**
+	 * Method to getting participant from database by client id
+	 * 
+	 * @param clientId
+	 * @return 
+	 */
+	public List<Participant> selectClientAllParticipants(Integer cliectId);
 }
