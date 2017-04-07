@@ -3,7 +3,6 @@ package com.softbistro.survey.participant.components.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.participant.components.entity.Participant;
@@ -27,8 +26,9 @@ public class ParticipantService {
 	 * @param participant
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> setParticipant(Participant participant) {
-		return iParticipant.setParticipant(participant);
+	public void setParticipant(Participant participant) {
+
+		iParticipant.setParticipant(participant);
 	}
 
 	/**
@@ -37,8 +37,9 @@ public class ParticipantService {
 	 * @param participant
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> updateParticipant(Participant participant, Integer id) {
-		return iParticipant.updateParticipant(participant, id);
+	public void updateParticipant(Participant participant, Integer id) {
+
+		iParticipant.updateParticipant(participant, id);
 	}
 
 	/**
@@ -47,8 +48,9 @@ public class ParticipantService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deleteParticipantById(Integer participantId) {
-		return iParticipant.deleteParticipantById(participantId);
+	public void deleteParticipantById(Integer participantId) {
+
+		iParticipant.deleteParticipantById(participantId);
 	}
 
 	/**
@@ -57,18 +59,20 @@ public class ParticipantService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Participant> getParticipantById(Integer participantId) {
+	public Participant getParticipantById(Integer participantId) {
+
 		return iParticipant.getParticipantById(participantId);
 	}
 
 	/**
-	 * Method to getting participant from db by client Id
+	 * Method to getting participant from db by group Id
 	 * 
 	 * @param clientid
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Participant>> getParticipantByClientId(Integer clientid) {
-		return iParticipant.getParticipantByClientId(clientid);
+		
+	public List<Participant> getParticipantByGroup(Integer groupId) {
+		return iParticipant.getParticipantByGroup(groupId);
 	}
 
 	/**
@@ -78,8 +82,19 @@ public class ParticipantService {
 	 *            attribute value
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Participant>> getParticipantByAttributeValue(Integer attributeId,
-			String attributeValue) {
+	public List<Participant> getParticipantByAttributeValue(Integer attributeId, String attributeValue) {
+
 		return iParticipant.getParticipantByAttributeValue(attributeId, attributeValue);
+	}
+	
+	/**
+	 * Method to getting participant from database by client id
+	 * 
+	 * @param clientId
+	 * @return 
+	 */
+	public List<Participant> selectClientAllParticipants(Integer clientId) {
+
+		return iParticipant.selectClientAllParticipants(clientId);
 	}
 }

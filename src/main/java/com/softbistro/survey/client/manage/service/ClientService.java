@@ -1,7 +1,6 @@
 package com.softbistro.survey.client.manage.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
@@ -26,9 +25,11 @@ public class ClientService {
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	public ResponseEntity<Client> findClientByEmail(String email) {
 
-		return iClient.findClientByEmail(email);
+	public Client findClient(Integer id) {
+
+		return iClient.findClient(id);
+
 	}
 
 	/**
@@ -39,9 +40,9 @@ public class ClientService {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> saveClient(Client client) {
+	public void saveClient(Client client) {
 
-		return iClient.saveClient(client);
+		iClient.saveClient(client);
 	}
 
 	/**
@@ -51,9 +52,9 @@ public class ClientService {
 	 *            email - email of client
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> deleteClient(Integer id) {
+	public void deleteClient(Integer id) {
 
-		return iClient.deleteClient(id);
+		iClient.deleteClient(id);
 
 	}
 
@@ -69,9 +70,9 @@ public class ClientService {
 	 *            password - email of client that used for authorization
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> updateClient(Client client, Integer id) {
+	public void updateClient(Client client, Integer id) {
 
-		return iClient.updateClient(client, id);
+		iClient.updateClient(client, id);
 	}
 
 	/**
@@ -85,14 +86,28 @@ public class ClientService {
 	 * 
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> updatePassword(Client client, Integer id) {
+	public void updatePassword(Client client, Integer id) {
 
-		return iClient.updatePassword(client, id);
+		iClient.updatePassword(client, id);
 	}
 
-	public ResponseEntity<Object> saveSocialClient(Client client) {
+	public void saveSocialClient(Client client) {
 
-		return iClient.saveSocialClient(client);
+		iClient.saveSocialClient(client);
+	}
+
+	/**
+	 * Find client by email, facebookId or googleId
+	 * 
+	 * @param template
+	 *            template - email, facebookId or googleId
+	 * @param value
+	 *            value - value of template
+	 * @return return - information about of client
+	 */
+	public Client findByTemplate(String template, String value) {
+
+		return iClient.findByTemplate(template, value);
 	}
 
 }

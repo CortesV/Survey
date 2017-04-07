@@ -2,6 +2,7 @@ package com.softbistro.survey.participant.components.controller;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,8 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rest/survey/v1/participant")
 public class ParticipantController {
 
+	private static final Logger LOGGER = Logger.getLogger(ParticipantController.class);
+
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -46,10 +49,18 @@ public class ParticipantController {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<Participant>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantService.getParticipantById(id);
+		try {
+
+			return new ResponseEntity<>(participantService.getParticipantById(id), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.debug(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
 	}
 
 	/**
@@ -59,17 +70,26 @@ public class ParticipantController {
 	 *            clientid
 	 * @return ResponseEntity
 	 */
-	@ApiOperation(value = "Get Participants By Client", notes = "Get participant instanse by participant client id", tags = "Participant")
-	@RequestMapping(value = "client/{client_id}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(
-			@PathVariable("client_id") Integer clientid, @RequestHeader String token) {
+	@ApiOperation(value = "Get Participants By group", notes = "Get participant instanse by participant group id", tags = "Participant")
+	@RequestMapping(value = "group/{groupId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<Participant>> getParticipantByGroupId(
+			@PathVariable("groupId") Integer groupId, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<List<Participant>>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantService.getParticipantByClientId(clientid);
+
+		try {
+
+			return new ResponseEntity<>(participantService.getParticipantByGroup(groupId),
+					HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -87,10 +107,18 @@ public class ParticipantController {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<List<Participant>>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantService.getParticipantByAttributeValue(attributeId, attributeValue);
+		try {
+
+			return new ResponseEntity<>(participantService.getParticipantByAttributeValue(attributeId, attributeValue),
+					HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -103,12 +131,20 @@ public class ParticipantController {
 	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> setParticipant(@RequestBody Participant participant, @RequestHeader String token) {
 
-		 if (!authorizationService.checkAccess(token)) {
-		
-		 return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-		 }
+		if (!authorizationService.checkAccess(token)) {
 
-		return participantService.setParticipant(participant);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		try {
+
+			participantService.setParticipant(participant);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -124,10 +160,18 @@ public class ParticipantController {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantService.updateParticipant(participant, id);
+		try {
+
+			participantService.updateParticipant(participant, id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -142,9 +186,37 @@ public class ParticipantController {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantService.deleteParticipantById(id);
+		try {
+
+			participantService.deleteParticipantById(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@ApiOperation(value = "Get client's participants by client id", notes = "Get client's participant by client id", tags = "Participant")
+	@RequestMapping(value = "/all/{clientId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<Participant>> selectClientAllParticipants(@PathVariable("clientId") Integer clientId,
+			@RequestHeader String token) {
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		try {
+
+			return new ResponseEntity<>(participantService.selectClientAllParticipants(clientId), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

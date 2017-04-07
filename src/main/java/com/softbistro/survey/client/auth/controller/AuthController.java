@@ -1,5 +1,6 @@
 package com.softbistro.survey.client.auth.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,14 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/rest/survey/v1/")
 public class AuthController {
 
+	private static final Logger LOGGER = Logger.getLogger(AuthController.class);
+	private static final String SIMPLE_AUTH = "Simple auth request --- ";
+	private static final String SOCIAL_AUTH = "Social auth request --- ";
+	private static final String LOGOUT = "Logout request --- ";
+	private static final String LOGOUT_FAIL = "Logout request --- Unauthorized client";
+	private static final String ADD_SOC_INFO = "Add social info request --- ";
+	private static final String ADD_SOC_FAIL = "Add social info request --- Unauthorized client";
+
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -42,7 +51,15 @@ public class AuthController {
 	@RequestMapping(value = "auth/simple", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Client> simpleAuth(@RequestBody Client client) {
 
-		return authorizationService.simpleAthorization(client);
+		try {
+
+			LOGGER.info(SIMPLE_AUTH + client.toString());
+			return new ResponseEntity<>(authorizationService.simpleAthorization(client), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -57,7 +74,15 @@ public class AuthController {
 	@RequestMapping(value = "auth/social", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Client> socialAuth(@RequestBody Client client) {
 
-		return authorizationService.socialAuthorization(client);
+		try {
+
+			LOGGER.info(SOCIAL_AUTH + client.toString());
+			return new ResponseEntity<>(authorizationService.socialAuthorization(client), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -71,12 +96,51 @@ public class AuthController {
 	@RequestMapping(value = "logout", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> logout(@RequestHeader String token) {
 
+		LOGGER.info(LOGOUT + token);
+
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+			LOGGER.info(LOGOUT_FAIL);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		authorizedClientService.deleteClients(token);
 
-		return new ResponseEntity<Object>(HttpStatus.OK);
+		try {
+
+			authorizedClientService.deleteClients(token);
+
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
+
+	/**
+	 * Controller that add social data from social networks to exist client
+	 * 
+	 * @param token
+	 * @return
+	 */
+	@ApiOperation(value = "Add social info", notes = "Add social information for authorized client", tags = "Authorization")
+	@RequestMapping(value = "/add/social", method = RequestMethod.POST)
+	public ResponseEntity<Client> setClient1(@RequestHeader String token, @RequestBody Client client) {
+
+		LOGGER.info(ADD_SOC_INFO + client.toString() + "   " + token);
+		if (!authorizationService.checkAccess(token)) {
+
+			LOGGER.info(ADD_SOC_FAIL);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		try {
+
+			return new ResponseEntity<>(authorizationService.addSocialInfo(client), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 }

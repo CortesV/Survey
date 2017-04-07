@@ -1,19 +1,18 @@
 package com.softbistro.survey.client.manage.components.interfaces;
 
-import org.springframework.http.ResponseEntity;
-
 import com.softbistro.survey.client.manage.components.entity.Client;
 
 public interface IClient {
 
 	/**
-	 * Find client in database by email of client
+	 * Find client in database by id of client
 	 * 
-	 * @param email
-	 *            email - email of client
+	 * @param id
+	 *            id - id of client
 	 * @return return - client's information
 	 */
-	public ResponseEntity<Client> findClientByEmail(String email);
+
+	public Client findClient(Integer id);
 
 	/**
 	 * Save client to database
@@ -21,18 +20,18 @@ public interface IClient {
 	 * @param client
 	 *            client - all information about client that will write to
 	 *            database
-	 * @return return - status of execution this method
+	 * @return return - information about of client
 	 */
-	public ResponseEntity<Object> saveClient(Client client);
+	public void saveClient(Client client);
 
 	/**
 	 * Delete client from database by email of client
 	 * 
 	 * @param id
 	 *            id - id of client
-	 * @return return - status of execution this method
+	 * @return return - information about of client
 	 */
-	public ResponseEntity<Object> deleteClient(Integer id);
+	public void deleteClient(Integer id);
 
 	/**
 	 * Update information of client
@@ -43,9 +42,9 @@ public interface IClient {
 	 * @param id
 	 *            id - id of client
 	 * 
-	 * @return return - status of execution this method
+	 * @return return - information about of client
 	 */
-	public ResponseEntity<Object> updateClient(Client client, Integer id);
+	public void updateClient(Client client, Integer id);
 
 	/**
 	 * Update client's password
@@ -56,9 +55,9 @@ public interface IClient {
 	 * @param id
 	 *            id - id of client
 	 * 
-	 * @return return - status of execution this method
+	 * @return return - information about of client
 	 */
-	public ResponseEntity<Object> updatePassword(Client client, Integer id);
+	public void updatePassword(Client client, Integer id);
 
 	/**
 	 * Save information about client that authorized with help of social
@@ -67,7 +66,8 @@ public interface IClient {
 	 * @param client
 	 * @return
 	 */
-	public ResponseEntity<Object> saveSocialClient(Client client);
+	public Client saveSocialClient(Client client);
+	
 
 	/**
 	 * Find client by email and client name
@@ -75,5 +75,17 @@ public interface IClient {
 	 * @param client
 	 * @return
 	 */
-	public ResponseEntity<Client> findClientByLoginAndEmail(Client client);
+	public Client findClientByLoginAndEmail(Client client);
+
+	/**
+	 * Find client by email, facebookId or googleId
+	 * 
+	 * @param template
+	 *            template - email, facebookId or googleId
+	 * @param value
+	 *            value - value of template
+	 * @return return - information about of client
+	 */
+	public Client findByTemplate(String template, String value);
+
 }

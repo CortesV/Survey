@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -25,18 +23,18 @@ import com.softbistro.survey.imports.system.components.interfaces.ISurveyDAO;
 
 /**
  * Save survey into db
- *  
+ * 
  * @author olegnovatskiy
  */
 @Repository
 public class SurveyDAO implements ISurveyDAO {
 
 	private static final String INSERT_SURVEY = "INSERT INTO survey (client_id, name) VALUES (?,?);";
-	
+
 	private static final String INSERT_GROUP = "INSERT INTO question_sections (section_name) VALUES (?);";
-	
+
 	private static final String INSERT_CONNECT_SECTION_QUESTION_SURVEY = "INSERT INTO connect_question_section_survey (question_section_id, survey_id) VALUES (?,?);";
-	
+
 	private static final String INSERT_QUESTION = "INSERT INTO questions (survey_id, question, question_section_id, answer_type, question_choices, required, required_comment) VALUES (:surveyId, :text, :questionSectionId, :answerType, :questionChoices, :required, :requiredComment);";
 
 	private static Logger log = Logger.getLogger(SurveyDAO.class);
@@ -52,7 +50,7 @@ public class SurveyDAO implements ISurveyDAO {
 	 *            survey
 	 * @return Response
 	 */
-	public ResponseEntity<Object> saveSurvey(Survey savedSurvey) {
+	public void saveSurvey(Survey savedSurvey) {
 
 		Connection connection = null;
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = null;
@@ -62,20 +60,17 @@ public class SurveyDAO implements ISurveyDAO {
 			namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbc.getDataSource());
 			connection.setAutoCommit(false);
 
-			savedSurvey.setId(executeStatement(INSERT_SURVEY, new Object[] { savedSurvey.getClienId(), savedSurvey.getTitle() }, connection));
+			savedSurvey.setId(executeStatement(INSERT_SURVEY,
+					new Object[] { savedSurvey.getClienId(), savedSurvey.getTitle() }, connection));
 
 			saveQuestions(savedSurvey, namedParameterJdbcTemplate, connection);
 
 			connection.commit();
 			connection.close();
 
-			return new ResponseEntity<Object>(HttpStatus.OK);
-
 		} catch (SQLException e) {
 
 			log.error(e.getMessage());
-
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 
 		} finally {
 
@@ -99,8 +94,9 @@ public class SurveyDAO implements ISurveyDAO {
 	 * @param connection
 	 * @throws SQLException
 	 */
-	private void saveQuestions(Survey savedSurvey, NamedParameterJdbcTemplate namedParameterJdbcTemplate , Connection connection) throws SQLException{
-		
+	private void saveQuestions(Survey savedSurvey, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+			Connection connection) throws SQLException {
+
 		for (GroupQuestions group : savedSurvey.getGroupQuestions()) {
 
 			group.setId(executeStatement(INSERT_GROUP, new Object[] { group.getTitle() }, connection));
@@ -118,9 +114,9 @@ public class SurveyDAO implements ISurveyDAO {
 			SqlParameterSource[] sqlBatchQuestions = SqlParameterSourceUtils.createBatch(batchQuestions.toArray());
 			namedParameterJdbcTemplate.batchUpdate(INSERT_QUESTION, sqlBatchQuestions);
 		}
-		
+
 	}
-	
+
 	/**
 	 * Execute statement and return generated Id.
 	 * 

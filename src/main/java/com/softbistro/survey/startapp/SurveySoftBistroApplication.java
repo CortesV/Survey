@@ -42,11 +42,6 @@ public class SurveySoftBistroApplication {
 
 		final RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(jedisConnectionFactory());
-		// template.setKeySerializer(new StringRedisSerializer());
-		// template.setHashValueSerializer(new
-		// GenericToStringSerializer<Object>(Object.class));
-		// template.setValueSerializer(new
-		// GenericToStringSerializer<Object>(Object.class));
 		return template;
 	}
 

@@ -3,7 +3,6 @@ package com.softbistro.survey.question.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.question.components.entity.QuestionSection;
@@ -27,8 +26,9 @@ public class QuestionSectionService {
 	 * @param questionSection
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> setQuestionSection(QuestionSection questionSection) {
-		return iQuestionSection.setQuestionSection(questionSection);
+	public void setQuestionSection(QuestionSection questionSection) {
+
+		iQuestionSection.setQuestionSection(questionSection);
 	}
 
 	/**
@@ -37,8 +37,9 @@ public class QuestionSectionService {
 	 * @param questionSection
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> updateQuestionSection(QuestionSection questionSection, Integer questionSectionId) {
-		return iQuestionSection.updateQuestionSection(questionSection, questionSectionId);
+	public void updateQuestionSection(QuestionSection questionSection, Integer questionSectionId) {
+
+		iQuestionSection.updateQuestionSection(questionSection, questionSectionId);
 	}
 
 	/**
@@ -47,8 +48,9 @@ public class QuestionSectionService {
 	 * @param questionSectionId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deleteQuestionSection(Integer questionSectionId) {
-		return iQuestionSection.deleteQuestionSection(questionSectionId);
+	public void deleteQuestionSection(Integer questionSectionId) {
+
+		iQuestionSection.deleteQuestionSection(questionSectionId);
 	}
 
 	/**
@@ -57,7 +59,8 @@ public class QuestionSectionService {
 	 * @param questionSectionId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<QuestionSection> getQuestionSectionById(Integer questionSectionId) {
+	public QuestionSection getQuestionSectionById(Integer questionSectionId) {
+
 		return iQuestionSection.getQuestionSectionById(questionSectionId);
 	}
 
@@ -67,38 +70,43 @@ public class QuestionSectionService {
 	 * @param clientId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<QuestionSection>> getQuestionSectionByClientId(Integer clientId) {
+	public List<QuestionSection> getQuestionSectionByClientId(Integer clientId) {
+
 		return iQuestionSection.getQuestionSectionByClientId(clientId);
 	}
-	
+
 	/**
 	 * Method to getting QuestionSection from db by surveyId
 	 * 
 	 * @param surveyId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<QuestionSection>> getQuestionSectionBySurveyId(Integer surveyId) {
+	public List<QuestionSection> getQuestionSectionBySurveyId(Integer surveyId) {
+
 		return iQuestionSection.getQuestionSectionBySurveyId(surveyId);
 	}
-	
+
 	/**
 	 * Method for adding QuestionSection to survey
 	 * 
-	 * @param questionSection id, survey id
+	 * @param questionSection
+	 *            id, survey id
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> addQuestionSectionToSurvey(Integer questionSectionId, Integer surveyId){
-		return iQuestionSection.addQuestionSectionToSurvey(questionSectionId, surveyId);
+	public void addQuestionSectionToSurvey(Integer questionSectionId, Integer surveyId) {
+
+		iQuestionSection.addQuestionSectionToSurvey(questionSectionId, surveyId);
 	}
-	
 
 	/**
 	 * Method for deleting QuestionSection from survey
 	 * 
-	 * @param questionSectionId, survey id
+	 * @param questionSectionId,
+	 *            survey id
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deleteQuestionSectionFromSurvey(Integer questionSectionId, Integer surveyId){
-		return iQuestionSection.deleteQuestionSectionFromSurvey(questionSectionId, surveyId);
+	public void deleteQuestionSectionFromSurvey(Integer questionSectionId, Integer surveyId) {
+
+		iQuestionSection.deleteQuestionSectionFromSurvey(questionSectionId, surveyId);
 	}
 }
