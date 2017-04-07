@@ -29,7 +29,7 @@ public class AuthorizedClientDao implements IAuthorizedClientRepository {
 	private HashOperations<String, String, AuthorizedClient> hashOps;
 
 	@Autowired
-	public AuthorizedClientDao(RedisTemplate redisTemplate) {
+	public AuthorizedClientDao(RedisTemplate<String, AuthorizedClient> redisTemplate) {
 
 		this.redisTemplate = redisTemplate;
 	}
