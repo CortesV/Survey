@@ -2,7 +2,9 @@ package com.softbistro.survey.confirm.url.controller;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +28,8 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("rest/survey/v1/answer")
 public class VoteController {
 
+	private static final Logger LOGGER = Logger.getLogger(VoteController.class);
+
 	@Autowired
 	private VoteService voteService;
 
@@ -38,11 +42,19 @@ public class VoteController {
 	@ApiOperation(value = "Write the Answer", notes = "Write answer to data base by uuid and answer list"
 			+ "(Answer etitys contains : survey id, question, description short,"
 			+ " description Long, questionSection Id, answer Type, question Choices, required, required Comment. "
-			+ "Field answerType can have value such as: RATE1-10, RATE1-5, RATE1-3, BOOLEAN, LIST, MULTILIST, INPUT, MEMO)"
-	, tags = "Answer")
+			+ "Field answerType can have value such as: RATE1-10, RATE1-5, RATE1-3, BOOLEAN, LIST, MULTILIST, INPUT, MEMO)", tags = "Answer")
 	@RequestMapping(value = "/{uuid}", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> vote(@PathVariable(value = "uuid") String uuid, @RequestBody List<Answer> answers) {
-		return voteService.answerOnSurvey(uuid, answers);
+
+		try {
+
+			voteService.answerOnSurvey(uuid, answers);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -54,6 +66,14 @@ public class VoteController {
 	@ApiOperation(value = "Information about questions", notes = "Response for site with information about questions by uuid", tags = "Answer")
 	@RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
 	public ResponseEntity<List<VotePage>> getVotePage(@PathVariable(value = "uuid") String uuid) {
-		return voteService.getVotePage(uuid);
+
+		try {
+
+			return new ResponseEntity<>(voteService.getVotePage(uuid), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

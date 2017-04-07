@@ -2,8 +2,6 @@ package com.softbistro.survey.participant.components.interfaces;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.entity.ParticipantInGroup;
@@ -23,7 +21,7 @@ public interface IParticipantInGroup {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> addParticipantInGroup(ParticipantInGroup participantInGoup);
+	public void addParticipantInGroup(ParticipantInGroup participantInGoup);
 
 	/**
 	 * Method for deleting participant from group
@@ -32,7 +30,7 @@ public interface IParticipantInGroup {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Integer participantId);
+	public void deletingParticipantfromGroup(Integer groupId, Integer participantId);
 
 	/**
 	 * Method for getting all participant by group
@@ -40,7 +38,7 @@ public interface IParticipantInGroup {
 	 * @param groupId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Participant>> getParticipantsByGroup(Integer groupId);
+	public List<Participant> getParticipantsByGroup(Integer groupId);
 
 	/**
 	 * Method for getting all participant groups
@@ -48,5 +46,5 @@ public interface IParticipantInGroup {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Group>> getParticipantGroups(Integer participantId);
+	public List<Group> getParticipantGroups(Integer participantId);
 }

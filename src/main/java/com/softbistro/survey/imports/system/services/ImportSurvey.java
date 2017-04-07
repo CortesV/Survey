@@ -13,8 +13,6 @@ import javax.xml.bind.TypeConstraintException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvReader;
@@ -51,9 +49,9 @@ public class ImportSurvey implements IImportSurvey {
 	 * @return
 	 */
 	@Override
-	public ResponseEntity<Object> importSyrveyCSV(HttpServletRequest request, Long clientId) {
+	public void importSyrveyCSV(HttpServletRequest request, Long clientId) {
 
-		Map<String, String> attributes;
+		Map<String, String> attributes = null;
 
 		try {
 
@@ -63,7 +61,6 @@ public class ImportSurvey implements IImportSurvey {
 
 			log.error(e1.getMessage());
 
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 		}
 
 		String fileName = attributes.get("fileName");
@@ -77,13 +74,12 @@ public class ImportSurvey implements IImportSurvey {
 			survey.setTitle(surveyName);
 			survey.setClienId(clientId);
 
-			return iSurveyDAO.saveSurvey(survey);
+			iSurveyDAO.saveSurvey(survey);
 
 		} catch (IOException e) {
 
 			log.error(e.getMessage());
 
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 		} finally {
 
 			deleteImportFile(fileName);
@@ -123,10 +119,10 @@ public class ImportSurvey implements IImportSurvey {
 
 				if (currentGroup.equals(groupQuestions.getTitle())) {
 
-					ResponseEntity<Question> responseReadQuestion = readRecord(csvReader);
-					if (responseReadQuestion.getStatusCode() == HttpStatus.OK) {
+					Question responseReadQuestion = readRecord(csvReader);
+					if (responseReadQuestion != null) {
 
-						questions.add((Question) responseReadQuestion.getBody());
+						questions.add((Question) responseReadQuestion);
 					}
 
 				} else {
@@ -137,10 +133,10 @@ public class ImportSurvey implements IImportSurvey {
 					groupQuestions = new GroupQuestions();
 					groupQuestions.setTitle(csvReader.get("Group"));
 
-					ResponseEntity<Question> responseReadQuestion = readRecord(csvReader);
-					if (responseReadQuestion.getStatusCode() == HttpStatus.OK) {
+					Question responseReadQuestion = readRecord(csvReader);
+					if (responseReadQuestion != null) {
 
-						questions.add((Question) responseReadQuestion.getBody());
+						questions.add((Question) responseReadQuestion);
 					}
 				}
 			}
@@ -164,7 +160,7 @@ public class ImportSurvey implements IImportSurvey {
 	 * @param csvReader
 	 * @return Response response
 	 */
-	private ResponseEntity<Question> readRecord(CsvReader csvReader) {
+	private Question readRecord(CsvReader csvReader) {
 
 		try {
 			String required = csvReader.get("Required");
@@ -193,13 +189,13 @@ public class ImportSurvey implements IImportSurvey {
 			question.setAnswerType(type);
 			question.setQuestionChoices(csvReader.get("Value"));
 
-			return new ResponseEntity<Question>(question, HttpStatus.OK);
+			return question;
 
 		} catch (IOException e) {
 
 			log.error(e.getMessage());
 			
-			return new ResponseEntity<Question>(HttpStatus.BAD_REQUEST);
+			return null;
 		}
 	}
 

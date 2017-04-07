@@ -2,8 +2,6 @@ package com.softbistro.survey.participant.components.interfaces;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.softbistro.survey.participant.components.entity.AttributeValues;
 
 /**
@@ -20,7 +18,7 @@ public interface IAttributeValues {
 	 * @param attributeValues
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> setAttributeValues(AttributeValues attributeValues);
+	public void setAttributeValues(AttributeValues attributeValues);
 
 	/**
 	 * Method for getting attribute values form the db
@@ -28,7 +26,7 @@ public interface IAttributeValues {
 	 * @param attributeValuesId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<AttributeValues> getAttributeValuesById(Integer attributeValuesId);
+	public AttributeValues getAttributeValuesById(Integer attributeValuesId);
 
 	/**
 	 * Method for updating attribute values
@@ -37,7 +35,7 @@ public interface IAttributeValues {
 	 *            id
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> updateAttributeValuesById(AttributeValues attributeValues, Integer id);
+	public void updateAttributeValuesById(AttributeValues attributeValues, Integer id);
 
 	/**
 	 * Method for deleting attribute values by id
@@ -45,7 +43,7 @@ public interface IAttributeValues {
 	 * @param attributeValuesId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deleteAttributeValuesById(Integer attributeValuesId);
+	public void deleteAttributeValuesById(Integer attributeValuesId);
 
 	/**
 	 * Method for getting all attribute values of participant in group
@@ -54,7 +52,7 @@ public interface IAttributeValues {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<AttributeValues>> getParticipantAttributesInGroup(Integer groupId,
+	public List<AttributeValues> getParticipantAttributesInGroup(Integer groupId,
 			Integer participantId);
 
 }
