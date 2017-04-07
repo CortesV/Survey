@@ -6,8 +6,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -65,7 +63,7 @@ public class ClientDao implements IClient {
 
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 
@@ -94,7 +92,7 @@ public class ClientDao implements IClient {
 
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 	}
@@ -123,7 +121,7 @@ public class ClientDao implements IClient {
 
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 
@@ -144,7 +142,7 @@ public class ClientDao implements IClient {
 			jdbc.update(DELETE_CLIENT, id);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -170,7 +168,7 @@ public class ClientDao implements IClient {
 					client.getFacebookId(), client.getGoogleId(), id);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 	}
@@ -195,7 +193,7 @@ public class ClientDao implements IClient {
 			jdbc.update(UPDATE_CLIENT_PASSWORD, md5HexPassword, id);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 	}
@@ -218,7 +216,7 @@ public class ClientDao implements IClient {
 
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -257,7 +255,7 @@ public class ClientDao implements IClient {
 
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 
@@ -299,7 +297,7 @@ public class ClientDao implements IClient {
 
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -325,7 +323,7 @@ public class ClientDao implements IClient {
 
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}

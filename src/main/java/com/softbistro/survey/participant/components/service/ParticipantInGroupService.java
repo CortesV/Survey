@@ -3,7 +3,6 @@ package com.softbistro.survey.participant.components.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.participant.components.entity.Group;
@@ -21,7 +20,7 @@ import com.softbistro.survey.participant.components.interfaces.IParticipantInGro
 public class ParticipantInGroupService {
 
 	@Autowired
-	private IParticipantInGroup iparticipantInGroup;
+	private IParticipantInGroup iParticipantInGroup;
 
 	/**
 	 * Method for getting all participant by group
@@ -29,8 +28,9 @@ public class ParticipantInGroupService {
 	 * @param groupId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Participant>> getParticipantsByGroupId(Integer groupId) {
-		return iparticipantInGroup.getParticipantsByGroup(groupId);
+	public List<Participant> getParticipantsByGroupId(Integer groupId) {
+
+		return iParticipantInGroup.getParticipantsByGroup(groupId);
 	}
 
 	/**
@@ -40,8 +40,9 @@ public class ParticipantInGroupService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> addParticipantInGroup(ParticipantInGroup participantInGoup) {
-		return iparticipantInGroup.addParticipantInGroup(participantInGoup);
+	public void addParticipantInGroup(ParticipantInGroup participantInGoup) {
+
+		iParticipantInGroup.addParticipantInGroup(participantInGoup);
 	}
 
 	/**
@@ -51,8 +52,9 @@ public class ParticipantInGroupService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deletingParticipantfromGroup(Integer groupId, Integer participantId) {
-		return iparticipantInGroup.deletingParticipantfromGroup(groupId, participantId);
+	public void deletingParticipantfromGroup(Integer groupId, Integer participantId) {
+
+		iParticipantInGroup.deletingParticipantfromGroup(groupId, participantId);
 	}
 
 	/**
@@ -61,7 +63,8 @@ public class ParticipantInGroupService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Group>> getParticipantGroups(Integer participantId) {
-		return iparticipantInGroup.getParticipantGroups(participantId);
+	public List<Group> getParticipantGroups(Integer participantId) {
+
+		return iParticipantInGroup.getParticipantGroups(participantId);
 	}
 }

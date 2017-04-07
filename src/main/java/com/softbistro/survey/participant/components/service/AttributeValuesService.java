@@ -3,7 +3,6 @@ package com.softbistro.survey.participant.components.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.participant.components.entity.AttributeValues;
@@ -27,8 +26,9 @@ public class AttributeValuesService {
 	 * @param attributeValues
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> setAttributeValues(AttributeValues attributeValues) {
-		return iAttributeValues.setAttributeValues(attributeValues);
+	public void setAttributeValues(AttributeValues attributeValues) {
+
+		iAttributeValues.setAttributeValues(attributeValues);
 	}
 
 	/**
@@ -37,7 +37,8 @@ public class AttributeValuesService {
 	 * @param attributeValuesId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<AttributeValues> getAttributeValuesById(Integer attributeValuesId) {
+	public AttributeValues getAttributeValuesById(Integer attributeValuesId) {
+
 		return iAttributeValues.getAttributeValuesById(attributeValuesId);
 	}
 
@@ -48,8 +49,9 @@ public class AttributeValuesService {
 	 *            id
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> updateAttributeValuesById(AttributeValues attributeValues, Integer id) {
-		return iAttributeValues.updateAttributeValuesById(attributeValues, id);
+	public void updateAttributeValuesById(AttributeValues attributeValues, Integer id) {
+
+		iAttributeValues.updateAttributeValuesById(attributeValues, id);
 	}
 
 	/**
@@ -58,8 +60,9 @@ public class AttributeValuesService {
 	 * @param attributeValuesId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deleteAttributeValuesById(Integer attributeValuesId) {
-		return iAttributeValues.deleteAttributeValuesById(attributeValuesId);
+	public void deleteAttributeValuesById(Integer attributeValuesId) {
+
+		iAttributeValues.deleteAttributeValuesById(attributeValuesId);
 	}
 
 	/**
@@ -69,8 +72,8 @@ public class AttributeValuesService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<AttributeValues>> getParticipantAttributesInGroup(Integer groupId,
-			Integer participantId) {
+	public List<AttributeValues> getParticipantAttributesInGroup(Integer groupId, Integer participantId) {
+
 		return iAttributeValues.getParticipantAttributesInGroup(groupId, participantId);
 	}
 }

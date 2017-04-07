@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.softbistro.survey.client.auth.controller.AuthController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
@@ -58,7 +57,7 @@ public class ClientController {
 			return new ResponseEntity<>(clientService.findClient(id), HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -81,7 +80,7 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -108,7 +107,7 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -141,7 +140,7 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -173,7 +172,7 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

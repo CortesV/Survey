@@ -2,6 +2,7 @@ package com.softbistro.survey.participant.components.controller;
 
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,8 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rest/survey/v1/participant_in_group")
 public class ParticipantInGroupController {
 
+	private static final Logger LOGGER = Logger.getLogger(ParticipantInGroupController.class);
+
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -49,10 +52,17 @@ public class ParticipantInGroupController {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<List<Participant>>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantInGroupService.getParticipantsByGroupId(groupId);
+		try {
+
+			return new ResponseEntity<>(participantInGroupService.getParticipantsByGroupId(groupId), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -69,10 +79,18 @@ public class ParticipantInGroupController {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantInGroupService.addParticipantInGroup(participantInGoup);
+		try {
+
+			participantInGroupService.addParticipantInGroup(participantInGoup);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -89,10 +107,18 @@ public class ParticipantInGroupController {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantInGroupService.deletingParticipantfromGroup(groupId, participantId);
+		try {
+
+			participantInGroupService.deletingParticipantfromGroup(groupId, participantId);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -108,9 +134,16 @@ public class ParticipantInGroupController {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<List<Group>>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return participantInGroupService.getParticipantGroups(participantId);
+		try {
+
+			return new ResponseEntity<>(participantInGroupService.getParticipantGroups(participantId), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

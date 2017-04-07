@@ -2,8 +2,6 @@ package com.softbistro.survey.participant.components.interfaces;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.softbistro.survey.participant.components.entity.Participant;
 
 /**

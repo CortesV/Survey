@@ -1,7 +1,6 @@
 package com.softbistro.survey.question.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.question.components.entity.Question;

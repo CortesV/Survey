@@ -1,10 +1,10 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -24,11 +24,13 @@ public class AttributesDao implements IAttributes {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private final static String SQL_FOR_SETTING_ATTRIBUTES = "INSERT INTO attributes (attributes.group_id, attributes.attribute) VALUES (?, ?)";
-	private final static String SQL_FOR_GETTING_ATTRIBUTES_BY_ID = "SELECT * FROM attributes AS at WHERE at.id = ? AND at.delete = 0";
-	private final static String SQL_FOR_UPDATING__ATTRIBUTES_BY_ID = "UPDATE attributes AS at SET at.group_id = ?, at.attribute = ? WHERE at.id = ?";
-	private final static String SQL_FOR_DELETING_ATTRIBUTES = "UPDATE attributes AS at SET at.delete = 1 WHERE at.id = ?";
-	private final static String SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP = "SELECT * FROM attributes WHERE attributes.group_id = ? AND attributes.delete = 0";
+	private static final Logger LOGGER = Logger.getLogger(AttributesDao.class);
+
+	private static final String SQL_FOR_SETTING_ATTRIBUTES = "INSERT INTO attributes (attributes.group_id, attributes.attribute) VALUES (?, ?)";
+	private static final String SQL_FOR_GETTING_ATTRIBUTES_BY_ID = "SELECT * FROM attributes AS at WHERE at.id = ? AND at.delete = 0";
+	private static final String SQL_FOR_UPDATING__ATTRIBUTES_BY_ID = "UPDATE attributes AS at SET at.group_id = ?, at.attribute = ? WHERE at.id = ?";
+	private static final String SQL_FOR_DELETING_ATTRIBUTES = "UPDATE attributes AS at SET at.delete = 1 WHERE at.id = ?";
+	private static final String SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP = "SELECT * FROM attributes WHERE attributes.group_id = ? AND attributes.delete = 0";
 
 	/**
 	 * Method for creating the attribute value
@@ -37,15 +39,16 @@ public class AttributesDao implements IAttributes {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<Object> setAttribute(Attributes attributes) {
+	public void setAttribute(Attributes attributes) {
 
 		try {
+
 			jdbcTemplate.update(SQL_FOR_SETTING_ATTRIBUTES, attributes.getGroupId(), attributes.getAttribute());
-			return new ResponseEntity<Object>(HttpStatus.CREATED);
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -56,18 +59,20 @@ public class AttributesDao implements IAttributes {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<Attributes> getAttributeById(Integer attributesId) {
+	public Attributes getAttributeById(Integer attributesId) {
 
 		try {
+
 			List<Attributes> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_ID,
 					new BeanPropertyRowMapper<>(Attributes.class), attributesId);
 
-			return list.isEmpty() ? new ResponseEntity<Attributes>(HttpStatus.NO_CONTENT)
-					: new ResponseEntity<Attributes>(list.get(0), HttpStatus.OK);
+			return list.isEmpty() ? null : list.get(0);
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<Attributes>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 
@@ -78,16 +83,17 @@ public class AttributesDao implements IAttributes {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<Object> updateAttributes(Attributes attributes, Integer attributesId) {
+	public void updateAttributes(Attributes attributes, Integer attributesId) {
 
 		try {
+
 			jdbcTemplate.update(SQL_FOR_UPDATING__ATTRIBUTES_BY_ID, attributes.getGroupId(), attributes.getAttribute(),
 					attributesId);
-			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -98,15 +104,16 @@ public class AttributesDao implements IAttributes {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<Object> deleteAttributes(Integer attributesId) {
+	public void deleteAttributes(Integer attributesId) {
 
 		try {
+
 			jdbcTemplate.update(SQL_FOR_DELETING_ATTRIBUTES, attributesId);
-			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -117,18 +124,21 @@ public class AttributesDao implements IAttributes {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<List<Attributes>> getAttributesByGroup(Integer groupId) {
+	public List<Attributes> getAttributesByGroup(Integer groupId) {
 
+		List<Attributes> list = new ArrayList<>();
 		try {
-			List<Attributes> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP,
+
+			list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP,
 					new BeanPropertyRowMapper<>(Attributes.class), groupId);
 
-			return list.isEmpty() ? new ResponseEntity<List<Attributes>>(HttpStatus.NO_CONTENT)
-					: new ResponseEntity<List<Attributes>>(list, HttpStatus.OK);
+			return list.isEmpty() ? null : list;
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<List<Attributes>>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
+			return list;
 		}
 	}
 }

@@ -3,7 +3,6 @@ package com.softbistro.survey.participant.components.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.participant.components.entity.Group;
@@ -27,8 +26,9 @@ public class GroupService {
 	 * @param group
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> setGroup(Group group) {
-		return iGroup.setGroup(group);
+	public void setGroup(Group group) {
+
+		iGroup.setGroup(group);
 	}
 
 	/**
@@ -37,7 +37,8 @@ public class GroupService {
 	 * @param groupId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Group> getGroupById(Integer groupId) {
+	public Group getGroupById(Integer groupId) {
+
 		return iGroup.getGroupByid(groupId);
 	}
 
@@ -47,7 +48,8 @@ public class GroupService {
 	 * @param clientId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Group>> getGroupsByClient(Integer clientId) {
+	public List<Group> getGroupsByClient(Integer clientId) {
+
 		return iGroup.getGroupsByClient(clientId);
 	}
 
@@ -57,8 +59,9 @@ public class GroupService {
 	 * @param group
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> updateGroupById(Group group, Integer id) {
-		return iGroup.updateGroupById(group, id);
+	public void updateGroupById(Group group, Integer id) {
+
+		iGroup.updateGroupById(group, id);
 	}
 
 	/**
@@ -67,7 +70,8 @@ public class GroupService {
 	 * @param groupId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deleteGroupById(Integer groupId) {
-		return iGroup.deleteGroupById(groupId);
+	public void deleteGroupById(Integer groupId) {
+
+		iGroup.deleteGroupById(groupId);
 	}
 }

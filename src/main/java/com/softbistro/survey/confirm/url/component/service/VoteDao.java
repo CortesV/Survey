@@ -7,9 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -22,6 +21,8 @@ import com.softbistro.survey.confirm.url.component.interfacee.IVote;
 
 @Repository
 public class VoteDao implements IVote {
+	
+	private static final Logger LOGGER = Logger.getLogger(VoteDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -57,8 +58,10 @@ public class VoteDao implements IVote {
 	 * @return
 	 */
 	@Override
-	public ResponseEntity<Object> answerOnSurvey(String uuid, List<Answer> answers) {
+	public void answerOnSurvey(String uuid, List<Answer> answers) {
+		
 		try {
+			
 			Date date = new Date(System.currentTimeMillis());
 			UuidInformation uuidInformation = jdbcTemplate.queryForObject(SQL_GET_UUID_INFORMATION,
 					new GetInformationFromUuid(), uuid, date);
@@ -67,6 +70,7 @@ public class VoteDao implements IVote {
 
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					
 					Answer answer = answers.get(i);
 					ps.setInt(1, answer.getQuestionId());
 					ps.setInt(2, uuidInformation.getPartisipantId());
@@ -78,15 +82,16 @@ public class VoteDao implements IVote {
 
 				@Override
 				public int getBatchSize() {
+					
 					return answers.size();
 				}
 			});
 
 			jdbcTemplate.update(SQL_UPDATE_STATUS_SENDING_SURVEY, statusForUpdate, uuid);
 
-			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+			
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -97,8 +102,10 @@ public class VoteDao implements IVote {
 	 * @return
 	 */
 	@Override
-	public ResponseEntity<List<VotePage>> getVotePage(String uuid) {
+	public List<VotePage> getVotePage(String uuid) {
+		
 		try {
+			
 			Date date = new Date(System.currentTimeMillis());
 			UuidInformation uuidInformation = jdbcTemplate.queryForObject(SQL_GET_UUID_INFORMATION,
 					new GetInformationFromUuid(), uuid, date);
@@ -108,6 +115,7 @@ public class VoteDao implements IVote {
 
 						@Override
 						public VotePage mapRow(ResultSet rs, int rowNum) throws SQLException {
+							
 							VotePage votePage = new VotePage();
 
 							List<String> choiseForQuestion = new ArrayList<>();
@@ -129,9 +137,11 @@ public class VoteDao implements IVote {
 						}
 
 					}, uuidInformation.getSurveyId());
-			return new ResponseEntity<List<VotePage>>(votePages, HttpStatus.OK);
+			return votePages;
 		} catch (Exception e) {
-			return new ResponseEntity<List<VotePage>>(HttpStatus.INTERNAL_SERVER_ERROR);
+			
+			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 

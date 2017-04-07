@@ -2,8 +2,6 @@ package com.softbistro.survey.participant.components.interfaces;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.softbistro.survey.participant.components.entity.Group;
 
 /**
@@ -14,15 +12,21 @@ import com.softbistro.survey.participant.components.entity.Group;
  */
 public interface IGroup {
 
-	public ResponseEntity<Object> setGroup(Group group);
-
 	/**
 	 * Method to create group
 	 * 
 	 * @param group
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Group> getGroupByid(Integer groupId);
+	public void setGroup(Group group);
+
+	/**
+	 * Method to get group by id
+	 * 
+	 * @param group
+	 * @return ResponseEntity
+	 */
+	public Group getGroupByid(Integer groupId);
 
 	/**
 	 * Method to get all clients in group
@@ -30,7 +34,7 @@ public interface IGroup {
 	 * @param clientId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<List<Group>> getGroupsByClient(Integer clientId);
+	public List<Group> getGroupsByClient(Integer clientId);
 
 	/**
 	 * Method to update group
@@ -38,7 +42,7 @@ public interface IGroup {
 	 * @param group
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> updateGroupById(Group group, Integer id);
+	public void updateGroupById(Group group, Integer id);
 
 	/**
 	 * Method for deleting group by id
@@ -46,5 +50,5 @@ public interface IGroup {
 	 * @param groupId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deleteGroupById(Integer groupId);
+	public void deleteGroupById(Integer groupId);
 }

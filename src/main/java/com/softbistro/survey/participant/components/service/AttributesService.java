@@ -3,7 +3,6 @@ package com.softbistro.survey.participant.components.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.participant.components.entity.Attributes;
@@ -27,8 +26,9 @@ public class AttributesService {
 	 * @param Attributes
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> setAttribute(Attributes attributes) {
-		return iAttributes.setAttribute(attributes);
+	public void setAttribute(Attributes attributes) {
+		
+		iAttributes.setAttribute(attributes);
 	}
 
 	/**
@@ -37,7 +37,8 @@ public class AttributesService {
 	 * @param attributesId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Attributes> getAttributeById(Integer attributesId) {
+	public Attributes getAttributeById(Integer attributesId) {
+		
 		return iAttributes.getAttributeById(attributesId);
 	}
 
@@ -49,8 +50,9 @@ public class AttributesService {
 	 * @param Attributes
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> updateAttributes(Attributes attributes, Integer attributesId) {
-		return iAttributes.updateAttributes(attributes, attributesId);
+	public void updateAttributes(Attributes attributes, Integer attributesId) {
+		
+		iAttributes.updateAttributes(attributes, attributesId);
 	}
 
 	/**
@@ -59,8 +61,9 @@ public class AttributesService {
 	 * @param attributesId
 	 * @return ResponseEntity
 	 */
-	public ResponseEntity<Object> deleteAttributesById(Integer attributesId) {
-		return iAttributes.deleteAttributes(attributesId);
+	public void deleteAttributesById(Integer attributesId) {
+		
+		iAttributes.deleteAttributes(attributesId);
 	}
 
 	/**
@@ -69,7 +72,8 @@ public class AttributesService {
 	 * @param groupId
 	 * @ResponseEntity
 	 */
-	public ResponseEntity<List<Attributes>> getAttributesByGroupId(Integer groupId) {
+	public List<Attributes> getAttributesByGroupId(Integer groupId) {
+		
 		return iAttributes.getAttributesByGroup(groupId);
 	}
 }
