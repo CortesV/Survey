@@ -66,15 +66,14 @@ public class ParticipantService {
 	}
 
 	/**
-	 * Method to getting participant from db by email and client Id
+	 * Method to getting participant from db by group Id
 	 * 
-	 * @param email,
-	 *            clientid
+	 * @param clientid
 	 * @return ResponseEntity
 	 */
-	public List<Participant> getParticipantByEmailAndClientId(String email, Integer clientid) {
-
-		return iParticipant.getParticipantByEmailAndClientId(email, clientid);
+		
+	public List<Participant> getParticipantByGroup(Integer groupId) {
+		return iParticipant.getParticipantByGroup(groupId);
 	}
 
 	/**

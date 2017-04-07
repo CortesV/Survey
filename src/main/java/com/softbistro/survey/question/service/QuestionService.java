@@ -20,7 +20,7 @@ public class QuestionService {
 	 *            id - id of question
 	 * @return return - all information about question
 	 */
-	public ResponseEntity<Question> findQuestionById(Long id) {
+	public Question findQuestionById(Long id) {
 
 		return iQuestion.findQuestionById(id);
 	}
@@ -33,9 +33,9 @@ public class QuestionService {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> saveQuestion(Question question) {
+	public void saveQuestion(Question question) {
 
-		return iQuestion.saveQuestion(question);
+		iQuestion.saveQuestion(question);
 	}
 
 	/**
@@ -45,9 +45,9 @@ public class QuestionService {
 	 *            of question
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> deleteQuestion(Long id) {
+	public void deleteQuestion(Long id) {
 
-		return iQuestion.deleteQuestion(id);
+		iQuestion.deleteQuestion(id);
 	}
 
 	/**
@@ -60,8 +60,8 @@ public class QuestionService {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> updateQuestion(Question question, Long id) {
+	public void updateQuestion(Question question, Long id) {
 
-		return iQuestion.updateQuestion(question, id);
+		iQuestion.updateQuestion(question, id);
 	}
 }

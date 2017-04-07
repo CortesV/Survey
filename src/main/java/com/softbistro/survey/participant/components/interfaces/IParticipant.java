@@ -18,7 +18,7 @@ public interface IParticipant {
 	 * Method for creating participant
 	 * 
 	 * @param participant
-	 * @return 
+	 * @return
 	 */
 	public void setParticipant(Participant participant);
 
@@ -26,7 +26,7 @@ public interface IParticipant {
 	 * Method for updating participant
 	 * 
 	 * @param participant
-	 * @return 
+	 * @return
 	 */
 	public void updateParticipant(Participant participant, Integer id);
 
@@ -34,7 +34,7 @@ public interface IParticipant {
 	 * Method for deleting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return 
+	 * @return
 	 */
 	public void deleteParticipantById(Integer participantId);
 
@@ -42,31 +42,34 @@ public interface IParticipant {
 	 * Method to getting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return 
+	 * @return
 	 */
 	public Participant getParticipantById(Integer participantId);
 
 	/**
-	 * Method to getting participant from db by email and client Id
+	 * Method to getting participant from db by group Id
 	 * 
-	 * @param email, clientId
-	 * @return 
+	 * 
+	 * @param clientId
+	 * @return
 	 */
-	public List<Participant> getParticipantByEmailAndClientId(String email, Integer cliectId);
-	
+
+	public List<Participant> getParticipantByGroup(Integer groupId);
+
 	/**
 	 * Method to getting participant from db by attribute value
 	 * 
-	 * @param attributeId, attribute value
-	 * @return 
+	 * @param attributeId,
+	 *            attribute value
+	 * @return
 	 */
 	public List<Participant> getParticipantByAttributeValue(Integer attributeId, String attributeValue);
-	
+
 	/**
 	 * Method to getting participant from database by client id
 	 * 
 	 * @param clientId
-	 * @return 
+	 * @return
 	 */
 	public List<Participant> selectClientAllParticipants(Integer cliectId);
 }

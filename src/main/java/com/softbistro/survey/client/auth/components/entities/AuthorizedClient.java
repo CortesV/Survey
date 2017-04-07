@@ -60,4 +60,10 @@ public class AuthorizedClient implements Serializable {
 		this.clientId = clientId;
 	}
 
+	@Override
+	public String toString() {
+		return "AuthorizedClient [clientId=" + clientId + ", uniqueKey=" + uniqueKey + ", timeValidKey=" + timeValidKey
+				+ "]";
+	}
+
 }

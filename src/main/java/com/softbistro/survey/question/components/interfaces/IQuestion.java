@@ -18,7 +18,7 @@ public interface IQuestion {
 	 *            id - id of question
 	 * @return return - all information about question
 	 */
-	public ResponseEntity<Question> findQuestionById(Long id);
+	public Question findQuestionById(Long id);
 
 	/**
 	 * Save client to database
@@ -28,7 +28,7 @@ public interface IQuestion {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> saveQuestion(Question question);
+	public void saveQuestion(Question question);
 
 	/**
 	 * Delete question from database by id of question
@@ -37,7 +37,7 @@ public interface IQuestion {
 	 *            of question
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> deleteQuestion(Long id);
+	public void deleteQuestion(Long id);
 
 	/**
 	 * Update information of question
@@ -49,5 +49,5 @@ public interface IQuestion {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
-	public ResponseEntity<Object> updateQuestion(Question question, Long id);
+	public void updateQuestion(Question question, Long id);
 }

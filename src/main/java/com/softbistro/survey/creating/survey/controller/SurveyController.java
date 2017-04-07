@@ -41,11 +41,14 @@ public class SurveyController {
 	public ResponseEntity<Integer> create(@RequestBody Survey survey, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
-
 			return new ResponseEntity<Integer>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return surveyService.createSurvey(survey);
+		try {
+			return new ResponseEntity<Integer>(surveyService.create(survey), HttpStatus.CREATED);
+		} catch (Exception e) {
+			return new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -60,11 +63,15 @@ public class SurveyController {
 	public ResponseEntity<Object> update(@RequestBody Survey survey, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
-
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return surveyService.updateOfSurvey(survey);
+		try {
+			surveyService.update(survey);
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -79,11 +86,14 @@ public class SurveyController {
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
-
 			return new ResponseEntity<List<Survey>>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return surveyService.getAllSurveysOfClient(clientId);
+		try {
+			return new ResponseEntity<List<Survey>>(surveyService.getAllSurveysByClient(clientId), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<List<Survey>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -94,14 +104,18 @@ public class SurveyController {
 	 */
 	@ApiOperation(value = "Add Groups to Survey", notes = "Add groups to survey by list of groups", tags = "Survey")
 	@RequestMapping(value = "/groups", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<Object> addGroupsToSurvey(@RequestBody List<Group> groups, @RequestHeader String token) {
+	public ResponseEntity<Object> addGroups(@RequestBody List<Group> groups, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
-
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return surveyService.addGroupsToSurvey(groups);
+		try {
+			surveyService.addGroups(groups);
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -112,15 +126,18 @@ public class SurveyController {
 	 */
 	@ApiOperation(value = "Get all Groups of Client", notes = "Get all groups of Client by client id", tags = "Survey")
 	@RequestMapping(value = "/client/{client_id}/groups", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<List<Group>> getGroups(@PathVariable(value = "client_id") Integer clientId,
+	public ResponseEntity<List<Group>> getGroupsClient(@PathVariable(value = "client_id") Integer clientId,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
-
 			return new ResponseEntity<List<Group>>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return surveyService.getGroups(clientId);
+		try {
+			return new ResponseEntity<List<Group>>(surveyService.getGroupsClient(clientId), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<List<Group>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -134,11 +151,14 @@ public class SurveyController {
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
-
 			return new ResponseEntity<List<Group>>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return surveyService.getGroupsSurvey(surveyId);
+		try {
+			return new ResponseEntity<List<Group>>(surveyService.getGroupsSurvey(surveyId), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<List<Group>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
@@ -149,14 +169,63 @@ public class SurveyController {
 	 */
 	@ApiOperation(value = "Delete Survey By Id", notes = "Delete survey from data base by survey id", tags = "Survey")
 	@RequestMapping(value = "/{survey_id}", method = RequestMethod.DELETE, produces = "application/json")
-	public ResponseEntity<Object> deleteSurvey(@PathVariable(value = "survey_id") Integer surveyId,
+	public ResponseEntity<Object> delete(@PathVariable(value = "survey_id") Integer surveyId,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
-
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return surveyService.deleteSurvey(surveyId);
+		try {
+			surveyService.delete(surveyId);
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	/**
+	 * Start working time URL for vote and functions of survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@ApiOperation(value = "Start Survey By Id", notes = "Start survey by survey id", tags = "Survey")
+	@RequestMapping(value = "/start/{survey_id}/", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<Object> start(@PathVariable(value = "survey_id") Integer surveyId,
+			@RequestHeader String token) {
+		if (!authorizationService.checkAccess(token)) {
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+		}
+
+		try {
+			surveyService.start(surveyId);
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		}
+	}
+
+	/**
+	 * Stop working time URL for vote and functions of survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@ApiOperation(value = "Stop Survey By Id", notes = "Stop survey  by survey id", tags = "Survey")
+	@RequestMapping(value = "/stop/{survey_id}/", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<Object> stop(@PathVariable(value = "survey_id") Integer surveyId,
+			@RequestHeader String token) {
+		if (!authorizationService.checkAccess(token)) {
+			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+		}
+
+		try {
+			surveyService.stop(surveyId);
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<Object>(HttpStatus.OK);
+		}
 	}
 }

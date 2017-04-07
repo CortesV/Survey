@@ -64,29 +64,30 @@ public class ParticipantController {
 	}
 
 	/**
-	 * Method to getting participant from db by email and client Id
+	 * Method to getting participant from db by client Id
 	 * 
 	 * @param email,
 	 *            clientid
 	 * @return ResponseEntity
 	 */
-	@ApiOperation(value = "Get Participants By Client", notes = "Get participant instanse by participant email and client id", tags = "Participant")
-	@RequestMapping(value = "email/{email}/{client_id}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<List<Participant>> getParticipantByEmailAndClientId(@PathVariable("email") String email,
-			@PathVariable("client_id") Integer clientid, @RequestHeader String token) {
+	@ApiOperation(value = "Get Participants By group", notes = "Get participant instanse by participant group id", tags = "Participant")
+	@RequestMapping(value = "group/{groupId}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<Participant>> getParticipantByGroupId(
+			@PathVariable("groupId") Integer groupId, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
+
 		try {
 
-			return new ResponseEntity<>(participantService.getParticipantByEmailAndClientId(email, clientid),
+			return new ResponseEntity<>(participantService.getParticipantByGroup(groupId),
 					HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -115,7 +116,7 @@ public class ParticipantController {
 					HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -141,7 +142,7 @@ public class ParticipantController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -168,7 +169,7 @@ public class ParticipantController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -185,7 +186,7 @@ public class ParticipantController {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
 		try {
@@ -194,7 +195,7 @@ public class ParticipantController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -214,7 +215,7 @@ public class ParticipantController {
 			return new ResponseEntity<>(participantService.selectClientAllParticipants(clientId), HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
