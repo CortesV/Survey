@@ -16,11 +16,17 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 public class Client implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	private Long id;
+
+	private Integer id;
+
 	private String facebookId;
+
 	private String googleId;
+
 	private String clientName;
+
 	private String password;
+
 	private String email;
 	/**
 	 * This field that represent authorization token
@@ -31,11 +37,11 @@ public class Client implements Serializable {
 	 */
 	private String flag;
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -93,6 +99,13 @@ public class Client implements Serializable {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	@Override
+	public String toString() {
+		return "Client [id=" + id + ", facebookId=" + facebookId + ", googleId=" + googleId + ", clientName="
+				+ clientName + ", password=" + password + ", email=" + email + ", token=" + token + ", flag=" + flag
+				+ "]";
 	}
 
 }
