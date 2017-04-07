@@ -12,6 +12,8 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.Permission;
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.Sheet;
 import com.google.api.services.sheets.v4.model.SheetProperties;
@@ -42,7 +44,7 @@ public class SheetsService {
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	public Spreadsheet send(List<SurveyStatisticExport> statistic) throws IOException, GeneralSecurityException {
+	public String send(List<SurveyStatisticExport> statistic) throws IOException, GeneralSecurityException {
 
 		Sheets sheetsService = googleAuthorization.getSheetsService();
 
@@ -52,7 +54,9 @@ public class SheetsService {
 
 		insertData(response.getSpreadsheetId(), statistic);
 
-		return response;
+		publicAccess(response.getSpreadsheetId());
+
+		return response.getSpreadsheetUrl();
 
 	}
 
@@ -102,8 +106,7 @@ public class SheetsService {
 
 			URL url = FeedURLFactory.getDefault().getWorksheetFeedUrl(key, "private", "full");
 
-			WorksheetEntry worksheetEntry;
-			worksheetEntry = spreadsheetService.getFeed(url, WorksheetFeed.class).getEntries().get(0);
+			WorksheetEntry worksheetEntry = spreadsheetService.getFeed(url, WorksheetFeed.class).getEntries().get(0);
 
 			URL celledUrl = worksheetEntry.getCellFeedUrl();
 
@@ -148,7 +151,7 @@ public class SheetsService {
 		if (value != null) {
 			newRow.getCustomElements().setValueLocal(name, value);
 		} else {
-			newRow.getCustomElements().setValueLocal(name, " - ");
+			newRow.getCustomElements().setValueLocal(name, "");
 		}
 
 	}
@@ -184,8 +187,17 @@ public class SheetsService {
 		return arrNames;
 	}
 
-	public void insertStatistic() {
-
+	private void publicAccess(String fileId) {
+		try {
+			Drive service = googleAuthorization.getDriveService();
+			Permission newPermission = new Permission();
+			newPermission.setType("anyone");
+			newPermission.setRole("writer");
+			service.permissions().create(fileId, newPermission).execute();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

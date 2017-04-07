@@ -1,8 +1,5 @@
 package com.softbistro.survey.statistic.service;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,21 +32,14 @@ public class StatisticService {
 	 * @return
 	 */
 	public ResponseEntity<Object> exportSurveyStatistic(Integer surveyId) {
-		// try {
-		SheetsService sheetsService = new SheetsService();
-
 		try {
-			sheetsService.send(statisticDao.exportSurveyStatistic(surveyId));
-		} catch (IOException | GeneralSecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			SheetsService sheetsService = new SheetsService();
 
-		return new ResponseEntity<Object>(statisticDao.exportSurveyStatistic(surveyId), HttpStatus.OK);
-		// } catch (Exception e) {
-		// return new ResponseEntity<Object>(e.getMessage(),
-		// HttpStatus.INTERNAL_SERVER_ERROR);
-		// }
+			return new ResponseEntity<Object>(sheetsService.send(statisticDao.exportSurveyStatistic(surveyId)),
+					HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 
 	}
 }

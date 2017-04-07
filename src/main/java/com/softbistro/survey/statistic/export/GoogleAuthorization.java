@@ -3,8 +3,7 @@ package com.softbistro.survey.statistic.export;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import javax.annotation.Resource;
 
@@ -18,8 +17,9 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.sheets.v4.Sheets;
-import com.google.api.services.sheets.v4.SheetsScopes;
 
 /**
  * Authorization for working with google API
@@ -52,7 +52,7 @@ public class GoogleAuthorization {
 	 * If modifying these scopes, delete your previously saved credentials at
 	 * ~/.credentials/sheets.googleapis.com-java-quickstart
 	 */
-	private static final List<String> SCOPES = Arrays.asList(SheetsScopes.SPREADSHEETS);
+	private static final Collection<String> SCOPES = DriveScopes.all();
 
 	static {
 		try {
@@ -92,4 +92,16 @@ public class GoogleAuthorization {
 		return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME)
 				.build();
 	}
+
+	/**
+	 * Build and return an authorized Drive client service.
+	 * 
+	 * @return an authorized Drive client service
+	 * @throws IOException
+	 */
+	public static Drive getDriveService() throws IOException {
+		Credential credential = authorize();
+		return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
+	}
+
 }
