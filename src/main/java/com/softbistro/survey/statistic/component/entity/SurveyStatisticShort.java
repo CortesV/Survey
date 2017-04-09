@@ -2,8 +2,6 @@ package com.softbistro.survey.statistic.component.entity;
 
 import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Short information about survey<br>
  * 
@@ -17,19 +15,14 @@ public class SurveyStatisticShort {
 
 	private String name;
 
-	@JsonProperty(value = "start_time")
 	private Date startTimeOfSurvey;
 
-	@JsonProperty(value = "finish_time")
 	private Date finishTimeOfSurvey;
 
-	@JsonProperty(value = "participant_count")
 	private Integer participantCount;
 
-	@JsonProperty(value = "participant_voted")
 	private Integer participantVoted;
 
-	@JsonProperty(value = "participant_not_voted")
 	private Integer participanNotVoted;
 
 	public Integer getId() {

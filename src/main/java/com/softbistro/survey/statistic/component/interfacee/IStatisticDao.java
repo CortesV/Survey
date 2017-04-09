@@ -2,8 +2,6 @@ package com.softbistro.survey.statistic.component.interfacee;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
 
@@ -13,7 +11,7 @@ import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
  * @author zviproject
  *
  */
-public interface IStatistic {
+public interface IStatisticDao {
 
 	/**
 	 * Get answers on question from survey
@@ -22,7 +20,7 @@ public interface IStatistic {
 	 *            - survey id for getting information
 	 * @return
 	 */
-	public ResponseEntity<SurveyStatisticShort> surveyStatistic(Integer surveyId);
+	public SurveyStatisticShort survey(Integer surveyId);
 
 	/**
 	 * Export statistic about survey
@@ -30,5 +28,5 @@ public interface IStatistic {
 	 * @param surveyId
 	 * @return
 	 */
-	public List<SurveyStatisticExport> exportSurveyStatistic(Integer surveyId);
+	public List<SurveyStatisticExport> export(Integer surveyId);
 }

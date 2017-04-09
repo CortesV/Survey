@@ -1,8 +1,10 @@
 package com.softbistro.survey.statistic.service;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
@@ -14,6 +16,11 @@ public class StatisticService {
 	@Autowired
 	private StatisticDao statisticDao;
 
+	@Autowired
+	private SheetsService sheetsService;
+
+	private static final Logger LOG = Logger.getLogger(StatisticService.class);
+
 	/**
 	 * Get answers on question from survey
 	 * 
@@ -21,8 +28,8 @@ public class StatisticService {
 	 *            - survey id for getting information
 	 * @return
 	 */
-	public ResponseEntity<SurveyStatisticShort> surveyStatistic(Integer surveyId) {
-		return statisticDao.surveyStatistic(surveyId);
+	public SurveyStatisticShort survey(Integer surveyId) {
+		return statisticDao.survey(surveyId);
 	}
 
 	/**
@@ -31,15 +38,12 @@ public class StatisticService {
 	 * @param surveyId
 	 * @return
 	 */
-	public ResponseEntity<Object> exportSurveyStatistic(Integer surveyId) {
+	public String export(Integer surveyId) {
 		try {
-			SheetsService sheetsService = new SheetsService();
-
-			return new ResponseEntity<Object>(sheetsService.send(statisticDao.exportSurveyStatistic(surveyId)),
-					HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return sheetsService.send(statisticDao.export(surveyId));
+		} catch (GeneralSecurityException | IOException e) {
+			LOG.error(e.getMessage());
+			return null;
 		}
-
 	}
 }

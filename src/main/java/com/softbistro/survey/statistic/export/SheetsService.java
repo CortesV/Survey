@@ -7,10 +7,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.Permission;
@@ -29,13 +28,13 @@ import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 
-@Resource
+@Service
 public class SheetsService {
 
 	@Autowired
 	private GoogleAuthorization googleAuthorization;
 
-	private static Logger log = Logger.getLogger(SheetsService.class);
+	private static final Logger LOG = Logger.getLogger(SheetsService.class);
 
 	/**
 	 * Creating and configure new sheets
@@ -137,12 +136,8 @@ public class SheetsService {
 
 				column = 0;
 			}
-
-			log.info("************* Finish sending statistic on the google sheets");
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ServiceException e) {
-			e.printStackTrace();
+		} catch (ServiceException | IOException e) {
+			LOG.error("Insert data " + e.getMessage());
 		}
 
 	}
@@ -181,7 +176,7 @@ public class SheetsService {
 			}
 
 		} catch (ServiceException | IOException e) {
-			log.error(e.getMessage());
+			LOG.error("Generate headers " + e.getMessage());
 			e.printStackTrace();
 		}
 		return arrNames;
@@ -195,8 +190,7 @@ public class SheetsService {
 			newPermission.setRole("writer");
 			service.permissions().create(fileId, newPermission).execute();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Public access " + e.getMessage());
 		}
 	}
 

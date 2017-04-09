@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -15,7 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.softbistro.survey.statistic.component.entity.ParticipantAttributes;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
-import com.softbistro.survey.statistic.component.interfacee.IStatistic;
+import com.softbistro.survey.statistic.component.interfacee.IStatisticDao;
 
 /**
  * Working with database for statistic
@@ -24,22 +22,22 @@ import com.softbistro.survey.statistic.component.interfacee.IStatistic;
  *
  */
 @Repository
-public class StatisticDao implements IStatistic {
+public class StatisticDao implements IStatisticDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private static final String SQL_GET_SURVEY_STATISTIC_SHORT = "SELECT s.id, s.name, s.start_time, s.finish_time, COUNT(ss.id) AS participant_count ,"
+	private static final String SQL_GET_SURVEY_STATISTIC_SHORT = "SELECT survey .id, survey .name, survey .start_time, survey .finish_time, COUNT(ss.id) AS participant_count ,"
 			+ " (SELECT COUNT(ss.id) AS voted_count  FROM sending_survey AS ss "
 			+ "WHERE ss.answer_status = 'VOTED' AND ss.survey_id = ? ) AS voted_count "
-			+ "FROM survey AS s , sending_survey AS ss WHERE s.id = ? AND ss.survey_id = ?";
+			+ "FROM survey AS survey , sending_survey AS ss WHERE survey.id = ? AND ss.survey_id = ?";
 
-	private static final String SQL_GET_STATISTIC_FOR_EXPORT = "SELECT  s.id AS survey_id, s.`name` AS survey_name, p.first_name, p.last_name, question_sections.section_name AS group_name,"
+	private static final String SQL_GET_STATISTIC_FOR_EXPORT = "SELECT  survey.id AS survey_id, survey.`name` AS survey_name, p.first_name, p.last_name, question_sections.section_name AS group_name,"
 			+ "questions.question, answers.participant_id ,  answers.answer_value, answers.comment, answers.modified_date AS answer_datetime "
 			+ "FROM answers  LEFT JOIN questions ON answers.question_id = questions.id "
-			+ "LEFT JOIN survey AS s ON s.id = questions.survey_id "
-			+ "LEFT JOIN connect_question_section_survey ON s.id = connect_question_section_survey.survey_id "
+			+ "LEFT JOIN survey AS survey ON survey.id = questions.survey_id "
+			+ "LEFT JOIN connect_question_section_survey ON survey.id = connect_question_section_survey.survey_id "
 			+ "LEFT JOIN question_sections ON question_sections.id = connect_question_section_survey.question_section_id "
-			+ "LEFT JOIN participant AS p ON p.id = answers.participant_id WHERE s.id= ?";
+			+ "LEFT JOIN participant AS p ON p.id = answers.participant_id WHERE survey.id= ?";
 
 	private static final String SQL_GET_PARTICIPANT_ATTRIBUTES = "SELECT attribute, attribute_value FROM attributes "
 			+ "INNER JOIN attribute_values ON attributes.id = attribute_values.attribute_id "
@@ -53,7 +51,7 @@ public class StatisticDao implements IStatistic {
 	 * @return
 	 */
 	@Override
-	public ResponseEntity<SurveyStatisticShort> surveyStatistic(Integer surveyId) {
+	public SurveyStatisticShort survey(Integer surveyId) {
 		SurveyStatisticShort surveyStatisticShort = jdbcTemplate.queryForObject(SQL_GET_SURVEY_STATISTIC_SHORT,
 				new RowMapper<SurveyStatisticShort>() {
 
@@ -73,7 +71,7 @@ public class StatisticDao implements IStatistic {
 
 				}, surveyId, surveyId, surveyId);
 
-		return new ResponseEntity<SurveyStatisticShort>(surveyStatisticShort, HttpStatus.OK);
+		return surveyStatisticShort;
 	}
 
 	/**
@@ -83,7 +81,7 @@ public class StatisticDao implements IStatistic {
 	 * @return
 	 */
 	@Override
-	public List<SurveyStatisticExport> exportSurveyStatistic(Integer surveyId) {
+	public List<SurveyStatisticExport> export(Integer surveyId) {
 		List<SurveyStatisticExport> surveyStatisticExport = new ArrayList<>();
 
 		surveyStatisticExport = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT,
