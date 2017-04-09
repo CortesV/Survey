@@ -12,6 +12,7 @@
 .project
 .settings
 .springBeans
+.google_apis
 
 ### IntelliJ IDEA ###
 .idea
