@@ -4,10 +4,11 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -15,20 +16,25 @@ import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.confirm.url.component.entity.Answer;
 import com.softbistro.survey.confirm.url.component.entity.UuidInformation;
+import com.softbistro.survey.confirm.url.component.entity.VotePage;
 import com.softbistro.survey.confirm.url.component.interfacee.IVote;
-import com.softbistro.survey.response.Response;
 
 @Repository
 public class VoteDao implements IVote {
+	
+	private static final Logger LOGGER = Logger.getLogger(VoteDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private static final String SQL_GET_UUID_INFORMATION = "SELECT survey_id, participant_id FROM sending_survey WHERE url=? AND working_time > ? AND answer_status='NEW'";
+	private static final String SQL_GET_UUID_INFORMATION = "SELECT participant_id, survey_id FROM sending_survey WHERE url=? AND working_time > ? AND answer_status='NEW'";
 
 	private static final String SQL_INSERT_ANSWERS = "INSERT INTO answers (question_id, participant_id, answer_type, answer_value, `comment`) VALUES(?,?,?,?,?)";
 
 	private static final String SQL_UPDATE_STATUS_SENDING_SURVEY = "UPDATE sending_survey SET answer_status= ? WHERE url = ?";
+
+	private static final String SQL_GET_INFORMATION_ABOUT_QUESTIONS = "SELECT question, required, question_choices, answer_type, required_comment, id FROM questions "
+			+ "WHERE survey_id = ? AND `delete` = 0";
 
 	private final String statusForUpdate = "VOTED";
 
@@ -38,7 +44,7 @@ public class VoteDao implements IVote {
 		public UuidInformation mapRow(ResultSet rs, int rowNum) throws SQLException {
 			UuidInformation uuidInformation = new UuidInformation();
 			uuidInformation.setPartisipantId(rs.getInt(1));
-			uuidInformation.setQuestionId(rs.getInt(2));
+			uuidInformation.setSurveyId(rs.getInt(2));
 
 			return uuidInformation;
 		}
@@ -52,8 +58,10 @@ public class VoteDao implements IVote {
 	 * @return
 	 */
 	@Override
-	public Response answerOnSurvey(String uuid, List<Answer> answers) {
+	public void answerOnSurvey(String uuid, List<Answer> answers) {
+		
 		try {
+			
 			Date date = new Date(System.currentTimeMillis());
 			UuidInformation uuidInformation = jdbcTemplate.queryForObject(SQL_GET_UUID_INFORMATION,
 					new GetInformationFromUuid(), uuid, date);
@@ -62,8 +70,9 @@ public class VoteDao implements IVote {
 
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					
 					Answer answer = answers.get(i);
-					ps.setInt(1, uuidInformation.getQuestionId());
+					ps.setInt(1, answer.getQuestionId());
 					ps.setInt(2, uuidInformation.getPartisipantId());
 					ps.setString(3, answer.getAnswerType());
 					ps.setString(4, answer.getAnswerValue());
@@ -73,15 +82,66 @@ public class VoteDao implements IVote {
 
 				@Override
 				public int getBatchSize() {
+					
 					return answers.size();
 				}
 			});
 
 			jdbcTemplate.update(SQL_UPDATE_STATUS_SENDING_SURVEY, statusForUpdate, uuid);
 
-			return new Response(null, HttpStatus.OK, null);
 		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+			
+			LOGGER.error(e.getMessage());
+		}
+	}
+
+	/**
+	 * Response for site with information about questions
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	@Override
+	public List<VotePage> getVotePage(String uuid) {
+		
+		try {
+			
+			Date date = new Date(System.currentTimeMillis());
+			UuidInformation uuidInformation = jdbcTemplate.queryForObject(SQL_GET_UUID_INFORMATION,
+					new GetInformationFromUuid(), uuid, date);
+
+			List<VotePage> votePages = jdbcTemplate.query(SQL_GET_INFORMATION_ABOUT_QUESTIONS,
+					new RowMapper<VotePage>() {
+
+						@Override
+						public VotePage mapRow(ResultSet rs, int rowNum) throws SQLException {
+							
+							VotePage votePage = new VotePage();
+
+							List<String> choiseForQuestion = new ArrayList<>();
+
+							String allChoiseForQuestion = rs.getString(3);
+
+							for (String retval : allChoiseForQuestion.split("/")) {
+								choiseForQuestion.add(retval);
+							}
+
+							votePage.setQuestionName(rs.getString(1));
+							votePage.setRequired(rs.getInt(2));
+							votePage.setQuestionAnswers(choiseForQuestion);
+							votePage.setAnswerType(rs.getString(4));
+							votePage.setRequiredComment(rs.getInt(5));
+							votePage.setId(rs.getInt(6));
+
+							return votePage;
+						}
+
+					}, uuidInformation.getSurveyId());
+			return votePages;
+		} catch (Exception e) {
+			
+			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 

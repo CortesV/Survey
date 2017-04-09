@@ -11,7 +11,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.softbistro.survey" })
+@ComponentScan({"com.softbistro.survey"})
 @PropertySource("classpath:application.properties")
 public class SurveySoftBistroApplication {
 
@@ -42,11 +42,6 @@ public class SurveySoftBistroApplication {
 
 		final RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(jedisConnectionFactory());
-		// template.setKeySerializer(new StringRedisSerializer());
-		// template.setHashValueSerializer(new
-		// GenericToStringSerializer<Object>(Object.class));
-		// template.setValueSerializer(new
-		// GenericToStringSerializer<Object>(Object.class));
 		return template;
 	}
 

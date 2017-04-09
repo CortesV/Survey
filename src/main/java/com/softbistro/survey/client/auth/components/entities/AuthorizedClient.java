@@ -8,9 +8,9 @@ import java.io.Serializable;
  * @author cortes
  *
  */
-@SuppressWarnings("serial")
 public class AuthorizedClient implements Serializable {
 
+	private static final long serialVersionUID = 1L;
 	/**
 	 * clientId - id client in MySQL database
 	 */
@@ -58,6 +58,12 @@ public class AuthorizedClient implements Serializable {
 
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
+	}
+
+	@Override
+	public String toString() {
+		return "AuthorizedClient [clientId=" + clientId + ", uniqueKey=" + uniqueKey + ", timeValidKey=" + timeValidKey
+				+ "]";
 	}
 
 }

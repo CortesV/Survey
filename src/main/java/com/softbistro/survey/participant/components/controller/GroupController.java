@@ -1,7 +1,11 @@
 package com.softbistro.survey.participant.components.controller;
 
+import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -12,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.service.GroupService;
-import com.softbistro.survey.response.Response;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Controller for group entity
@@ -23,8 +28,8 @@ import com.softbistro.survey.response.Response;
 @RestController
 @RequestMapping("/rest/survey/v1/group")
 public class GroupController {
-	
-	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
+
+	private static final Logger LOGGER = Logger.getLogger(GroupController.class);
 
 	@Autowired
 	private AuthorizationService authorizationService;
@@ -36,84 +41,128 @@ public class GroupController {
 	 * Method to create group
 	 * 
 	 * @param group
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	@RequestMapping(method = RequestMethod.POST)
-	public Response setGroup(@RequestBody Group group, @RequestHeader String token) {
+	@ApiOperation(value = "Create new Group", notes = "Create new group instanse by client id and group name", tags = "Participant Group")
+	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Object> setGroup(@RequestBody Group group, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
-		return groupService.setGroup(group);
+
+		try {
+
+			groupService.setGroup(group);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
 	 * Method to get group from db
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Response getGroupById(@PathVariable Integer id, @RequestHeader String token) {
+	@ApiOperation(value = "Get Group By Id", notes = "Get group instanse by group id", tags = "Participant Group")
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<Group> getGroupById(@PathVariable Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
-		return groupService.getGroupById(id);
+
+		try {
+
+			return new ResponseEntity<>(groupService.getGroupById(id), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
-	 * Method to get all clients in group
+	 * Method to get all client groups
 	 * 
 	 * @param clientId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	@RequestMapping(value = "/client/{id}", method = RequestMethod.GET)
-	public Response getGroupByClientId(@PathVariable Integer id, @RequestHeader String token) {
+	@ApiOperation(value = "Get Group By Client", notes = "Get group instanse by group id", tags = "Participant Group")
+	@RequestMapping(value = "/client/{id}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<Group>> getGroupByClientId(@PathVariable Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
-		return groupService.getGroupsByClient(id);
+
+		try {
+
+			return new ResponseEntity<>(groupService.getGroupsByClient(id), HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
 	 * Method to update group
 	 * 
 	 * @param group
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	@RequestMapping(method = RequestMethod.PUT)
-	public Response updateGroup(@RequestBody Group group, @RequestHeader String token) {
+	@ApiOperation(value = "Update Group Name By Id", notes = "Update group instanse by group name and group id", tags = "Participant Group")
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+	public ResponseEntity<Object> updateGroup(@PathVariable Integer id, @RequestBody Group group,
+			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
-		return groupService.updateGroupById(group);
+
+		try {
+
+			groupService.updateGroupById(group, id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	/**
 	 * Method for deleting group by id
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public Response deleteGroupById(@PathVariable Integer id, @RequestHeader String token) {
+	@ApiOperation(value = "Delete Group By Id", notes = "Delete group instanse by group id", tags = "Participant Group")
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
+	public ResponseEntity<Object> deleteGroupById(@PathVariable Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
-		return groupService.deleteGroupById(id);
+
+		try {
+
+			groupService.deleteGroupById(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 }

@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.confirm.url.component.interfacee.IConfirm;
-import com.softbistro.survey.response.Response;
 
 @Service
 public class ConfirmService {
+	
 	@Autowired
 	private IConfirm iConfirm;
 
@@ -17,8 +17,9 @@ public class ConfirmService {
 	 * @param uuid
 	 * @return
 	 */
-	public Response confirmPassword(String uuid) {
-		return iConfirm.confirmPassword(uuid);
+	public void confirmPassword(String uuid) {
+		
+		iConfirm.confirmPassword(uuid);
 	}
 
 	/**
@@ -27,7 +28,8 @@ public class ConfirmService {
 	 * @param uuid
 	 * @return
 	 */
-	public Response confirmEmail(String uuid) {
-		return iConfirm.confirmEmail(uuid);
+	public void confirmEmail(String uuid) {
+		
+		iConfirm.confirmEmail(uuid);
 	}
 }

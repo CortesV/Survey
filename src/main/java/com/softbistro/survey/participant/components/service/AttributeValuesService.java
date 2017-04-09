@@ -1,11 +1,12 @@
 package com.softbistro.survey.participant.components.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.participant.components.entity.AttributeValues;
 import com.softbistro.survey.participant.components.interfaces.IAttributeValues;
-import com.softbistro.survey.response.Response;
 
 /**
  * Service for attribute Values entity
@@ -23,40 +24,45 @@ public class AttributeValuesService {
 	 * Method for creating attribute values
 	 * 
 	 * @param attributeValues
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response setAttributeValues(AttributeValues attributeValues) {
-		return iAttributeValues.setAttributeValues(attributeValues);
+	public void setAttributeValues(AttributeValues attributeValues) {
+
+		iAttributeValues.setAttributeValues(attributeValues);
 	}
 
 	/**
 	 * Method for getting attribute values form the db
 	 * 
 	 * @param attributeValuesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getAttributeValuesById(Integer attributeValuesId) {
+	public AttributeValues getAttributeValuesById(Integer attributeValuesId) {
+
 		return iAttributeValues.getAttributeValuesById(attributeValuesId);
 	}
 
 	/**
 	 * Method for updating attribute values
 	 * 
-	 * @param attributeValues
-	 * @return Response
+	 * @param attributeValues,
+	 *            id
+	 * @return ResponseEntity
 	 */
-	public Response updateAttributeValuesById(AttributeValues attributeValues) {
-		return iAttributeValues.updateAttributeValuesById(attributeValues);
+	public void updateAttributeValuesById(AttributeValues attributeValues, Integer id) {
+
+		iAttributeValues.updateAttributeValuesById(attributeValues, id);
 	}
 
 	/**
 	 * Method for deleting attribute values by id
 	 * 
 	 * @param attributeValuesId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deleteAttributeValuesById(Integer attributeValuesId) {
-		return iAttributeValues.deleteAttributeValuesById(attributeValuesId);
+	public void deleteAttributeValuesById(Integer attributeValuesId) {
+
+		iAttributeValues.deleteAttributeValuesById(attributeValuesId);
 	}
 
 	/**
@@ -64,9 +70,10 @@ public class AttributeValuesService {
 	 * 
 	 * @param groupId
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantAttributesInGroup(Integer groupId, Integer participantId) {
+	public List<AttributeValues> getParticipantAttributesInGroup(Integer groupId, Integer participantId) {
+
 		return iAttributeValues.getParticipantAttributesInGroup(groupId, participantId);
 	}
 }

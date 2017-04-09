@@ -1,7 +1,5 @@
 package com.softbistro.survey.confirm.url.component.interfacee;
 
-import com.softbistro.survey.response.Response;
-
 /**
  * Using for confirm operations from notification system
  * 
@@ -16,7 +14,7 @@ public interface IConfirm {
 	 * @param uuid
 	 * @return
 	 */
-	public Response confirmPassword(String uuid);
+	public void confirmPassword(String uuid);
 
 	/**
 	 * Confirming email new client by using update status in database
@@ -24,5 +22,5 @@ public interface IConfirm {
 	 * @param uuid
 	 * @return
 	 */
-	public Response confirmEmail(String uuid);
+	public void confirmEmail(String uuid);
 }

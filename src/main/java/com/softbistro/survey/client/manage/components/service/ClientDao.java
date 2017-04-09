@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
-import com.softbistro.survey.response.Response;
+import com.softbistro.survey.client.manage.service.FindClientService;
 
 /**
  * CRUD for entity Client
@@ -23,56 +23,48 @@ import com.softbistro.survey.response.Response;
 @Repository
 public class ClientDao implements IClient {
 
-	private static final String SELECT_BY_EMAIL = "SELECT * FROM clients  WHERE clients.email = ? and clients.`delete` = 0";
+	private static final Logger LOGGER = Logger.getLogger(ClientDao.class);
+
+	private static final String SELECT_CLIENT_FIRST_PART = "SELECT * FROM clients  WHERE clients.";
+	private static final String SELECT_CLIENT_SECOND_PART = " = ? and clients.`delete` = 0";
+	private static final String FIND_CLIENT_BY_ID = "SELECT * FROM clients  WHERE clients.id = ? and clients.`delete` = 0";
 	private static final String FIND_CLIENT = "SELECT * FROM clients  WHERE clients.email = ? or clients.client_name = ? and clients.`delete` = 0";
-	private static final String SAVE_CLIENT = "INSERT INTO clients (client_name, password, email) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE  email = email";
-	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO clients (client_name, password, facebook_id, email) VALUES(?, ?, ?, ?)"
-			+ "ON DUPLICATE KEY UPDATE facebook_id = ?";
-	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, password, google_id, email) VALUES(?, ?, ?, ?)"
-			+ "ON DUPLICATE KEY UPDATE google_id = ?";
-	private static final String UPDATE_CLIENT = "UPDATE clients SET client_name = ?, email = ?, password = ? WHERE id = ?";
-	private static final String DELETE_CLIENT = "UPDATE clients as sc LEFT JOIN survey as ss on ss.client_id = sc.id LEFT JOIN `group` as sg on "
-			+ "sg.client_id = sc.id LEFT JOIN connect_group_participant as cgp on cgp.group_id = sg.id LEFT JOIN participant as sp on "
-			+ "sp.id = cgp.participant_id LEFT JOIN attributes as sa on sa.group_id = sg.id LEFT JOIN attribute_values as sav on "
-			+ "sav.attribute_id = sa.id LEFT JOIN answers as answ on answ.participant_id = sp.id LEFT JOIN questions as sq on "
-			+ "sq.survey_id = ss.id LEFT JOIN question_sections as qs on qs.survey_id = ss.id LEFT JOIN connect_group_survey as cgs on "
-			+ "cgs.survey_id = ss.id LEFT JOIN client_role as cr on cr.client_id = sc.id "
-			+ "SET sc.`delete` = '1', ss.`delete` = '1', sg.`delete` = '1', cgp.`delete` = '1', sa.`delete` = '1', sp.`delete` = '1', "
-			+ "sav.`delete` = '1', answ.`delete` = '1', sq.`delete` = '1', qs.`delete` = '1', cgs.`delete` = '1', cr.`delete` = '1'"
-			+ " WHERE sc.id = ?";
+	private static final String SAVE_CLIENT = "INSERT INTO clients (client_name, password, email) VALUES(?, ?, ?)";
+	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO clients (client_name, facebook_id, email) VALUES(?, ?, ?)";
+	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, google_id, email) VALUES(?, ?, ?)";
+	private static final String UPDATE_CLIENT = "UPDATE clients SET client_name = ?, email = ?, password = ?, facebook_id = ?, google_id = ? WHERE id = ?";
+	private static final String DELETE_CLIENT = "UPDATE clients as sc SET sc.`delete` = '1' WHERE sc.id = ?";
 	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE clients SET password = ? WHERE id = ?";
-	private static final String DESCRIPTION_SAVE = "Client successfully saved";
-	private static final String DESCRIPTION_SOC_SAVE = "Client from social network successfully saved";
-	private static final String NOT_FOUND_CLIENT = "Client with this email isn't found";
-	private static final String EXIST_CLIENT = "Dyplicate client name or email.";
-	private static final String EXIST_SOC_CLIENT = "This email has already exist";
 	private static final String FACEBOOK = "facebook";
 	private static final String GOOGLE = "google";
 
 	@Autowired
 	private JdbcTemplate jdbc;
 
+	@Autowired
+	FindClientService findClientService;
+
 	/**
-	 * Find client in database by email of client
+	 * Find client in database by id of client
 	 * 
 	 * @param email
 	 *            email - email of client
 	 * @return return - client's information
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Response findClientByEmail(String email) {
+	public Client findClient(Integer id) {
 
 		try {
 
-			List<Client> clientList = jdbc.query(SELECT_BY_EMAIL, new BeanPropertyRowMapper(Client.class), email);
+			Client client = (Client) jdbc.queryForObject(FIND_CLIENT_BY_ID, new BeanPropertyRowMapper(Client.class),
+					id);
 
-			return clientList.isEmpty() ? new Response(null, HttpStatus.OK, NOT_FOUND_CLIENT)
-					: new Response(clientList.get(0), HttpStatus.OK, null);
+			return client == null ? null : client;
 
-		} catch (Exception ex) {
+		} catch (Exception e) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			LOGGER.error(e.getMessage());
+			return null;
 		}
 
 	}
@@ -83,59 +75,54 @@ public class ClientDao implements IClient {
 	 * @param client
 	 *            client - all information about client that will write to
 	 *            database
-	 * @return return - status of execution this method
+	 * @return return - information about of client
 	 */
 	@Override
-	public Response saveClient(Client client) {
+	public void saveClient(Client client) {
 
 		try {
 
-			List<Client> clientList = (List<Client>) findClientByLoginAndEmail(client).getData();
+			if (findClientByLoginAndEmail(client) != null) {
 
-			if (clientList != null) {
-
-				return new Response(null, HttpStatus.OK, EXIST_CLIENT);
+				return;
 			}
 
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 			jdbc.update(SAVE_CLIENT, client.getClientName(), md5HexPassword, client.getEmail());
-			return new Response(null, HttpStatus.CREATED, DESCRIPTION_SAVE);
 
-		} catch (Exception ex) {
+		} catch (Exception e) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 	}
 
+	/**
+	 * Save information about client that authorized with help of social
+	 * networks
+	 * 
+	 * @param client
+	 * @return
+	 */
 	@Override
-	public Response saveSocialClient(Client client) {
+	public Client saveSocialClient(Client client) {
 
 		try {
-			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 
-			Client resultFindClient = (Client) findClientByEmail(client.getEmail()).getData();
+			Client resultFindClient = findClientService.findClient(client);
 
-			if (client.getFlag().equals(FACEBOOK) && StringUtils.isBlank(resultFindClient.getFacebookId())) {
+			if (resultFindClient == null) {
 
-				jdbc.update(SAVE_FACEBOOK_CLIENT, client.getEmail(), md5HexPassword, client.getFacebookId(),
-						client.getEmail(), client.getFacebookId());
-				return new Response(null, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
+				return socialSaveClientNotExist(client);
+			} else {
+
+				return socialSaveClientExist(client, resultFindClient);
 			}
 
-			if (client.getFlag().equals(GOOGLE) && StringUtils.isBlank(resultFindClient.getGoogleId())) {
+		} catch (Exception e) {
 
-				jdbc.update(SAVE_GOOGLE_CLIENT, client.getEmail(), md5HexPassword, client.getGoogleId(),
-						client.getEmail(), client.getGoogleId());
-				return new Response(null, HttpStatus.CREATED, DESCRIPTION_SOC_SAVE);
-			}
-
-			
-			return new Response(null, HttpStatus.OK, EXIST_SOC_CLIENT);
-
-		} catch (Exception ex) {
-
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			LOGGER.error(e.getMessage());
+			return null;
 		}
 
 	}
@@ -148,17 +135,15 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response deleteClient(Integer id) {
+	public void deleteClient(Integer id) {
 
 		try {
 
 			jdbc.update(DELETE_CLIENT, id);
-		} catch (Exception ex) {
+		} catch (Exception e) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			LOGGER.error(e.getMessage());
 		}
-
-		return new Response(null, HttpStatus.OK, null);
 	}
 
 	/**
@@ -174,17 +159,18 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response updateClient(Client client, Integer id) {
+	public void updateClient(Client client, Integer id) {
 
 		try {
-			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
-			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), md5HexPassword, id);
-		} catch (Exception ex) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), md5HexPassword,
+					client.getFacebookId(), client.getGoogleId(), id);
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
 		}
 
-		return new Response(null, HttpStatus.OK, null);
 	}
 
 	/**
@@ -199,35 +185,146 @@ public class ClientDao implements IClient {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public Response updatePassword(Client client, Integer id) {
+	public void updatePassword(Client client, Integer id) {
 
 		try {
+
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 			jdbc.update(UPDATE_CLIENT_PASSWORD, md5HexPassword, id);
-		} catch (Exception ex) {
+		} catch (Exception e) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
-		return new Response(null, HttpStatus.OK, null);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	/**
+	 * Find client by email and client name
+	 * 
+	 * @param client
+	 * @return
+	 */
 	@Override
-	public Response findClientByLoginAndEmail(Client client) {
+	public Client findClientByLoginAndEmail(Client client) {
 
 		try {
 
-			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper(Client.class),
+			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper<>(Client.class),
 					client.getEmail(), client.getClientName());
 
-			return clientList.isEmpty() ? new Response(null, HttpStatus.OK, NOT_FOUND_CLIENT)
-					: new Response(clientList, HttpStatus.OK, null);
+			return clientList.isEmpty() ? null : clientList.get(0);
 
-		} catch (Exception ex) {
+		} catch (Exception e) {
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 
+	/**
+	 * Update some fields in client when client authorized with help of social
+	 * networks
+	 * 
+	 * @param client
+	 * @return
+	 */
+	private Client socialSaveClientNotExist(Client client) {
+
+		try {
+
+			Client resultFindClient = findClientService.findByEmail(client);
+
+			if (resultFindClient != null) {
+
+				return null;
+			}
+
+			if (client.getFlag().equals(FACEBOOK)) {
+
+				jdbc.update(SAVE_FACEBOOK_CLIENT, client.getClientName(), client.getFacebookId(), client.getEmail());
+				return client;
+			}
+
+			if (client.getFlag().equals(GOOGLE)) {
+
+				jdbc.update(SAVE_GOOGLE_CLIENT, client.getClientName(), client.getGoogleId(), client.getEmail());
+				return client;
+			}
+
+			return client;
+
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+
+	}
+
+	/**
+	 * Save information about client that authorized with help of social
+	 * networks when this client is exist in database
+	 * 
+	 * @param client
+	 * @param resultFindClient
+	 * @return
+	 */
+	private Client socialSaveClientExist(Client client, Client resultFindClient) {
+
+		try {
+
+			if (client.getFlag().equals(FACEBOOK) && StringUtils.isNotBlank(resultFindClient.getFacebookId())
+					&& !resultFindClient.getEmail().equals(client.getEmail())) {
+
+				resultFindClient.setEmail(client.getEmail());
+				jdbc.update(UPDATE_CLIENT, resultFindClient.getClientName(), resultFindClient.getEmail(),
+						resultFindClient.getPassword(), resultFindClient.getFacebookId(),
+						resultFindClient.getGoogleId(), resultFindClient.getId());
+				return client;
+			}
+
+			if (client.getFlag().equals(GOOGLE) && StringUtils.isNotBlank(resultFindClient.getGoogleId())
+					&& !resultFindClient.getEmail().equals(client.getEmail())) {
+
+				resultFindClient.setEmail(client.getEmail());
+				jdbc.update(UPDATE_CLIENT, resultFindClient.getClientName(), resultFindClient.getEmail(),
+						resultFindClient.getPassword(), resultFindClient.getFacebookId(),
+						resultFindClient.getGoogleId(), resultFindClient.getId());
+				return client;
+			}
+
+			return client;
+
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+	}
+
+	/**
+	 * Find client by email, facebookId or googleId
+	 * 
+	 * @param template
+	 *            template - email, facebookId or googleId
+	 * @param value
+	 *            value - value of template
+	 * @return return - information about of client
+	 */
+	@Override
+	public Client findByTemplate(String template, String value) {
+
+		try {
+
+			List<Client> clientList = jdbc.query(SELECT_CLIENT_FIRST_PART + template + SELECT_CLIENT_SECOND_PART,
+					new BeanPropertyRowMapper(Client.class), value);
+
+			return clientList.isEmpty() ? null : clientList.get(0);
+
+		} catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+	}
 }

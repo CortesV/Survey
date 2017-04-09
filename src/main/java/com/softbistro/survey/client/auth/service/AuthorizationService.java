@@ -3,15 +3,16 @@ package com.softbistro.survey.client.auth.service;
 import java.util.UUID;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.auth.components.entities.AuthorizedClient;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
-import com.softbistro.survey.response.Response;
+import com.softbistro.survey.client.manage.service.FindClientService;
 
 /**
  * Service for authorization of client
@@ -22,9 +23,21 @@ import com.softbistro.survey.response.Response;
 @Service
 public class AuthorizationService {
 
-	private static final String EMPTY_PASSWORD = "";
-	private static final String NOT_FOUND_CLIENT = "Wrong password or email";
-	private static final String NOT_FOUND_SOC_CLIENT = "Client with entered credentials isn't exist in database";
+	private static final Logger LOGGER = Logger.getLogger(AuthorizationService.class);
+	private static final String FACEBOOK = "facebook";
+	private static final String GOOGLE = "google";
+
+	private static final String WRONG_PASS_OR_CLIENT_EXIST = "Simple auth answer --- Wrong password or this client doesn't exist in database";
+	private static final String SIMPLE_AUTH = "Simple auth answer --- ";
+	private static final String SOCIAL_AUTH = "Social auth answer --- ";
+	private static final String SIMPLE_AUTH_EXCEPTION = "Simple auth exception --- ";
+	private static final String SOCIAL_AUTH_EXCEPTION = "Social auth exception --- ";
+	private static final String BAD_FLAG = "Bad flag";
+	private static final String NOT_EXIST_IN_DB = "Can not find client in database";
+	private static final String WRONG_FACEBOOK = "Something wrong with facebook id";
+	private static final String WRONG_GOOGLE = "Something wrong with google id";
+	private static final String WRONG_EMAIL = "Something wrong with email";
+	private static final String ADD_SOC_INFO = "Add social info answer --- Info add successful";
 
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
@@ -35,41 +48,51 @@ public class AuthorizationService {
 	@Autowired
 	private ClientService clientService;
 
+	@Autowired
+	FindClientService findClientService;
+
 	/**
 	 * Method that do simple authorization of client
 	 * 
 	 * @param client
 	 *            client - information about client
-	 * @return return - status of execution this method
+	 * @return return - information about client that is authorized
 	 */
-	public Response simpleAthorization(Client client) {
+	public Client simpleAthorization(Client requestClient) {
 
 		AuthorizedClient authorizedClient;
 		Client responseClient;
 		try {
 
-			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
-			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+			Client resultFindClient = findClientService.findByEmail(requestClient);
 
-			if (resultFindClient.getId() == null && !resultFindClient.getPassword().equals(md5HexPassword)) {
+			String md5HexPassword = DigestUtils.md5Hex(requestClient.getPassword());
 
-				return new Response(resultFindClient, HttpStatus.OK, NOT_FOUND_CLIENT);
+			if (resultFindClient == null || !resultFindClient.getPassword().equals(md5HexPassword)) {
+
+				LOGGER.info(WRONG_PASS_OR_CLIENT_EXIST);
+				return null;
 			}
 
 			String uniqueKey = UUID.randomUUID().toString();
 			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
 			authorizedClientService.saveClient(authorizedClient);
+
 			responseClient = new Client();
 			responseClient.setId(resultFindClient.getId());
 			responseClient.setClientName(resultFindClient.getClientName());
 			responseClient.setEmail(resultFindClient.getEmail());
 			responseClient.setToken(authorizedClient.getUniqueKey());
 
-		} catch (Exception ex) {
+			LOGGER.info(SIMPLE_AUTH + responseClient.toString());
+			return responseClient;
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+		} catch (Exception e) {
+
+			LOGGER.error(SIMPLE_AUTH_EXCEPTION, e);
+			return null;
 		}
-		return new Response(responseClient, HttpStatus.OK, null);
+
 	}
 
 	/**
@@ -78,44 +101,74 @@ public class AuthorizationService {
 	 * 
 	 * @param client
 	 *            client - information about client
-	 * @return return - status of execution this method
+	 * @return return - information about client that is authorized
 	 */
-	public Response socialAuthorization(Client client) {
+	public Client socialAuthorization(Client requestClient) {
 
 		AuthorizedClient authorizedClient;
 		Client responseClient;
 		try {
 
-			client.setPassword(EMPTY_PASSWORD);
-			Response saveResponse = clientService.saveSocialClient(client);
+			clientService.saveSocialClient(requestClient);
 
-			Client resultFindClient = (Client) clientService.findClientByEmail(client.getEmail()).getData();
+			if (!checkFlag(requestClient)) {
+
+				LOGGER.info(SOCIAL_AUTH + BAD_FLAG);
+				return null;
+			}
+
+			clientService.saveSocialClient(requestClient);
+
+			Client resultFindClient = findClientService.findClient(requestClient);
 
 			if (resultFindClient == null) {
 
-				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
+				LOGGER.info(SOCIAL_AUTH + NOT_EXIST_IN_DB);
+				return null;
 			}
 
-			if (!resultFindClient.getFacebookId().equals(client.getFacebookId())
-					&& !resultFindClient.getGoogleId().equals(client.getGoogleId())) {
+			if (resultFindClient.getFacebookId() != null
+					&& !resultFindClient.getFacebookId().equals(requestClient.getFacebookId())
+					&& StringUtils.isNotBlank(requestClient.getFacebookId())) {
 
-				return new Response(null, HttpStatus.OK, NOT_FOUND_SOC_CLIENT);
+				LOGGER.info(SOCIAL_AUTH + WRONG_FACEBOOK);
+				return null;
+			}
+
+			if (resultFindClient.getGoogleId() != null
+					&& !resultFindClient.getGoogleId().equals(requestClient.getGoogleId())
+					&& StringUtils.isNotBlank(requestClient.getGoogleId())) {
+
+				LOGGER.info(SOCIAL_AUTH + WRONG_GOOGLE);
+				return null;
+			}
+
+			if (resultFindClient.getEmail() != null && !resultFindClient.getEmail().equals(requestClient.getEmail())
+					&& StringUtils.isNotBlank(requestClient.getEmail())) {
+
+				LOGGER.info(SOCIAL_AUTH + WRONG_EMAIL);
+				return null;
 			}
 
 			String uniqueKey = UUID.randomUUID().toString();
 			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
 			authorizedClientService.saveClient(authorizedClient);
+
 			responseClient = new Client();
 			responseClient.setId(resultFindClient.getId());
 			responseClient.setClientName(resultFindClient.getClientName());
 			responseClient.setEmail(resultFindClient.getEmail());
 			responseClient.setToken(authorizedClient.getUniqueKey());
 
-		} catch (Exception ex) {
+			LOGGER.info(SOCIAL_AUTH + responseClient.toString());
+			return responseClient;
 
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+		} catch (Exception e) {
+
+			LOGGER.error(SOCIAL_AUTH_EXCEPTION, e);
+			return null;
 		}
-		return new Response(responseClient, HttpStatus.OK, null);
+
 	}
 
 	/**
@@ -137,6 +190,52 @@ public class AuthorizationService {
 		authorizedClient.setTimeValidKey(authorizedClient.getTimeValidKey());
 		authorizedClientService.saveClient(authorizedClient);
 		return true;
+	}
+
+	/**
+	 * Method for checking exist this token in redis or not
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public boolean checkToken(String token) {
+
+		return !checkAccess(token) ? false : true;
+	}
+
+	/**
+	 * Method for checking if got flag equals standart flags
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	private boolean checkFlag(Client client) {
+
+		return StringUtils.isNotBlank(client.getGoogleId()) && client.getFlag().equals(GOOGLE)
+				|| StringUtils.isNotBlank(client.getFacebookId()) && client.getFlag().equals(FACEBOOK);
+	}
+
+	public Client addSocialInfo(Client socialClient) {
+
+		Client updateClient = clientService.findClient(socialClient.getId());
+
+		if (StringUtils.isNotBlank(socialClient.getFacebookId()) && StringUtils.isBlank(socialClient.getGoogleId())) {
+
+			updateClient.setFacebookId(socialClient.getFacebookId());
+			clientService.updateClient(updateClient, updateClient.getId());
+			LOGGER.info(ADD_SOC_INFO);
+			return null;
+		}
+
+		if (StringUtils.isNotBlank(socialClient.getGoogleId()) && StringUtils.isBlank(socialClient.getFacebookId())) {
+
+			updateClient.setGoogleId(socialClient.getGoogleId());
+			clientService.updateClient(updateClient, updateClient.getId());
+			LOGGER.info(ADD_SOC_INFO);
+			return null;
+		}
+
+		return null;
 	}
 
 }

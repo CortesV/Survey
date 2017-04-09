@@ -1,11 +1,12 @@
 package com.softbistro.survey.participant.components.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.interfaces.IParticipant;
-import com.softbistro.survey.response.Response;
 
 /**
  * Service for participant entity
@@ -23,51 +24,55 @@ public class ParticipantService {
 	 * Method for creating participant
 	 * 
 	 * @param participant
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response setParticipant(Participant participant) {
-		return iParticipant.setParticipant(participant);
+	public void setParticipant(Participant participant) {
+
+		iParticipant.setParticipant(participant);
 	}
 
 	/**
 	 * Method for updating participant
 	 * 
 	 * @param participant
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response updateParticipant(Participant participant) {
-		return iParticipant.updateParticipant(participant);
+	public void updateParticipant(Participant participant, Integer id) {
+
+		iParticipant.updateParticipant(participant, id);
 	}
 
 	/**
 	 * Method for deleting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deleteParticipantById(Integer participantId) {
-		return iParticipant.deleteParticipantById(participantId);
+	public void deleteParticipantById(Integer participantId) {
+
+		iParticipant.deleteParticipantById(participantId);
 	}
 
 	/**
 	 * Method to getting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantById(Integer participantId) {
+	public Participant getParticipantById(Integer participantId) {
+
 		return iParticipant.getParticipantById(participantId);
 	}
 
 	/**
-	 * Method to getting participant from db by email and client Id
+	 * Method to getting participant from db by group Id
 	 * 
-	 * @param email,
-	 *            clientid
-	 * @return Response
+	 * @param clientid
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantByEmailAndClientId(String email, Integer clientid) {
-		return iParticipant.getParticipantByEmailAndClientId(email, clientid);
+		
+	public List<Participant> getParticipantByGroup(Integer groupId) {
+		return iParticipant.getParticipantByGroup(groupId);
 	}
 
 	/**
@@ -75,9 +80,21 @@ public class ParticipantService {
 	 * 
 	 * @param attributeId,
 	 *            attribute value
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantByAttributeValue(Integer attributeId, String attributeValue) {
+	public List<Participant> getParticipantByAttributeValue(Integer attributeId, String attributeValue) {
+
 		return iParticipant.getParticipantByAttributeValue(attributeId, attributeValue);
+	}
+	
+	/**
+	 * Method to getting participant from database by client id
+	 * 
+	 * @param clientId
+	 * @return 
+	 */
+	public List<Participant> selectClientAllParticipants(Integer clientId) {
+
+		return iParticipant.selectClientAllParticipants(clientId);
 	}
 }

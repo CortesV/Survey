@@ -1,7 +1,8 @@
 package com.softbistro.survey.participant.components.interfaces;
 
+import java.util.List;
+
 import com.softbistro.survey.participant.components.entity.Participant;
-import com.softbistro.survey.response.Response;
 
 /**
  * Interface for participant entity
@@ -15,47 +16,58 @@ public interface IParticipant {
 	 * Method for creating participant
 	 * 
 	 * @param participant
-	 * @return Response
+	 * @return
 	 */
-	public Response setParticipant(Participant participant);
+	public void setParticipant(Participant participant);
 
 	/**
 	 * Method for updating participant
 	 * 
 	 * @param participant
-	 * @return Response
+	 * @return
 	 */
-	public Response updateParticipant(Participant participant);
+	public void updateParticipant(Participant participant, Integer id);
 
 	/**
 	 * Method for deleting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return
 	 */
-	public Response deleteParticipantById(Integer participantId);
+	public void deleteParticipantById(Integer participantId);
 
 	/**
 	 * Method to getting participant from db by id
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return
 	 */
-	public Response getParticipantById(Integer participantId);
+	public Participant getParticipantById(Integer participantId);
 
 	/**
-	 * Method to getting participant from db by email and client Id
+	 * Method to getting participant from db by group Id
 	 * 
-	 * @param email, clientId
-	 * @return Response
+	 * 
+	 * @param clientId
+	 * @return
 	 */
-	public Response getParticipantByEmailAndClientId(String email, Integer cliectId);
-	
+
+	public List<Participant> getParticipantByGroup(Integer groupId);
+
 	/**
 	 * Method to getting participant from db by attribute value
 	 * 
-	 * @param attributeId, attribute value
-	 * @return Response
+	 * @param attributeId,
+	 *            attribute value
+	 * @return
 	 */
-	public Response getParticipantByAttributeValue(Integer attributeId, String attributeValue);
+	public List<Participant> getParticipantByAttributeValue(Integer attributeId, String attributeValue);
+
+	/**
+	 * Method to getting participant from database by client id
+	 * 
+	 * @param clientId
+	 * @return
+	 */
+	public List<Participant> selectClientAllParticipants(Integer cliectId);
 }

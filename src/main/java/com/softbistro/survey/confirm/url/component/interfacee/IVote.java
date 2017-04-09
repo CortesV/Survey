@@ -3,7 +3,7 @@ package com.softbistro.survey.confirm.url.component.interfacee;
 import java.util.List;
 
 import com.softbistro.survey.confirm.url.component.entity.Answer;
-import com.softbistro.survey.response.Response;
+import com.softbistro.survey.confirm.url.component.entity.VotePage;
 
 /**
  * Using for vote operations
@@ -19,5 +19,13 @@ public interface IVote {
 	 * @param uuid
 	 * @return
 	 */
-	public Response answerOnSurvey(String uuid, List<Answer> answers);
+	public void answerOnSurvey(String uuid, List<Answer> answers);
+
+	/**
+	 * Response for site with information about questions
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	public List<VotePage> getVotePage(String uuid);
 }

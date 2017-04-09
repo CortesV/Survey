@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.confirm.url.component.entity.Answer;
+import com.softbistro.survey.confirm.url.component.entity.VotePage;
 import com.softbistro.survey.confirm.url.component.interfacee.IVote;
-import com.softbistro.survey.response.Response;
 
 @Service
 public class VoteService {
+	
 	@Autowired
 	private IVote iVote;
 
@@ -20,7 +21,19 @@ public class VoteService {
 	 * @param uuid
 	 * @return
 	 */
-	public Response answerOnSurvey(String uuid, List<Answer> answers) {
-		return iVote.answerOnSurvey(uuid, answers);
+	public void answerOnSurvey(String uuid, List<Answer> answers) {
+		
+		iVote.answerOnSurvey(uuid, answers);
+	}
+
+	/**
+	 * Response for site with information about questions
+	 * 
+	 * @param uuid
+	 * @return
+	 */
+	public List<VotePage> getVotePage(String uuid) {
+		
+		return iVote.getVotePage(uuid);
 	}
 }

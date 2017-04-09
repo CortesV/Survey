@@ -2,13 +2,12 @@ package com.softbistro.survey.confirm.url.component.service;
 
 import java.sql.Date;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.confirm.url.component.interfacee.IConfirm;
-import com.softbistro.survey.response.Response;
 
 /**
  * Input information about operation from message in database
@@ -18,14 +17,15 @@ import com.softbistro.survey.response.Response;
  */
 @Repository
 public class ConfirmDao implements IConfirm {
+	
+	private static final Logger LOGGER = Logger.getLogger(ConfirmDao.class);
+	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
 	private String statusForConfirmPassword = "DONE";
 
 	private String statusForConfirmClient = "DONE";
-
-	private String statusForConfirmSurvey = "DONE";
 
 	/**
 	 * Current time for comparison with working time of url
@@ -47,14 +47,16 @@ public class ConfirmDao implements IConfirm {
 	 * @return
 	 */
 	@Override
-	public Response confirmPassword(String uuid) {
+	public void confirmPassword(String uuid) {
+		
 		try {
+			
 			Integer clientId = jdbcTemplate.queryForObject(SQL_GET_INFORMATION_BY_USING_UUID_PASSWORD, Integer.class,
 					uuid, date);
 			jdbcTemplate.update(SQL_UPDATE_STATUS_FOR_CONFIRMING_CLIENT_OPERATIONS, statusForConfirmPassword, clientId);
-			return new Response(null, HttpStatus.OK, null);
 		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, null);
+			
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -65,14 +67,16 @@ public class ConfirmDao implements IConfirm {
 	 * @return
 	 */
 	@Override
-	public Response confirmEmail(String uuid) {
+	public void confirmEmail(String uuid) {
+		
 		try {
+			
 			Integer clientId = jdbcTemplate.queryForObject(SQL_GET_INFORMATION_BY_USING_UUID_CLIENT, Integer.class,
 					uuid, date);
 			jdbcTemplate.update(SQL_UPDATE_STATUS_FOR_CONFIRMING_CLIENT_OPERATIONS, statusForConfirmClient, clientId);
-			return new Response(null, HttpStatus.OK, null);
 		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, null);
+
+			LOGGER.error(e.getMessage());
 		}
 	}
 

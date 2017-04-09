@@ -1,11 +1,12 @@
 package com.softbistro.survey.participant.components.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.interfaces.IGroup;
-import com.softbistro.survey.response.Response;
 
 /**
  * Service for group entity
@@ -23,19 +24,21 @@ public class GroupService {
 	 * Method to create group
 	 * 
 	 * @param group
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response setGroup(Group group) {
-		return iGroup.setGroup(group);
+	public void setGroup(Group group) {
+
+		iGroup.setGroup(group);
 	}
 
 	/**
 	 * Method to get group from db
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getGroupById(Integer groupId) {
+	public Group getGroupById(Integer groupId) {
+
 		return iGroup.getGroupByid(groupId);
 	}
 
@@ -43,9 +46,10 @@ public class GroupService {
 	 * Method to get all clients in group
 	 * 
 	 * @param clientId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getGroupsByClient(Integer clientId) {
+	public List<Group> getGroupsByClient(Integer clientId) {
+
 		return iGroup.getGroupsByClient(clientId);
 	}
 
@@ -53,19 +57,21 @@ public class GroupService {
 	 * Method to update group
 	 * 
 	 * @param group
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response updateGroupById(Group group) {
-		return iGroup.updateGroupById(group);
+	public void updateGroupById(Group group, Integer id) {
+
+		iGroup.updateGroupById(group, id);
 	}
 
 	/**
 	 * Method for deleting group by id
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deleteGroupById(Integer groupId) {
-		return iGroup.deleteGroupById(groupId);
+	public void deleteGroupById(Integer groupId) {
+
+		iGroup.deleteGroupById(groupId);
 	}
 }

@@ -4,10 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,11 +18,10 @@ import org.springframework.stereotype.Repository;
 import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.creating.survey.component.entity.Group;
 import com.softbistro.survey.creating.survey.component.entity.Survey;
-import com.softbistro.survey.creating.survey.component.interfacee.ISurvey;
-import com.softbistro.survey.response.Response;
+import com.softbistro.survey.creating.survey.component.interfacee.ISurveyDao;
 
 @Repository
-public class SurveyDao implements ISurvey {
+public class SurveyDao implements ISurveyDao {
 
 	private static final String SQL_INSERT_INFORMATION_ABOUT_SURVEY = "INSERT INTO survey (client_id, name, theme,start_time, finish_time) VALUES(?, ?, ?, ?, ?)";
 	private static final String SQL_UPDATE_NAME_OF_SURVEY = "UPDATE survey "
@@ -30,15 +30,23 @@ public class SurveyDao implements ISurvey {
 	private static final String SQL_GET_LIST_OF_SURVEYS = "SELECT * FROM survey WHERE client_id = ? AND survey.delete = 0";
 	private static final String SQL_GET_LIST_OF_GROUPS_CLIENT = "SELECT * FROM `group` WHERE client_id = ? AND `delete`=0";
 	private static final String SQL_ADD_GROUP_TO_SURVEY = "INSERT INTO connect_group_survey (survey_id, group_id) VALUES(?,?) ";
-	private static final String SQL_GET_LIST_OF_GROUPS_SURVEY = "SELECT g.id, g.client_id, g.group_name FROM `group` AS g INNER JOIN connect_group_survey AS c "
-			+ "ON c.group_id = g.id INNER JOIN survey AS s ON s.id= c.survey_id WHERE s.id=? AND s.delete = 0";
-	private static final String SQL_DELETE_SURVEY = "UPDATE survey AS s "
-			+ "LEFT JOIN connect_group_survey AS c ON c.survey_id = s.id LEFT JOIN question_sections AS q "
-			+ "ON q.survey_id = s.id LEFT JOIN questions AS quest ON quest.survey_id = s.id "
-			+ "SET s.`delete` = 1, q.`delete` = 1, c.`delete`= 1, quest.`delete`= 1 WHERE s.id = ?";
+	private static final String SQL_GET_LIST_OF_GROUPS_SURVEY = "SELECT group.id, group.client_id, group.group_name FROM `group` INNER JOIN connect_group_survey AS cgs "
+			+ "ON cgs.group_id = group.id INNER JOIN survey ON survey.id= cgs.survey_id WHERE survey.id=? AND survey.delete = 0";
+	private static final String SQL_DELETE_SURVEY = "UPDATE `survey` "
+			+ "LEFT JOIN sending_survey AS ss ON ss.survey_id = survey.id "
+			+ "SET ss.answer_status= 'STOPPED', `delete`=1  WHERE survey.id = ? ";
+
+	private static final String SQL_UPDATE_STATUS_OF_STARTED_SURVEY = "UPDATE survey SET `status`= 'NEW', start_time = ? WHERE survey.id = ?";
+
+	private static final String SQL_UPDATE_STATUS_OF_STOPPED_SURVEY = "UPDATE sending_survey SET answer_status = 'STOPPED' WHERE survey_id = ?";
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+
+	/**
+	 * Printing information in stack trace
+	 */
+	private static Logger log = Logger.getLogger(SurveyDao.class.getName());
 
 	private class ListOfSurveys implements RowMapper<Survey> {
 
@@ -76,16 +84,17 @@ public class SurveyDao implements ISurvey {
 	 * 
 	 * @param survey
 	 *            - parsed JSON with information about survey.
-	 * @return Response
+	 * @return ResponseEntity
 	 */
 	@Override
-	public Response createSurvey(Survey survey) {
+	public Integer create(Survey survey) {
 		try {
 			Connection connection = jdbcTemplate.getDataSource().getConnection();
 			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_INFORMATION_ABOUT_SURVEY,
 					Statement.RETURN_GENERATED_KEYS);
 			preparedStatement.setInt(1, survey.getClientId());
 			preparedStatement.setString(2, survey.getSurveyName());
+
 			preparedStatement.setString(3, survey.getSurveyTheme());
 			preparedStatement.setDate(4, survey.getStartTime());
 			preparedStatement.setDate(5, survey.getFinishTime());
@@ -97,9 +106,11 @@ public class SurveyDao implements ISurvey {
 			if (keys.next()) {
 				generatedId = keys.getInt(1);
 			}
-			return new Response(generatedId, HttpStatus.CREATED, null);
-		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+
+			return generatedId;
+		} catch (SQLException e) {
+			log.error(e.getMessage());
+			return 0;
 		}
 
 	}
@@ -111,14 +122,9 @@ public class SurveyDao implements ISurvey {
 	 *            - id of survey that will be changed
 	 */
 	@Override
-	public Response updateOfSurvey(Survey survey) {
-		try {
-			jdbcTemplate.update(SQL_UPDATE_NAME_OF_SURVEY, survey.getClientId(), survey.getSurveyName(),
-					survey.getSurveyTheme(), survey.getStartTime(), survey.getFinishTime(), survey.getId());
-			return new Response(null, HttpStatus.OK, null);
-		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-		}
+	public void update(Survey survey) {
+		jdbcTemplate.update(SQL_UPDATE_NAME_OF_SURVEY, survey.getClientId(), survey.getSurveyName(),
+				survey.getSurveyTheme(), survey.getStartTime(), survey.getFinishTime(), survey.getId());
 	}
 
 	/**
@@ -128,13 +134,8 @@ public class SurveyDao implements ISurvey {
 	 * @return
 	 */
 	@Override
-	public Response getAllSurveysOfClient(Integer clientId) {
-		try {
-			List<Survey> surveys = jdbcTemplate.query(SQL_GET_LIST_OF_SURVEYS, new ListOfSurveys(), clientId);
-			return new Response(surveys, HttpStatus.OK, null);
-		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-		}
+	public List<Survey> getAllSurveysByClient(Integer clientId) {
+		return jdbcTemplate.query(SQL_GET_LIST_OF_SURVEYS, new ListOfSurveys(), clientId);
 	}
 
 	/**
@@ -144,14 +145,8 @@ public class SurveyDao implements ISurvey {
 	 * @return
 	 */
 	@Override
-	public Response getGroupsClient(Integer clientId) {
-		try {
-			List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_CLIENT,
-					new BeanPropertyRowMapper<>(Group.class), clientId);
-			return new Response(groups, HttpStatus.OK, null);
-		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-		}
+	public List<Group> getGroupsClient(Integer clientId) {
+		return jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_CLIENT, new BeanPropertyRowMapper<>(Group.class), clientId);
 	}
 
 	/**
@@ -161,26 +156,22 @@ public class SurveyDao implements ISurvey {
 	 * @return
 	 */
 	@Override
-	public Response addGroupsToSurvey(List<Group> groups) {
-		try {
-			jdbcTemplate.batchUpdate(SQL_ADD_GROUP_TO_SURVEY, new BatchPreparedStatementSetter() {
+	public void addGroups(List<Group> groups) {
+		jdbcTemplate.batchUpdate(SQL_ADD_GROUP_TO_SURVEY, new BatchPreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
-					Group group = groups.get(i);
-					ps.setInt(1, group.getSurveyId());
-					ps.setInt(2, group.getId());
-				}
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				Group group = groups.get(i);
+				ps.setInt(1, group.getSurveyId());
+				ps.setInt(2, group.getId());
+			}
 
-				@Override
-				public int getBatchSize() {
-					return groups.size();
-				}
-			});
-			return new Response(null, HttpStatus.OK, null);
-		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-		}
+			@Override
+			public int getBatchSize() {
+				return groups.size();
+			}
+		});
+
 	}
 
 	/**
@@ -189,14 +180,8 @@ public class SurveyDao implements ISurvey {
 	 * @param surveyId
 	 */
 	@Override
-	public Response getGroupsSurvey(Integer surveyId) {
-		try {
-			List<Group> groups = jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_SURVEY, new ListOfGroups(), surveyId);
-
-			return new Response(groups, HttpStatus.OK, null);
-		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-		}
+	public List<Group> getGroupsSurvey(Integer surveyId) {
+		return jdbcTemplate.query(SQL_GET_LIST_OF_GROUPS_SURVEY, new ListOfGroups(), surveyId);
 	}
 
 	/**
@@ -206,14 +191,31 @@ public class SurveyDao implements ISurvey {
 	 * @param surveyId
 	 */
 	@Override
-	public Response deleteSurvey(Integer surveyId) {
-		try {
-			jdbcTemplate.update(SQL_DELETE_SURVEY, surveyId);
-			return new Response(null, HttpStatus.OK, null);
-		} catch (Exception e) {
-			return new Response(null, HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-		}
+	public void delete(Integer surveyId) {
+		jdbcTemplate.update(SQL_DELETE_SURVEY, surveyId);
+	}
 
+	/**
+	 * Start survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@Override
+	public void start(Integer surveyId) {
+		LocalDate date = LocalDate.now();
+		jdbcTemplate.update(SQL_UPDATE_STATUS_OF_STARTED_SURVEY, date, surveyId);
+	}
+
+	/**
+	 * Stop survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@Override
+	public void stop(Integer surveyId) {
+		jdbcTemplate.update(SQL_UPDATE_STATUS_OF_STOPPED_SURVEY, surveyId);
 	}
 
 }

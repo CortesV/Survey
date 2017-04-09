@@ -1,8 +1,10 @@
 package com.softbistro.survey.participant.components.interfaces;
 
+import java.util.List;
+
+import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.entity.ParticipantInGroup;
-import com.softbistro.survey.response.Response;
 
 /**
  * Interface for participaantInGroup entity
@@ -17,32 +19,32 @@ public interface IParticipantInGroup {
 	 * 
 	 * @param groupId
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response addParticipantInGroup(ParticipantInGroup participantInGoup);
+	public void addParticipantInGroup(ParticipantInGroup participantInGoup);
 
 	/**
 	 * Method for deleting participant from group
 	 * 
 	 * @param groupId
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response deletingParticipantfromGroup(Integer groupId, Participant participantId);
+	public void deletingParticipantfromGroup(Integer groupId, Integer participantId);
 
 	/**
 	 * Method for getting all participant by group
 	 * 
 	 * @param groupId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantsByGroup(Integer groupId);
+	public List<Participant> getParticipantsByGroup(Integer groupId);
 
 	/**
 	 * Method for getting all participant groups
 	 * 
 	 * @param participantId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
-	public Response getParticipantGroups(Integer participantId);
+	public List<Group> getParticipantGroups(Integer participantId);
 }

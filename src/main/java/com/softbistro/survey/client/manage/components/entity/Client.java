@@ -2,6 +2,9 @@ package com.softbistro.survey.client.manage.components.entity;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Simple JavaBean object that represents a Client
  * 
@@ -9,14 +12,21 @@ import java.io.Serializable;
  * @version 1.0
  *
  */
-@SuppressWarnings("serial")
+@JsonInclude(Include.NON_NULL)
 public class Client implements Serializable {
 
-	private Long id;
+	private static final long serialVersionUID = 1L;
+
+	private Integer id;
+
 	private String facebookId;
+
 	private String googleId;
+
 	private String clientName;
+
 	private String password;
+
 	private String email;
 	/**
 	 * This field that represent authorization token
@@ -27,11 +37,11 @@ public class Client implements Serializable {
 	 */
 	private String flag;
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -89,6 +99,13 @@ public class Client implements Serializable {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	@Override
+	public String toString() {
+		return "Client [id=" + id + ", facebookId=" + facebookId + ", googleId=" + googleId + ", clientName="
+				+ clientName + ", password=" + password + ", email=" + email + ", token=" + token + ", flag=" + flag
+				+ "]";
 	}
 
 }
