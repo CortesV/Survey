@@ -18,6 +18,13 @@ import com.softbistro.survey.question.components.entity.QuestionSection;
 import com.softbistro.survey.question.components.service.QuestionSectionDao;
 import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 
+/**
+ * Integration test for question section dao
+ * 
+ * @author cortes
+ *
+ */
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = SurveySoftBistroApplication.class)
@@ -51,6 +58,9 @@ public class QuestionSectionIntegrationTest {
 		questionSectionTest2.setDescriptionLong("descrioptionLong2");
 	}
 
+	/**
+	 * Test of save question section to database
+	 */
 	@Test
 	public void saveQuestionSectionTest() {
 
@@ -59,6 +69,9 @@ public class QuestionSectionIntegrationTest {
 				questionSectionTest.getClientId());
 	}
 
+	/**
+	 * Test of update question section
+	 */
 	@Test
 	public void updateQuestionSectionTest() {
 
@@ -71,6 +84,9 @@ public class QuestionSectionIntegrationTest {
 				questionSectionTest.getClientId());
 	}
 
+	/**
+	 * Test of delete question section
+	 */
 	@Test
 	public void deleteQuestionSectionTest() {
 
@@ -79,13 +95,20 @@ public class QuestionSectionIntegrationTest {
 		assertEquals(questionSectionService.getQuestionSectionById(id), null);
 	}
 
+	/**
+	 * Test of get question sections by client id
+	 */
 	@Test
 	public void getByClientIdQuestionSectionTest() {
 
 		questionSectionService.setQuestionSection(questionSectionTest);
-		assertNotEquals(questionSectionService.getQuestionSectionByClientId(questionSectionTest.getClientId()).size(), 0);
+		assertNotEquals(questionSectionService.getQuestionSectionByClientId(questionSectionTest.getClientId()).size(),
+				0);
 	}
 
+	/**
+	 * Test of add record to table "connect_question_section_survey" of database
+	 */
 	@Test
 	public void addQuestionSectionToSurveyTest() {
 
@@ -99,6 +122,9 @@ public class QuestionSectionIntegrationTest {
 				questionSectionService.getQuestionSectionBySurveyId(surveyId).size());
 	}
 
+	/**
+	 * Test delete record from table "connect_question_section_survey"
+	 */
 	@Test
 	public void deleteQuestionSectionFromSurveyTest() {
 

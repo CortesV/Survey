@@ -16,6 +16,13 @@ import com.softbistro.survey.question.components.entity.Question;
 import com.softbistro.survey.question.components.service.QuestionDao;
 import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 
+/**
+ * Integration test of question dao
+ * 
+ * @author cortes
+ *
+ */
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ContextConfiguration(classes = SurveySoftBistroApplication.class)
@@ -43,20 +50,29 @@ public class QuestionIntegrationTest {
 		testQuestion.setRequired(true);
 	}
 
+	/**
+	 * Test of save question to database
+	 */
 	@Test
 	public void saveQuestionTest() {
 
 		Integer id = questionService.saveQuestion(testQuestion);
 		assertEquals(questionService.findQuestionById(id).getQuestion(), testQuestion.getQuestion());
 	}
-	
+
+	/**
+	 * Test of find question in database by id
+	 */
 	@Test
 	public void findQuestionTest() {
 
-		Integer id = questionService.saveQuestion(testQuestion);		
+		Integer id = questionService.saveQuestion(testQuestion);
 		assertEquals(questionService.findQuestionById(id).getId(), id);
 	}
-	
+
+	/**
+	 * Test of update question
+	 */
 	@Test
 	public void updateQuestionTest() {
 
@@ -65,7 +81,10 @@ public class QuestionIntegrationTest {
 		questionService.updateQuestion(testQuestion, id);
 		assertEquals(questionService.findQuestionById(id).getQuestion(), testQuestion.getQuestion());
 	}
-	
+
+	/**
+	 * Test of delete question
+	 */
 	@Test
 	public void deleteQuestionTest() {
 
