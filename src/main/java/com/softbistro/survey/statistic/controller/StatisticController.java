@@ -1,5 +1,8 @@
 package com.softbistro.survey.statistic.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,7 +39,7 @@ public class StatisticController {
 	 * @return
 	 */
 	@ApiOperation(value = "Get short statistic", notes = "Get short statistic by survey id", tags = "Statistic")
-	@RequestMapping(value = "/{survey_id}/get", method = RequestMethod.GET)
+	@RequestMapping(value = "/{survey_id}", method = RequestMethod.GET)
 	public ResponseEntity<SurveyStatisticShort> surveyStatistic(@PathVariable(value = "survey_id") Integer surveyId,
 			@RequestHeader String token) {
 
@@ -60,7 +63,7 @@ public class StatisticController {
 	 * @return
 	 */
 	@ApiOperation(value = "Export statistic on google sheets", notes = "Export statistic on google sheets by survey id", tags = "Statistic")
-	@RequestMapping(value = "/{survey_id}/")
+	@RequestMapping(value = "/{survey_id}/", method = RequestMethod.POST)
 	public ResponseEntity<Object> exportSurveyStatistic(@PathVariable("survey_id") Integer surveyId,
 			@RequestHeader String token) {
 
@@ -70,7 +73,9 @@ public class StatisticController {
 		}
 
 		try {
-			return new ResponseEntity<Object>(statisticService.export(surveyId), HttpStatus.OK);
+			Map<String, String> responseValue = new HashMap<String, String>();
+			responseValue.put("URL", statisticService.export(surveyId));
+			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

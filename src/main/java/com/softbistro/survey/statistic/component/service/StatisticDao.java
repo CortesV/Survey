@@ -26,7 +26,7 @@ public class StatisticDao implements IStatisticDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private static final String SQL_GET_SURVEY_STATISTIC_SHORT = "SELECT survey .id, survey .name, survey .start_time, survey .finish_time, COUNT(ss.id) AS participant_count ,"
+	private static final String SQL_GET_SURVEY_STATISTIC_SHORT = "SELECT survey.id, survey.name, survey.start_time, survey.finish_time, COUNT(ss.id) AS participant_count ,"
 			+ " (SELECT COUNT(ss.id) AS voted_count  FROM sending_survey AS ss "
 			+ "WHERE ss.answer_status = 'VOTED' AND ss.survey_id = ? ) AS voted_count "
 			+ "FROM survey AS survey , sending_survey AS ss WHERE survey.id = ? AND ss.survey_id = ?";
