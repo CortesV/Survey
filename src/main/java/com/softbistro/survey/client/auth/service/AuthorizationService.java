@@ -7,12 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.auth.components.entities.AuthorizedClient;
-import com.softbistro.survey.client.auth.controller.AuthController;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
 import com.softbistro.survey.client.manage.service.FindClientService;
@@ -92,7 +89,7 @@ public class AuthorizationService {
 
 		} catch (Exception e) {
 
-			LOGGER.debug(SIMPLE_AUTH_EXCEPTION, e);
+			LOGGER.error(SIMPLE_AUTH_EXCEPTION, e);
 			return null;
 		}
 
@@ -168,7 +165,7 @@ public class AuthorizationService {
 
 		} catch (Exception e) {
 
-			LOGGER.debug(SOCIAL_AUTH_EXCEPTION, e);
+			LOGGER.error(SOCIAL_AUTH_EXCEPTION, e);
 			return null;
 		}
 

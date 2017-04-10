@@ -20,6 +20,8 @@ public class Participant implements Serializable {
 	 */
 	private Integer id;
 
+	private Integer clientId;
+
 	/**
 	 * participant first name
 	 */
@@ -66,4 +68,13 @@ public class Participant implements Serializable {
 	public void seteMail(String eMail) {
 		this.eMail = eMail;
 	}
+
+	public Integer getClientId() {
+		return clientId;
+	}
+
+	public void setClientId(Integer clientId) {
+		this.clientId = clientId;
+	}
+
 }

@@ -1,10 +1,10 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -21,22 +21,32 @@ import com.softbistro.survey.participant.components.interfaces.IParticipant;
 @Repository
 public class ParticipantDao implements IParticipant {
 
+	private static final Logger LOGGER = Logger.getLogger(ParticipantDao.class);
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private final static String SQL_FOR_SETTING_PARTICIPANT = "INSERT INTO participant (participant.first_name, "
-			+ "participant.last_name, participant.email) VALUES (?, ?, ?)";
-	private final static String SQL_FOR_UPDATING_PARTICIPANT = "UPDATE participant AS p "
+	private static final String SQL_FOR_SETTING_PARTICIPANT = "INSERT INTO participant (client_id, first_name, "
+			+ "last_name, email) VALUES (?, ?, ?, ?)";
+
+	private static final String SQL_FOR_UPDATING_PARTICIPANT = "UPDATE participant AS p "
 			+ "SET p.first_name= ?, p.last_name= ?, p.email = ? WHERE p.id= ?";
-	private final static String SQL_FOR_DELETING_PARTICIPANT = "UPDATE participant AS p SET p.delete = 1 WHERE p.id = ?";
-	private final static String SQL_FOR_GETTING_PARTICIPANT_BY_ID = "SELECT * FROM participant WHERE participant.id= ? "
+
+	private static final String SQL_FOR_DELETING_PARTICIPANT = "UPDATE participant AS p SET p.delete = 1 WHERE p.id = ?";
+
+	private static final String SQL_FOR_GETTING_PARTICIPANT_BY_ID = "SELECT * FROM participant WHERE participant.id= ? "
 			+ "AND participant.delete = 0";
-	private final static String SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE = "SELECT * FROM participant AS p "
+
+	private static final String SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE = "SELECT * FROM participant AS p "
 			+ "LEFT JOIN attribute_values AS av ON av.participant_id=p.id LEFT JOIN attributes AS at "
 			+ "ON at.id=av.attribute_id WHERE at.id = ? AND av.attribute_value = ? AND p.delete = 0 AND av.delete = 0 AND at.delete = 0";
-	private final static String SQL_FOR_GETTING_PARTICIPANT_BY_CLIENT_ID = "SELECT p.id, p.email, p.first_name, p.last_name"
-			+ " FROM participant AS p LEFT JOIN connect_group_participant AS cgp ON cgp.participant_id=p.id LEFT "
-			+ "JOIN `group` AS g ON g.id=cgp.group_id WHERE g.client_id = ? AND p.delete = 0";
+
+	private static final String SELECT_CLIENT_ALL_CLIENT_PARTICIPANTS = "SELECT * FROM participant WHERE client_id = ? "
+			+ "AND participant.delete = 0";
+
+	private static final String SQL_FOR_GETTING_PARTICIPANT_BY_GROUP_ID = "SELECT p.id, p.client_id, p.email, p.first_name, p.last_name FROM participant AS p "
+			+ "LEFT JOIN connect_group_participant AS cgp ON cgp.participant_id = p.id LEFT JOIN `group` AS g ON g.id = cgp.group_id "
+			+ "WHERE g.id = ? AND p.`delete` = 0";
 
 	/**
 	 * Method for creating participant
@@ -45,15 +55,17 @@ public class ParticipantDao implements IParticipant {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<Object> setParticipant(Participant participant) {
+	public void setParticipant(Participant participant) {
+
 		try {
-			jdbcTemplate.update(SQL_FOR_SETTING_PARTICIPANT, participant.getFirstName(), participant.getLastName(),
-					participant.geteMail());
-			return new ResponseEntity<Object>(HttpStatus.CREATED);
+
+			jdbcTemplate.update(SQL_FOR_SETTING_PARTICIPANT, participant.getClientId(), participant.getFirstName(),
+					participant.getLastName(), participant.geteMail());
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -64,15 +76,17 @@ public class ParticipantDao implements IParticipant {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<Object> updateParticipant(Participant participant, Integer id) {
+	public void updateParticipant(Participant participant, Integer id) {
+
 		try {
+
 			jdbcTemplate.update(SQL_FOR_UPDATING_PARTICIPANT, participant.getFirstName(), participant.getLastName(),
 					participant.geteMail(), id);
-			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -83,14 +97,16 @@ public class ParticipantDao implements IParticipant {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<Object> deleteParticipantById(Integer participantId) {
+	public void deleteParticipantById(Integer participantId) {
+
 		try {
+
 			jdbcTemplate.update(SQL_FOR_DELETING_PARTICIPANT, participantId);
-			return new ResponseEntity<Object>(HttpStatus.OK);
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
 		}
 	}
 
@@ -101,38 +117,45 @@ public class ParticipantDao implements IParticipant {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<Participant> getParticipantById(Integer participantId) {
+	public Participant getParticipantById(Integer participantId) {
+
 		try {
+
 			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ID,
 					new BeanPropertyRowMapper<>(Participant.class), participantId);
 
-			return list.isEmpty() ? new ResponseEntity<Participant>(HttpStatus.NO_CONTENT)
-					: new ResponseEntity<Participant>(list.get(0), HttpStatus.OK);
+			return list.isEmpty() ? null : list.get(0);
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<Participant>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 
 	/**
-	 * Method to getting participant from db client id
+	 * Method to getting participant from db group id
 	 * 
-	 * @param clientId
+	 * @param groupId
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<List<Participant>> getParticipantByClientId(Integer clientId) {
-		try {
-			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_CLIENT_ID,
-					new BeanPropertyRowMapper<>(Participant.class), clientId);
+	public List<Participant> getParticipantByGroup(Integer groupId) {
 
-			return list.isEmpty() ? new ResponseEntity<List<Participant>>(HttpStatus.NO_CONTENT)
-					: new ResponseEntity<List<Participant>>(list, HttpStatus.OK);
+		List<Participant> participantList = new ArrayList<>();
+		try {
+
+			participantList = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_GROUP_ID,
+					new BeanPropertyRowMapper<>(Participant.class), groupId);
+
+			return participantList.isEmpty() ? null : participantList;
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<List<Participant>>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
+			return participantList;
 		}
 	}
 
@@ -144,18 +167,46 @@ public class ParticipantDao implements IParticipant {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public ResponseEntity<List<Participant>> getParticipantByAttributeValue(Integer attributeId,
-			String attributeValue) {
+	public List<Participant> getParticipantByAttributeValue(Integer attributeId, String attributeValue) {
+
+		List<Participant> participantList = new ArrayList<>();
 		try {
-			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE,
+
+			participantList = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE,
 					new BeanPropertyRowMapper<>(Participant.class), attributeId, attributeValue);
 
-			return list.isEmpty() ? new ResponseEntity<List<Participant>>(HttpStatus.NO_CONTENT)
-					: new ResponseEntity<List<Participant>>(list, HttpStatus.OK);
+			return participantList.isEmpty() ? null : participantList;
 		}
 
 		catch (Exception e) {
-			return new ResponseEntity<List<Participant>>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+			LOGGER.error(e.getMessage());
+			return participantList;
+		}
+	}
+
+	/**
+	 * Method to getting participant from database by client id
+	 * 
+	 * @param clientId
+	 * @return
+	 */
+	@Override
+	public List<Participant> selectClientAllParticipants(Integer cliectId) {
+
+		List<Participant> participantList = new ArrayList<>();
+		try {
+
+			participantList = jdbcTemplate.query(SELECT_CLIENT_ALL_CLIENT_PARTICIPANTS,
+					new BeanPropertyRowMapper<>(Participant.class), cliectId);
+
+			return participantList.isEmpty() ? null : participantList;
+		}
+
+		catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return participantList;
 		}
 	}
 }

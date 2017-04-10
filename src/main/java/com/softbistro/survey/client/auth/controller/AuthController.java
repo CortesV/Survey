@@ -57,7 +57,7 @@ public class AuthController {
 			return new ResponseEntity<>(authorizationService.simpleAthorization(client), HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -80,7 +80,7 @@ public class AuthController {
 			return new ResponseEntity<>(authorizationService.socialAuthorization(client), HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -111,7 +111,7 @@ public class AuthController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -138,7 +138,7 @@ public class AuthController {
 			return new ResponseEntity<>(authorizationService.addSocialInfo(client), HttpStatus.OK);
 		} catch (Exception e) {
 
-			LOGGER.debug(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
