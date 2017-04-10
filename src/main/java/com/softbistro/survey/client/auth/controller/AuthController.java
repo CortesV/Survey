@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.client.auth.service.AuthorizedClientService;
 import com.softbistro.survey.client.manage.components.entity.Client;
+import com.softbistro.survey.client.manage.service.ClientService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -39,6 +40,9 @@ public class AuthController {
 
 	@Autowired
 	private AuthorizedClientService authorizedClientService;
+	
+	@Autowired
+	private ClientService clientService;
 
 	/**
 	 * Method that do simple authorization of client
@@ -124,7 +128,7 @@ public class AuthController {
 	 */
 	@ApiOperation(value = "Add social info", notes = "Add social information for authorized client", tags = "Authorization")
 	@RequestMapping(value = "/add/social", method = RequestMethod.POST)
-	public ResponseEntity<Client> setClient1(@RequestHeader String token, @RequestBody Client client) {
+	public ResponseEntity<Client> setClientInfo(@RequestHeader String token, @RequestBody Client client) {
 
 		LOGGER.info(ADD_SOC_INFO + client.toString() + "   " + token);
 		if (!authorizationService.checkAccess(token)) {
@@ -135,7 +139,7 @@ public class AuthController {
 
 		try {
 
-			return new ResponseEntity<>(authorizationService.addSocialInfo(client), HttpStatus.OK);
+			return new ResponseEntity<>(clientService.addSocialInfo(client), HttpStatus.OK);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

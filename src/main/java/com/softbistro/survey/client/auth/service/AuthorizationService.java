@@ -37,7 +37,7 @@ public class AuthorizationService {
 	private static final String WRONG_FACEBOOK = "Something wrong with facebook id";
 	private static final String WRONG_GOOGLE = "Something wrong with google id";
 	private static final String WRONG_EMAIL = "Something wrong with email";
-	private static final String ADD_SOC_INFO = "Add social info answer --- Info add successful";
+	
 
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
@@ -213,29 +213,6 @@ public class AuthorizationService {
 
 		return StringUtils.isNotBlank(client.getGoogleId()) && client.getFlag().equals(GOOGLE)
 				|| StringUtils.isNotBlank(client.getFacebookId()) && client.getFlag().equals(FACEBOOK);
-	}
-
-	public Client addSocialInfo(Client socialClient) {
-
-		Client updateClient = clientService.findClient(socialClient.getId());
-
-		if (StringUtils.isNotBlank(socialClient.getFacebookId()) && StringUtils.isBlank(socialClient.getGoogleId())) {
-
-			updateClient.setFacebookId(socialClient.getFacebookId());
-			clientService.updateClient(updateClient, updateClient.getId());
-			LOGGER.info(ADD_SOC_INFO);
-			return null;
-		}
-
-		if (StringUtils.isNotBlank(socialClient.getGoogleId()) && StringUtils.isBlank(socialClient.getFacebookId())) {
-
-			updateClient.setGoogleId(socialClient.getGoogleId());
-			clientService.updateClient(updateClient, updateClient.getId());
-			LOGGER.info(ADD_SOC_INFO);
-			return null;
-		}
-
-		return null;
 	}
 
 }

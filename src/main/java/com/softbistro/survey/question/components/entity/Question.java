@@ -8,9 +8,9 @@ package com.softbistro.survey.question.components.entity;
  */
 public class Question {
 	
-	private Long id;
+	private Integer id;
 	
-	private Long surveyId;
+	private Integer surveyId;
 	
 	private String question;
 	
@@ -18,7 +18,7 @@ public class Question {
 	
 	private String descriptionLong;
 	
-	private Long questionSectionId;
+	private Integer questionSectionId;
 	
 	private String answerType;
 	
@@ -28,19 +28,19 @@ public class Question {
 	
 	private Boolean requiredComment;
 
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public Long getSurveyId() {
+	public Integer getSurveyId() {
 		return surveyId;
 	}
 
-	public void setSurveyId(Long survey_id) {
+	public void setSurveyId(Integer survey_id) {
 		this.surveyId = survey_id;
 	}
 
@@ -68,11 +68,11 @@ public class Question {
 		this.descriptionLong = descriptionLong;
 	}
 
-	public Long getQuestionSectionId() {
+	public Integer getQuestionSectionId() {
 		return questionSectionId;
 	}
 
-	public void setQuestionSectionId(Long questionSectionId) {
+	public void setQuestionSectionId(Integer questionSectionId) {
 		this.questionSectionId = questionSectionId;
 	}
 
