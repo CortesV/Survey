@@ -123,14 +123,7 @@ public class QuestionDao implements IQuestion {
 			}
 
 			return generatedId;
-
-			/*
-			 * jdbc.update(SAVE_QUESTION, question.getSurveyId(),
-			 * question.getQuestion(), question.getDescriptionShort(),
-			 * question.getDescriptionLong(), question.getQuestionSectionId(),
-			 * question.getAnswerType(), question.getQuestionChoices(),
-			 * question.isRequired(), question.isRequiredComment());
-			 */
+			
 		} catch (Exception e) {
 
 			LOGGER.debug(e.getMessage());

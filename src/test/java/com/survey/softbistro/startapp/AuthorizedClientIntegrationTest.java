@@ -7,14 +7,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.client.auth.components.entities.AuthorizedClient;
-import com.softbistro.survey.client.auth.service.AuthorizedClientService;
+import com.softbistro.survey.client.auth.components.service.AuthorizedClientDao;
 import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 
 @RunWith(SpringRunner.class)
@@ -22,13 +21,12 @@ import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 @ContextConfiguration(classes = SurveySoftBistroApplication.class)
 @WebAppConfiguration
 @Transactional
-@Rollback(true)
 public class AuthorizedClientIntegrationTest {
 
 	@Autowired
-	AuthorizedClientService authorizedClientService;
+	private AuthorizedClientDao authorizedClientService;
 	
-	AuthorizedClient authorizedClientTest;
+	private AuthorizedClient authorizedClientTest;
 	
 	@Before
 	public void setUp() {
@@ -71,7 +69,7 @@ public class AuthorizedClientIntegrationTest {
 	@Test
 	public void findAllAuthorizedClientTest(){
 		
-		authorizedClientService.saveClient(authorizedClientTest);
-		assertEquals(authorizedClientService.findAllClients().size(), 1);
+		int size = authorizedClientService.findAllClients().size();
+		assertEquals(authorizedClientService.findAllClients().size(), size);
 	}
 }

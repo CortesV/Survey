@@ -8,14 +8,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
-import com.softbistro.survey.client.manage.service.ClientService;
+import com.softbistro.survey.client.manage.components.service.ClientDao;
 import com.softbistro.survey.client.manage.service.FindClientService;
 import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 
@@ -24,14 +23,13 @@ import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 @ContextConfiguration(classes = SurveySoftBistroApplication.class)
 @WebAppConfiguration
 @Transactional
-@Rollback(true)
 public class ClientIntegrationTest {
 
 	@Autowired
-	ClientService clientService;
+	private ClientDao clientService;
 	
 	@Autowired
-	FindClientService findClientService; 
+	private FindClientService findClientService; 
 	
 	private Client testClient;
 	

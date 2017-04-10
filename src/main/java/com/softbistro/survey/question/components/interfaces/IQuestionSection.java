@@ -18,7 +18,7 @@ public interface IQuestionSection {
 	 * @param questionSection
 	 * @return ResponseEntity
 	 */
-	public void setQuestionSection(QuestionSection questionSection);
+	public Integer setQuestionSection(QuestionSection questionSection);
 
 	/**
 	 * Method for updating QuestionSection

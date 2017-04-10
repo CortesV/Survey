@@ -7,14 +7,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.question.components.entity.Question;
-import com.softbistro.survey.question.service.QuestionService;
+import com.softbistro.survey.question.components.service.QuestionDao;
 import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 
 @RunWith(SpringRunner.class)
@@ -22,11 +21,10 @@ import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 @ContextConfiguration(classes = SurveySoftBistroApplication.class)
 @WebAppConfiguration
 @Transactional
-@Rollback(false)
 public class QuestionIntegrationTest {
 
 	@Autowired
-	QuestionService questionService;
+	private QuestionDao questionService;
 
 	private Question testQuestion;
 

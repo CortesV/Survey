@@ -1,5 +1,8 @@
 package com.softbistro.survey.question.components.service;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -8,6 +11,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.question.components.entity.QuestionSection;
 import com.softbistro.survey.question.components.interfaces.IQuestionSection;
 
@@ -48,18 +52,35 @@ public class QuestionSectionDao implements IQuestionSection {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public void setQuestionSection(QuestionSection questionSection) {
+	public Integer setQuestionSection(QuestionSection questionSection) {
 
 		try {
 
-			jdbcTemplate.update(SQL_FOR_SETTING_QUESTION_SECTION, questionSection.getClientId(),
-					questionSection.getSectionName(), questionSection.getDescriptionShort(),
-					questionSection.getDescriptionLong());
+			Connection connection = jdbcTemplate.getDataSource().getConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_QUESTION_SECTION,
+					Statement.RETURN_GENERATED_KEYS);
+
+			preparedStatement.setInt(1, questionSection.getClientId());
+			preparedStatement.setString(2, questionSection.getSectionName());
+			preparedStatement.setString(3, questionSection.getDescriptionShort());
+			preparedStatement.setString(4, questionSection.getDescriptionLong());
+
+			preparedStatement.executeUpdate();
+			ResultSet keys = preparedStatement.getGeneratedKeys();
+
+			Integer generatedId = 0;
+			if (keys.next()) {
+				generatedId = keys.getInt(1);
+			}
+
+			return generatedId;
+
 		}
 
 		catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 
