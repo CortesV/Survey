@@ -19,7 +19,7 @@ public class QuestionService {
 	 *            id - id of question
 	 * @return return - all information about question
 	 */
-	public Question findQuestionById(Long id) {
+	public Question findQuestionById(Integer id) {
 
 		return iQuestion.findQuestionById(id);
 	}
@@ -32,9 +32,9 @@ public class QuestionService {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public void saveQuestion(Question question) {
+	public Integer saveQuestion(Question question) {
 
-		iQuestion.saveQuestion(question);
+		return iQuestion.saveQuestion(question);
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class QuestionService {
 	 *            of question
 	 * @return return - status of execution this method
 	 */
-	public void deleteQuestion(Long id) {
+	public void deleteQuestion(Integer id) {
 
 		iQuestion.deleteQuestion(id);
 	}
@@ -59,7 +59,7 @@ public class QuestionService {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
-	public void updateQuestion(Question question, Long id) {
+	public void updateQuestion(Question question, Integer id) {
 
 		iQuestion.updateQuestion(question, id);
 	}

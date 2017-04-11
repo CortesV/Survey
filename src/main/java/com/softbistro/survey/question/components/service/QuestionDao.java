@@ -1,5 +1,7 @@
 package com.softbistro.survey.question.components.service;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -8,9 +10,13 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.question.components.entity.Question;
 import com.softbistro.survey.question.components.interfaces.IQuestion;
 
@@ -46,12 +52,12 @@ public class QuestionDao implements IQuestion {
 		@Override
 		public Question mapRow(ResultSet resultSet, int rowNum) throws SQLException {
 			Question question = new Question();
-			question.setId(resultSet.getLong(1));
-			question.setSurveyId(resultSet.getLong(2));
+			question.setId(resultSet.getInt(1));
+			question.setSurveyId(resultSet.getInt(2));
 			question.setQuestion(resultSet.getString(3));
 			question.setDescriptionShort(resultSet.getString(4));
 			question.setDescriptionLong(resultSet.getString(5));
-			question.setQuestionSectionId(resultSet.getLong(6));
+			question.setQuestionSectionId(resultSet.getInt(6));
 			question.setAnswerType(resultSet.getString(7));
 			question.setQuestionChoices(resultSet.getString(8));
 			question.setRequired(resultSet.getBoolean(9));
@@ -68,7 +74,7 @@ public class QuestionDao implements IQuestion {
 	 * @return return - all information about question
 	 */
 	@Override
-	public Question findQuestionById(Long id) {
+	public Question findQuestionById(Integer id) {
 
 		try {
 
@@ -93,16 +99,37 @@ public class QuestionDao implements IQuestion {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public void saveQuestion(Question question) {
+	public Integer saveQuestion(Question question) {
 
 		try {
 
-			jdbc.update(SAVE_QUESTION, question.getSurveyId(), question.getQuestion(), question.getDescriptionShort(),
-					question.getDescriptionLong(), question.getQuestionSectionId(), question.getAnswerType(),
-					question.getQuestionChoices(), question.isRequired(), question.isRequiredComment());
+			KeyHolder holder = new GeneratedKeyHolder();
+
+			jdbc.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SAVE_QUESTION,
+							Statement.RETURN_GENERATED_KEYS);
+					preparedStatement.setInt(1, question.getSurveyId());
+					preparedStatement.setString(2, question.getQuestion());
+					preparedStatement.setString(3, question.getDescriptionShort());
+					preparedStatement.setString(4, question.getDescriptionLong());
+					preparedStatement.setInt(5, question.getQuestionSectionId());
+					preparedStatement.setString(6, question.getAnswerType());
+					preparedStatement.setString(7, question.getQuestionChoices());
+					preparedStatement.setBoolean(8, question.isRequired());
+					preparedStatement.setBoolean(9, question.isRequiredComment());
+					return preparedStatement;
+				}
+			}, holder);
+
+			return holder.getKey().intValue();
+
 		} catch (Exception e) {
 
 			LOGGER.debug(e.getMessage());
+			return null;
 		}
 
 	}
@@ -115,7 +142,7 @@ public class QuestionDao implements IQuestion {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public void deleteQuestion(Long id) {
+	public void deleteQuestion(Integer id) {
 
 		try {
 
@@ -138,7 +165,7 @@ public class QuestionDao implements IQuestion {
 	 * @return return - status of execution this method
 	 */
 	@Override
-	public void updateQuestion(Question question, Long id) {
+	public void updateQuestion(Question question, Integer id) {
 
 		try {
 			jdbc.update(UPDATE_QUESTION, question.getSurveyId(), question.getQuestion(), question.getDescriptionShort(),

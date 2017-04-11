@@ -110,4 +110,14 @@ public class ClientService {
 		return iClient.findByTemplate(template, value);
 	}
 
+	/**
+	 * Method that add social data from social networks to exist client
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public Client addSocialInfo(Client socialClient){
+		
+		return iClient.addSocialInfo(socialClient);
+	}
 }
