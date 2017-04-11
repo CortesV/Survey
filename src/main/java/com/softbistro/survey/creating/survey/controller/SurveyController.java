@@ -202,7 +202,7 @@ public class SurveyController {
 			surveyService.start(surveyId);
 			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.OK);
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -225,7 +225,7 @@ public class SurveyController {
 			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new ResponseEntity<Object>(HttpStatus.OK);
+			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
