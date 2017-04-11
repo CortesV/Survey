@@ -55,7 +55,6 @@ dependencies {
 	
 	compile group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
 	compile group: 'commons-io', name: 'commons-io', version: '2.5'
-	runtime files(org.gradle.internal.jvm.Jvm.current().toolsJar)
 	
 }
 
