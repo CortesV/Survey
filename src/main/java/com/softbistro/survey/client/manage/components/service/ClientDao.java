@@ -37,6 +37,7 @@ public class ClientDao implements IClient {
 	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE clients SET password = ? WHERE id = ?";
 	private static final String FACEBOOK = "facebook";
 	private static final String GOOGLE = "google";
+	private static final String ADD_SOC_INFO = "Add social info answer --- Info add successful";
 
 	@Autowired
 	private JdbcTemplate jdbc;
@@ -326,5 +327,35 @@ public class ClientDao implements IClient {
 			LOGGER.error(e.getMessage());
 			return null;
 		}
+	}
+	
+	/**
+	 * Method that add social data from social networks to exist client
+	 * 
+	 * @param token
+	 * @return
+	 */
+	@Override
+	public Client addSocialInfo(Client socialClient) {
+
+		Client updateClient = findClient(socialClient.getId());
+
+		if (StringUtils.isNotBlank(socialClient.getFacebookId()) && StringUtils.isBlank(socialClient.getGoogleId())) {
+
+			updateClient.setFacebookId(socialClient.getFacebookId());
+			updateClient(updateClient, updateClient.getId());
+			LOGGER.info(ADD_SOC_INFO);
+			return null;
+		}
+
+		if (StringUtils.isNotBlank(socialClient.getGoogleId()) && StringUtils.isBlank(socialClient.getFacebookId())) {
+
+			updateClient.setGoogleId(socialClient.getGoogleId());
+			updateClient(updateClient, updateClient.getId());
+			LOGGER.info(ADD_SOC_INFO);
+			return null;
+		}
+
+		return null;
 	}
 }

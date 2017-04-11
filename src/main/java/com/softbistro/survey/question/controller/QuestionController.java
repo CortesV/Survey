@@ -44,7 +44,7 @@ public class QuestionController {
 	 */
 	@ApiOperation(value = "Get Question By Id", notes = "Get question instanse by question id", tags = "Question")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<Question> findQuestionById(@PathVariable("id") Long id, @RequestHeader String token) {
+	public ResponseEntity<Question> findQuestionById(@PathVariable("id") Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
@@ -82,8 +82,7 @@ public class QuestionController {
 
 		try {
 
-			questionService.saveQuestion(question);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(questionService.saveQuestion(question), HttpStatus.OK);
 		} catch (Exception e) {
 
 			LOGGER.debug(e.getMessage());
@@ -100,7 +99,7 @@ public class QuestionController {
 	 */
 	@ApiOperation(value = "Delete Question By Id", notes = "Delete question instanse by question id", tags = "Question")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> deleteQuestion(@PathVariable("id") Long id, @RequestHeader String token) {
+	public ResponseEntity<Object> deleteQuestion(@PathVariable("id") Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
@@ -132,7 +131,7 @@ public class QuestionController {
 			+ " description Long, questionSection Id, answer Type, question Choices, required, required Comment and question id. "
 			+ "Field answerType can have value such as: RATE1-10, RATE1-5, RATE1-3, BOOLEAN, LIST, MULTILIST, INPUT, MEMO", tags = "Question")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Object> updateQuestion(@RequestBody Question question, @PathVariable("id") Long id,
+	public ResponseEntity<Object> updateQuestion(@RequestBody Question question, @PathVariable("id") Integer id,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {

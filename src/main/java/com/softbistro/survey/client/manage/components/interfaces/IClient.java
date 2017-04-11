@@ -87,5 +87,13 @@ public interface IClient {
 	 * @return return - information about of client
 	 */
 	public Client findByTemplate(String template, String value);
+	
+	/**
+	 * Method that add social data from social networks to exist client
+	 * 
+	 * @param token
+	 * @return
+	 */
+	public Client addSocialInfo(Client socialClient);
 
 }

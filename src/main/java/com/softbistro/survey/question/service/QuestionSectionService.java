@@ -26,9 +26,9 @@ public class QuestionSectionService {
 	 * @param questionSection
 	 * @return ResponseEntity
 	 */
-	public void setQuestionSection(QuestionSection questionSection) {
+	public Integer setQuestionSection(QuestionSection questionSection) {
 
-		iQuestionSection.setQuestionSection(questionSection);
+		return iQuestionSection.setQuestionSection(questionSection);
 	}
 
 	/**

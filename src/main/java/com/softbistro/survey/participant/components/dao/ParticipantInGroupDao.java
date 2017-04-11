@@ -31,8 +31,9 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 			+ "(connect_group_participant.group_id, connect_group_participant.participant_id) VALUES (?, ?)";
 	private static final String SQL_FOR_DELETING_PARTICIPANT_IN_GROUP = "UPDATE connect_group_participant AS c "
 			+ "SET c.delete = 1 WHERE c.group_id = ? AND c.participant_id = ?";
-	private static final String SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID = "SELECT * FROM participant AS p "
-			+ "LEFT JOIN connect_group_participant AS c ON c.participant_id=p.id WHERE c.group_id = ?  AND p.delete = 0";
+	private static final String SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID = "SELECT p.id, p.client_id, p.email, p.first_name, "
+			+ "p.last_name FROM participant AS p LEFT JOIN connect_group_participant AS cgp ON cgp.participant_id = p.id "
+			+ "LEFT JOIN `group` AS g ON g.id = cgp.group_id WHERE g.id = ? AND p.`delete` = 0";
 	private static final String SQL_FOR_GETTING_PARTICIPANT_GROUPS = "SELECT g.id, g.client_id, group_name FROM `group` AS g "
 			+ "LEFT JOIN connect_group_participant AS c ON g.id=c.group_id WHERE c.participant_id = ? AND g.delete = 0";
 
