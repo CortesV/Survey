@@ -2,13 +2,16 @@ package com.softbistro.survey.question.components.service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.mysql.cj.api.jdbc.Statement;
@@ -39,7 +42,7 @@ public class QuestionSectionDao implements IQuestionSection {
 	private static final String SQL_FOR_GETTING_QUESTION_SECTION_BY_CLIENT_ID = "SELECT * FROM question_sections AS q "
 			+ "WHERE q.client_id=? AND q.delete !=1";
 	private static final String SQL_FOR_GETTING_QUESTION_SECTION_BY_SURVEY_ID = "SELECT * FROM question_sections AS q "
-			+ "LEFT JOIN connect_question_section_survey AS c ON c.question_section_id=q.id WHERE c.survey_id=? AND q.delete !=1";
+			+ "LEFT JOIN connect_question_section_survey AS c ON c.question_section_id=q.id WHERE c.survey_id=? AND q.delete !=1 AND c.`delete`!=1";
 	private static final String SQL_FOR_ADDING_QUESTION_SECTION_TO_SURVEY = "INSERT INTO connect_question_section_survey "
 			+ "(connect_question_section_survey.question_section_id, connect_question_section_survey.survey_id) VALUES (?, ?)";
 	private static final String SQL_FOR_DELETING_QUESTION_SECTION_FROM_SURVEY = "UPDATE connect_question_section_survey AS c "
@@ -56,24 +59,23 @@ public class QuestionSectionDao implements IQuestionSection {
 
 		try {
 
-			Connection connection = jdbcTemplate.getDataSource().getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_QUESTION_SECTION,
-					Statement.RETURN_GENERATED_KEYS);
+			KeyHolder holder = new GeneratedKeyHolder();
 
-			preparedStatement.setInt(1, questionSection.getClientId());
-			preparedStatement.setString(2, questionSection.getSectionName());
-			preparedStatement.setString(3, questionSection.getDescriptionShort());
-			preparedStatement.setString(4, questionSection.getDescriptionLong());
+			jdbcTemplate.update(new PreparedStatementCreator() {
 
-			preparedStatement.executeUpdate();
-			ResultSet keys = preparedStatement.getGeneratedKeys();
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_QUESTION_SECTION,
+							Statement.RETURN_GENERATED_KEYS);
+					preparedStatement.setInt(1, questionSection.getClientId());
+					preparedStatement.setString(2, questionSection.getSectionName());
+					preparedStatement.setString(3, questionSection.getDescriptionShort());
+					preparedStatement.setString(4, questionSection.getDescriptionLong());
+					return preparedStatement;
+				}
+			}, holder);
 
-			Integer generatedId = 0;
-			if (keys.next()) {
-				generatedId = keys.getInt(1);
-			}
-
-			return generatedId;
+			return holder.getKey().intValue();
 
 		}
 
@@ -84,7 +86,7 @@ public class QuestionSectionDao implements IQuestionSection {
 		}
 	}
 
-	/**
+	/**getJdbcTemplate
 	 * Method for updating QuestionSection
 	 * 
 	 * @param questionSection,

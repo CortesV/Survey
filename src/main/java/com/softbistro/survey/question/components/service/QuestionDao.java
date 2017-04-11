@@ -10,7 +10,10 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.mysql.cj.api.jdbc.Statement;
@@ -100,30 +103,29 @@ public class QuestionDao implements IQuestion {
 
 		try {
 
-			Connection connection = jdbc.getDataSource().getConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(SAVE_QUESTION,
-					Statement.RETURN_GENERATED_KEYS);
+			KeyHolder holder = new GeneratedKeyHolder();
 
-			preparedStatement.setInt(1, question.getSurveyId());
-			preparedStatement.setString(2, question.getQuestion());
-			preparedStatement.setString(3, question.getDescriptionShort());
-			preparedStatement.setString(4, question.getDescriptionLong());
-			preparedStatement.setInt(5, question.getQuestionSectionId());
-			preparedStatement.setString(6, question.getAnswerType());
-			preparedStatement.setString(7, question.getQuestionChoices());
-			preparedStatement.setBoolean(8, question.isRequired());
-			preparedStatement.setBoolean(9, question.isRequiredComment());
+			jdbc.update(new PreparedStatementCreator() {
 
-			preparedStatement.executeUpdate();
-			ResultSet keys = preparedStatement.getGeneratedKeys();
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SAVE_QUESTION,
+							Statement.RETURN_GENERATED_KEYS);
+					preparedStatement.setInt(1, question.getSurveyId());
+					preparedStatement.setString(2, question.getQuestion());
+					preparedStatement.setString(3, question.getDescriptionShort());
+					preparedStatement.setString(4, question.getDescriptionLong());
+					preparedStatement.setInt(5, question.getQuestionSectionId());
+					preparedStatement.setString(6, question.getAnswerType());
+					preparedStatement.setString(7, question.getQuestionChoices());
+					preparedStatement.setBoolean(8, question.isRequired());
+					preparedStatement.setBoolean(9, question.isRequiredComment());
+					return preparedStatement;
+				}
+			}, holder);
 
-			Integer generatedId = 0;
-			if (keys.next()) {
-				generatedId = keys.getInt(1);
-			}
+			return holder.getKey().intValue();
 
-			return generatedId;
-			
 		} catch (Exception e) {
 
 			LOGGER.debug(e.getMessage());

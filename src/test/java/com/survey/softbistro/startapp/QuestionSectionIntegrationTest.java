@@ -1,7 +1,6 @@
 package com.survey.softbistro.startapp;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -36,26 +35,20 @@ public class QuestionSectionIntegrationTest {
 	@Autowired
 	private QuestionSectionDao questionSectionService;
 
-	private QuestionSection questionSectionTest, questionSectionTest2;
+	private QuestionSection questionSectionTest;
 
 	private Integer surveyId;
 
 	@Before
 	public void setUp() {
 
-		surveyId = 1000;
+		surveyId = Integer.MAX_VALUE;
 
 		questionSectionTest = new QuestionSection();
-		questionSectionTest.setClientId(1);
+		questionSectionTest.setClientId(Integer.MAX_VALUE);
 		questionSectionTest.setSectionName("sectionName");
 		questionSectionTest.setDescriptionShort("descriptionShort");
 		questionSectionTest.setDescriptionLong("descrioptionLong");
-
-		questionSectionTest2 = new QuestionSection();
-		questionSectionTest2.setClientId(1);
-		questionSectionTest2.setSectionName("sectionName2");
-		questionSectionTest2.setDescriptionShort("descriptionShort2");
-		questionSectionTest2.setDescriptionLong("descrioptionLong2");
 	}
 
 	/**
@@ -102,8 +95,7 @@ public class QuestionSectionIntegrationTest {
 	public void getByClientIdQuestionSectionTest() {
 
 		questionSectionService.setQuestionSection(questionSectionTest);
-		assertNotEquals(questionSectionService.getQuestionSectionByClientId(questionSectionTest.getClientId()).size(),
-				0);
+		assertEquals(questionSectionService.getQuestionSectionByClientId(questionSectionTest.getClientId()).size(), 1);
 	}
 
 	/**
@@ -114,12 +106,7 @@ public class QuestionSectionIntegrationTest {
 
 		Integer id = questionSectionService.setQuestionSection(questionSectionTest);
 		questionSectionService.addQuestionSectionToSurvey(id, surveyId);
-
-		id = questionSectionService.setQuestionSection(questionSectionTest2);
-		questionSectionService.addQuestionSectionToSurvey(id, surveyId);
-
-		assertEquals(questionSectionService.getQuestionSectionBySurveyId(surveyId).size(),
-				questionSectionService.getQuestionSectionBySurveyId(surveyId).size());
+		assertEquals(questionSectionService.getQuestionSectionBySurveyId(surveyId).size(), 1);
 	}
 
 	/**
@@ -130,10 +117,8 @@ public class QuestionSectionIntegrationTest {
 
 		Integer id = questionSectionService.setQuestionSection(questionSectionTest);
 		questionSectionService.addQuestionSectionToSurvey(id, surveyId);
-		assertEquals(questionSectionService.getQuestionSectionById(id).getClientId(),
-				questionSectionTest.getClientId());
-
+		assertEquals(questionSectionService.getQuestionSectionBySurveyId(surveyId).size(), 1);
 		questionSectionService.deleteQuestionSectionFromSurvey(id, surveyId);
-
+		assertEquals(questionSectionService.getQuestionSectionBySurveyId(surveyId).size(), 0);
 	}
 }
