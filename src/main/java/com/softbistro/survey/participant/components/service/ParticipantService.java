@@ -65,17 +65,6 @@ public class ParticipantService {
 	}
 
 	/**
-	 * Method to getting participant from db by group Id
-	 * 
-	 * @param clientid
-	 * @return ResponseEntity
-	 */
-		
-	public List<Participant> getParticipantByGroup(Integer groupId) {
-		return iParticipant.getParticipantByGroup(groupId);
-	}
-
-	/**
 	 * Method to getting participant from db by attribute value
 	 * 
 	 * @param attributeId,
@@ -86,12 +75,12 @@ public class ParticipantService {
 
 		return iParticipant.getParticipantByAttributeValue(attributeId, attributeValue);
 	}
-	
+
 	/**
 	 * Method to getting participant from database by client id
 	 * 
 	 * @param clientId
-	 * @return 
+	 * @return
 	 */
 	public List<Participant> selectClientAllParticipants(Integer clientId) {
 
