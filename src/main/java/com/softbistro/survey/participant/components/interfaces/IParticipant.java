@@ -18,7 +18,7 @@ public interface IParticipant {
 	 * @param participant
 	 * @return
 	 */
-	public void setParticipant(Participant participant);
+	public Integer setParticipant(Participant participant);
 
 	/**
 	 * Method for updating participant

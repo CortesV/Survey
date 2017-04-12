@@ -1,5 +1,7 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -7,9 +9,13 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.participant.components.entity.AttributeValues;
 import com.softbistro.survey.participant.components.interfaces.IAttributeValues;
 
@@ -61,17 +67,34 @@ public class AttributeValuesDao implements IAttributeValues {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public void setAttributeValues(AttributeValues attributeValues) {
+	public Integer setAttributeValues(AttributeValues attributeValues) {
 
 		try {
 
-			jdbcTemplate.update(SQL_FOR_SETTING_ATTRIBUTE_VALUES, attributeValues.getAttributeId(),
-					attributeValues.getParticipantId(), attributeValues.getValue());
+			KeyHolder holder = new GeneratedKeyHolder();
+
+			jdbcTemplate.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_ATTRIBUTE_VALUES,
+							Statement.RETURN_GENERATED_KEYS);
+					preparedStatement.setInt(1, attributeValues.getAttributeId());
+					preparedStatement.setInt(2, attributeValues.getParticipantId());
+					preparedStatement.setString(3, attributeValues.getValue());
+
+					return preparedStatement;
+				}
+			}, holder);
+
+			return holder.getKey().intValue();			
+			
 		}
 
 		catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 

@@ -26,9 +26,9 @@ public class AttributeValuesService {
 	 * @param attributeValues
 	 * @return ResponseEntity
 	 */
-	public void setAttributeValues(AttributeValues attributeValues) {
+	public Integer setAttributeValues(AttributeValues attributeValues) {
 
-		iAttributeValues.setAttributeValues(attributeValues);
+		return iAttributeValues.setAttributeValues(attributeValues);
 	}
 
 	/**

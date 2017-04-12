@@ -18,7 +18,7 @@ public interface IGroup {
 	 * @param group
 	 * @return ResponseEntity
 	 */
-	public void setGroup(Group group);
+	public Integer setGroup(Group group);
 
 	/**
 	 * Method to get group by id

@@ -54,8 +54,7 @@ public class GroupController {
 
 		try {
 
-			groupService.setGroup(group);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(groupService.setGroup(group), HttpStatus.OK);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

@@ -1,5 +1,8 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +10,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.participant.components.entity.Attributes;
 import com.softbistro.survey.participant.components.interfaces.IAttributes;
 
@@ -39,16 +46,33 @@ public class AttributesDao implements IAttributes {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public void setAttribute(Attributes attributes) {
+	public Integer setAttribute(Attributes attributes) {
 
 		try {
 
-			jdbcTemplate.update(SQL_FOR_SETTING_ATTRIBUTES, attributes.getGroupId(), attributes.getAttribute());
+			KeyHolder holder = new GeneratedKeyHolder();
+
+			jdbcTemplate.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_ATTRIBUTES,
+							Statement.RETURN_GENERATED_KEYS);
+					preparedStatement.setInt(1, attributes.getGroupId());
+					preparedStatement.setString(2, attributes.getAttribute());
+					
+					return preparedStatement;
+				}
+			}, holder);
+
+			return holder.getKey().intValue();
+			
 		}
 
 		catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 

@@ -26,9 +26,9 @@ public class ParticipantService {
 	 * @param participant
 	 * @return ResponseEntity
 	 */
-	public void setParticipant(Participant participant) {
+	public Integer setParticipant(Participant participant) {
 
-		iParticipant.setParticipant(participant);
+		return iParticipant.setParticipant(participant);
 	}
 
 	/**
