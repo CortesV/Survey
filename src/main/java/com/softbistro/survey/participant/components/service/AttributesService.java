@@ -26,9 +26,9 @@ public class AttributesService {
 	 * @param Attributes
 	 * @return ResponseEntity
 	 */
-	public void setAttribute(Attributes attributes) {
+	public Integer setAttribute(Attributes attributes) {
 		
-		iAttributes.setAttribute(attributes);
+		return iAttributes.setAttribute(attributes);
 	}
 
 	/**

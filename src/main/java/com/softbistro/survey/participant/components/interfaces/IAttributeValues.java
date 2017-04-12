@@ -18,7 +18,7 @@ public interface IAttributeValues {
 	 * @param attributeValues
 	 * @return ResponseEntity
 	 */
-	public void setAttributeValues(AttributeValues attributeValues);
+	public Integer setAttributeValues(AttributeValues attributeValues);
 
 	/**
 	 * Method for getting attribute values form the db

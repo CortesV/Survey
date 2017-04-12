@@ -109,8 +109,7 @@ public class ParticipantController {
 
 		try {
 
-			participantService.setParticipant(participant);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(participantService.setParticipant(participant), HttpStatus.OK);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

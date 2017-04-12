@@ -1,5 +1,8 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,8 +10,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.interfaces.IParticipant;
 
@@ -52,17 +59,36 @@ public class ParticipantDao implements IParticipant {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public void setParticipant(Participant participant) {
+	public Integer setParticipant(Participant participant) {
 
 		try {
 
-			jdbcTemplate.update(SQL_FOR_SETTING_PARTICIPANT, participant.getClientId(), participant.getFirstName(),
-					participant.getLastName(), participant.geteMail());
+			
+			KeyHolder holder = new GeneratedKeyHolder();
+
+			jdbcTemplate.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_PARTICIPANT,
+							Statement.RETURN_GENERATED_KEYS);
+					preparedStatement.setInt(1, participant.getClientId());
+					preparedStatement.setString(2, participant.getFirstName());
+					preparedStatement.setString(3, participant.getLastName());
+					preparedStatement.setString(4, participant.geteMail());
+					
+					return preparedStatement;
+				}
+			}, holder);
+
+			return holder.getKey().intValue();
+			
 		}
 
 		catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 

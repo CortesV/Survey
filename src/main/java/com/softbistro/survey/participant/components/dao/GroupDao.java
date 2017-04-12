@@ -1,13 +1,20 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.interfaces.IGroup;
 
@@ -38,16 +45,33 @@ public class GroupDao implements IGroup {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public void setGroup(Group group) {
+	public Integer setGroup(Group group) {
 
 		try {
 
-			jdbcTemplate.update(SQL_FOR_SETTING_GROUP, group.getClientId(), group.getGroupName());
+			KeyHolder holder = new GeneratedKeyHolder();
+
+			jdbcTemplate.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_GROUP,
+							Statement.RETURN_GENERATED_KEYS);
+					preparedStatement.setInt(1, group.getClientId());
+					preparedStatement.setString(2, group.getGroupName());
+					
+					return preparedStatement;
+				}
+			}, holder);
+
+			return holder.getKey().intValue();
+			
 		}
 
 		catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 
