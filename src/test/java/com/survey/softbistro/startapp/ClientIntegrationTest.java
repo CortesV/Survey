@@ -1,6 +1,6 @@
 package com.survey.softbistro.startapp;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Before;
@@ -47,6 +47,10 @@ public class ClientIntegrationTest {
 		testClient.setClientName("SurveyManager");
 		testClient.setEmail("SurveyManager@gmail.com");
 		testClient.setPassword("SurveyManager");
+		testClient.setGoogleId("googleId");
+		testClient.setFlag("google");
+
+		clientService.saveClient(testClient);
 	}
 
 	/**
@@ -55,9 +59,8 @@ public class ClientIntegrationTest {
 	@Test
 	public void saveClientTest() {
 
-		clientService.saveClient(testClient);
-		Client findServiceClient = findClientService.findByEmail(testClient);
-		assertEquals(clientService.findClient(findServiceClient.getId()).getId(), findServiceClient.getId());
+		assertThat(findClientService.findByEmail(testClient).getEmail()).as("Email = ")
+				.isEqualTo(testClient.getEmail());
 	}
 
 	/**
@@ -66,9 +69,8 @@ public class ClientIntegrationTest {
 	@Test
 	public void getClientTest() {
 
-		clientService.saveClient(testClient);
-		Client findServiceClient = findClientService.findByEmail(testClient);
-		assertEquals(clientService.findClient(findServiceClient.getId()).getEmail(), testClient.getEmail());
+		assertThat(clientService.findClient(findClientService.findByEmail(testClient).getId()).getEmail())
+				.as("Email = ").isEqualTo(testClient.getEmail());
 	}
 
 	/**
@@ -77,18 +79,12 @@ public class ClientIntegrationTest {
 	@Test
 	public void updateClientTest() {
 
-		clientService.saveClient(testClient);
 		Client findServiceClient = findClientService.findByEmail(testClient);
-
 		testClient.setClientName("Manager");
 		testClient.setEmail("Manager@gmail.com");
-		testClient.setPassword("Manager");
-
-		assertEquals(clientService.findClient(findServiceClient.getId()).getId(), findServiceClient.getId());
-
+		testClient.setPassword("Manager");		
 		clientService.updateClient(testClient, findServiceClient.getId());
-
-		assertEquals(clientService.findClient(findServiceClient.getId()).getEmail(), testClient.getEmail());
+		assertThat(clientService.findClient(findServiceClient.getId()).getEmail()).as("Email = ").isEqualTo(testClient.getEmail());
 	}
 
 	/**
@@ -97,15 +93,8 @@ public class ClientIntegrationTest {
 	@Test
 	public void deleteClientTest() {
 
-		clientService.saveClient(testClient);
-
-		Client findServiceClient = findClientService.findByEmail(testClient);
-		assertEquals(clientService.findClient(findServiceClient.getId()).getEmail(), testClient.getEmail());
-
-		clientService.deleteClient(findServiceClient.getId());
-
-		findServiceClient = findClientService.findByEmail(testClient);
-		assertEquals(findServiceClient, null);
+		clientService.deleteClient(findClientService.findByEmail(testClient).getId());
+		assertThat(findClientService.findByEmail(testClient)).as("Object = ").isEqualTo(null);
 	}
 
 	/**
@@ -114,16 +103,13 @@ public class ClientIntegrationTest {
 	@Test
 	public void updatePasswordTest() {
 
-		clientService.saveClient(testClient);
-
 		Client findServiceClient = findClientService.findByEmail(testClient);
-		assertEquals(clientService.findClient(findServiceClient.getId()).getEmail(), testClient.getEmail());
 
 		testClient.setPassword("Manager");
 		clientService.updatePassword(testClient, findServiceClient.getId());
 
 		String md5HexPassword = DigestUtils.md5Hex(testClient.getPassword());
-		assertEquals(clientService.findClient(findServiceClient.getId()).getPassword(), md5HexPassword);
+		assertThat(clientService.findClient(findServiceClient.getId()).getPassword()).as("Password = ").isEqualTo(md5HexPassword);
 	}
 
 	/**
@@ -132,22 +118,14 @@ public class ClientIntegrationTest {
 	@Test
 	public void socialSaveTest() {
 
-		clientService.saveSocialClient(testClient);
-
-		testClient.setGoogleId("googleId");
-		testClient.setFlag("google");
-		clientService.saveSocialClient(testClient);
-		Client findServiceClient = findClientService.findClient(testClient);
-		assertEquals(clientService.findClient(findServiceClient.getId()).getGoogleId(), testClient.getGoogleId());
-
 		testClient.setClientName(null);
 		testClient.setEmail(null);
 		testClient.setPassword(null);
 		testClient.setFacebookId("facebookId");
 		testClient.setFlag("facebook");
 		clientService.saveSocialClient(testClient);
-		findServiceClient = findClientService.findClient(testClient);
-		assertEquals(clientService.findClient(findServiceClient.getId()).getFacebookId(), testClient.getFacebookId());
+
+		assertThat(findClientService.findClient(testClient).getFacebookId()).as("FacebookId = ").isEqualTo(testClient.getFacebookId());
 
 	}
 
@@ -157,16 +135,14 @@ public class ClientIntegrationTest {
 	@Test
 	public void addSocInfoTest() {
 
-		clientService.saveClient(testClient);
-
 		Client findServiceClient = findClientService.findByEmail(testClient);
-		assertEquals(clientService.findClient(findServiceClient.getId()).getEmail(), testClient.getEmail());
-
-		testClient.setGoogleId("googleId");
-		testClient.setFlag("google");
 
 		testClient.setId(findServiceClient.getId());
+		testClient.setFacebookId("facebookId");
+		testClient.setGoogleId(null);
+		
 		clientService.addSocialInfo(testClient);
-		assertEquals(clientService.findClient(findServiceClient.getId()).getGoogleId(), testClient.getGoogleId());
+		findServiceClient = findClientService.findByEmail(testClient);
+		assertThat(clientService.findClient(findServiceClient.getId()).getFacebookId()).as("FacebookId = ").isEqualTo(testClient.getFacebookId());
 	}
 }
