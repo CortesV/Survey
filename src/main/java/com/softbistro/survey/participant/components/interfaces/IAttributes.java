@@ -18,7 +18,7 @@ public interface IAttributes {
 	 * @param Attributes
 	 * @return ResponseEntity
 	 */
-	public void setAttribute(Attributes atributes);
+	public Integer setAttribute(Attributes atributes);
 
 	/**
 	 * Method for getting attribute by id

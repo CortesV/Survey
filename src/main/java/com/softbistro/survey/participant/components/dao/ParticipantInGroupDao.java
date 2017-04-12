@@ -1,13 +1,20 @@
 package com.softbistro.survey.participant.components.dao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.entity.ParticipantInGroup;
@@ -31,9 +38,11 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 			+ "(connect_group_participant.group_id, connect_group_participant.participant_id) VALUES (?, ?)";
 	private static final String SQL_FOR_DELETING_PARTICIPANT_IN_GROUP = "UPDATE connect_group_participant AS c "
 			+ "SET c.delete = 1 WHERE c.group_id = ? AND c.participant_id = ?";
+
 	private static final String SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID = "SELECT p.id, p.client_id, p.email, p.first_name, "
 			+ "p.last_name FROM participant AS p LEFT JOIN connect_group_participant AS cgp ON cgp.participant_id = p.id "
 			+ "LEFT JOIN `group` AS g ON g.id = cgp.group_id WHERE g.id = ? AND p.`delete` = 0";
+
 	private static final String SQL_FOR_GETTING_PARTICIPANT_GROUPS = "SELECT g.id, g.client_id, group_name FROM `group` AS g "
 			+ "LEFT JOIN connect_group_participant AS c ON g.id=c.group_id WHERE c.participant_id = ? AND g.delete = 0";
 
@@ -69,17 +78,34 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public void addParticipantInGroup(ParticipantInGroup participantInGoup) {
+	public Integer addParticipantInGroup(ParticipantInGroup participantInGoup) {
 
 		try {
 
-			jdbcTemplate.update(SQL_FOR_ADDING_PARTICIPANT_IN_GROUP, participantInGoup.getGroupId(),
-					participantInGoup.getParticipantId());
+			
+			KeyHolder holder = new GeneratedKeyHolder();
+
+			jdbcTemplate.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_ADDING_PARTICIPANT_IN_GROUP,
+							Statement.RETURN_GENERATED_KEYS);
+					preparedStatement.setInt(1, participantInGoup.getGroupId());
+					preparedStatement.setInt(2, participantInGoup.getParticipantId());
+					
+					return preparedStatement;
+				}
+			}, holder);
+
+			return holder.getKey().intValue();
+			
 		}
 
 		catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
+			return null;
 		}
 	}
 

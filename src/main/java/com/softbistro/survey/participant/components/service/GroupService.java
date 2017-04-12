@@ -26,9 +26,9 @@ public class GroupService {
 	 * @param group
 	 * @return ResponseEntity
 	 */
-	public void setGroup(Group group) {
+	public Integer setGroup(Group group) {
 
-		iGroup.setGroup(group);
+		return iGroup.setGroup(group);
 	}
 
 	/**
