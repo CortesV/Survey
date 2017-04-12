@@ -111,23 +111,6 @@ public class ParticipantIntegrationTest {
 	}
 	
 	/**
-	 * Test getting participant from db group id
-	 */
-	@Test
-	public void getParticipantByGroupTest() {
-		
-		Integer idParticipant = participantDao.setParticipant(participantTest);
-		Integer idGroup = groupDao.setGroup(groupTest);
-		
-		participantInGroupTest.setGroupId(idGroup);
-		participantInGroupTest.setParticipantId(idParticipant);
-		
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
-		
-		assertEquals(participantDao.getParticipantByGroup(idGroup).size(), 1);
-	}
-	
-	/**
 	 * Test getting participant from db by attribute value
 	 */
 	@Test

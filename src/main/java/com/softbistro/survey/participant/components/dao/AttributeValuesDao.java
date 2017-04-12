@@ -42,7 +42,8 @@ public class AttributeValuesDao implements IAttributeValues {
 			+ "SET av.attribute_value = ? WHERE av.id = ?";
 	private static final String SQL_FOR_DELETING_ATTRIBUTE_VALUES_BY_ID = "UPDATE attribute_values AS av"
 			+ " SET av.delete = 1 WHERE av.id = ?";
-	private static final String SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES = "SELECT * FROM attribute_values AS av "
+	private static final String SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES = "SELECT av.id, av.attribute_id, "
+			+ "av.participant_id, av.attribute_value  FROM attribute_values AS av "
 			+ "LEFT JOIN attributes AS a ON av.attribute_id=a.id LEFT JOIN `group` AS g ON a.group_id=g.id "
 			+ "LEFT JOIN connect_group_participant AS c ON g.id=c.group_id AND c.participant_id=av.participant_id "
 			+ "LEFT JOIN participant AS p ON c.participant_id=p.id WHERE g.id= ? and p.id= ? AND p.delete = 0";

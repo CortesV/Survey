@@ -64,35 +64,6 @@ public class ParticipantController {
 	}
 
 	/**
-	 * Method to getting participant from db by client Id
-	 * 
-	 * @param email,
-	 *            clientid
-	 * @return ResponseEntity
-	 */
-	@ApiOperation(value = "Get Participants By group", notes = "Get participant instanse by participant group id", tags = "Participant")
-	@RequestMapping(value = "group/{groupId}", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<List<Participant>> getParticipantByGroupId(
-			@PathVariable("groupId") Integer groupId, @RequestHeader String token) {
-
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
-
-
-		try {
-
-			return new ResponseEntity<>(participantService.getParticipantByGroup(groupId),
-					HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
-	/**
 	 * Method to getting participant from db by attribute value
 	 * 
 	 * @param attributeId,

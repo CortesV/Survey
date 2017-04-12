@@ -45,16 +45,6 @@ public interface IParticipant {
 	public Participant getParticipantById(Integer participantId);
 
 	/**
-	 * Method to getting participant from db by group Id
-	 * 
-	 * 
-	 * @param clientId
-	 * @return
-	 */
-
-	public List<Participant> getParticipantByGroup(Integer groupId);
-
-	/**
 	 * Method to getting participant from db by attribute value
 	 * 
 	 * @param attributeId,
