@@ -53,5 +53,6 @@ public class ImportIntegrationTest {
 	@Test
 	public void importTest() {
 
+		System.out.println("Hello");
 	}
 }

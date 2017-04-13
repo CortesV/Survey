@@ -55,7 +55,7 @@ public class AttributeValuesController {
 
 		try {
 
-			return new ResponseEntity<>(attributeValuesService.setAttributeValues(attributeValues), HttpStatus.OK);
+			return new ResponseEntity<>(attributeValuesService.setAttributeValues(attributeValues), HttpStatus.CREATED);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

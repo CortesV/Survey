@@ -76,8 +76,8 @@ public class ClientController {
 
 		try {
 
-			clientService.saveClient(client);
-			return new ResponseEntity<>(HttpStatus.CREATED);
+			return clientService.saveClient(client) == null ? new ResponseEntity<>(HttpStatus.OK)
+					: new ResponseEntity<>(HttpStatus.CREATED);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

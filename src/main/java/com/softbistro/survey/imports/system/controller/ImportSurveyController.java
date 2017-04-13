@@ -43,7 +43,6 @@ public class ImportSurveyController {
 	 * @param clientId
 	 * @return Response
 	 */
-	@ApiIgnore
 	@ApiOperation(value = "Import Survey", notes = "Import survey from csv file", tags = "Import")
 	@RequestMapping(value = "/import", method = RequestMethod.POST, produces = "application/json")
 	@ApiImplicitParam(dataType = "HttpServletRequest")
