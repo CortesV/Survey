@@ -82,7 +82,7 @@ public class QuestionController {
 
 		try {
 
-			return new ResponseEntity<>(questionService.saveQuestion(question), HttpStatus.OK);
+			return new ResponseEntity<>(questionService.saveQuestion(question), HttpStatus.CREATED);
 		} catch (Exception e) {
 
 			LOGGER.debug(e.getMessage());

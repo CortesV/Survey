@@ -40,9 +40,9 @@ public class ClientService {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public void saveClient(Client client) {
+	public Integer saveClient(Client client) {
 
-		iClient.saveClient(client);
+		return iClient.saveClient(client);
 	}
 
 	/**
@@ -116,8 +116,8 @@ public class ClientService {
 	 * @param token
 	 * @return
 	 */
-	public Client addSocialInfo(Client socialClient){
+	public void addSocialInfo(Client socialClient){
 		
-		return iClient.addSocialInfo(socialClient);
+		iClient.addSocialInfo(socialClient);
 	}
 }

@@ -22,7 +22,7 @@ public interface IClient {
 	 *            database
 	 * @return return - information about of client
 	 */
-	public void saveClient(Client client);
+	public Integer saveClient(Client client);
 
 	/**
 	 * Delete client from database by email of client
@@ -94,6 +94,6 @@ public interface IClient {
 	 * @param token
 	 * @return
 	 */
-	public Client addSocialInfo(Client socialClient);
+	public void addSocialInfo(Client socialClient);
 
 }

@@ -43,7 +43,7 @@ public class QuestionSectionController {
 	 * @param questionSection
 	 * @return ResponseEntity
 	 */
-	@ApiOperation(value = "Create new QuestionSection", notes = "Create new question section instanse by survey id, section name, short description, long description", tags = "Question Section")
+	@ApiOperation(value = "Create new QuestionSection", notes = "Create new question section instanse by client id, section name, short description, long description", tags = "Question Section")
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Object> setQuestionSection(@RequestBody QuestionSection questionSection,
 			@RequestHeader String token) {
@@ -55,7 +55,7 @@ public class QuestionSectionController {
 
 		try {
 
-			return new ResponseEntity<>(questionSectionService.setQuestionSection(questionSection), HttpStatus.OK);
+			return new ResponseEntity<>(questionSectionService.setQuestionSection(questionSection), HttpStatus.CREATED);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
