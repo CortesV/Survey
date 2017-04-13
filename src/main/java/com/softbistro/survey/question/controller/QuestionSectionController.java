@@ -55,7 +55,7 @@ public class QuestionSectionController {
 
 		try {
 
-			return new ResponseEntity<>(questionSectionService.setQuestionSection(questionSection), HttpStatus.OK);
+			return new ResponseEntity<>(questionSectionService.setQuestionSection(questionSection), HttpStatus.CREATED);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

@@ -1,5 +1,8 @@
 package com.softbistro.survey.client.manage.components.service;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -8,8 +11,12 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.client.manage.service.FindClientService;
@@ -79,21 +86,40 @@ public class ClientDao implements IClient {
 	 * @return return - information about of client
 	 */
 	@Override
-	public void saveClient(Client client) {
+	public Integer saveClient(Client client) {
 
 		try {
 
 			if (findClientByLoginAndEmail(client) != null) {
 
-				return;
+				return null;
 			}
 
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
-			jdbc.update(SAVE_CLIENT, client.getClientName(), md5HexPassword, client.getEmail());
+			
+			KeyHolder holder = new GeneratedKeyHolder();
+
+			jdbc.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CLIENT,
+							Statement.RETURN_GENERATED_KEYS);
+					
+					preparedStatement.setString(1, client.getClientName());
+					preparedStatement.setString(2, md5HexPassword);
+					preparedStatement.setString(3, client.getEmail());
+				
+					return preparedStatement;
+				}
+			}, holder);
+
+			return holder.getKey().intValue();
 
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
+			return null;
 		}
 
 	}
@@ -336,7 +362,7 @@ public class ClientDao implements IClient {
 	 * @return
 	 */
 	@Override
-	public Client addSocialInfo(Client socialClient) {
+	public void addSocialInfo(Client socialClient) {
 
 		Client updateClient = findClient(socialClient.getId());
 
@@ -345,7 +371,7 @@ public class ClientDao implements IClient {
 			updateClient.setFacebookId(socialClient.getFacebookId());
 			updateClient(updateClient, updateClient.getId());
 			LOGGER.info(ADD_SOC_INFO);
-			return null;
+			return;
 		}
 
 		if (StringUtils.isNotBlank(socialClient.getGoogleId()) && StringUtils.isBlank(socialClient.getFacebookId())) {
@@ -353,9 +379,8 @@ public class ClientDao implements IClient {
 			updateClient.setGoogleId(socialClient.getGoogleId());
 			updateClient(updateClient, updateClient.getId());
 			LOGGER.info(ADD_SOC_INFO);
-			return null;
+			return;
 		}
 
-		return null;
 	}
 }

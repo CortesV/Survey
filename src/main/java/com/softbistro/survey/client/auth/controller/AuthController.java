@@ -128,7 +128,7 @@ public class AuthController {
 	 */
 	@ApiOperation(value = "Add social info", notes = "Add social information for authorized client", tags = "Authorization")
 	@RequestMapping(value = "/add/social", method = RequestMethod.POST)
-	public ResponseEntity<Client> setClientInfo(@RequestHeader String token, @RequestBody Client client) {
+	public ResponseEntity<Object> setClientInfo(@RequestHeader String token, @RequestBody Client client) {
 
 		LOGGER.info(ADD_SOC_INFO + client.toString() + "   " + token);
 		if (!authorizationService.checkAccess(token)) {
@@ -139,7 +139,8 @@ public class AuthController {
 
 		try {
 
-			return new ResponseEntity<>(clientService.addSocialInfo(client), HttpStatus.OK);
+			clientService.addSocialInfo(client);
+			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

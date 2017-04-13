@@ -84,7 +84,7 @@ public class ParticipantInGroupController {
 
 		try {
 
-			return new ResponseEntity<>(participantInGroupService.addParticipantInGroup(participantInGoup), HttpStatus.OK);
+			return new ResponseEntity<>(participantInGroupService.addParticipantInGroup(participantInGoup), HttpStatus.CREATED);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
