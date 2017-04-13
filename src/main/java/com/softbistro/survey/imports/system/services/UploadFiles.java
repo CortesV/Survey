@@ -41,7 +41,7 @@ public class UploadFiles {
 	public Map<String, String> uploadCSV(HttpServletRequest request)
 			throws ServletException, IOException, TypeConstraintException {
 
-		final Part filePart = request.getPart("importSCVFile");
+		final Part filePart = request.getPart("importCSVFile");
 
 		final String fullFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 		
