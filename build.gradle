@@ -1,0 +1,109 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.1.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath('se.transmode.gradle:gradle-docker:1.2')
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'docker'
+
+jar {
+	baseName = 'survey'
+	version = '0.0.1-SNAPSHOT'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven {
+        url 'https://repo.spring.io/libs-snapshot'
+    }
+}
+
+
+dependencies {
+	compile group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
+	compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
+	compile group: 'org.springframework.data', name: 'spring-data-redis', version: '2.0.0.M1'
+	compile group: 'org.apache.poi', name: 'poi-ooxml', version: '3.16-beta2'
+	compile 'org.apache.commons:commons-lang3:3.5'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '1.5.1.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.1.RELEASE'
+	compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.5'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
+
+	compile group: 'javax.mail', name: 'mail', version: '1.4'
+	compile group: 'com.sun.mail', name: 'all', version: '1.5.6'
+	compile group: 'commons-codec', name: 'commons-codec', version: '1.9'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.8.7'
+	
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.6'	
+	compile group: 'org.mockito', name: 'mockito-all', version: '1.9.5'
+		
+	compile 'com.google.api-client:google-api-client:1.22.0'
+    compile 'com.google.oauth-client:google-oauth-client-jetty:1.22.0'
+    compile 'com.google.apis:google-api-services-sheets:v4-rev466-1.22.0'
+    compile 'com.google.apis:google-api-services-drive:v3-rev68-1.22.0'
+    
+    compile group: 'com.google.gdata', name: 'core', version: '1.47.1'
+	
+	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
+	
+	compile group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
+	compile group: 'commons-io', name: 'commons-io', version: '2.5'
+	
+	compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
+	compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.2'
+	
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+  push = false
+  applicationName = jar.baseName
+  dockerfile = file('Dockerfile')
+  doFirst {
+    copy {
+      from jar
+      into stageDir
+    }
+  }
+}
+
+
+configurations {
+  itestCompile.extendsFrom testCompile
+  itestRuntime.extendsFrom testRuntime
+}
+
+sourceSets {
+  itest {
+    compileClasspath += main.output + test.output
+    runtimeClasspath += main.output + test.output
+
+    java.srcDir file('src/test/java')
+  }
+
+  test {
+    resources.srcDir file('src/main/resources')
+  }
+}
+
+task itest(type: Test) {
+  testClassesDir = sourceSets.itest.output.classesDir
+  classpath = sourceSets.itest.runtimeClasspath
+
+  testLogging {
+    events "passed", "skipped", "failed"
+  }
+}
