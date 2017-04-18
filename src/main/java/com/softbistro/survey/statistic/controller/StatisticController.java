@@ -16,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
+import com.softbistro.survey.statistic.service.CsvServiceStatistic;
 import com.softbistro.survey.statistic.service.JsonServiceStatistic;
 import com.softbistro.survey.statistic.service.StatisticService;
 import com.softbistro.survey.statistic.service.XMLServiceStatistic;
+import com.softbistro.survey.statistic.service.XlsxServiceStatistic;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -37,6 +39,12 @@ public class StatisticController {
 	
 	@Autowired
 	private XMLServiceStatistic xmlServiceStatistic;
+	
+	@Autowired
+	private CsvServiceStatistic csvServiceStatistic;
+	
+	@Autowired
+	private XlsxServiceStatistic xlsxServiceStatistic;
 
 	private static final Logger LOG = Logger.getLogger(StatisticController.class);
 
@@ -115,6 +123,29 @@ public class StatisticController {
 	}
 	
 	/**
+	 * Export statistic about surveys to Csv file
+	 * @return 
+	 */
+	@ApiOperation(value = "Export statistic to CSV file", notes = "Export all statistic to local CSV file", tags = "Statistic")
+	@RequestMapping(value = "/datacsv", method = RequestMethod.POST)
+	public ResponseEntity<Object> exportSurveyStatisticCsv(/*@RequestHeader String token*/) {
+
+		/*if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}*/
+		
+		try {
+			Map<String, File> responseValue = new HashMap<String, File>();
+			responseValue.put("File", csvServiceStatistic.export());
+			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
+		} catch (Exception e) {
+			LOG.error("Export statistic" + e.getMessage());
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	/**
 	 * Export statistic about surveys to XML file
 	 * @return 
 	 */
@@ -130,6 +161,29 @@ public class StatisticController {
 		try {
 			Map<String, File> responseValue = new HashMap<String, File>();
 			responseValue.put("File", xmlServiceStatistic.export());
+			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
+		} catch (Exception e) {
+			LOG.error("Export statistic" + e.getMessage());
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	/**
+	 * Export statistic about surveys to XLSX file
+	 * @return 
+	 */
+	@ApiOperation(value = "Export statistic to XLSX file", notes = "Export all statistic to local XLSX file", tags = "Statistic")
+	@RequestMapping(value = "/dataxlsx", method = RequestMethod.POST)
+	public ResponseEntity<Object> exportSurveyStatisticXlsx(/*@RequestHeader String token*/) {
+
+		/*if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}*/
+		
+		try {
+			Map<String, File> responseValue = new HashMap<String, File>();
+			responseValue.put("File", xlsxServiceStatistic.export());
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());

@@ -5,6 +5,7 @@ import java.io.File;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.csvreader.CsvWriter;
 import com.softbistro.survey.statistic.component.service.XmlStatisticDao;
 import com.softbistro.survey.statistic.export.ExportStatisticService;
 
@@ -18,10 +19,11 @@ public class XMLServiceStatistic {
 	private XmlStatisticDao xmlDao;
 	
 	/**
-	 * Export statistic about surveys
+	 * Export statistic about surveys to xml file
 	 * @return - file with content
 	 */
 	public File export() {
 		return xmlService.storeDataToFile(xmlDao.export(),"src/main/resources/importing_files/statistic.xml");
 	}
+	
 }

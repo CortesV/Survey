@@ -21,7 +21,7 @@ public class JsonServiceStatistic {
 	private JsonStatisticDao jsonDao;
 	
 	/**
-	 * Export statistic about surveys
+	 * Export statistic about surveys to json file
 	 * @return - file with content
 	 */
 	public File export() {
