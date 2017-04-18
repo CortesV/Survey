@@ -12,25 +12,18 @@ import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.statistic.component.entity.ParticipantAttributes;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
-import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
-import com.softbistro.survey.statistic.component.interfacee.IStatisticDao;
 
 /**
- * Working with database for statistic
+ * Working with database to get statistic data
  * 
- * @author zviproject
+ * @author alex_alokhin
  *
  */
 @Repository
-public class StatisticDao implements IStatisticDao {
+public class GeneralStatisticDao {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
-	private static final String SQL_GET_SURVEY_STATISTIC_SHORT = "SELECT survey.id, survey.name, survey.start_time, survey.finish_time, COUNT(ss.id) AS participant_count ,"
-			+ " (SELECT COUNT(ss.id) AS voted_count  FROM sending_survey AS ss "
-			+ "WHERE ss.answer_status = 'VOTED' AND ss.survey_id = ? ) AS voted_count "
-			+ "FROM survey AS survey , sending_survey AS ss WHERE survey.id = ? AND ss.survey_id = ?";
 
 	private static final String SQL_GET_STATISTIC_FOR_EXPORT = "SELECT  survey.id AS survey_id, survey.`name` AS survey_name, p.first_name, p.last_name, question_sections.section_name AS group_name,"
 			+ "questions.question, answers.participant_id ,  answers.answer_value, answers.comment, answers.modified_date AS answer_datetime "
@@ -38,51 +31,16 @@ public class StatisticDao implements IStatisticDao {
 			+ "LEFT JOIN survey AS survey ON survey.id = questions.survey_id "
 			+ "LEFT JOIN connect_question_section_survey ON survey.id = connect_question_section_survey.survey_id "
 			+ "LEFT JOIN question_sections ON question_sections.id = connect_question_section_survey.question_section_id "
-			+ "LEFT JOIN participant AS p ON p.id = answers.participant_id WHERE survey.id= ?";
+			+ "LEFT JOIN participant AS p ON p.id = answers.participant_id WHERE survey.id IS NOT NULL";
 
 	private static final String SQL_GET_PARTICIPANT_ATTRIBUTES = "SELECT attribute, attribute_value FROM attributes "
-			+ "INNER JOIN attribute_values ON attributes.id = attribute_values.attribute_id "
-			+ "WHERE participant_id = ?";
+			+ "INNER JOIN attribute_values ON attributes.id = attribute_values.attribute_id WHERE participant_id = ?";
 
 	/**
-	 * Get answers on question from survey
-	 * 
-	 * @param surveyId
-	 *            - survey id for getting information
-	 * @return
+	 * Get statistic about surveys
+	 * @return  - list of surveys statistic 
 	 */
-	@Override
-	public SurveyStatisticShort survey(Integer surveyId) {
-		SurveyStatisticShort surveyStatisticShort = jdbcTemplate.queryForObject(SQL_GET_SURVEY_STATISTIC_SHORT,
-				new RowMapper<SurveyStatisticShort>() {
-
-					@Override
-					public SurveyStatisticShort mapRow(ResultSet rs, int rowNum) throws SQLException {
-						SurveyStatisticShort shortSurvey = new SurveyStatisticShort();
-						shortSurvey.setId(rs.getInt(1));
-						shortSurvey.setName(rs.getString(2));
-						shortSurvey.setStartTimeOfSurvey(rs.getDate(3));
-						shortSurvey.setFinishTimeOfSurvey(rs.getDate(4));
-						shortSurvey.setParticipantCount(rs.getInt(5));
-						shortSurvey.setParticipantVoted(rs.getInt(6));
-
-						shortSurvey.setParticipanNotVoted(rs.getInt(5) - rs.getInt(6));
-						return shortSurvey;
-					}
-
-				}, surveyId, surveyId, surveyId);
-
-		return surveyStatisticShort;
-	}
-
-	/**
-	 * Export statistic about survey
-	 * 
-	 * @param surveyId
-	 * @return
-	 */
-	@Override
-	public List<SurveyStatisticExport> export(Integer surveyId) {
+	public List<SurveyStatisticExport> getAllStatistic(){
 		List<SurveyStatisticExport> surveyStatisticExport = new ArrayList<>();
 
 		surveyStatisticExport = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT,
@@ -118,9 +76,8 @@ public class StatisticDao implements IStatisticDao {
 
 						return surveyStatisticExport;
 					}
-				}, surveyId);
-
+			});
+		
 		return surveyStatisticExport;
 	}
-
 }
