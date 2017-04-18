@@ -115,7 +115,7 @@ public class StatisticController {
 		
 		try {
 			Map<String, File> responseValue = new HashMap<String, File>();
-			responseValue.put("File", jsonServiceStatistic.export());
+			responseValue.put("File", jsonServiceStatistic.export("src/main/resources/importing_files/statistic.json"));
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
@@ -138,7 +138,7 @@ public class StatisticController {
 		
 		try {
 			Map<String, File> responseValue = new HashMap<String, File>();
-			responseValue.put("File", csvServiceStatistic.export());
+			responseValue.put("File", csvServiceStatistic.export("src/main/resources/importing_files/statistic.csv"));
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
@@ -161,7 +161,7 @@ public class StatisticController {
 		
 		try {
 			Map<String, File> responseValue = new HashMap<String, File>();
-			responseValue.put("File", xmlServiceStatistic.export());
+			responseValue.put("File", xmlServiceStatistic.export("src/main/resources/importing_files/statistic.xml"));
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
@@ -184,7 +184,7 @@ public class StatisticController {
 		
 		try {
 			Map<String, File> responseValue = new HashMap<String, File>();
-			responseValue.put("File", xlsxServiceStatistic.export());
+			responseValue.put("File", xlsxServiceStatistic.export("src/main/resources/importing_files/statistic.xlsx"));
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());

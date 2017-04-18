@@ -8,11 +8,17 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.softbistro.survey.statistic.component.interfacee.ExportFile;
 import com.softbistro.survey.statistic.component.service.JsonStatisticDao;
 import com.softbistro.survey.statistic.export.ExportStatisticService;
 
+/**
+ * Export data to file
+ * @author alex_alokhin
+ *
+ */
 @Service
-public class JsonServiceStatistic {
+public class JsonServiceStatistic implements ExportFile{
 	
 	@Autowired
 	private ExportStatisticService jsonService;
@@ -22,9 +28,11 @@ public class JsonServiceStatistic {
 	
 	/**
 	 * Export statistic about surveys to json file
+	 * @param path - path to file
 	 * @return - file with content
 	 */
-	public File export() {
-		return jsonService.storeDataToFile(jsonDao.export(),"src/main/resources/importing_files/statistic.json");
+	@Override
+	public File export(String path) {
+		return jsonService.storeDataToFile(jsonDao.export(),path);
 	}
 }

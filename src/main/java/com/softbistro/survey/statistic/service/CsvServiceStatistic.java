@@ -14,25 +14,33 @@ import com.opencsv.bean.BeanToCsv;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.softbistro.survey.statistic.component.entity.ParticipantAttributes;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
+import com.softbistro.survey.statistic.component.interfacee.ExportFile;
 import com.softbistro.survey.statistic.component.service.GeneralStatisticDao;
 
+/**
+ * Export data to file
+ * @author alex_alokhin
+ *
+ */
 @Service
-public class CsvServiceStatistic {
+public class CsvServiceStatistic implements ExportFile{
 
 	@Autowired
 	private GeneralStatisticDao generalStatisticDao;
 	
 	/**
 	 * Export statistic about surveys to csv file
+	 * @param path - path to file
 	 * @return - file with content
 	 */
-	public File export() {
+	@Override
+	public File export(String path) {
 		File file = null;
 		CsvWriter csvWriter;
 		List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();   
 		ParticipantAttributes attr;
 		try {
-		file = new File("src/main/resources/importing_files/statistic.csv");
+		file = new File(path);
 		if (!file.exists()){
 			file.createNewFile();
 		}

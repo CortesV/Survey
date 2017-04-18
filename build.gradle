@@ -63,14 +63,11 @@ dependencies {
 	compile group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
 	compile group: 'commons-io', name: 'commons-io', version: '2.5'
 	
-<<<<<<< HEAD
-=======
 	compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
 	compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.2'
 	compile group: 'com.opencsv', name: 'opencsv', version: '3.3'
 	compile group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
 		
->>>>>>> branchAlexAlokhin
 }
 
 task buildDocker(type: Docker, dependsOn: build) {
@@ -87,21 +84,18 @@ task buildDocker(type: Docker, dependsOn: build) {
 
 
 configurations {
-<<<<<<< HEAD
   intengrationTestCompile.extendsFrom testCompile
   intengrationTestRuntime.extendsFrom testRuntime
 }
 
 sourceSets {
   intengrationTest {
-=======
   itestCompile.extendsFrom testCompile
   itestRuntime.extendsFrom testRuntime
 }
 
 sourceSets {
   itest {
->>>>>>> branchAlexAlokhin
     compileClasspath += main.output + test.output
     runtimeClasspath += main.output + test.output
 
@@ -113,15 +107,12 @@ sourceSets {
   }
 }
 
-<<<<<<< HEAD
 task intengrationTest(type: Test) {
   testClassesDir = sourceSets.intengrationTest.output.classesDir
   classpath = sourceSets.intengrationTest.runtimeClasspath
-=======
 task itest(type: Test) {
   testClassesDir = sourceSets.itest.output.classesDir
   classpath = sourceSets.itest.runtimeClasspath
->>>>>>> branchAlexAlokhin
 
   testLogging {
     events "passed", "skipped", "failed"

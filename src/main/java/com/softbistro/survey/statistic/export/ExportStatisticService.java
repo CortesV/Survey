@@ -7,6 +7,11 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+/**
+ * Export data to file
+ * @author alex_alokhin
+ *
+ */
 @Service
 public class ExportStatisticService {
 	
@@ -17,7 +22,6 @@ public class ExportStatisticService {
 	 * @return - file with content
 	 */
 	public File storeDataToFile(String content, String path){
-		 
 	    	FileOutputStream fop = null;
 			File file = null;
 
