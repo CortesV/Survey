@@ -132,11 +132,11 @@ public class ParticipantIntegrationTest {
 		attributeValuesDao.setAttributeValues(attributeValuesTest);
 		
 		participantInGroupTest.setGroupId(idGroup);
-		participantInGroupTest.setParticipantId(idParticipant);
 		
-		List<ParticipantInGroup> batch = new ArrayList<>();
-		batch.add(participantInGroupTest);
-		participantInGroupDao.addParticipantInGroup(batch);
+		List<Integer> batch = new ArrayList<>();
+		batch.add(idParticipant);
+		participantInGroupTest.setParticipantsId(batch);
+		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
 		
 		assertEquals(participantDao.getParticipantByAttributeValue(idAttribute, attributeValuesTest.getValue()).size(), 1);
 	}
@@ -160,11 +160,10 @@ public class ParticipantIntegrationTest {
 		attributeValuesDao.setAttributeValues(attributeValuesTest);
 		
 		participantInGroupTest.setGroupId(idGroup);
-		participantInGroupTest.setParticipantId(idParticipant);
 		
-		List<ParticipantInGroup> batch = new ArrayList<>();
-		batch.add(participantInGroupTest);
-		participantInGroupDao.addParticipantInGroup(batch);
+		List<Integer> batch = new ArrayList<>();
+		batch.add(idParticipant);
+		participantInGroupTest.setParticipantsId(batch);
 		
 		assertEquals(participantDao.selectClientAllParticipants(groupTest.getClientId()).size(), 1);
 	}

@@ -74,7 +74,7 @@ public class ParticipantInGroupController {
 	 */
 	@ApiOperation(value = "Add Participant in Group", notes = "Add participant in group by group id and group id", tags = "Participant")
 	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<Object> addParticipantInGroup(@RequestBody List<ParticipantInGroup> participantInGoup,
+	public ResponseEntity<Object> addParticipantInGroup(@RequestBody ParticipantInGroup participantInGoup,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
