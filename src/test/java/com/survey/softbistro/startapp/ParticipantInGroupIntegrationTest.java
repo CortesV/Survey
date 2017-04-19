@@ -2,6 +2,9 @@ package com.survey.softbistro.startapp;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,7 +79,10 @@ public class ParticipantInGroupIntegrationTest {
 		participantInGroupTest.setGroupId(idGroup);
 		participantInGroupTest.setParticipantId(idParticipant);
 		
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
+		List<ParticipantInGroup> batch = new ArrayList<>();
+		batch.add(participantInGroupTest);
+		
+		participantInGroupDao.addParticipantInGroup(batch);
 		assertEquals(participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId()).size(), 1);
 	}
 
@@ -92,10 +98,14 @@ public class ParticipantInGroupIntegrationTest {
 		participantInGroupTest.setGroupId(idGroup);
 		participantInGroupTest.setParticipantId(idParticipant);
 
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
+		List<ParticipantInGroup> batch = new ArrayList<>();
+		batch.add(participantInGroupTest);
+		
+		participantInGroupDao.addParticipantInGroup(batch);
 
 		participantInGroupTest.setParticipantId(Integer.MAX_VALUE);
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
+		batch.add(participantInGroupTest);
+		participantInGroupDao.addParticipantInGroup(batch);
 
 		participantInGroupDao.deletingParticipantfromGroup(participantInGroupTest.getGroupId(),
 				participantInGroupTest.getParticipantId());
@@ -113,7 +123,9 @@ public class ParticipantInGroupIntegrationTest {
 		Integer idGroup = groupDao.setGroup(groupTest);
 		participantInGroupTest.setParticipantId(idParticipant);
 		participantInGroupTest.setGroupId(idGroup);
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
+		List<ParticipantInGroup> batch = new ArrayList<>();
+		batch.add(participantInGroupTest);
+		participantInGroupDao.addParticipantInGroup(batch);
 		assertEquals(participantInGroupDao.getParticipantGroups(idParticipant).size(), 1);
 	}
 }
