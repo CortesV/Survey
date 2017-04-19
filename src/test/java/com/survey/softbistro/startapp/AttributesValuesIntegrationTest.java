@@ -135,12 +135,12 @@ public class AttributesValuesIntegrationTest {
 		attributeValuesDao.setAttributeValues(attributeValuesTest);
 		
 		participantInGroupTest.setGroupId(idGroup);
-		participantInGroupTest.setParticipantId(idParticipant);
 		
-		List<ParticipantInGroup> batch = new ArrayList<>();
-		batch.add(participantInGroupTest);
+		List<Integer> batch = new ArrayList<>();
+		batch.add(idParticipant);
+		participantInGroupTest.setParticipantsId(batch);
 		
-		participantInGroupDao.addParticipantInGroup(batch);
+		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
 
 		assertEquals(attributeValuesDao.getParticipantAttributesInGroup(idGroup, idParticipant).size(), 1);
 	}

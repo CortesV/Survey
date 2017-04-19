@@ -74,7 +74,7 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public void addParticipantInGroup(List<ParticipantInGroup> participantInGoup) {
+	public void addParticipantInGroup(ParticipantInGroup participantInGoup) {
 
 		try {
 
@@ -82,14 +82,13 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 
 				@Override
 				public void setValues(PreparedStatement ps, int i) throws SQLException {
-					ParticipantInGroup connectParticipantGroup = participantInGoup.get(i);
-					ps.setInt(1, connectParticipantGroup.getGroupId());
-					ps.setInt(2, connectParticipantGroup.getParticipantId());
+					ps.setInt(1, participantInGoup.getGroupId());
+					ps.setInt(2, participantInGoup.getParticipantsId().get(i));
 				}
 
 				@Override
 				public int getBatchSize() {
-					return participantInGoup.size();
+					return participantInGoup.getParticipantsId().size();
 				}
 			});
 

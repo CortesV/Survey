@@ -21,7 +21,7 @@ public interface IParticipantInGroup {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public void addParticipantInGroup(List<ParticipantInGroup> participantInGoup);
+	public void addParticipantInGroup(ParticipantInGroup participantInGoup);
 
 	/**
 	 * Method for deleting participant from group
