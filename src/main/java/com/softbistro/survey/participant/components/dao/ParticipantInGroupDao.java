@@ -1,20 +1,16 @@
 package com.softbistro.survey.participant.components.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.entity.ParticipantInGroup;
@@ -71,41 +67,37 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	}
 
 	/**
-	 * Method for adding participant in group
+	 * Method for adding participants in group
 	 * 
 	 * @param groupId
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
 	@Override
-	public Integer addParticipantInGroup(ParticipantInGroup participantInGoup) {
+	public void addParticipantInGroup(List<ParticipantInGroup> participantInGoup) {
 
 		try {
 
-			
-			KeyHolder holder = new GeneratedKeyHolder();
-
-			jdbcTemplate.update(new PreparedStatementCreator() {
+			jdbcTemplate.batchUpdate(SQL_FOR_ADDING_PARTICIPANT_IN_GROUP, new BatchPreparedStatementSetter() {
 
 				@Override
-				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_ADDING_PARTICIPANT_IN_GROUP,
-							Statement.RETURN_GENERATED_KEYS);
-					preparedStatement.setInt(1, participantInGoup.getGroupId());
-					preparedStatement.setInt(2, participantInGoup.getParticipantId());
-					
-					return preparedStatement;
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					ParticipantInGroup connectParticipantGroup = participantInGoup.get(i);
+					ps.setInt(1, connectParticipantGroup.getGroupId());
+					ps.setInt(2, connectParticipantGroup.getParticipantId());
 				}
-			}, holder);
 
-			return holder.getKey().intValue();
-			
+				@Override
+				public int getBatchSize() {
+					return participantInGoup.size();
+				}
+			});
+
 		}
 
 		catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
-			return null;
 		}
 	}
 

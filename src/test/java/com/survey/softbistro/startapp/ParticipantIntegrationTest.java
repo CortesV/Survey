@@ -2,6 +2,9 @@ package com.survey.softbistro.startapp;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -131,7 +134,9 @@ public class ParticipantIntegrationTest {
 		participantInGroupTest.setGroupId(idGroup);
 		participantInGroupTest.setParticipantId(idParticipant);
 		
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
+		List<ParticipantInGroup> batch = new ArrayList<>();
+		batch.add(participantInGroupTest);
+		participantInGroupDao.addParticipantInGroup(batch);
 		
 		assertEquals(participantDao.getParticipantByAttributeValue(idAttribute, attributeValuesTest.getValue()).size(), 1);
 	}
@@ -157,7 +162,9 @@ public class ParticipantIntegrationTest {
 		participantInGroupTest.setGroupId(idGroup);
 		participantInGroupTest.setParticipantId(idParticipant);
 		
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
+		List<ParticipantInGroup> batch = new ArrayList<>();
+		batch.add(participantInGroupTest);
+		participantInGroupDao.addParticipantInGroup(batch);
 		
 		assertEquals(participantDao.selectClientAllParticipants(groupTest.getClientId()).size(), 1);
 	}

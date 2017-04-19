@@ -1,6 +1,7 @@
 package com.softbistro.survey.participant.components.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Class that represents connection between Participant entity and Group entity
@@ -25,6 +26,8 @@ public class ParticipantInGroup implements Serializable {
 	 * 
 	 */
 	private Integer participantId;
+	
+	private List<Integer> participantsId;
 
 	/**
 	 * groupId
@@ -54,4 +57,13 @@ public class ParticipantInGroup implements Serializable {
 	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
 	}
+
+	public List<Integer> getParticipantsId() {
+		return participantsId;
+	}
+
+	public void setParticipantsId(List<Integer> participantsId) {
+		this.participantsId = participantsId;
+	}
+	
 }
