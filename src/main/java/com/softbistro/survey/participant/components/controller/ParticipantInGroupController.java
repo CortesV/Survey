@@ -74,7 +74,7 @@ public class ParticipantInGroupController {
 	 */
 	@ApiOperation(value = "Add Participant in Group", notes = "Add participant in group by group id and group id", tags = "Participant")
 	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<Object> addParticipantInGroup(@RequestBody ParticipantInGroup participantInGoup,
+	public ResponseEntity<Object> addParticipantInGroup(@RequestBody List<ParticipantInGroup> participantInGoup,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
@@ -83,8 +83,9 @@ public class ParticipantInGroupController {
 		}
 
 		try {
-
-			return new ResponseEntity<>(participantInGroupService.addParticipantInGroup(participantInGoup), HttpStatus.CREATED);
+			
+			participantInGroupService.addParticipantInGroup(participantInGoup);
+			return new ResponseEntity<>(HttpStatus.CREATED);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
