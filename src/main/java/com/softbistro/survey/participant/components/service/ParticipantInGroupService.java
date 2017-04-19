@@ -40,7 +40,7 @@ public class ParticipantInGroupService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public void addParticipantInGroup(List<ParticipantInGroup> participantInGoup) {
+	public void addParticipantInGroup(ParticipantInGroup participantInGoup) {
 
 		iParticipantInGroup.addParticipantInGroup(participantInGoup);
 	}
