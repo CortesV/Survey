@@ -122,7 +122,7 @@ public class SheetsService {
 
 				for (int column = 0; column < filters.size(); column++) {
 					fillValue(newRow, arrHeadersColumn.get(column),
-							String.valueOf(list.get(numberOfRecord).get(new com.softbistro.survey.statistic.component.entity.Filter().getPattern().get(filters.get(column)))));
+							String.valueOf(list.get(numberOfRecord).get(new com.softbistro.survey.statistic.component.entity.StatisticColumnFilter().getFiltersMap().get(filters.get(column)))));
 				}
 				spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
 			}

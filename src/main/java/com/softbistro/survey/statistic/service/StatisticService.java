@@ -2,6 +2,7 @@ package com.softbistro.survey.statistic.service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -41,10 +42,20 @@ public class StatisticService {
 	 */
 	public String export(Integer surveyId, List<String> filters) {
 		try {
-			return sheetsService.send(statisticDao.export(surveyId),filters);
+			return sheetsService.send(statisticDao.export(surveyId), filters);
 		} catch (GeneralSecurityException | IOException e) {
 			LOG.error(e.getMessage());
 			return null;
 		}
+	}
+
+	/**
+	 * Get Statistic Filters for Export statistic on google sheets
+	 * 
+	 * @param
+	 * @return statisticColumnFilter
+	 */
+	public ArrayList<String> getStatisticColumnFilters() {
+		return statisticDao.getStatisticColumnFilters();
 	}
 }

@@ -1,5 +1,6 @@
 package com.softbistro.survey.statistic.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,9 +66,7 @@ public class StatisticController {
 	 * @return
 	 */
 	@ApiOperation(value = "Export statistic on google sheets", notes = "Export statistic on google sheets by survey id "
-			+ "and filters by pattern : [\n\"Survey ID\", \n\"Survey Name\", \n\"Participant First Name\", \n\"Participant Last Name\","
-			+ " \n\"Question Group Name\", \n\"Question Name\", \n\"Participant ID\", \n\"Answer\", \n\"Comment\", \n\"Answer Date and Time\","
-			+ " \n\"Participant Group\", \n\"Participant Attribute name\", \n\"Participant Attribute value\"\n]", tags = "Statistic")
+			+ "and filters", tags = "Statistic")
 	@RequestMapping(value = "/{survey_id}/", method = RequestMethod.POST)
 	public ResponseEntity<Object> exportSurveyStatistic(@PathVariable("survey_id") Integer surveyId,
 			@RequestBody List<String> filters, @RequestHeader String token) {
@@ -75,6 +74,12 @@ public class StatisticController {
 		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		for (String filter : filters) {
+			if (!statisticService.getStatisticColumnFilters().contains(filter)) {
+				return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+			}
 		}
 
 		try {
@@ -87,4 +92,27 @@ public class StatisticController {
 		}
 	}
 
+	/**
+	 * Export statistic about survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@ApiOperation(value = "Get Statistic Filters for Export statistic on google sheets", notes = "Get column filters for export statistic on google sheets ", tags = "Statistic")
+	@RequestMapping(value = "/filters/", method = RequestMethod.GET)
+	public ResponseEntity<ArrayList<String>> getStatisticFilters(@RequestHeader String token) {
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		try {
+			
+			return new ResponseEntity<ArrayList<String>>(statisticService.getStatisticColumnFilters(), HttpStatus.OK);
+		} catch (Exception e) {
+			LOG.error("Export statistic" + e.getMessage());
+			return new ResponseEntity<ArrayList<String>>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }

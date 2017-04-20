@@ -1,5 +1,6 @@
 package com.softbistro.survey.statistic.component.interfacee;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,4 +30,12 @@ public interface IStatisticDao {
 	 * @return
 	 */
 	public List<Map<String, Object>> export(Integer surveyId);
+
+	/**
+	 * Get Statistic Filters for Export statistic on google sheets
+	 * 
+	 * @param
+	 * @return statisticColumnFilter
+	 */
+	public ArrayList<String> getStatisticColumnFilters();
 }

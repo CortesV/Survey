@@ -2,6 +2,7 @@ package com.softbistro.survey.statistic.component.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.softbistro.survey.statistic.component.entity.StatisticColumnFilter;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
 import com.softbistro.survey.statistic.component.interfacee.IStatisticDao;
 
@@ -97,4 +99,15 @@ public class StatisticDao implements IStatisticDao {
 		}
 	}
 
+	/**
+	 * Get Statistic Filters for Export statistic on google sheets
+	 * 
+	 * @param
+	 * @return statisticColumnFilter
+	 */
+	@Override
+	@SuppressWarnings("static-access")
+	public ArrayList<String> getStatisticColumnFilters() {
+		return new StatisticColumnFilter().getFilterlist();
+	}
 }
