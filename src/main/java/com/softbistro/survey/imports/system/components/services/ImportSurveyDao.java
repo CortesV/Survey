@@ -27,7 +27,7 @@ import com.softbistro.survey.imports.system.components.interfaces.ISurveyDAO;
  * @author olegnovatskiy
  */
 @Repository
-public class SurveyDAO implements ISurveyDAO {
+public class ImportSurveyDao implements ISurveyDAO {
 
 	private static final String INSERT_SURVEY = "INSERT INTO survey (client_id, name) VALUES (?,?);";
 
@@ -37,7 +37,7 @@ public class SurveyDAO implements ISurveyDAO {
 
 	private static final String INSERT_QUESTION = "INSERT INTO questions (survey_id, question, question_section_id, answer_type, question_choices, required, required_comment) VALUES (:surveyId, :text, :questionSectionId, :answerType, :questionChoices, :required, :requiredComment);";
 
-	private static Logger log = Logger.getLogger(SurveyDAO.class);
+	private static Logger log = Logger.getLogger(ImportSurveyDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbc;

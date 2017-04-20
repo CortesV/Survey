@@ -1,6 +1,6 @@
 package com.softbistro.survey.imports.system.interfaces;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 
 /**
  * Importing survey from file
@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 public interface IImportSurvey {
 
 	/**
-	 * Import survey from file of CSV format.
+	 * Import survey from file diferent formats.
 	 * 
 	 * @param importFileName
 	 * @return
 	 */
-	public void importSyrveyCSV(HttpServletRequest request, Long clientId);
+	public void fromFile(Part filePart, Long clientId);
 }

@@ -1,14 +1,13 @@
-package com.softbistro.survey.imports.system.services;
+package com.softbistro.survey.imports.system.importt.csv;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 import javax.xml.bind.TypeConstraintException;
 
 import org.apache.log4j.Logger;
@@ -28,13 +27,13 @@ import com.softbistro.survey.imports.system.interfaces.IImportSurvey;
  * @author olegnovatskiy
  */
 @Service
-public class ImportSurvey implements IImportSurvey {
+public class CSVImport implements IImportSurvey {
 
 	private static final String SOURCE_IMPORT_FILES = "src/main/resources/importing_files/";
 
 	private static final String TRUE_VALUE_FROM_FILE = "Y";
 
-	private static Logger log = Logger.getLogger(ImportSurvey.class);
+	private static final Logger LOGGER = Logger.getLogger(CSVImport.class);
 
 	@Autowired
 	private ISurveyDAO iSurveyDAO;
@@ -49,40 +48,28 @@ public class ImportSurvey implements IImportSurvey {
 	 * @return
 	 */
 	@Override
-	public void importSyrveyCSV(HttpServletRequest request, Long clientId) {
-
-		Map<String, String> attributes = null;
-
+	public void fromFile(Part filePart, Long clientId) {
 		try {
+			String fullFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
-			attributes = uploadFiles.uploadCSV(request);
+			Survey survey = new Survey();
 
-		} catch (TypeConstraintException | ServletException | IOException e1) {
+			importDate(filePart, survey);
 
-			log.error(e1.getMessage());
-
-		}
-
-		String fileName = attributes.get("fileName");
-		String surveyName = attributes.get("surveyName");
-
-		System.out.println(fileName + surveyName);
-		
-		try {
-
-			Survey survey = importDate(fileName);
-			survey.setTitle(surveyName);
+			survey.setTitle(fullFileName.substring(0, fullFileName.length() - 4));
 			survey.setClienId(clientId);
 
 			iSurveyDAO.saveSurvey(survey);
+		} catch (TypeConstraintException | IOException e) {
 
-		} catch (IOException e) {
-
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 
 		} finally {
-
-			deleteImportFile(fileName);
+			try {
+				filePart.delete();
+			} catch (IOException e) {
+				LOGGER.error(e.getMessage());
+			}
 		}
 
 	}
@@ -93,64 +80,55 @@ public class ImportSurvey implements IImportSurvey {
 	 * @param fileName
 	 * @return
 	 */
-	private Survey importDate(String fileName) throws IOException {
-
+	private void importDate(Part filePart, Survey survey) throws IOException {
 		CsvReader csvReader = null;
-
 		try {
-			File importFile = new File(String.format("%s%s", SOURCE_IMPORT_FILES, fileName));
-
-			List<GroupQuestions> listGroupQuestions = new ArrayList<>();
-			GroupQuestions groupQuestions = new GroupQuestions();
+			List<GroupQuestions> questionGroups = new ArrayList<>();
+			GroupQuestions questionGroup = new GroupQuestions();
 			List<Question> questions = new ArrayList<>();
-			csvReader = new CsvReader(new FileReader(importFile));
-			Survey survey = new Survey();
 
+			csvReader = new CsvReader(filePart.getInputStream(), ';', Charset.forName("UTF-8"));
 			csvReader.readHeaders();
+			csvReader.readRecord();
 
-			while (csvReader.readRecord()) {
+			String currentGroup = csvReader.get("Group");
 
-				String currentGroup = csvReader.get("Group");
+			if (questionGroup.getTitle() == null) {
 
-				if (groupQuestions.getTitle() == null) {
+				questionGroup.setTitle(csvReader.get("Group"));
+			}
 
-					groupQuestions.setTitle(csvReader.get("Group"));
+			if (currentGroup.equals(questionGroup.getTitle())) {
+
+				Question responseReadQuestion = readRecord(csvReader);
+				if (responseReadQuestion != null) {
+
+					questions.add((Question) responseReadQuestion);
 				}
 
-				if (currentGroup.equals(groupQuestions.getTitle())) {
+			} else {
 
-					Question responseReadQuestion = readRecord(csvReader);
-					if (responseReadQuestion != null) {
+				questionGroup.setQuestions(questions);
+				questionGroups.add(questionGroup);
+				questions = new ArrayList<>();
+				questionGroup = new GroupQuestions();
+				questionGroup.setTitle(csvReader.get("Group"));
 
-						questions.add((Question) responseReadQuestion);
-					}
+				Question responseReadQuestion = readRecord(csvReader);
+				if (responseReadQuestion != null) {
 
-				} else {
-
-					groupQuestions.setQuestions(questions);
-					listGroupQuestions.add(groupQuestions);
-					questions = new ArrayList<>();
-					groupQuestions = new GroupQuestions();
-					groupQuestions.setTitle(csvReader.get("Group"));
-
-					Question responseReadQuestion = readRecord(csvReader);
-					if (responseReadQuestion != null) {
-
-						questions.add((Question) responseReadQuestion);
-					}
+					questions.add((Question) responseReadQuestion);
 				}
 			}
-			
-			groupQuestions.setQuestions(questions);
-			listGroupQuestions.add(groupQuestions);
-			survey.setGroupQuestions(listGroupQuestions);
 
-			return survey;
+			questionGroup.setQuestions(questions);
+			questionGroups.add(questionGroup);
+			survey.setGroupQuestions(questionGroups);
+
+			// return survey;
 
 		} finally {
-
-			if (csvReader != null)
-				csvReader.close();
+			csvReader.close();
 		}
 	}
 
@@ -188,19 +166,18 @@ public class ImportSurvey implements IImportSurvey {
 
 			question.setAnswerType(type);
 			question.setQuestionChoices(csvReader.get("Value"));
-
 			return question;
 
 		} catch (IOException e) {
 
-			log.error(e.getMessage());
-			
+			LOGGER.error(e.getMessage());
+
 			return null;
 		}
 	}
 
 	/**
-	 * Delete importing files from source folder at server.
+	 * Delete imported file from source folder at server.
 	 * 
 	 * @param nameDeletingFile
 	 * @return
