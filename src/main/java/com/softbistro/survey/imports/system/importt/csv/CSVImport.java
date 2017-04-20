@@ -103,7 +103,7 @@ public class CSVImport implements IImportSurvey {
 				Question responseReadQuestion = readRecord(csvReader);
 				if (responseReadQuestion != null) {
 
-					questions.add((Question) responseReadQuestion);
+					questions.add(responseReadQuestion);
 				}
 
 			} else {

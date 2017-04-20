@@ -77,10 +77,4 @@ public class UploadFiles {
 		}
 	}
 
-	@Override
-	public void fromFile(Part filePart, Long clientId) {
-		// TODO Auto-generated method stub
-
-	}
-
 }
