@@ -32,15 +32,13 @@ public class JsonStatisticDao implements IExportStatisticDao {
 	@Autowired
 	private GeneralStatisticDao generalStatisticDao;
 	
-	private Gson gson;
-	
 	/**
 	 * Export statistic about surveys to string in JSON format 
 	 * @return - string with data in JSON format
 	 */
 	@Override
 	public String export() {
-		gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		
 		List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();
 		

@@ -4,21 +4,20 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 /**
- * Export data to file
+ * Store data to file
  * @author alex_alokhin
  *
  */
 @Service
-public class ExportStatisticService {
+public class StoreDataToFile {
 	
 	/**
 	 * 
 	 * @param content - content that stores to the file
-	 * 		  path - path of the file
+	 * 		  path - path to the file
 	 * @return - file with content
 	 */
 	public File storeDataToFile(String content, String path){
@@ -42,8 +41,9 @@ public class ExportStatisticService {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {
-				
+				file.deleteOnExit();
 			}
+			
 		return file;
 	}	
 

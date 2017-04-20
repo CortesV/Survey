@@ -1,4 +1,4 @@
-package com.softbistro.survey.statistic.service;
+package com.softbistro.survey.statistic.export.xlsx;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,29 +26,28 @@ import com.opencsv.bean.BeanToCsv;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.softbistro.survey.statistic.component.entity.ParticipantAttributes;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
+import com.softbistro.survey.statistic.component.interfacee.IExportFile;
 import com.softbistro.survey.statistic.component.service.GeneralStatisticDao;
 
 /**
- * Export data to file
+ * Export data to XLSX file
  * @author alex_alokhin
  *
  */
 @Service
-public class XlsxServiceStatistic {
+public class XlsxStatisticService implements IExportFile{
 
 	@Autowired
 	private GeneralStatisticDao generalStatisticDao;
-	
-	private CellStyle cellStyle;
 	private Workbook workbook;
-	private CreationHelper createHelper;
 	
 	/**
 	 * Export statistic about surveys to xlsx file
-	 * @param path - path to file
+	 * @param extension - extension of file
 	 * @return - file with content
 	 */
-	public File export(String path) {
+	@Override
+	public File exportToFile(String extension) {
 		File file = null;
 		int rowNum = 0;
 		int fieldIter = 0;
@@ -56,26 +55,22 @@ public class XlsxServiceStatistic {
 		ParticipantAttributes attr;
 		
 		try {
-		file = new File(path);
+		file = new File("src/main/resources/importing_files/statistic."+extension);
 		if (!file.exists()){
 			file.createNewFile();
 		}
-		
+
 		FileOutputStream fop = new FileOutputStream(file.getPath());
 		workbook = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Statistic Surveys");
 		List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();
 
-		
 		Row row = sheet.createRow(rowNum++);
 		Field[] names = surveyStatisticExport.get(0).getClass().getDeclaredFields();
 		for(Field s: names){
 			cell = row.createCell(fieldIter++);
-		    cell.setCellValue(s.getName()!="participantAttribute"?s.getName():"");
+		    cell.setCellValue(s.getName()!="participantAttribute"?s.getName():"Attribute name");
 		}
-		cell = row.createCell(fieldIter++);
-		cell.setCellValue("Attribute Name");
-
 		cell = row.createCell(fieldIter++);
 		cell.setCellValue("Attribute Value");
 		
@@ -97,16 +92,16 @@ public class XlsxServiceStatistic {
             	  
             	  cell = row.createCell(cellNum++);
             	  cell.setCellValue(attr.getValue());
-            	  
 			}
 		}
-		
 		workbook.write(fop);
 		fop.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		finally {
+			file.deleteOnExit();
+		}
 		return file;
 	}
 	
@@ -118,6 +113,8 @@ public class XlsxServiceStatistic {
 	 */
 	private void createList(SurveyStatisticExport survey, Row row) {
       int cellNum = 0;
+      CellStyle cellStyle;
+      CreationHelper createHelper;
       
       Cell cell = row.createCell(cellNum++);
       cell.setCellValue(survey.getId());
@@ -153,8 +150,6 @@ public class XlsxServiceStatistic {
       createHelper.createDataFormat().getFormat("yyyy-mm-dd"));
       cell.setCellStyle(cellStyle);
       cell.setCellValue(survey.getAnswerDateTime());
-      
-      int i = 0;
       
 	}
 

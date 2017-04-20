@@ -12,21 +12,22 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
+import com.softbistro.survey.statistic.export.csv.CsvStatisticService;
+import com.softbistro.survey.statistic.export.json.JsonStatisticService;
+import com.softbistro.survey.statistic.export.xlsx.XlsxStatisticService;
+import com.softbistro.survey.statistic.service.ExportFileService;
 import com.softbistro.survey.statistic.service.StatisticService;
-import com.softbistro.survey.statistic.service.CsvServiceStatistic;
-import com.softbistro.survey.statistic.service.JsonServiceStatistic;
 import com.softbistro.survey.statistic.service.StatisticService;
-import com.softbistro.survey.statistic.service.XMLServiceStatistic;
-import com.softbistro.survey.statistic.service.XlsxServiceStatistic;
 
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("rest/survey/v1/statistic/")
+@RequestMapping("rest/survey/v1/statistic")
 public class StatisticController {
 
 	@Autowired
@@ -36,16 +37,7 @@ public class StatisticController {
 	private AuthorizationService authorizationService;
 	
 	@Autowired
-	private JsonServiceStatistic jsonServiceStatistic;
-	
-	@Autowired
-	private XMLServiceStatistic xmlServiceStatistic;
-	
-	@Autowired
-	private CsvServiceStatistic csvServiceStatistic;
-	
-	@Autowired
-	private XlsxServiceStatistic xlsxServiceStatistic;
+	private ExportFileService exportFileService;
 
 	private static final Logger LOG = Logger.getLogger(StatisticController.class);
 
@@ -100,36 +92,14 @@ public class StatisticController {
 		}
 	}
 	
-	/**
-	 * Export statistic about surveys to JSON file
-	 * @return 
-	 */
-	@ApiOperation(value = "Export statistic to JSON file", notes = "Export all statistic to local JSON file", tags = "Statistic")
-	@RequestMapping(value = "/datajson", method = RequestMethod.POST)
-	public ResponseEntity<Object> exportSurveyStatisticJson(@RequestHeader String token) {
-
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
-		
-		try {
-			Map<String, File> responseValue = new HashMap<String, File>();
-			responseValue.put("File", jsonServiceStatistic.export("src/main/resources/importing_files/statistic.json"));
-			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
-		} catch (Exception e) {
-			LOG.error("Export statistic" + e.getMessage());
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
 	
 	/**
-	 * Export statistic about surveys to Csv file
+	 * Export statistic about surveys to file with specified extension
 	 * @return 
 	 */
-	@ApiOperation(value = "Export statistic to CSV file", notes = "Export all statistic to local CSV file", tags = "Statistic")
-	@RequestMapping(value = "/datacsv", method = RequestMethod.POST)
-	public ResponseEntity<Object> exportSurveyStatisticCsv(@RequestHeader String token) {
+	@ApiOperation(value = "Export statistic about surveys to file with specified extension", notes = "Export statistic about surveys to temporaty file", tags = "Statistic")
+	@RequestMapping(value = "/data/{extension}", method = RequestMethod.POST)
+	public ResponseEntity<Object> exportSurveyStatistic(@RequestHeader String token, @PathVariable("extension") String extension) {
 
 		if (!authorizationService.checkAccess(token)) {
 
@@ -138,58 +108,11 @@ public class StatisticController {
 		
 		try {
 			Map<String, File> responseValue = new HashMap<String, File>();
-			responseValue.put("File", csvServiceStatistic.export("src/main/resources/importing_files/statistic.csv"));
+			responseValue.put("File", exportFileService.exportToFile(extension));
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	/**
-	 * Export statistic about surveys to XML file
-	 * @return 
-	 */
-	@ApiOperation(value = "Export statistic to XML file", notes = "Export all statistic to local XML file", tags = "Statistic")
-	@RequestMapping(value = "/dataxml", method = RequestMethod.POST)
-	public ResponseEntity<Object> exportSurveyStatisticXml(@RequestHeader String token) {
-
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
-		
-		try {
-			Map<String, File> responseValue = new HashMap<String, File>();
-			responseValue.put("File", xmlServiceStatistic.export("src/main/resources/importing_files/statistic.xml"));
-			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
-		} catch (Exception e) {
-			LOG.error("Export statistic" + e.getMessage());
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-	
-	/**
-	 * Export statistic about surveys to XLSX file
-	 * @return 
-	 */
-	@ApiOperation(value = "Export statistic to XLSX file", notes = "Export all statistic to local XLSX file", tags = "Statistic")
-	@RequestMapping(value = "/dataxlsx", method = RequestMethod.POST)
-	public ResponseEntity<Object> exportSurveyStatisticXlsx(@RequestHeader String token) {
-
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
-		
-		try {
-			Map<String, File> responseValue = new HashMap<String, File>();
-			responseValue.put("File", xlsxServiceStatistic.export("src/main/resources/importing_files/statistic.xlsx"));
-			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
-		} catch (Exception e) {
-			LOG.error("Export statistic" + e.getMessage());
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
-
 }

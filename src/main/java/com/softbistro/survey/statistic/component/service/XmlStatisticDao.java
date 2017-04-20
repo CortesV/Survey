@@ -22,15 +22,13 @@ public class XmlStatisticDao implements IExportStatisticDao{
 	@Autowired
 	private GeneralStatisticDao generalStatisticDao;
 	
-	private XStream xstream;
-	
 	/**
 	 * Export statistic about surveys to string in XML format 
 	 * @return - string with data in XML format
 	 */
 	@Override
 	public String export() {
-		xstream = new XStream();
+		XStream xstream = new XStream();
 		
 		List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();
 

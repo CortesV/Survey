@@ -1,4 +1,4 @@
-package com.softbistro.survey.statistic.service;
+package com.softbistro.survey.statistic.export.csv;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
@@ -14,33 +15,33 @@ import com.opencsv.bean.BeanToCsv;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.softbistro.survey.statistic.component.entity.ParticipantAttributes;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
-import com.softbistro.survey.statistic.component.interfacee.ExportFile;
+import com.softbistro.survey.statistic.component.interfacee.IExportFile;
 import com.softbistro.survey.statistic.component.service.GeneralStatisticDao;
 
 /**
- * Export data to file
+ * Export data to CSV file
  * @author alex_alokhin
  *
  */
 @Service
-public class CsvServiceStatistic implements ExportFile{
+public class CsvStatisticService implements IExportFile{
 
 	@Autowired
 	private GeneralStatisticDao generalStatisticDao;
 	
 	/**
-	 * Export statistic about surveys to csv file
-	 * @param path - path to file
+	 * Export statistic about surveys to CSV file
+	 * @param extension - extension of file
 	 * @return - file with content
 	 */
 	@Override
-	public File export(String path) {
+	public File exportToFile(String extension) {
 		File file = null;
 		CsvWriter csvWriter;
 		List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();   
 		ParticipantAttributes attr;
 		try {
-		file = new File(path);
+		file = new File("src/main/resources/importing_files/statistic."+extension);
 		if (!file.exists()){
 			file.createNewFile();
 		}
@@ -83,12 +84,13 @@ public class CsvServiceStatistic implements ExportFile{
 		}
 		
 		csvWriter.close();
-		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		finally {
+			file.deleteOnExit();
+		}
 		
 		return file;
-		
 	}
 }
