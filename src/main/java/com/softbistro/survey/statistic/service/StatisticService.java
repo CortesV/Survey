@@ -2,6 +2,7 @@ package com.softbistro.survey.statistic.service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +39,9 @@ public class StatisticService {
 	 * @param surveyId
 	 * @return
 	 */
-	public String export(Integer surveyId) {
+	public String export(Integer surveyId, List<String> filters) {
 		try {
-			return sheetsService.send(statisticDao.export(surveyId));
+			return sheetsService.send(statisticDao.export(surveyId),filters);
 		} catch (GeneralSecurityException | IOException e) {
 			LOG.error(e.getMessage());
 			return null;
