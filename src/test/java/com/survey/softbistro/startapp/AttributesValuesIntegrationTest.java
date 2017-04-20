@@ -2,6 +2,9 @@ package com.survey.softbistro.startapp;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -132,7 +135,10 @@ public class AttributesValuesIntegrationTest {
 		attributeValuesDao.setAttributeValues(attributeValuesTest);
 		
 		participantInGroupTest.setGroupId(idGroup);
-		participantInGroupTest.setParticipantId(idParticipant);
+		
+		List<Integer> batch = new ArrayList<>();
+		batch.add(idParticipant);
+		participantInGroupTest.setParticipantsId(batch);
 		
 		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
 

@@ -40,9 +40,9 @@ public class ParticipantInGroupService {
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public Integer addParticipantInGroup(ParticipantInGroup participantInGoup) {
+	public void addParticipantInGroup(ParticipantInGroup participantInGoup) {
 
-		return iParticipantInGroup.addParticipantInGroup(participantInGoup);
+		iParticipantInGroup.addParticipantInGroup(participantInGoup);
 	}
 
 	/**
