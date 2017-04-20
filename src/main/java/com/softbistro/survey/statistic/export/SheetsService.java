@@ -124,8 +124,8 @@ public class SheetsService {
 					fillValue(newRow, arrHeadersColumn.get(column),
 							String.valueOf(list.get(numberOfRecord).get(new com.softbistro.survey.statistic.component.entity.Filter().getPattern().get(filters.get(column)))));
 				}
+				spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
 			}
-			spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
 			
 		} catch (ServiceException | IOException e) {
 			LOG.error("Insert data " + e.getMessage());
