@@ -127,6 +127,7 @@ public class SheetsService {
 				spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
 			}
 			
+
 		} catch (ServiceException | IOException e) {
 			LOG.error("Insert data " + e.getMessage());
 		}
