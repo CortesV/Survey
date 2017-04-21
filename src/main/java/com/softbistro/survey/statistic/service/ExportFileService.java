@@ -32,20 +32,25 @@ public class ExportFileService {
 	@Autowired
 	private CsvStatisticService csvStatisticService;
 	
+	private static final String CSV = "csv";
+	private static final String XML = "xml";
+	private static final String XLSX = "xlsx";
+	private static final String JSON = "json";
+	
 	public File exportToFile(String extension){
 		IExportFile exportSurvey;
 		extension = extension.toLowerCase();
 		switch (extension) {
-		case "xml":
+		case XML:
 			exportSurvey = xmlStatisticService;	
 			break;
-		case "csv":
+		case CSV:
 			exportSurvey = csvStatisticService;
 			break;
-		case "json":
+		case JSON:
 			exportSurvey = jsonStatisticService;
 			break;
-		case "xlsx":
+		case XLSX:
 			exportSurvey = xlsxStatisticService;
 			break;
 		default:	
