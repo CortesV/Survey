@@ -39,8 +39,7 @@ public class ExportFileService {
 	
 	public File exportToFile(String extension){
 		IExportFile exportSurvey;
-		extension = extension.toLowerCase();
-		switch (extension) {
+		switch (extension.toLowerCase()) {
 		case XML:
 			exportSurvey = xmlStatisticService;	
 			break;
