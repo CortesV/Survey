@@ -6,6 +6,7 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
-import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
+import com.softbistro.survey.statistic.component.entity.StatisticColumnFilter;
 
 @Service
 public class SheetsService {
@@ -43,15 +44,17 @@ public class SheetsService {
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	public String send(List<SurveyStatisticExport> statistic) throws IOException, GeneralSecurityException {
+	public String send(List<Map<String, Object>> list, List<String> filters)
+			throws IOException, GeneralSecurityException {
 
+		@SuppressWarnings("static-access")
 		Sheets sheetsService = googleAuthorization.getSheetsService();
 
-		Sheets.Spreadsheets.Create request = sheetsService.spreadsheets().create(create(statistic, sheetsService));
+		Sheets.Spreadsheets.Create request = sheetsService.spreadsheets().create(create(list, sheetsService));
 
 		Spreadsheet response = request.execute();
 
-		insertData(response.getSpreadsheetId(), statistic);
+		insertData(response.getSpreadsheetId(), list, filters);
 
 		publicAccess(response.getSpreadsheetId());
 
@@ -62,12 +65,12 @@ public class SheetsService {
 	/**
 	 * Main configure for creating sheets
 	 * 
-	 * @param statistic
+	 * @param list
 	 * @param sheetsService
 	 * @return
 	 */
-	public Spreadsheet create(List<SurveyStatisticExport> statistic, Sheets sheetsService) {
-		String title = statistic.get(0).getName() + new java.util.Date().toString();
+	public Spreadsheet create(List<Map<String, Object>> list, Sheets sheetsService) {
+		String title = list.get(0).get("survey_name") + " " + new java.util.Date().toString();
 
 		Spreadsheet requestBody = new Spreadsheet();
 
@@ -94,7 +97,8 @@ public class SheetsService {
 	 * 
 	 * @param key
 	 */
-	public void insertData(String key, List<SurveyStatisticExport> statistic) {
+	@SuppressWarnings("static-access")
+	public void insertData(String key, List<Map<String, Object>> list, List<String> filters) {
 		try {
 
 			SpreadsheetService spreadsheetService = new SpreadsheetService("SurveySoftbistro");
@@ -111,31 +115,19 @@ public class SheetsService {
 
 			CellFeed cellFeed = spreadsheetService.getFeed(celledUrl, CellFeed.class);
 
-			List<String> arrHeadersColumn = generateHeadersColumn(cellFeed);
+			List<String> arrHeadersColumn = generateHeadersColumn(cellFeed, filters);
 
 			ListEntry newRow = new ListEntry();
 
-			int column = 0;
-			for (int numberOfRecord = 0; numberOfRecord < statistic.size(); numberOfRecord++) {
+			for (int numberOfRecord = 0; numberOfRecord < list.size(); numberOfRecord++) {
 
-				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getId().toString());
-				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getName());
-				fillValue(newRow, arrHeadersColumn.get(column++),
-						statistic.get(numberOfRecord).getParticipantId().toString());
-				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getFirstName());
-				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getLastName());
-
-				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getGroupName());
-				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getQuestionName());
-				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getAnswer());
-
-				fillValue(newRow, arrHeadersColumn.get(column++), statistic.get(numberOfRecord).getComment());
-				fillValue(newRow, arrHeadersColumn.get(column),
-						statistic.get(numberOfRecord).getAnswerDateTime().toString());
+				for (int column = 0; column < filters.size(); column++) {
+					fillValue(newRow, arrHeadersColumn.get(column), String.valueOf(list.get(numberOfRecord)
+							.get(new StatisticColumnFilter().getFiltersMap().get(filters.get(column)))));
+				}
 				spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
-
-				column = 0;
 			}
+
 		} catch (ServiceException | IOException e) {
 			LOG.error("Insert data " + e.getMessage());
 		}
@@ -151,20 +143,14 @@ public class SheetsService {
 
 	}
 
-	public List<String> generateHeadersColumn(CellFeed cellFeed) {
+	public List<String> generateHeadersColumn(CellFeed cellFeed, List<String> filters) {
 		List<String> arrNames = new LinkedList<>();
 
 		try {
-			arrNames.add("SurveyId");
-			arrNames.add("SurveyName");
-			arrNames.add("ParticipantId");
-			arrNames.add("FirstName");
-			arrNames.add("LastName");
-			arrNames.add("GroupName");
-			arrNames.add("QuestionName");
-			arrNames.add("Answer");
-			arrNames.add("Comment");
-			arrNames.add("AnswerData");
+
+			for (String filter : filters) {
+				arrNames.add(filter);
+			}
 
 			CellEntry cellEntry;
 
@@ -177,13 +163,13 @@ public class SheetsService {
 
 		} catch (ServiceException | IOException e) {
 			LOG.error("Generate headers " + e.getMessage());
-			e.printStackTrace();
 		}
 		return arrNames;
 	}
 
 	private void publicAccess(String fileId) {
 		try {
+			@SuppressWarnings("static-access")
 			Drive service = googleAuthorization.getDriveService();
 			Permission newPermission = new Permission();
 			newPermission.setType("anyone");
