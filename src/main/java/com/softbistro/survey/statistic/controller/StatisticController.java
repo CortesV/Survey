@@ -41,7 +41,7 @@ public class StatisticController {
 	 * @return
 	 */
 	@ApiOperation(value = "Get short statistic", notes = "Get short statistic by survey id", tags = "Statistic")
-	@RequestMapping(value = "/{survey_id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{survey_id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<SurveyStatisticShort> surveyStatistic(@PathVariable(value = "survey_id") Integer surveyId,
 			@RequestHeader String token) {
 
@@ -65,8 +65,8 @@ public class StatisticController {
 	 * @return
 	 */
 	@ApiOperation(value = "Export statistic on google sheets", notes = "Export statistic on google sheets by survey id "
-			+ "and filters", tags = "Statistic")
-	@RequestMapping(value = "/{survey_id}/", method = RequestMethod.POST)
+			+ "and column filters", tags = "Statistic")
+	@RequestMapping(value = "/{survey_id}/", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> exportSurveyStatistic(@PathVariable("survey_id") Integer surveyId,
 			@RequestBody List<String> filters, @RequestHeader String token) {
 
@@ -98,7 +98,7 @@ public class StatisticController {
 	 * @return
 	 */
 	@ApiOperation(value = "Get Statistic Filters for Export statistic on google sheets", notes = "Get column filters for export statistic on google sheets ", tags = "Statistic")
-	@RequestMapping(value = "/filters/", method = RequestMethod.GET)
+	@RequestMapping(value = "/filters/", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<String>> getStatisticFilters(@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
