@@ -2,7 +2,6 @@ package com.softbistro.survey.statistic.service;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -55,7 +54,7 @@ public class StatisticService {
 	 * @param
 	 * @return statisticColumnFilter
 	 */
-	public ArrayList<String> getStatisticColumnFilters() {
+	public List<String> getStatisticColumnFilters() {
 		return statisticDao.getStatisticColumnFilters();
 	}
 }

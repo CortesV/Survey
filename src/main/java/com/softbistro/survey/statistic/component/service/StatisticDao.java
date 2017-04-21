@@ -2,7 +2,6 @@ package com.softbistro.survey.statistic.component.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public class StatisticDao implements IStatisticDao {
 			+ "WHERE ss.answer_status = 'VOTED' AND ss.survey_id = ? ) AS voted_count "
 			+ "FROM survey AS survey , sending_survey AS ss WHERE survey.id = ? AND ss.survey_id = ?";
 
-	private static final String SQL_GET_STATISTIC_FOR_DYNAMIC_EXPORT = "SELECT survey.id AS survey_id, survey.`name` AS survey_name, p.first_name, p.last_name, "
+	private static final String SQL_GET_STATISTIC_FOR_EXPORT = "SELECT survey.id AS survey_id, survey.`name` AS survey_name, p.first_name, p.last_name, "
 			+ "question_sections.section_name AS section_name, questions.question, answers.participant_id, answers.answer_value, answers.`comment`, "
 			+ "answers.modified_date AS answer_datetime, `group`.group_name, attributes.attribute, av.attribute_value FROM answers  LEFT JOIN questions "
 			+ "ON answers.question_id = questions.id LEFT JOIN survey AS survey ON survey.id = questions.survey_id LEFT JOIN connect_question_section_survey "
@@ -86,7 +85,7 @@ public class StatisticDao implements IStatisticDao {
 	public List<Map<String, Object>> export(Integer surveyId) {
 		try {
 
-			List<Map<String, Object>> export = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_DYNAMIC_EXPORT,
+			List<Map<String, Object>> export = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT,
 					new ColumnMapRowMapper(), surveyId);
 
 			return export.isEmpty() ? null : export;
@@ -107,7 +106,7 @@ public class StatisticDao implements IStatisticDao {
 	 */
 	@Override
 	@SuppressWarnings("static-access")
-	public ArrayList<String> getStatisticColumnFilters() {
+	public List<String> getStatisticColumnFilters() {
 		return new StatisticColumnFilter().getFilterlist();
 	}
 }

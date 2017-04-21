@@ -27,8 +27,7 @@ import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
-
-import ch.qos.logback.core.filter.Filter;
+import com.softbistro.survey.statistic.component.entity.StatisticColumnFilter;
 
 @Service
 public class SheetsService {
@@ -48,6 +47,7 @@ public class SheetsService {
 	public String send(List<Map<String, Object>> list, List<String> filters)
 			throws IOException, GeneralSecurityException {
 
+		@SuppressWarnings("static-access")
 		Sheets sheetsService = googleAuthorization.getSheetsService();
 
 		Sheets.Spreadsheets.Create request = sheetsService.spreadsheets().create(create(list, sheetsService));
@@ -70,7 +70,7 @@ public class SheetsService {
 	 * @return
 	 */
 	public Spreadsheet create(List<Map<String, Object>> list, Sheets sheetsService) {
-		String title = list.get(0).get("survey_name") + new java.util.Date().toString();
+		String title = list.get(0).get("survey_name") + " " + new java.util.Date().toString();
 
 		Spreadsheet requestBody = new Spreadsheet();
 
@@ -97,6 +97,7 @@ public class SheetsService {
 	 * 
 	 * @param key
 	 */
+	@SuppressWarnings("static-access")
 	public void insertData(String key, List<Map<String, Object>> list, List<String> filters) {
 		try {
 
@@ -121,12 +122,11 @@ public class SheetsService {
 			for (int numberOfRecord = 0; numberOfRecord < list.size(); numberOfRecord++) {
 
 				for (int column = 0; column < filters.size(); column++) {
-					fillValue(newRow, arrHeadersColumn.get(column),
-							String.valueOf(list.get(numberOfRecord).get(new com.softbistro.survey.statistic.component.entity.StatisticColumnFilter().getFiltersMap().get(filters.get(column)))));
+					fillValue(newRow, arrHeadersColumn.get(column), String.valueOf(list.get(numberOfRecord)
+							.get(new StatisticColumnFilter().getFiltersMap().get(filters.get(column)))));
 				}
 				spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
 			}
-			
 
 		} catch (ServiceException | IOException e) {
 			LOG.error("Insert data " + e.getMessage());
@@ -169,6 +169,7 @@ public class SheetsService {
 
 	private void publicAccess(String fileId) {
 		try {
+			@SuppressWarnings("static-access")
 			Drive service = googleAuthorization.getDriveService();
 			Permission newPermission = new Permission();
 			newPermission.setType("anyone");

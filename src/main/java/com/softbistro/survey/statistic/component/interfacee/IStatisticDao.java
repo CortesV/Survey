@@ -1,6 +1,5 @@
 package com.softbistro.survey.statistic.component.interfacee;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,5 +36,5 @@ public interface IStatisticDao {
 	 * @param
 	 * @return statisticColumnFilter
 	 */
-	public ArrayList<String> getStatisticColumnFilters();
+	public List<String> getStatisticColumnFilters();
 }

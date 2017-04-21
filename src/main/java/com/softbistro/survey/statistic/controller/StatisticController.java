@@ -1,6 +1,5 @@
 package com.softbistro.survey.statistic.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +99,7 @@ public class StatisticController {
 	 */
 	@ApiOperation(value = "Get Statistic Filters for Export statistic on google sheets", notes = "Get column filters for export statistic on google sheets ", tags = "Statistic")
 	@RequestMapping(value = "/filters/", method = RequestMethod.GET)
-	public ResponseEntity<ArrayList<String>> getStatisticFilters(@RequestHeader String token) {
+	public ResponseEntity<List<String>> getStatisticFilters(@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
@@ -108,11 +107,11 @@ public class StatisticController {
 		}
 
 		try {
-			
-			return new ResponseEntity<ArrayList<String>>(statisticService.getStatisticColumnFilters(), HttpStatus.OK);
+
+			return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(), HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
-			return new ResponseEntity<ArrayList<String>>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<List<String>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
