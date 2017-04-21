@@ -70,6 +70,7 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage<Re
 
 			log.info(String.format("Password email: %s", messages.get(emailIndex).getClientEmail()));
 
+			
 		}
 
 	}

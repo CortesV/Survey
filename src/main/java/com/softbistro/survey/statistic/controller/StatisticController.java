@@ -1,5 +1,6 @@
 package com.softbistro.survey.statistic.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,14 +14,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
+import com.softbistro.survey.statistic.export.csv.CsvStatisticService;
+import com.softbistro.survey.statistic.export.json.JsonStatisticService;
+import com.softbistro.survey.statistic.export.xlsx.XlsxStatisticService;
+import com.softbistro.survey.statistic.service.ExportFileService;
+import com.softbistro.survey.statistic.service.StatisticService;
 import com.softbistro.survey.statistic.service.StatisticService;
 
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * Controller for statistic
+ * @author alex_alokhin
+ *
+ */
 @RestController
 @RequestMapping("rest/survey/v1/statistic")
 public class StatisticController {
@@ -30,6 +42,9 @@ public class StatisticController {
 
 	@Autowired
 	private AuthorizationService authorizationService;
+	
+	@Autowired
+	private ExportFileService exportFileService;
 
 	private static final Logger LOG = Logger.getLogger(StatisticController.class);
 
@@ -90,7 +105,36 @@ public class StatisticController {
 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	/**
+	 * Export statistic about surveys to file with specified extension
+	 * @return 
+	 */
+	@ApiOperation(value = "Export statistic about surveys to file with specified extension", notes = "Export statistic about surveys to temporaty file", tags = "Statistic")
+	@RequestMapping(value = "/data/{extension}", method = RequestMethod.POST)
+	public ResponseEntity<Object> exportSurveyStatistic(/*@RequestHeader String token,*/ @PathVariable("extension") String extension) {
+ 		
+		/*if (!authorizationService.checkAccess(token)) {
+ 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+ 		}*/
+		
+		try {
 
+ 			Map<String, File> responseValue = new HashMap<String, File>();
+
+ 			responseValue.put("File", exportFileService.exportToFile(extension));
+
+ 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
+
+ 		} catch (Exception e) {
+
+ 			LOG.error("Export statistic" + e.getMessage());
+
+ 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+ 		}
+	}
 	/**
 	 * Export statistic about survey
 	 * 
@@ -105,7 +149,7 @@ public class StatisticController {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-
+		
 		try {
 
 			return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(), HttpStatus.OK);
