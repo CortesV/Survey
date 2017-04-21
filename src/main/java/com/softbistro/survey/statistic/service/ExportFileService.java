@@ -22,21 +22,18 @@ public class ExportFileService {
 	
 	public File exportToFile(String extension){
 		IExportFile exportSurvey;
+		extension = extension.toLowerCase();
 		switch (extension) {
 		case "xml":
-		case "XML":
 			exportSurvey = (IExportFile) applicationContext.getBean("xmlStatisticService");	
 			break;
 		case "csv":
-		case "CSV":
 			exportSurvey = (IExportFile) applicationContext.getBean("csvStatisticService");	
 			break;
 		case "json":
-		case "JSON":
 			exportSurvey = (IExportFile) applicationContext.getBean("jsonStatisticService");
 			break;
 		case "xlsx":
-		case "XLSX":
 			exportSurvey = (IExportFile) applicationContext.getBean("xlsxStatisticService");	
 			break;
 		default:	
