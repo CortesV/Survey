@@ -16,10 +16,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import com.mysql.cj.api.jdbc.Statement;
-import com.softbistro.survey.imports.system.components.entities.GroupQuestions;
-import com.softbistro.survey.imports.system.components.entities.Question;
-import com.softbistro.survey.imports.system.components.entities.Survey;
+import com.softbistro.survey.imports.system.components.entities.ImportGroupQuestions;
+import com.softbistro.survey.imports.system.components.entities.ImportSurvey;
 import com.softbistro.survey.imports.system.components.interfaces.ISurveyDAO;
+import com.softbistro.survey.question.components.entity.Question;
 
 /**
  * Save survey into db
@@ -50,7 +50,7 @@ public class ImportSurveyDao implements ISurveyDAO {
 	 *            survey
 	 * @return Response
 	 */
-	public void saveSurvey(Survey savedSurvey) {
+	public void saveSurvey(ImportSurvey savedSurvey) {
 
 		Connection connection = null;
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = null;
@@ -94,10 +94,10 @@ public class ImportSurveyDao implements ISurveyDAO {
 	 * @param connection
 	 * @throws SQLException
 	 */
-	private void saveQuestions(Survey savedSurvey, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+	private void saveQuestions(ImportSurvey savedSurvey, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
 			Connection connection) throws SQLException {
 
-		for (GroupQuestions group : savedSurvey.getGroupQuestions()) {
+		for (ImportGroupQuestions group : savedSurvey.getGroupQuestions()) {
 
 			group.setId(executeStatement(INSERT_GROUP, new Object[] { group.getTitle() }, connection));
 

@@ -13,9 +13,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softbistro.survey.imports.system.components.entities.GroupQuestions;
+import com.softbistro.survey.imports.system.components.entities.ImportGroupQuestions;
 import com.softbistro.survey.imports.system.components.entities.Question;
-import com.softbistro.survey.imports.system.components.entities.Survey;
+import com.softbistro.survey.imports.system.components.entities.ImportSurvey;
 import com.softbistro.survey.imports.system.components.services.ImportSurveyDao;
 import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 
@@ -37,9 +37,9 @@ public class ImportIntegrationTest {
 	private ImportSurveyDao importSurveyDao;
 
 	private List<Question> listQuestions;
-	private List<GroupQuestions> listGroupQuestions;
-	private Survey surveyTest;
-	private GroupQuestions groupQuestionsTest;
+	private List<ImportGroupQuestions> listGroupQuestions;
+	private ImportSurvey surveyTest;
+	private ImportGroupQuestions groupQuestionsTest;
 	private Question questionTest, questionTest2, questionTest3;
 
 	@Before

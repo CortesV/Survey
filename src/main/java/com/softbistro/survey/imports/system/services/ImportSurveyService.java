@@ -51,8 +51,7 @@ public class ImportSurveyService {
 
 	private IImportSurvey selectImportServiceRealization(String format) {
 
-		switch (format) {
-		case "csv":
+		switch (format.toUpperCase()) {
 		case "CSV":
 			return (IImportSurvey) applicationContext.getBean("CSVImport");
 
