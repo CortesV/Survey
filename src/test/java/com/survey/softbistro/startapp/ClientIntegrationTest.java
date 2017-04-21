@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.service.ClientDao;
 import com.softbistro.survey.client.manage.service.FindClientService;
-import com.softbistro.survey.startapp.SurveySoftBistroApplication;
+import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test for Client dao

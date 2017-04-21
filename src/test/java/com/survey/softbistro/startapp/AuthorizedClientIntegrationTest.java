@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.client.auth.components.entities.AuthorizedClient;
 import com.softbistro.survey.client.auth.components.service.AuthorizedClientDao;
-import com.softbistro.survey.startapp.SurveySoftBistroApplication;
+import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test for authorized client dao

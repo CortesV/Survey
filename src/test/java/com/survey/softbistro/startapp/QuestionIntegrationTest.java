@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.question.components.entity.Question;
 import com.softbistro.survey.question.components.service.QuestionDao;
-import com.softbistro.survey.startapp.SurveySoftBistroApplication;
+import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test of question dao

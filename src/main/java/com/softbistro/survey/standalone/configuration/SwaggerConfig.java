@@ -1,6 +1,7 @@
-package com.softbistro.survey.startapp;
+package com.softbistro.survey.standalone.configuration;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.google.common.base.Predicates;
 
@@ -12,7 +13,7 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-@org.springframework.context.annotation.Configuration
+@Configuration
 @EnableSwagger2
 public class SwaggerConfig {
 	@Bean
@@ -24,7 +25,6 @@ public class SwaggerConfig {
 
 	private ApiInfo metadata() {
 
-		return new ApiInfoBuilder().title("Survey API").description("Documentation for Survey API").version("0.1.0")
-				.build();
+		return new ApiInfoBuilder().title("Survey API").description("Documentation for Survey API").build();
 	}
 }
