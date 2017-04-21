@@ -113,8 +113,28 @@ public class StatisticController {
 	 */
 	@ApiOperation(value = "Export statistic about surveys to file with specified extension", notes = "Export statistic about surveys to temporaty file", tags = "Statistic")
 	@RequestMapping(value = "/data/{extension}", method = RequestMethod.POST)
-	public ResponseEntity<Object> exportSurveyStatistic(@RequestHeader String token, @PathVariable("extension") String extension) {
+	public ResponseEntity<Object> exportSurveyStatistic(/*@RequestHeader String token,*/ @PathVariable("extension") String extension) {
+ 		
+		/*if (!authorizationService.checkAccess(token)) {
+ 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+ 		}*/
+		
+		try {
 
+ 			Map<String, File> responseValue = new HashMap<String, File>();
+
+ 			responseValue.put("File", exportFileService.exportToFile(extension));
+
+ 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
+
+ 		} catch (Exception e) {
+
+ 			LOG.error("Export statistic" + e.getMessage());
+
+ 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+ 		}
+	}
 	/**
 	 * Export statistic about survey
 	 * 
@@ -130,14 +150,6 @@ public class StatisticController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 		
-		try {
-			Map<String, File> responseValue = new HashMap<String, File>();
-			responseValue.put("File", exportFileService.exportToFile(extension));
-			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
-		} catch (Exception e) {
-			LOG.error("Export statistic" + e.getMessage());
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
 		try {
 
 			return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(), HttpStatus.OK);
