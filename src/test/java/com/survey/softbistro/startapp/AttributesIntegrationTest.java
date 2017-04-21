@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.participant.components.dao.AttributesDao;
 import com.softbistro.survey.participant.components.entity.Attributes;
-import com.softbistro.survey.startapp.SurveySoftBistroApplication;
+import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test for attributes dao

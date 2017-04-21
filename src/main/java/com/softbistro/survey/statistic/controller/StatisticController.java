@@ -2,6 +2,7 @@ package com.softbistro.survey.statistic.controller;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -54,7 +56,7 @@ public class StatisticController {
 	 * @return
 	 */
 	@ApiOperation(value = "Get short statistic", notes = "Get short statistic by survey id", tags = "Statistic")
-	@RequestMapping(value = "/{survey_id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/{survey_id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<SurveyStatisticShort> surveyStatistic(@PathVariable(value = "survey_id") Integer surveyId,
 			@RequestHeader String token) {
 
@@ -77,19 +79,26 @@ public class StatisticController {
 	 * @param surveyId
 	 * @return
 	 */
-	@ApiOperation(value = "Export statistic on google sheets", notes = "Export statistic on google sheets by survey id", tags = "Statistic")
-	@RequestMapping(value = "/{survey_id}/", method = RequestMethod.POST)
+	@ApiOperation(value = "Export statistic on google sheets", notes = "Export statistic on google sheets by survey id "
+			+ "and column filters", tags = "Statistic")
+	@RequestMapping(value = "/{survey_id}/", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> exportSurveyStatistic(@PathVariable("survey_id") Integer surveyId,
-			@RequestHeader String token) {
+			@RequestBody List<String> filters, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
+		for (String filter : filters) {
+			if (!statisticService.getStatisticColumnFilters().contains(filter)) {
+				return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+			}
+		}
+
 		try {
 			Map<String, String> responseValue = new HashMap<String, String>();
-			responseValue.put("URL", statisticService.export(surveyId));
+			responseValue.put("URL", statisticService.export(surveyId, filters));
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
@@ -106,6 +115,16 @@ public class StatisticController {
 	@RequestMapping(value = "/data/{extension}", method = RequestMethod.POST)
 	public ResponseEntity<Object> exportSurveyStatistic(@RequestHeader String token, @PathVariable("extension") String extension) {
 
+	/**
+	 * Export statistic about survey
+	 * 
+	 * @param surveyId
+	 * @return
+	 */
+	@ApiOperation(value = "Get Statistic Filters for Export statistic on google sheets", notes = "Get column filters for export statistic on google sheets ", tags = "Statistic")
+	@RequestMapping(value = "/filters/", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<String>> getStatisticFilters(@RequestHeader String token) {
+
 		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -118,6 +137,13 @@ public class StatisticController {
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+		try {
+
+			return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(), HttpStatus.OK);
+		} catch (Exception e) {
+			LOG.error("Export statistic" + e.getMessage());
+			return new ResponseEntity<List<String>>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 }
