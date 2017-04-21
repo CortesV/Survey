@@ -1,33 +1,26 @@
 package com.softbistro.survey.statistic.export.xlsx;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.opencsv.CSVWriter;
-import com.opencsv.bean.BeanToCsv;
-import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.softbistro.survey.statistic.component.entity.ParticipantAttributes;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 import com.softbistro.survey.statistic.component.interfacee.IExportFile;
 import com.softbistro.survey.statistic.component.service.GeneralStatisticDao;
+import com.softbistro.survey.statistic.service.StatisticService;
 
 /**
  * Export data to XLSX file
@@ -40,6 +33,18 @@ public class XlsxStatisticService implements IExportFile{
 	@Autowired
 	private GeneralStatisticDao generalStatisticDao;
 	private Workbook workbook;
+	
+	private final static String SHEET = "Statistic";
+	
+	private final static String FILE_PATH = "src/main/resources/importing_files/statistic.";
+	
+	private final static String ATTR_NAME = "Attribute name";
+	
+	private final static String ATTR_VALUE = "Attribute value";
+	
+	private final static String PARTICIPANT_ATTR = "Attribute value";
+	
+	private static final Logger LOG = Logger.getLogger(XlsxStatisticService.class);
 	
 	/**
 	 * Export statistic about surveys to xlsx file
@@ -55,24 +60,24 @@ public class XlsxStatisticService implements IExportFile{
 		ParticipantAttributes attr;
 		
 		try {
-		file = new File("src/main/resources/importing_files/statistic."+extension);
+		file = new File(FILE_PATH+extension);
 		if (!file.exists()){
 			file.createNewFile();
 		}
 
 		FileOutputStream fop = new FileOutputStream(file.getPath());
 		workbook = new XSSFWorkbook();
-        XSSFSheet sheet = (XSSFSheet) workbook.createSheet("Statistic Surveys");
+        XSSFSheet sheet = (XSSFSheet) workbook.createSheet(SHEET);
 		List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();
 
 		Row row = sheet.createRow(rowNum++);
 		Field[] names = surveyStatisticExport.get(0).getClass().getDeclaredFields();
 		for(Field s: names){
 			cell = row.createCell(fieldIter++);
-		    cell.setCellValue(s.getName()!="participantAttribute"?s.getName():"Attribute name");
+		    cell.setCellValue(s.getName()!=PARTICIPANT_ATTR?s.getName():ATTR_NAME);
 		}
 		cell = row.createCell(fieldIter++);
-		cell.setCellValue("Attribute Value");
+		cell.setCellValue(ATTR_VALUE);
 		
 		for (SurveyStatisticExport survey : surveyStatisticExport) {
 			int cellNum=10;
@@ -96,8 +101,10 @@ public class XlsxStatisticService implements IExportFile{
 		}
 		workbook.write(fop);
 		fop.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
+			return null;
 		}
 		finally {
 			file.deleteOnExit();

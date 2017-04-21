@@ -2,9 +2,11 @@ package com.softbistro.survey.statistic.export;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+
+import com.softbistro.survey.statistic.service.StatisticService;
 
 /**
  * Store data to file
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class StoreDataToFile {
 	
+	private static final Logger LOG = Logger.getLogger(StatisticService.class);
 	/**
 	 * 
 	 * @param content - content that stores to the file
@@ -37,13 +40,14 @@ public class StoreDataToFile {
 				fop.write(contentInBytes);
 				fop.flush();
 				fop.close();
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			} finally {
+			}
+			catch (Exception e) {
+				LOG.error(e.getMessage());
+				return null;
+			}
+			finally {
 				file.deleteOnExit();
 			}
-			
 		return file;
 	}	
 

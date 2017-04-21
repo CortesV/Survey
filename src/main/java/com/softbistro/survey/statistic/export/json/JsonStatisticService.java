@@ -1,17 +1,15 @@
 package com.softbistro.survey.statistic.export.json;
 
 import java.io.File;
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.statistic.component.interfacee.IExportFile;
 import com.softbistro.survey.statistic.component.service.JsonStatisticDao;
 import com.softbistro.survey.statistic.export.StoreDataToFile;
+import com.softbistro.survey.statistic.service.StatisticService;
 
 /**
  * Export data to JSON file
@@ -27,6 +25,10 @@ public class JsonStatisticService implements IExportFile{
 	@Autowired
 	private JsonStatisticDao jsonDao;
 	
+	private final static  String FILE_PATH = "src/main/resources/importing_files/statistic.";
+	
+	private static final Logger LOG = Logger.getLogger(JsonStatisticService.class);
+	
 	/**
 	 * Export statistic about surveys to JSON file
 	 * @param extension - extension of file
@@ -34,6 +36,12 @@ public class JsonStatisticService implements IExportFile{
 	 */
 	@Override
 	public File exportToFile(String extension) {
-		return output.storeDataToFile(jsonDao.export(),"src/main/resources/importing_files/statistic."+extension);
+		try {
+			return output.storeDataToFile(jsonDao.export(),FILE_PATH+extension);
+		}
+		catch (Exception e) {
+			LOG.error(e.getMessage());
+			return null;
+		}
 	}
 }

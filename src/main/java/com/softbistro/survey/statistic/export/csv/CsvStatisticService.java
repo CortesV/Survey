@@ -2,17 +2,13 @@ package com.softbistro.survey.statistic.export.csv;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.csvreader.CsvWriter;
-import com.opencsv.bean.BeanToCsv;
-import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.softbistro.survey.statistic.component.entity.ParticipantAttributes;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 import com.softbistro.survey.statistic.component.interfacee.IExportFile;
@@ -29,6 +25,12 @@ public class CsvStatisticService implements IExportFile{
 	@Autowired
 	private GeneralStatisticDao generalStatisticDao;
 	
+	private final static  String FILE_PATH = "src/main/resources/importing_files/statistic.";
+	
+	private final static char DELIMETER = ',';
+	
+	private static final Logger LOG = Logger.getLogger(CsvStatisticService.class);
+	
 	/**
 	 * Export statistic about surveys to CSV file
 	 * @param extension - extension of file
@@ -41,12 +43,12 @@ public class CsvStatisticService implements IExportFile{
 		List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();   
 		ParticipantAttributes attr;
 		try {
-		file = new File("src/main/resources/importing_files/statistic."+extension);
+		file = new File(FILE_PATH+extension);
 		if (!file.exists()){
 			file.createNewFile();
 		}
 		
-		csvWriter = new CsvWriter(new FileWriter(file.getAbsolutePath()),',');
+		csvWriter = new CsvWriter(new FileWriter(file.getAbsolutePath()),DELIMETER);
 
 		String[] columns = new String[]{"id","name","participantId","firstName","lastName","groupName","questionName",
 				"answer","comment","answerDateTime","Attribute name","Attribute value"};
@@ -84,13 +86,13 @@ public class CsvStatisticService implements IExportFile{
 		}
 		
 		csvWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			LOG.error(e.getMessage());
+			return null;
 		}
 		finally {
 			file.deleteOnExit();
 		}
-		
 		return file;
 	}
 }
