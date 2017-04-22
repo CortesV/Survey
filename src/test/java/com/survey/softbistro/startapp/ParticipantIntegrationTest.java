@@ -2,6 +2,9 @@ package com.survey.softbistro.startapp;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +25,7 @@ import com.softbistro.survey.participant.components.entity.Attributes;
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.entity.ParticipantInGroup;
-import com.softbistro.survey.startapp.SurveySoftBistroApplication;
+import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test for participant dao
@@ -129,8 +132,10 @@ public class ParticipantIntegrationTest {
 		attributeValuesDao.setAttributeValues(attributeValuesTest);
 		
 		participantInGroupTest.setGroupId(idGroup);
-		participantInGroupTest.setParticipantId(idParticipant);
 		
+		List<Integer> batch = new ArrayList<>();
+		batch.add(idParticipant);
+		participantInGroupTest.setParticipantsId(batch);
 		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
 		
 		assertEquals(participantDao.getParticipantByAttributeValue(idAttribute, attributeValuesTest.getValue()).size(), 1);
@@ -155,9 +160,10 @@ public class ParticipantIntegrationTest {
 		attributeValuesDao.setAttributeValues(attributeValuesTest);
 		
 		participantInGroupTest.setGroupId(idGroup);
-		participantInGroupTest.setParticipantId(idParticipant);
 		
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
+		List<Integer> batch = new ArrayList<>();
+		batch.add(idParticipant);
+		participantInGroupTest.setParticipantsId(batch);
 		
 		assertEquals(participantDao.selectClientAllParticipants(groupTest.getClientId()).size(), 1);
 	}

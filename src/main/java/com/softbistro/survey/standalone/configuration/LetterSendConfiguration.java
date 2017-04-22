@@ -1,17 +1,18 @@
-package com.softbistro.survey.startapp;
+package com.softbistro.survey.standalone.configuration;
 
 import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@org.springframework.context.annotation.Configuration
+@Configuration
 @EnableTransactionManagement
 @PropertySource("classpath:application.properties")
-public class Configuration {
+public class LetterSendConfiguration {
 	@Autowired
 	private Environment environment;
 

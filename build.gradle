@@ -1,3 +1,4 @@
+
 buildscript {
 	ext {
 		springBootVersion = '1.5.1.RELEASE'
@@ -63,7 +64,9 @@ dependencies {
 	compile group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
 	compile group: 'commons-io', name: 'commons-io', version: '2.5'
 	
-	
+	compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
+	compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.2'
+	compile group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
 }
 
 task buildDocker(type: Docker, dependsOn: build) {
@@ -80,12 +83,12 @@ task buildDocker(type: Docker, dependsOn: build) {
 
 
 configurations {
-  itestCompile.extendsFrom testCompile
-  itestRuntime.extendsFrom testRuntime
+  intengrationTestCompile.extendsFrom testCompile
+  intengrationTestRuntime.extendsFrom testRuntime
 }
 
 sourceSets {
-  itest {
+  intengrationTest {
     compileClasspath += main.output + test.output
     runtimeClasspath += main.output + test.output
 
@@ -97,11 +100,11 @@ sourceSets {
   }
 }
 
-task itest(type: Test) {
-  testClassesDir = sourceSets.itest.output.classesDir
-  classpath = sourceSets.itest.runtimeClasspath
+task intengrationTest(type: Test) {
+  testClassesDir = sourceSets.intengrationTest.output.classesDir
+  classpath = sourceSets.intengrationTest.runtimeClasspath
 
   testLogging {
     events "passed", "skipped", "failed"
   }
-}
+ }

@@ -16,7 +16,7 @@ import com.softbistro.survey.imports.system.components.entities.ImportGroupQuest
 import com.softbistro.survey.imports.system.components.entities.ImportSurvey;
 import com.softbistro.survey.imports.system.components.services.ImportSurveyDao;
 import com.softbistro.survey.question.components.entity.Question;
-import com.softbistro.survey.startapp.SurveySoftBistroApplication;
+import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test for import survey
