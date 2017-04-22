@@ -1,5 +1,6 @@
 package com.softbistro.survey.imports.system.components.entities;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -13,9 +14,9 @@ import com.softbistro.survey.question.components.entity.Question;
  */
 public class ImportSurvey {
 
-	private Long id;
+	private Integer id;
 
-	private Long clienId;
+	private Integer clienId;
 
 	private String title;
 
@@ -23,21 +24,9 @@ public class ImportSurvey {
 
 	private List<Question> questions;
 
-	public Long getClienId() {
-		return clienId;
-	}
+	private Date startTime;
 
-	public void setClienId(Long clienId) {
-		this.clienId = clienId;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
+	private Date finishTime;
 
 	public String getTitle() {
 		return title;
@@ -61,6 +50,38 @@ public class ImportSurvey {
 
 	public void setQuestions(List<Question> questions) {
 		this.questions = questions;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getClienId() {
+		return clienId;
+	}
+
+	public void setClienId(Integer clienId) {
+		this.clienId = clienId;
+	}
+
+	public Date getFinishTime() {
+		return finishTime;
+	}
+
+	public void setFinishTime(Date finishTime) {
+		this.finishTime = finishTime;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
 	}
 
 }

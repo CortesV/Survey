@@ -41,19 +41,18 @@ public class ImportSurveyController {
 	 * @param clientId
 	 * @return Response
 	 */
-	@ApiOperation(value = "Import Survey", notes = "Import survey from csv file", tags = "Import")
+	@ApiOperation(value = "Import Survey", notes = "Import survey from file", tags = "Import")
 	@RequestMapping(value = "/survey/{client_id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> importSurvey(HttpServletRequest request,
-			@PathVariable(name = "client_id") Long clientId, @RequestHeader String token) {
+			@PathVariable(name = "client_id") Integer clientId, @RequestHeader String token) {
 
-		// if (!authorizationService.checkAccess(token)) {
-		//
-		// return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		// }
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
 
 		try {
 
-			String st = null;
 			importSurveyService.importFile(request, clientId);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {

@@ -9,9 +9,9 @@ import javax.servlet.http.Part;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.softbistro.survey.imports.system.importt.csv.CSVImport;
 import com.softbistro.survey.imports.system.interfaces.IImportSurvey;
 
 /**
@@ -23,8 +23,9 @@ import com.softbistro.survey.imports.system.interfaces.IImportSurvey;
  */
 @Service
 public class ImportSurveyService {
+
 	@Autowired
-	private GenericApplicationContext applicationContext;
+	private CSVImport csvImport;
 
 	/**
 	 * Select service for working with file by format
@@ -32,7 +33,7 @@ public class ImportSurveyService {
 	 * @param request
 	 * @param clientId
 	 */
-	public void importFile(HttpServletRequest request, Long clientId) {
+	public void importFile(HttpServletRequest request, Integer clientId) {
 
 		try {
 			Part filePart = request.getPart("file");
@@ -53,7 +54,7 @@ public class ImportSurveyService {
 
 		switch (format.toUpperCase()) {
 		case "CSV":
-			return (IImportSurvey) applicationContext.getBean("CSVImport");
+			return csvImport;
 
 		default:
 			return null;

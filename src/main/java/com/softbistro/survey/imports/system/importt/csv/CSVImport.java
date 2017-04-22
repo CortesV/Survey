@@ -3,6 +3,10 @@ package com.softbistro.survey.imports.system.importt.csv;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +38,16 @@ public class CSVImport implements IImportSurvey {
 
 	private static final Logger LOGGER = Logger.getLogger(CSVImport.class);
 
+	private static final String GROUP = "Group";
+	private static final String ANSWERS = "Answers";
+	private static final String QUESTIONS = "Questions";
+	private static final String COMMENT = "Comment";
+	private static final String REQUIRED = "Required";
+	private static final String VALUE = "Value";
+
+	private static final String SURVEY_START_TIME = "Start";
+	private static final String SURVEY_FINISH_TIME = "Finish";
+
 	@Autowired
 	private ISurveyDAO iSurveyDAO;
 
@@ -44,24 +58,12 @@ public class CSVImport implements IImportSurvey {
 	 * @return
 	 */
 	@Override
-	public void fromFile(Part filePart, Long clientId) {
+	public void fromFile(Part filePart, Integer clientId) {
 		try {
-			String fullFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+			ImportSurvey importSurvey = prepareSurvey(filePart, clientId);
 
-			// Creating survey object from file
-			ImportSurvey importSurvey = new ImportSurvey();
-			Map<String, Integer> groups = new HashMap<String, Integer>();
-			List<Question> questions = new LinkedList<>();
-
-			importDate(filePart, groups, questions);
-
-			importSurvey.setQuestions(questions);
-			importSurvey.setGroups(groups);
-			importSurvey.setTitle(fullFileName.substring(0, fullFileName.length() - 4));
-			importSurvey.setClienId(clientId);
-
-			// Save survey to database
 			iSurveyDAO.saveSurvey(importSurvey);
+
 		} catch (TypeConstraintException | IOException e) {
 			LOGGER.error(e.getMessage());
 		} finally {
@@ -80,55 +82,84 @@ public class CSVImport implements IImportSurvey {
 	 * @param fileName
 	 * @return
 	 */
-	private void importDate(Part filePart, Map<String, Integer> groups, List<Question> questions) throws IOException {
+	private ImportSurvey prepareSurvey(Part filePart, Integer clientId) throws IOException {
 		CsvReader csvReader = null;
+		ImportSurvey importSurvey = new ImportSurvey();
+
+		Map<String, Integer> groups = new HashMap<String, Integer>();
+		List<Question> questions = new LinkedList<>();
+
 		try {
+			DateFormat dateFormat = new SimpleDateFormat("MM.dd.yyyy");
+
+			String fullFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
 			csvReader = new CsvReader(filePart.getInputStream(), Charset.forName("UTF-8"));
 
 			csvReader.readHeaders();
+			csvReader.readRecord();
+			importSurvey.setStartTime((Date) dateFormat.parse(csvReader.get(SURVEY_START_TIME)));
+			importSurvey.setFinishTime((Date) dateFormat.parse(csvReader.get(SURVEY_FINISH_TIME)));
 
 			while (csvReader.readRecord()) {
-				saveFileData(csvReader, groups, questions);
+				fillQuestionsOnGroups(csvReader, groups, questions);
 			}
+			importSurvey.setQuestions(questions);
+			importSurvey.setGroups(groups);
+			importSurvey.setTitle(fullFileName.substring(0, fullFileName.length() - 4));
+			importSurvey.setClienId(clientId);
 
+		} catch (ParseException e) {
+			LOGGER.error(e.getMessage());
 		} finally {
 			csvReader.close();
 		}
+		return importSurvey;
 	}
 
-	private void saveFileData(CsvReader csvReader, Map<String, Integer> groups, List<Question> questions) {
+	private void fillQuestionsOnGroups(CsvReader csvReader, Map<String, Integer> groups, List<Question> questions) {
 
 		try {
-
-			String answerType = csvReader.get("Answers");
-			String groupName = csvReader.get("Group");
-
-			// Working with questions
-			Question question = new Question();
-			question.setGroupName(groupName);
-			question.setQuestion(csvReader.get("Questions"));
-			question.setRequiredComment(csvReader.get("Comment") == TRUE_VALUE_FROM_FILE);
-			question.setRequired(csvReader.get("Required") == TRUE_VALUE_FROM_FILE);
-			question.setQuestionChoices(csvReader.get("Value"));
-
-			if (answerType.equals("yes|no") || answerType.equals("boolean")) {
-				answerType = "boolean";
-			}
-
-			question.setAnswerType(answerType);
-
-			questions.add(question);
-
-			// Working with groups
+			String groupName = csvReader.get(GROUP);
 			ImportGroupQuestions group = new ImportGroupQuestions();
 			group.setTitle(groupName);
 
 			groups.put(groupName, 0);
 
+			questions.add(prepareQuestion(csvReader));
+
 		} catch (IOException e) {
-			LOGGER.error(e.getMessage());
+			LOGGER.error("Problem with parsing group " + e.getMessage());
 		}
+	}
+
+	private Question prepareQuestion(CsvReader csvReader) {
+		Question question = null;
+		try {
+
+			String answerType = csvReader.get(ANSWERS);
+			String groupName = csvReader.get(GROUP);
+
+			question = new Question();
+			question.setGroupName(groupName);
+
+			question.setQuestion(csvReader.get(QUESTIONS));
+
+			question.setRequiredComment(csvReader.get(COMMENT) == TRUE_VALUE_FROM_FILE);
+			question.setRequired(csvReader.get(REQUIRED) == TRUE_VALUE_FROM_FILE);
+			question.setQuestionChoices(csvReader.get(VALUE));
+
+			if (answerType.equals("yes|no") || answerType.equals("boolean")) {
+				answerType = "BOOLEAN";
+			}
+
+			question.setAnswerType(answerType.toUpperCase());
+
+		} catch (IOException e) {
+			LOGGER.error("Problem with parsing question " + e.getMessage());
+		}
+
+		return question;
 	}
 
 }

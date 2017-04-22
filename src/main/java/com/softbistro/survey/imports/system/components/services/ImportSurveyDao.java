@@ -1,22 +1,21 @@
 package com.softbistro.survey.imports.system.components.services;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.mysql.cj.api.jdbc.Statement;
-import com.softbistro.survey.imports.system.components.entities.ImportGroupQuestions;
 import com.softbistro.survey.imports.system.components.entities.ImportSurvey;
 import com.softbistro.survey.imports.system.components.interfaces.ISurveyDAO;
 import com.softbistro.survey.question.components.entity.Question;
@@ -29,20 +28,19 @@ import com.softbistro.survey.question.components.entity.Question;
 @Repository
 public class ImportSurveyDao implements ISurveyDAO {
 
-	private static final String INSERT_SURVEY = "INSERT INTO survey (client_id, name) VALUES (?,?);";
+	private static final String SQL_INSERT_SURVEY = "INSERT INTO survey (client_id, name, start_time, finish_time) VALUES (?,?,?,?)";
 
-	private static final String INSERT_GROUP = "INSERT INTO question_sections (section_name) VALUES (?);";
+	private static final String SQL_INSERT_GROUP = "INSERT INTO question_sections (section_name) VALUES (?);";
 
-	private static final String INSERT_CONNECT_SECTION_QUESTION_SURVEY = "INSERT INTO connect_question_section_survey (question_section_id, survey_id) VALUES (?,?);";
+	private static final String SQL_CONNECT_GROUP_OF_QUESTIONS_TO_SURVEY = "INSERT INTO connect_question_section_survey (question_section_id, survey_id) VALUES (?,?);";
 
-	private static final String INSERT_QUESTION = "INSERT INTO questions (survey_id, question, question_section_id, answer_type, question_choices, required, required_comment) VALUES (:surveyId, :text, :questionSectionId, :answerType, :questionChoices, :required, :requiredComment);";
+	private static final String SQL_INSERT_QUESTION = "INSERT INTO questions (survey_id, question, question_section_id, answer_type, question_choices, required, required_comment) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-	private static Logger log = Logger.getLogger(ImportSurveyDao.class);
+	private static final Logger LOGGER = Logger.getLogger(ImportSurveyDao.class);
 
 	@Autowired
-	private JdbcTemplate jdbc;
+	private JdbcTemplate jdbcTemplate;
 
-	@Override
 	/**
 	 * Save survey into db
 	 * 
@@ -50,120 +48,206 @@ public class ImportSurveyDao implements ISurveyDAO {
 	 *            survey
 	 * @return Response
 	 */
-	public void saveSurvey(ImportSurvey savedSurvey) {
-
+	@Override
+	@Transactional
+	public void saveSurvey(ImportSurvey importSurvey) {
 		Connection connection = null;
-		NamedParameterJdbcTemplate namedParameterJdbcTemplate = null;
-
 		try {
-			connection = jdbc.getDataSource().getConnection();
-			namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbc.getDataSource());
-			connection.setAutoCommit(false);
+			connection = jdbcTemplate.getDataSource().getConnection();
 
-			savedSurvey.setId(executeStatement(INSERT_SURVEY,
-					new Object[] { savedSurvey.getClienId(), savedSurvey.getTitle() }, connection));
+			insertSurvey(connection, importSurvey);
+			insertGroups(connection, importSurvey);
+			insertQuestions(importSurvey);
 
-			saveQuestions(savedSurvey, namedParameterJdbcTemplate, connection);
-
-			connection.commit();
-			connection.close();
-
+			LOGGER.info("INSERT OF SURVEY DONE");
 		} catch (SQLException e) {
 
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 
 		} finally {
-
 			try {
-
-				if (connection != null && !connection.isClosed())
-					connection.close();
+				connection.close();
 			} catch (SQLException e) {
-
-				log.error(e.getMessage());
+				LOGGER.error(e.getMessage());
 			}
 		}
 
 	}
 
-	/**
-	 * Save batch of questions into db.
-	 * 
-	 * @param savedSurvey
-	 * @param namedParameterJdbcTemplate
-	 * @param connection
-	 * @throws SQLException
-	 */
-	private void saveQuestions(ImportSurvey savedSurvey, NamedParameterJdbcTemplate namedParameterJdbcTemplate,
-			Connection connection) throws SQLException {
+	private ImportSurvey insertSurvey(Connection connection, ImportSurvey importSurvey) {
+		try {
 
-		for (ImportGroupQuestions group : savedSurvey.getGroupQuestions()) {
+			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_SURVEY,
+					Statement.RETURN_GENERATED_KEYS);
 
-			group.setId(executeStatement(INSERT_GROUP, new Object[] { group.getTitle() }, connection));
+			preparedStatement.setInt(1, importSurvey.getClienId());
+			preparedStatement.setString(2, importSurvey.getTitle());
+			preparedStatement.setDate(3, new Date(importSurvey.getStartTime().getTime()));
+			preparedStatement.setDate(4, new Date(importSurvey.getFinishTime().getTime()));
+			preparedStatement.executeUpdate();
 
-			jdbc.update(INSERT_CONNECT_SECTION_QUESTION_SURVEY, new Object[] { group.getId(), savedSurvey.getId() });
+			ResultSet keys = preparedStatement.getGeneratedKeys();
 
-			List<Question> batchQuestions = new ArrayList<>();
-			for (Question question : group.getQuestions()) {
-
-				question.setSurveyId(savedSurvey.getId());
-				question.setQuestionSectionId(group.getId());
-				batchQuestions.add(question);
+			Integer generatedId = 0;
+			if (keys.next()) {
+				generatedId = keys.getInt(1);
 			}
 
-			SqlParameterSource[] sqlBatchQuestions = SqlParameterSourceUtils.createBatch(batchQuestions.toArray());
-			namedParameterJdbcTemplate.batchUpdate(INSERT_QUESTION, sqlBatchQuestions);
+			importSurvey.setId(generatedId);
+
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage());
+		}
+		return importSurvey;
+
+	}
+
+	private void insertGroups(Connection connection, ImportSurvey importSurvey) {
+		try {
+			Map<String, Integer> groups = importSurvey.getGroups();
+
+			Set<String> groupsName = importSurvey.getGroups().keySet();
+
+			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_GROUP,
+					Statement.RETURN_GENERATED_KEYS);
+
+			ResultSet keys;
+
+			// Insert group in the database and connect it to survey
+			for (String groupName : groupsName) {
+				preparedStatement.setString(1, groupName);
+				preparedStatement.executeUpdate();
+
+				keys = preparedStatement.getGeneratedKeys();
+
+				Integer generatedId = 0;
+				if (keys.next()) {
+					generatedId = keys.getInt(1);
+				}
+
+				groups.put(groupName, generatedId);
+
+				// Connect group to survey
+				jdbcTemplate.update(SQL_CONNECT_GROUP_OF_QUESTIONS_TO_SURVEY, groups.get(groupName),
+						importSurvey.getId());
+			}
+
+			importSurvey.setGroups(groups);
+		} catch (SQLException e) {
+			LOGGER.error(e.getMessage());
 		}
 
 	}
 
-	/**
-	 * Execute statement and return generated Id.
-	 * 
-	 * @param preparedStatement
-	 * @return Long
-	 */
-	private Long executeStatement(String query, Object[] attributes, Connection connection) throws SQLException {
+	private void insertQuestions(ImportSurvey importSurvey) {
+		jdbcTemplate.batchUpdate(SQL_INSERT_QUESTION, new BatchPreparedStatementSetter() {
 
-		PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-
-		for (Integer numberAttribute = 0; numberAttribute < attributes.length; numberAttribute++) {
-
-			Object object = attributes[numberAttribute];
-
-			if (object instanceof String) {
-				preparedStatement.setString(numberAttribute + 1, String.valueOf(object));
-				continue;
+			@Override
+			public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
+				Question question = importSurvey.getQuestions().get(i);
+				preparedStatement.setInt(1, importSurvey.getId());
+				preparedStatement.setString(2, question.getQuestion());
+				preparedStatement.setInt(3, importSurvey.getGroups().get(question.getGroupName()));
+				preparedStatement.setString(4, question.getAnswerType());
+				preparedStatement.setString(5, question.getQuestionChoices());
+				preparedStatement.setBoolean(6, question.isRequired());
+				preparedStatement.setBoolean(7, question.isRequiredComment());
 			}
 
-			if (object instanceof Long) {
-				preparedStatement.setLong(numberAttribute + 1, (Long) object);
-				continue;
+			@Override
+			public int getBatchSize() {
+				return importSurvey.getQuestions().size();
 			}
-
-			if (object instanceof Integer) {
-				preparedStatement.setInt(numberAttribute + 1, (Integer) object);
-				continue;
-			}
-
-			if (object instanceof Boolean) {
-				preparedStatement.setBoolean(numberAttribute + 1, (Boolean) object);
-				continue;
-			}
-
-		}
-
-		preparedStatement.executeUpdate();
-		ResultSet keys = preparedStatement.getGeneratedKeys();
-		Long generateId = null;
-
-		if (keys.next()) {
-			generateId = keys.getLong(1);
-		}
-
-		preparedStatement.close();
-		return generateId;
+		});
 
 	}
+
+	// /**
+	// * Save batch of questions into db.
+	// *
+	// * @param savedSurvey
+	// * @param namedParameterJdbcTemplate
+	// * @param connection
+	// * @throws SQLException
+	// */
+	// private void saveQuestions(ImportSurvey savedSurvey,
+	// NamedParameterJdbcTemplate namedParameterJdbcTemplate,
+	// Connection connection) throws SQLException {
+	//
+	// for (ImportGroupQuestions group : savedSurvey.getGroupQuestions()) {
+	//
+	// group.setId(executeStatement(SQL_INSERT_GROUP, new Object[] {
+	// group.getTitle() }, connection));
+	//
+	// jdbcTemplate.update(SQL_CONNECT_GROUP_OF_QUESTIONS_TO_SURVEY,
+	// new Object[] { group.getId(), savedSurvey.getId() });
+	//
+	// List<Question> batchQuestions = new ArrayList<>();
+	// for (Question question : group.getQuestions()) {
+	//
+	// question.setSurveyId(savedSurvey.getId());
+	// question.setQuestionSectionId(group.getId());
+	// batchQuestions.add(question);
+	// }
+	//
+	// SqlParameterSource[] sqlBatchQuestions =
+	// SqlParameterSourceUtils.createBatch(batchQuestions.toArray());
+	// namedParameterJdbcTemplate.batchUpdate(SQL_INSERT_QUESTION,
+	// sqlBatchQuestions);
+	// }
+	//
+	// }
+	//
+	// /**
+	// * Execute statement and return generated Id.
+	// *
+	// * @param preparedStatement
+	// * @return Long
+	// */
+	// private Long executeStatement(String query, Object[] attributes,
+	// Connection connection) throws SQLException {
+	//
+	// PreparedStatement preparedStatement = connection.prepareStatement(query,
+	// Statement.RETURN_GENERATED_KEYS);
+	//
+	// for (Integer numberAttribute = 0; numberAttribute < attributes.length;
+	// numberAttribute++) {
+	//
+	// Object object = attributes[numberAttribute];
+	//
+	// if (object instanceof String) {
+	// preparedStatement.setString(numberAttribute + 1, String.valueOf(object));
+	// continue;
+	// }
+	//
+	// if (object instanceof Long) {
+	// preparedStatement.setLong(numberAttribute + 1, (Long) object);
+	// continue;
+	// }
+	//
+	// if (object instanceof Integer) {
+	// preparedStatement.setInt(numberAttribute + 1, (Integer) object);
+	// continue;
+	// }
+	//
+	// if (object instanceof Boolean) {
+	// preparedStatement.setBoolean(numberAttribute + 1, (Boolean) object);
+	// continue;
+	// }
+	//
+	// }
+	//
+	// preparedStatement.executeUpdate();
+	// ResultSet keys = preparedStatement.getGeneratedKeys();
+	// Long generateId = null;
+	//
+	// if (keys.next()) {
+	// generateId = keys.getLong(1);
+	// }
+	//
+	// preparedStatement.close();
+	// return generateId;
+	//
+	// }
 
 }

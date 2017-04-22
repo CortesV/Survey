@@ -1,6 +1,5 @@
 package com.survey.softbistro.startapp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -14,9 +13,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.imports.system.components.entities.ImportGroupQuestions;
-import com.softbistro.survey.imports.system.components.entities.Question;
 import com.softbistro.survey.imports.system.components.entities.ImportSurvey;
 import com.softbistro.survey.imports.system.components.services.ImportSurveyDao;
+import com.softbistro.survey.question.components.entity.Question;
 import com.softbistro.survey.startapp.SurveySoftBistroApplication;
 
 /**
