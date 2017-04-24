@@ -1,4 +1,4 @@
-package com.softbistro.survey.daemons.notification.system.interfacee;
+package com.softbistro.survey.daemons.notification.system.interfaces;
 
 /**
  * For sending messages

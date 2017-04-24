@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +14,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.daemons.notification.system.component.interfacee.ISendingMessage;
+import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
 
 @Repository
 @Scope("prototype")
@@ -27,6 +28,7 @@ public class MessageDao implements ISendingMessage {
 	private static final String SQL_UPDATE_LIST_NEW_CLIENTS = "UPDATE notification SET status='IN_PROCESS' WHERE status = ? LIMIT ?";
 
 	@Autowired
+	@Qualifier("jdbcNotificationSystem")
 	private JdbcTemplate jdbcTemplate;
 
 	/**
@@ -52,8 +54,7 @@ public class MessageDao implements ISendingMessage {
 	/**
 	 * Get an e-mails that need send
 	 * 
-	 * @param page
-	 * @return
+	 * @return List<Notification>
 	 */
 	@Override
 	public List<Notification> getEmailsForSending() {

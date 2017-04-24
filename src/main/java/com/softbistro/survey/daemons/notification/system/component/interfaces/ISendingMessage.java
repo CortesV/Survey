@@ -1,4 +1,4 @@
-package com.softbistro.survey.daemons.notification.system.component.interfacee;
+package com.softbistro.survey.daemons.notification.system.component.interfaces;
 
 import java.util.List;
 
