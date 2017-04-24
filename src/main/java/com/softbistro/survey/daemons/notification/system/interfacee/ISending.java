@@ -1,15 +1,12 @@
-package com.softbistro.survey.notification.system.interfacee;
+package com.softbistro.survey.daemons.notification.system.interfacee;
 
 /**
  * For sending messages
  * 
- * @author zviproject
- *
  */
 public interface ISending {
 	/**
 	 * Sending message on email
 	 */
 	public void sendMessage();
-
 }
