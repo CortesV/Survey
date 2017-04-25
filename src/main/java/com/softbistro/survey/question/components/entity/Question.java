@@ -7,26 +7,28 @@ package com.softbistro.survey.question.components.entity;
  *
  */
 public class Question {
-	
+
 	private Integer id;
-	
+
 	private Integer surveyId;
-	
+
 	private String question;
-	
+
 	private String descriptionShort;
-	
+
 	private String descriptionLong;
-	
+
 	private Integer questionSectionId;
-	
+
 	private String answerType;
-	
+
 	private String questionChoices;
-	
+
 	private Boolean required;
-	
+
 	private Boolean requiredComment;
+
+	private String groupName;
 
 	public Integer getId() {
 		return id;
@@ -106,5 +108,13 @@ public class Question {
 
 	public void setRequiredComment(Boolean requiredComment) {
 		this.requiredComment = requiredComment;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 }

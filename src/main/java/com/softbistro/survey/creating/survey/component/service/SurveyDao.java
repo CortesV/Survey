@@ -36,7 +36,8 @@ public class SurveyDao implements ISurveyDao {
 			+ "LEFT JOIN sending_survey AS ss ON ss.survey_id = survey.id "
 			+ "SET ss.answer_status= 'STOPPED', `delete`=1  WHERE survey.id = ? ";
 
-	private static final String SQL_UPDATE_STATUS_OF_STARTED_SURVEY = "UPDATE survey SET `status`= 'NEW', start_time = ? WHERE survey.id = ?";
+	private static final String SQL_PREPARE_START_TIME_OF_SURVEY = "UPDATE survey SET start_time = ? WHERE survey.id = ? && ISNULL(`start_time`)";
+	private static final String SQL_UPDATE_STATUS_OF_STARTED_SURVEY = "UPDATE survey SET `status`= 'NEW' WHERE survey.id = ?";
 
 	private static final String SQL_UPDATE_STATUS_OF_STOPPED_SURVEY = "UPDATE sending_survey SET answer_status = 'STOPPED' WHERE survey_id = ?";
 
@@ -204,7 +205,8 @@ public class SurveyDao implements ISurveyDao {
 	@Override
 	public void start(Integer surveyId) {
 		LocalDate date = LocalDate.now();
-		jdbcTemplate.update(SQL_UPDATE_STATUS_OF_STARTED_SURVEY, date, surveyId);
+		jdbcTemplate.update(SQL_PREPARE_START_TIME_OF_SURVEY, date, surveyId);
+		jdbcTemplate.update(SQL_UPDATE_STATUS_OF_STARTED_SURVEY, surveyId);
 	}
 
 	/**

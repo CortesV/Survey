@@ -2,18 +2,20 @@ package com.softbistro.survey.imports.system.components.entities;
 
 import java.util.List;
 
+import com.softbistro.survey.question.components.entity.Question;
+
 /**
- * Entity for group of questions. 
+ * Entity for group of questions.
  * 
  * @author olegnovatskiy
  *
  */
-public class GroupQuestions {
+public class ImportGroupQuestions {
 
 	private Long id;
-	
+
 	private String title;
-	
+
 	private List<Question> questions;
 
 	public Long getId() {
