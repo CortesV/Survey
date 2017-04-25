@@ -10,7 +10,6 @@ import javax.mail.Session;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -26,32 +25,35 @@ public class NotificationService implements Runnable {
 	@Autowired
 	private ISendingMessage iSendingMessage;
 
+	@Autowired
+	private Properties propertiesSurvey;
+
 	/**
 	 * Data about account that will sending messages
 	 */
-	@Value("${client.mail.username}")
-	protected String username;
-
-	@Value("${client.mail.password}")
-	protected String password;
-
-	@Autowired
-	private Properties propertiesClient;
+	private String username;
+	private String password;
 
 	public void send() {
-		Session session = Session.getInstance(propertiesClient, new Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(username, password);
-			}
-		});
 
 		List<Notification> messages = iSendingMessage.getEmailsForSending();
 
 		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
+			
+			username = messages.get(emailIndex).getSenderEmail();
+			password = messages.get(emailIndex).getSenderPassword();
+
+			Session session = Session.getInstance(propertiesSurvey, new Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(username, password);
+				}
+			});
+
 			Thread thread = new Thread(new MessageEmailThread(session, messages, emailIndex,
 					messages.get(emailIndex).getHeader(), messages.get(emailIndex).getBody(), username));
 			thread.start();
-			log.info(String.format("Receiver email: %s", messages.get(emailIndex).getReceiverEmail()));
+			log.info(String.format("Sender email: %s | Receiver email: %s", messages.get(emailIndex).getSenderEmail(),
+					messages.get(emailIndex).getReceiverEmail()));
 		}
 
 	}
