@@ -67,6 +67,9 @@ dependencies {
 	compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
 	compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.2'
 	compile group: 'net.sourceforge.javacsv', name: 'javacsv', version: '2.0'
+	
+	
+
 }
 
 task buildDocker(type: Docker, dependsOn: build) {
@@ -108,3 +111,11 @@ task intengrationTest(type: Test) {
     events "passed", "skipped", "failed"
   }
  }
+ 
+ 
+springBoot {
+    mainClass = 'com.softbistro.survey.standalone.SurveySoftBistroApplication'
+    agent = file('src/main/resources/newrelic/newrelic.jar')			
+}
+ 
+ 
