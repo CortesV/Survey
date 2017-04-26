@@ -1,4 +1,4 @@
-package com.softbistro.survey.notification.system.service;
+package com.softbistro.survey.daemons.notification.system.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +22,15 @@ import com.softbistro.survey.notification.system.component.entity.RegistrationMe
 import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
 
 /**
- * For creating and sending message that will contain information about changed
- * password
+ * For creating and sending message that will contain information about new
+ * user for confirm registration
  * 
- * @author alex_alokhin, zvproject
+ * @author alex_alokhin, zviproject
  *
  */
 @Service
 @Scope("prototype")
-public class ChangePasswordMessageService implements Runnable, ICreateMessage<RegistrationMessage> {
-
+public class RegistrationMessageServise implements Runnable, ICreateMessage<RegistrationMessage> {
 	private Logger log = LogManager.getLogger(getClass());
 
 	@Autowired
@@ -40,15 +39,16 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage<Re
 	/**
 	 * Data about account that will sending messages
 	 */
-	@Value("${password.mail.username}")
+	@Value("${client.mail.username}")
 	protected String username;
 
-	@Value("${password.text.for.sending.url}")
+	@Value("${client.text.for.sending.url}")
 	String url;
 
 	@Override
 	public void send() {
-		ArrayList<String> emails = iSendingMessage.getEmailOfNewPassword();
+		ArrayList<String> emails = iSendingMessage.getEmailOfNewClients();
+
 		for (int emailIndex = 0; emailIndex < emails.size(); emailIndex++) {
 			String uuid = UUID.randomUUID().toString();
 			Notification notification = new Notification();
@@ -60,22 +60,21 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage<Re
 			iSendingMessage.insertIntoNotification(notification);
 			log.info(String.format("Password email: %s", emails.get(emailIndex)));
 		}
-
 	}
 
 	@Override
-	public String generateTextForMessage(String mail, String uuid) {
+	public String generateTextForMessage(String email, String uuid) {
 		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
-				"Changed password on account with email \"%s\" \n" + "For confirm click on URL : %s",
-				mail, urlForVote);
+				"Registration new account with email \"%s\" \n" + "For confirm click on URL : %s",
+				email, urlForVote);
 		return textMessage;
 	}
 
 	@Override
 	public String generateThemeForMessage() {
-		return String.format("Changed password");
+		return String.format("Registration");
 	}
 
 	@Override

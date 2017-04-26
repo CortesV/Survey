@@ -15,16 +15,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
+import com.softbistro.survey.notification.system.component.entity.RegistrationMessage;
 import com.softbistro.survey.notification.system.component.entity.SurveyMessage;
-import com.softbistro.survey.notification.system.component.interfacee.ISendingMessage;
 import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
-import com.softbistro.survey.notification.system.threads.MessageSurveyThread;
 
 /**
- * For createing and sending message, that will contain information about survey
+ * For creating and sending message, that will contain information about survey
  * for participant
  * 
- * @author zviproject
+ * @author alex_alokhin, zviproject
  *
  */
 @Service
@@ -41,52 +42,39 @@ public class SurveyMessageService implements Runnable, ICreateMessage<SurveyMess
 	@Value("${survey.mail.username}")
 	protected String username;
 
-	@Value("${survey.mail.password}")
-	protected String password;
-
 	@Value("${survey.text.for.sending.url}")
 	protected String url;
 
-	@Autowired
-	private Properties propertiesSurvey;
-
 	/**
-	 * Sending message from main accaunt to email of users
+	 * Sending message from main account to email of users
 	 * 
 	 * @param toEmail
 	 *            - receiver message
 	 */
 	public void send() {
+		List<String> emails = iSendingMessage.getEmailsForSendingSurvey();
 
-		Session session = Session.getInstance(propertiesSurvey, new Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(username, password);
-			}
-		});
-
-		List<SurveyMessage> messages = iSendingMessage.getEmailsForSending();
-		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
-
+		for (int emailIndex = 0; emailIndex < emails.size(); emailIndex++) {
 			String uuid = UUID.randomUUID().toString();
-			Thread thread = new Thread(new MessageSurveyThread(session, messages, emailIndex, generateThemeForMessage(),
-					generateTextForMessage(messages.get(emailIndex), uuid), username, iSendingMessage, uuid));
-			thread.start();
-
-			log.info(String.format("Survey email: %s", messages.get(emailIndex).getParticipantEmail()));
+			Notification notification = new Notification();
+			notification.setSenderEmail(username);
+			notification.setBody(generateTextForMessage(emails.get(emailIndex), uuid));
+			notification.setHeader(generateThemeForMessage());
+			notification.setReceiverEmail(emails.get(emailIndex));
+			
+			iSendingMessage.insertIntoNotification(notification);
+			log.info(String.format("Password email: %s", emails.get(emailIndex)));
 
 		}
-
 	}
 
 	@Override
-	public String generateTextForMessage(SurveyMessage message, String uuid) {
+	public String generateTextForMessage(String email, String uuid) {
 		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
-				"Survey with name \"%s\" by \"%s\" was created.\n Survey will be from \" %tD \" to \" %tD \" \n"
-						+ "You can vote by clicking on URL : %s",
-				message.getSurveyName(), message.getClientName(), message.getSurveyStartTime(),
-				message.getSurveyFinashTime(), urlForVote);
+				"Participant with mail \"%s\" started survey\nYou can vote by clicking on URL : %s",
+				email, urlForVote);
 		return textMessage;
 	}
 

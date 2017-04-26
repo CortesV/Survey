@@ -36,12 +36,12 @@ public class ClientDao implements IClient {
 	private static final String SELECT_CLIENT_SECOND_PART = " = ? and clients.`delete` = 0";
 	private static final String FIND_CLIENT_BY_ID = "SELECT * FROM clients  WHERE clients.id = ? and clients.`delete` = 0";
 	private static final String FIND_CLIENT = "SELECT * FROM clients  WHERE clients.email = ? or clients.client_name = ? and clients.`delete` = 0";
-	private static final String SAVE_CLIENT = "INSERT INTO clients (client_name, password, email) VALUES(?, ?, ?)";
+	private static final String SAVE_CLIENT = "INSERT INTO clients (client_name, password, email,status) VALUES(?, ?, ?,'NEW')";
 	private static final String SAVE_FACEBOOK_CLIENT = "INSERT INTO clients (client_name, facebook_id, email) VALUES(?, ?, ?)";
 	private static final String SAVE_GOOGLE_CLIENT = "INSERT INTO clients (client_name, google_id, email) VALUES(?, ?, ?)";
 	private static final String UPDATE_CLIENT = "UPDATE clients SET client_name = ?, email = ?, password = ?, facebook_id = ?, google_id = ? WHERE id = ?";
 	private static final String DELETE_CLIENT = "UPDATE clients as sc SET sc.`delete` = '1' WHERE sc.id = ?";
-	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE clients SET password = ? WHERE id = ?";
+	private static final String UPDATE_CLIENT_PASSWORD = "UPDATE clients SET password = ?, status = 'VERIFY_PASSWORD' WHERE id = ?";
 	private static final String FACEBOOK = "facebook";
 	private static final String GOOGLE = "google";
 	private static final String ADD_SOC_INFO = "Add social info answer --- Info add successful";

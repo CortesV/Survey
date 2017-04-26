@@ -1,4 +1,4 @@
-package com.softbistro.survey.notification.system.service;
+package com.softbistro.survey.daemons.notification.system.service;
 
 import java.util.ArrayList;
 import java.util.List;

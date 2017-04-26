@@ -20,7 +20,7 @@ import com.softbistro.survey.notification.system.component.interfacee.ISendingMe
 
 @Repository
 @Scope("prototype")
-public class MessageDao implements ISendingMessage {
+public class Messagedao implements ISendingMessage {
 
 	@Value("${count.of.records}")
 	private int countOfRecords;

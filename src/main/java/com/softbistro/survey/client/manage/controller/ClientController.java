@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
+import com.softbistro.survey.notification.system.service.ChangePasswordMessageService;
+import com.softbistro.survey.notification.system.service.RegistrationMessageServise;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -35,6 +37,11 @@ public class ClientController {
 	@Autowired
 	private AuthorizationService authorizationService;
 
+	@Autowired
+	private ChangePasswordMessageService changePassService;
+	
+	@Autowired
+	private RegistrationMessageServise registrationService;
 	/**
 	 * Find client in database by id of client
 	 * 
@@ -75,9 +82,13 @@ public class ClientController {
 	public ResponseEntity<Client> saveClient(@RequestBody Client client) {
 
 		try {
-
-			return clientService.saveClient(client) == null ? new ResponseEntity<>(HttpStatus.OK)
-					: new ResponseEntity<>(HttpStatus.CREATED);
+			if(clientService.saveClient(client) == null) {
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+			else{
+				registrationService.send();
+				return new ResponseEntity<>(HttpStatus.CREATED);
+			}
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
@@ -158,17 +169,18 @@ public class ClientController {
 	 */
 	@ApiOperation(value = "Update Client Password By Id", notes = "Update Client password by password and client id", tags = "Client")
 	@RequestMapping(value = "/password/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Client> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id,
-			@RequestHeader String token) {
+	public ResponseEntity<Client> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id/*,
+			@RequestHeader String token*/) {
 
-		if (!authorizationService.checkAccess(token)) {
+		/*if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-
+*/
 		try {
 
 			clientService.updatePassword(client, id);
+			changePassService.send();
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 

@@ -1,5 +1,6 @@
 package com.softbistro.survey.notification.system.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -15,16 +16,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
 import com.softbistro.survey.notification.system.component.entity.RegistrationMessage;
-import com.softbistro.survey.notification.system.component.interfacee.ISendingMessage;
 import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
-import com.softbistro.survey.notification.system.threads.MessageClientEmailThread;
 
 /**
- * For createing and sending message that will contain information about new
+ * For creating and sending message that will contain information about new
  * user for confirm registration
  * 
- * @author zviproject
+ * @author alex_alokhin, zviproject
  *
  */
 @Service
@@ -33,7 +34,7 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Regi
 	private Logger log = LogManager.getLogger(getClass());
 
 	@Autowired
-	private ISendingMessage iSurveyMessage;
+	private ISendingMessage iSendingMessage;
 
 	/**
 	 * Data about account that will sending messages
@@ -41,43 +42,33 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Regi
 	@Value("${client.mail.username}")
 	protected String username;
 
-	@Value("${client.mail.password}")
-	protected String password;
-
 	@Value("${client.text.for.sending.url}")
 	String url;
 
-	@Autowired
-	private Properties propertiesClient;
-
 	@Override
 	public void send() {
-		Session session = Session.getInstance(propertiesClient, new Authenticator() {
-			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(username, password);
-			}
-		});
+		ArrayList<String> emails = iSendingMessage.getEmailOfNewClients();
 
-		List<RegistrationMessage> messages = iSurveyMessage.getEmailOfNewClients();
-
-		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
+		for (int emailIndex = 0; emailIndex < emails.size(); emailIndex++) {
 			String uuid = UUID.randomUUID().toString();
-			Thread thread = new Thread(
-					new MessageClientEmailThread(session, messages, emailIndex, generateThemeForMessage(),
-							generateTextForMessage(messages.get(emailIndex), uuid), username, iSurveyMessage, uuid));
-			thread.start();
-			log.info(String.format("Register email: %s", messages.get(emailIndex).getClientEmail()));
+			Notification notification = new Notification();
+			notification.setSenderEmail(username);
+			notification.setBody(generateTextForMessage(emails.get(emailIndex), uuid));
+			notification.setHeader(generateThemeForMessage());
+			notification.setReceiverEmail(emails.get(emailIndex));
+			
+			iSendingMessage.insertIntoNotification(notification);
+			log.info(String.format("Password email: %s", emails.get(emailIndex)));
 		}
-
 	}
 
 	@Override
-	public String generateTextForMessage(RegistrationMessage client, String uuid) {
+	public String generateTextForMessage(String email, String uuid) {
 		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
-				"Registration new account with name \"%s\" \n" + "For confirm click on URL : %s",
-				client.getClientName(), urlForVote);
+				"Registration new account with email \"%s\" \n" + "For confirm click on URL : %s",
+				email, urlForVote);
 		return textMessage;
 	}
 
