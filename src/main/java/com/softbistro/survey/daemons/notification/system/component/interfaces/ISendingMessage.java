@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.notificationDB.component.entity.RegistrationMessage;
-import com.softbistro.survey.notificationDB.component.entity.SurveyMessage;
 /**
  * Methods for working with notification
  * 

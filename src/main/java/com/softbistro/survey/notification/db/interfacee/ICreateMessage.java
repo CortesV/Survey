@@ -1,9 +1,7 @@
 package com.softbistro.survey.notification.db.interfacee;
 
-import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.notificationDB.component.entity.RegistrationMessage;
-
 public interface ICreateMessage<T> {
+	
 	/**
 	 * Sending message on email
 	 * 
@@ -24,6 +22,6 @@ public interface ICreateMessage<T> {
 	 * @param email, uuid
 	 * @return
 	 */
-	String generateTextForMessage(String email, String uuid);
+	public String generateTextForMessage(String email, String uuid);
 
 }
