@@ -23,7 +23,7 @@ import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
  */
 @Service
 @Scope("prototype")
-public class ChangePasswordMessageService implements Runnable, ICreateMessage<Notification> {
+public class ChangePasswordMessageService implements Runnable, ICreateMessage {
 
 	private Logger log = LogManager.getLogger(getClass());
 
@@ -38,7 +38,10 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage<No
 
 	@Value("${password.text.for.sending.url}")
 	String url;
-
+	
+	/**
+	 * Sending message to database
+	 */
 	@Override
 	public void send() {
 		ArrayList<String> emails = iSendingMessage.getEmailOfNewPassword();
@@ -55,7 +58,12 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage<No
 		}
 
 	}
-
+	
+	/**
+	 * Generate text for message
+	 * 
+	 * @param email, uuid
+	 */
 	@Override
 	public String generateTextForMessage(String mail, String uuid) {
 		String urlForVote = url + uuid;
@@ -65,7 +73,10 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage<No
 				mail, urlForVote);
 		return textMessage;
 	}
-
+	
+	/**
+	 * Generate theme of message
+	 */
 	@Override
 	public String generateThemeForMessage() {
 		return String.format("Changed password");

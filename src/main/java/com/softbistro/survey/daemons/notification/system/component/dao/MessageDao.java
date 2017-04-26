@@ -49,7 +49,7 @@ public class MessageDao implements ISendingMessage {
 	private static final String SQL_GET_EMAIL_OF_NEW_CLIENTS = "SELECT email FROM clients "
 			+ "WHERE clients.status='NEW'  LIMIT ? ";
 
-	private static final String SQL_INSERT_NOTIFICATION = "INSERT INTO notification(`from`,`cc`, `to`, `header`, `body`,`status`) VALUES (?,?,?,?,?,?)";
+	private static final String SQL_INSERT_NOTIFICATION = "INSERT INTO notification(`from`,`cc`, `to`, `header`, `body`,`status`) VALUES (?,?,?,?,?,'NEW')";
 	
 	private static final String SQL_UPDATE_NEW_CLIENTS = "UPDATE clients SET status='DONE' WHERE status = ? LIMIT ?";
 	
@@ -93,8 +93,7 @@ public class MessageDao implements ISendingMessage {
 	public List<Notification> getEmailsForSending() {
 		List<Notification> emailsForSending = new ArrayList<>();
 		emailsForSending = jdbcTemplateNotification.query(SQL_GET_LIST_EMAIL_NEED_TO_SEND, new ConnectToDB(), countOfRecords);
-
-		jdbcTemplateNotification.update(SQL_UPDATE_LIST_NEW_CLIENTS, "NEW", countOfRecords);
+ 		jdbcTemplateNotification.update(SQL_UPDATE_LIST_NEW_CLIENTS, "NEW", countOfRecords);
 		return emailsForSending;
 	}
 	
@@ -126,9 +125,7 @@ public class MessageDao implements ISendingMessage {
 		jdbcTemplateClient.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
 		
 		return clientsEmails;
-
 	}
-	
 
 	/**
 	 * Get mails of clients that have registration process
@@ -182,7 +179,7 @@ public class MessageDao implements ISendingMessage {
 	@Override
 	public void insertIntoNotification(Notification notification){
 		jdbcTemplateNotification.update(SQL_INSERT_NOTIFICATION, new Object[]{notification.getSenderEmail(),notification.getReceiverCCEmail(),
-					notification.getReceiverEmail(),notification.getHeader(),notification.getBody(),"NEW"});
+					notification.getReceiverEmail(),notification.getHeader(),notification.getBody()});
 	}
 	
 }

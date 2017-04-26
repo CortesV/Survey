@@ -29,7 +29,7 @@ import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
  */
 @Service
 @Scope("prototype")
-public class RegistrationMessageServise implements Runnable, ICreateMessage<Notification> {
+public class RegistrationMessageServise implements Runnable, ICreateMessage {
 	private Logger log = LogManager.getLogger(getClass());
 
 	@Autowired
@@ -43,7 +43,10 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Noti
 
 	@Value("${client.text.for.sending.url}")
 	String url;
-
+	
+	/**
+	 * Sending message to database
+	 */
 	@Override
 	public void send() {
 		ArrayList<String> emails = iSendingMessage.getEmailOfNewClients();
@@ -60,7 +63,12 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Noti
 			log.info(String.format("Password email: %s", emails.get(emailIndex)));
 		}
 	}
-
+	
+	/**
+	 * Generate text for message
+	 * 
+	 * @param email, uuid
+	 */
 	@Override
 	public String generateTextForMessage(String email, String uuid) {
 		String urlForVote = url + uuid;
@@ -71,6 +79,9 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Noti
 		return textMessage;
 	}
 
+	/**
+	 * Generate theme of message
+	 */
 	@Override
 	public String generateThemeForMessage() {
 		return String.format("Registration");

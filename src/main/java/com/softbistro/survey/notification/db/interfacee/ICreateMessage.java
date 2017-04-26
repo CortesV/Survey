@@ -1,18 +1,20 @@
 package com.softbistro.survey.notification.db.interfacee;
 
-public interface ICreateMessage<T> {
+/**Methods for creating messages for notification
+ * 
+ * @author zviproject,alex_alokhin
+ *
+ * @param <T>
+ */
+public interface ICreateMessage {
 	
 	/**
-	 * Sending message on email
-	 * 
-	 * @param page
+	 * Sending message to database
 	 */
 	public void send();
 	
 	/**
 	 * Generate theme of message
-	 * 
-	 * @return
 	 */
 	public String generateThemeForMessage();
 
@@ -20,7 +22,6 @@ public interface ICreateMessage<T> {
 	 * Generate text for message
 	 * 
 	 * @param email, uuid
-	 * @return
 	 */
 	public String generateTextForMessage(String email, String uuid);
 
