@@ -1,7 +1,7 @@
-package com.softbistro.survey.notification.system.interfacee;
+package com.softbistro.survey.notification.db.interfacee;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.notification.system.component.entity.RegistrationMessage;
+import com.softbistro.survey.notificationDB.component.entity.RegistrationMessage;
 
 public interface ICreateMessage<T> {
 	/**

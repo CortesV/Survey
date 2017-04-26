@@ -1,6 +1,5 @@
-package com.softbistro.survey.notification.system.service;
+package com.softbistro.survey.notification.db.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -18,19 +17,19 @@ import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
-import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
+import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 
 /**
- * For creating and sending message that will contain information about new
- * user for confirm registration
+ * For creating and sending message, that will contain information about survey
+ * for participant
  * 
  * @author alex_alokhin, zviproject
  *
  */
 @Service
 @Scope("prototype")
-public class RegistrationMessageServise implements Runnable, ICreateMessage<Notification> {
-	private Logger log = LogManager.getLogger(getClass());
+public class SurveyMessageService implements Runnable, ICreateMessage<Notification> {
+	private static final Logger log = LogManager.getLogger(SurveyMessageService.class);
 
 	@Autowired
 	private ISendingMessage iSendingMessage;
@@ -38,15 +37,20 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Noti
 	/**
 	 * Data about account that will sending messages
 	 */
-	@Value("${client.mail.username}")
+	@Value("${survey.mail.username}")
 	protected String username;
 
-	@Value("${client.text.for.sending.url}")
-	String url;
+	@Value("${survey.text.for.sending.url}")
+	protected String url;
 
-	@Override
+	/**
+	 * Sending message from main account to email of users
+	 * 
+	 * @param toEmail
+	 *            - receiver message
+	 */
 	public void send() {
-		ArrayList<String> emails = iSendingMessage.getEmailOfNewClients();
+		List<String> emails = iSendingMessage.getEmailsForSendingSurvey();
 
 		for (int emailIndex = 0; emailIndex < emails.size(); emailIndex++) {
 			String uuid = UUID.randomUUID().toString();
@@ -58,6 +62,7 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Noti
 			
 			iSendingMessage.insertIntoNotification(notification);
 			log.info(String.format("Password email: %s", emails.get(emailIndex)));
+
 		}
 	}
 
@@ -66,14 +71,14 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage<Noti
 		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
-				"Registration new account with email \"%s\" \n" + "For confirm click on URL : %s",
+				"Participant with mail \"%s\" started survey\nYou can vote by clicking on URL : %s",
 				email, urlForVote);
 		return textMessage;
 	}
 
 	@Override
 	public String generateThemeForMessage() {
-		return String.format("Registration");
+		return String.format("Survey");
 	}
 
 	@Override

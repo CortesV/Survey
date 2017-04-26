@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
-import com.softbistro.survey.notification.system.service.ChangePasswordMessageService;
-import com.softbistro.survey.notification.system.service.RegistrationMessageServise;
+import com.softbistro.survey.notification.db.service.ChangePasswordMessageService;
+import com.softbistro.survey.notification.db.service.RegistrationMessageServise;
 
 import io.swagger.annotations.ApiOperation;
 

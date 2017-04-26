@@ -16,7 +16,7 @@ import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.creating.survey.component.entity.Group;
 import com.softbistro.survey.creating.survey.component.entity.Survey;
 import com.softbistro.survey.creating.survey.service.SurveyService;
-import com.softbistro.survey.notification.system.service.SurveyMessageService;
+import com.softbistro.survey.notification.db.service.SurveyMessageService;
 
 import io.swagger.annotations.ApiOperation;
 
