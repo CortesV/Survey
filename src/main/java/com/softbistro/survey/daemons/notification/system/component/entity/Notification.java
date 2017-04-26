@@ -2,6 +2,8 @@ package com.softbistro.survey.daemons.notification.system.component.entity;
 
 public class Notification {
 	private String senderEmail;
+	private String senderPassword;
+	private String senderDescription;
 	private String receiverCCEmail;
 	private String receiverEmail;
 	private String header;
@@ -13,6 +15,22 @@ public class Notification {
 
 	public void setSenderEmail(String senderEmail) {
 		this.senderEmail = senderEmail;
+	}
+
+	public String getSenderPassword() {
+		return senderPassword;
+	}
+
+	public void setSenderPassword(String senderPassword) {
+		this.senderPassword = senderPassword;
+	}
+
+	public String getSenderDescription() {
+		return senderDescription;
+	}
+
+	public void setSenderDescription(String senderDescription) {
+		this.senderDescription = senderDescription;
 	}
 
 	public String getReceiverCCEmail() {

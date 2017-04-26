@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
-import com.softbistro.survey.notification.system.component.entity.RegistrationMessage;
-import com.softbistro.survey.notification.system.component.entity.SurveyMessage;
 import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
 
 /**
@@ -30,7 +28,7 @@ import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
  */
 @Service
 @Scope("prototype")
-public class SurveyMessageService implements Runnable, ICreateMessage<SurveyMessage> {
+public class SurveyMessageService implements Runnable, ICreateMessage<Notification> {
 	private static final Logger log = LogManager.getLogger(SurveyMessageService.class);
 
 	@Autowired

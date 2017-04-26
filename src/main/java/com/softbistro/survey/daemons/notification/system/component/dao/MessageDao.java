@@ -25,10 +25,12 @@ import com.softbistro.survey.daemons.notification.system.component.interfaces.IS
 @Repository
 @Scope("prototype")
 public class MessageDao implements ISendingMessage {
+
 	@Value("${count.of.records}")
 	private int countOfRecords;
 
-	private static final String SQL_GET_LIST_EMAIL_NEW_CLIENTS = "SELECT `from`,`cc`, `to`, `header`, `body` FROM notification "
+	private static final String SQL_GET_LIST_EMAIL_NEED_TO_SEND = "SELECT `from`, `password`, description, `cc`, `to`, `header`, `body` "
+			+ "FROM notification AS n JOIN sender AS s ON n.from=s.sender_email "
 			+ "WHERE (status='NEW' and `to` !='')  LIMIT ? ";
 
 	private static final String SQL_UPDATE_LIST_NEW_CLIENTS = "UPDATE notification SET status='PROCESSED' WHERE status = ? LIMIT ?";
@@ -72,10 +74,12 @@ public class MessageDao implements ISendingMessage {
 			Notification message = new Notification();
 
 			message.setSenderEmail(rs.getString(1));
-			message.setReceiverCCEmail(rs.getString(2));
-			message.setReceiverEmail(rs.getString(3));
-			message.setHeader(rs.getString(4));
-			message.setBody(rs.getString(5));
+			message.setSenderPassword(rs.getString(2));
+			message.setSenderDescription(rs.getString(3));
+			message.setReceiverCCEmail(rs.getString(4));
+			message.setReceiverEmail(rs.getString(5));
+			message.setHeader(rs.getString(6));
+			message.setBody(rs.getString(7));
 
 			return message;
 		}
@@ -89,12 +93,10 @@ public class MessageDao implements ISendingMessage {
 	@Override
 	public List<Notification> getEmailsForSending() {
 		List<Notification> emailsForSending = new ArrayList<>();
-		emailsForSending = jdbcTemplateNotification.query(SQL_GET_LIST_EMAIL_NEW_CLIENTS, new ConnectToDB(),
-				countOfRecords);
+		emailsForSending = jdbcTemplateNotification.query(SQL_GET_LIST_EMAIL_NEED_TO_SEND, new ConnectToDB(), countOfRecords);
 
 		jdbcTemplateNotification.update(SQL_UPDATE_LIST_NEW_CLIENTS, "NEW", countOfRecords);
 		return emailsForSending;
-
 	}
 	
 	/**
