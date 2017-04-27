@@ -48,11 +48,11 @@ public class ImportSurveyController {
 	@RequestMapping(value = "/survey/{client_id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> importSurvey(HttpServletRequest request,
 			@PathVariable(name = "client_id") Integer clientId, @RequestHeader String token) {
-		//
-		// if (!authorizationService.checkAccess(token)) {
-		//
-		// return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		// }
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
 
 		try {
 			Map<String, Integer> responseSurveyId = new HashMap<>();
