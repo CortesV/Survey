@@ -1,5 +1,8 @@
 package com.softbistro.survey.imports.system.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -45,14 +48,16 @@ public class ImportSurveyController {
 	@RequestMapping(value = "/survey/{client_id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> importSurvey(HttpServletRequest request,
 			@PathVariable(name = "client_id") Integer clientId, @RequestHeader String token) {
-
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
+		//
+		// if (!authorizationService.checkAccess(token)) {
+		//
+		// return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		// }
 
 		try {
-			return new ResponseEntity<>(importSurveyService.importFile(request, clientId), HttpStatus.OK);
+			Map<String, Integer> responseSurveyId = new HashMap<>();
+			responseSurveyId.put("surveyId", importSurveyService.importFile(request, clientId));
+			return new ResponseEntity<>(responseSurveyId, HttpStatus.OK);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
