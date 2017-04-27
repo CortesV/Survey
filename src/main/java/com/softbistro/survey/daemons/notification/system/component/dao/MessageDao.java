@@ -54,11 +54,9 @@ public class MessageDao implements ISendingMessage {
 	private static final String SQL_GET_EMAIL_OF_NEW_CLIENTS = "SELECT email FROM clients "
 			+ "WHERE clients.status='NEW'  LIMIT ? ";
 
-	private static final String SQL_INSERT_NOTIFICATION = "INSERT INTO notification(`from`,`cc`, `to`, `header`, `body`) VALUES (?,?,?,?,?)";
+	private static final String SQL_INSERT_NOTIFICATION = "INSERT INTO notification(`from`,`cc`, `to`, `header`, `body`,`status`) VALUES (?,?,?,?,?,'NEW')";
 
 	private static final String SQL_UPDATE_NEW_CLIENTS = "UPDATE clients SET status='DONE' WHERE status = ? LIMIT ?";
-
-	private static final String SQL_UPDATE_LIST_NEW_NOTIFICATION = "UPDATE notification SET status='NEW' WHERE NOT status ='NEW'  LIMIT ?";
 
 	@Autowired
 	@Qualifier("jdbcNotificationSystem")
@@ -174,7 +172,6 @@ public class MessageDao implements ISendingMessage {
 		jdbcTemplateClient.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
 
 		return clientsEmails;
-
 	}
 
 	/**
@@ -233,7 +230,6 @@ public class MessageDao implements ISendingMessage {
 		jdbcTemplateNotification.update(SQL_INSERT_NOTIFICATION,
 				new Object[] { notification.getSenderEmail(), notification.getReceiverCCEmail(),
 						notification.getReceiverEmail(), notification.getHeader(), notification.getBody() });
-		jdbcTemplateNotification.update(SQL_UPDATE_LIST_NEW_NOTIFICATION, countOfRecords);
 	}
 
 }

@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
-import com.softbistro.survey.notification.system.service.ChangePasswordMessageService;
-import com.softbistro.survey.notification.system.service.RegistrationMessageServise;
+import com.softbistro.survey.notification.db.service.ChangePasswordMessageService;
+import com.softbistro.survey.notification.db.service.RegistrationMessageServise;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -169,14 +169,13 @@ public class ClientController {
 	 */
 	@ApiOperation(value = "Update Client Password By Id", notes = "Update Client password by password and client id", tags = "Client")
 	@RequestMapping(value = "/password/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Client> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id/*,
-			@RequestHeader String token*/) {
+	public ResponseEntity<Client> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id,
+			@RequestHeader String token) {
 
-		/*if (!authorizationService.checkAccess(token)) {
+		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-*/
 		try {
 
 			clientService.updatePassword(client, id);

@@ -1,4 +1,4 @@
-package com.softbistro.survey.notification.system.service;
+package com.softbistro.survey.notification.db.service;
 
 import java.util.List;
 import java.util.Properties;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
-import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
+import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 
 /**
  * For creating and sending message, that will contain information about survey
@@ -28,7 +28,7 @@ import com.softbistro.survey.notification.system.interfacee.ICreateMessage;
  */
 @Service
 @Scope("prototype")
-public class SurveyMessageService implements Runnable, ICreateMessage<Notification> {
+public class SurveyMessageService implements Runnable, ICreateMessage {
 	private static final Logger log = LogManager.getLogger(SurveyMessageService.class);
 
 	@Autowired
@@ -42,12 +42,9 @@ public class SurveyMessageService implements Runnable, ICreateMessage<Notificati
 
 	@Value("${survey.text.for.sending.url}")
 	protected String url;
-
+	
 	/**
-	 * Sending message from main account to email of users
-	 * 
-	 * @param toEmail
-	 *            - receiver message
+	 * Sending message to database
 	 */
 	public void send() {
 		List<String> emails = iSendingMessage.getEmailsForSendingSurvey();
@@ -65,7 +62,12 @@ public class SurveyMessageService implements Runnable, ICreateMessage<Notificati
 
 		}
 	}
-
+	
+	/**
+	 * Generate text for message
+	 * 
+	 * @param email, uuid
+	 */
 	@Override
 	public String generateTextForMessage(String email, String uuid) {
 		String urlForVote = url + uuid;
@@ -76,6 +78,9 @@ public class SurveyMessageService implements Runnable, ICreateMessage<Notificati
 		return textMessage;
 	}
 
+	/**
+	 * Generate theme of message
+	 */
 	@Override
 	public String generateThemeForMessage() {
 		return String.format("Survey");

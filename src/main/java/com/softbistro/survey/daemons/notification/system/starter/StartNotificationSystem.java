@@ -24,7 +24,7 @@ public class StartNotificationSystem {
 	@Resource
 	private ApplicationContext context;
 
-	@Scheduled(fixedRate = 15000)
+	@Scheduled(fixedRate = 5000)
 	public void test() {
 
 		Thread registrationThread = new Thread(context.getBean(NotificationService.class));

@@ -2,9 +2,7 @@ package com.softbistro.survey.statistic.service;
 
 import java.io.File;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Service;
 
