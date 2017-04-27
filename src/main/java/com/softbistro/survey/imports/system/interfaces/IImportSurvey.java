@@ -15,5 +15,5 @@ public interface IImportSurvey {
 	 * @param importFileName
 	 * @return
 	 */
-	public void fromFile(Part filePart, Integer clientId);
+	public Integer fromFile(Part filePart, Integer clientId);
 }

@@ -52,9 +52,7 @@ public class ImportSurveyController {
 		}
 
 		try {
-
-			importSurveyService.importFile(request, clientId);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(importSurveyService.importFile(request, clientId), HttpStatus.OK);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

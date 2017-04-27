@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.imports.system.components.entities.ImportSurvey;
-import com.softbistro.survey.imports.system.components.interfaces.ISurveyDAO;
+import com.softbistro.survey.imports.system.components.interfaces.IImportSurveyDAO;
 import com.softbistro.survey.question.components.entity.Question;
 
 /**
@@ -26,7 +26,7 @@ import com.softbistro.survey.question.components.entity.Question;
  * @author olegnovatskiy
  */
 @Repository
-public class ImportSurveyDao implements ISurveyDAO {
+public class ImportSurveyDao implements IImportSurveyDAO {
 
 	private static final String SQL_INSERT_SURVEY = "INSERT INTO survey (client_id, name, start_time, finish_time) VALUES (?,?,?,?)";
 
@@ -41,6 +41,8 @@ public class ImportSurveyDao implements ISurveyDAO {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	private Integer generatedSurveyId = 0;
+
 	/**
 	 * Save survey into db
 	 * 
@@ -50,7 +52,7 @@ public class ImportSurveyDao implements ISurveyDAO {
 	 */
 	@Override
 	@Transactional
-	public void saveSurvey(ImportSurvey importSurvey) {
+	public Integer saveSurvey(ImportSurvey importSurvey) {
 		Connection connection = null;
 		try {
 			connection = jdbcTemplate.getDataSource().getConnection();
@@ -72,9 +74,11 @@ public class ImportSurveyDao implements ISurveyDAO {
 			}
 		}
 
+		return generatedSurveyId;
+
 	}
 
-	private ImportSurvey insertSurvey(Connection connection, ImportSurvey importSurvey) {
+	private Integer insertSurvey(Connection connection, ImportSurvey importSurvey) {
 		try {
 
 			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_SURVEY,
@@ -88,17 +92,16 @@ public class ImportSurveyDao implements ISurveyDAO {
 
 			ResultSet keys = preparedStatement.getGeneratedKeys();
 
-			Integer generatedId = 0;
 			if (keys.next()) {
-				generatedId = keys.getInt(1);
+				generatedSurveyId = keys.getInt(1);
 			}
 
-			importSurvey.setId(generatedId);
+			importSurvey.setId(generatedSurveyId);
 
 		} catch (SQLException e) {
 			LOGGER.error(e.getMessage());
 		}
-		return importSurvey;
+		return generatedSurveyId;
 
 	}
 
