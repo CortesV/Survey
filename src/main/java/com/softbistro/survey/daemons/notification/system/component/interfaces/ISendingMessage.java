@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.notification.system.component.entity.RegistrationMessage;
-import com.softbistro.survey.notification.system.component.entity.SurveyMessage;
 /**
  * Methods for working with notification
  * 
@@ -19,6 +17,32 @@ public interface ISendingMessage {
 	 */
 	public List<Notification> getEmailsForSending();
 	
+	/**
+	 * Update status on emails that need 
+	 * to resending to "NEW"
+	 */
+	public void updateStatusMessagesToNew();
+
+	/**
+	 * Update status on emails that need 
+	 * to resending to "NEW"
+	 * @author yagi
+	 */
+	public void updateStatusMessagesToInProcess();
+	
+	/**
+	 * Update status on emails that need 
+	 * to send to "IN_PROCESS"
+	 * @author yagi
+	 */
+	public void updateStatusMessagesToProcessed();
+	
+	/**
+	 * Update status on emails that has errors to "ERROR"
+	 * 
+	 * @author yagi
+	 */
+	public void updateStatusMessagesToError();
 	/**
 	 * Get mails of clients that change password 
 	 * @return - list of mails
