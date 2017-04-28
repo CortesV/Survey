@@ -8,7 +8,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -35,23 +34,8 @@ public class MessageDao implements ISendingMessage {
 
 	private static final String SQL_UPDATE_LIST_NEW_CLIENTS = "UPDATE notification SET status='PROCESSED' WHERE status = ? LIMIT ?";
 
-	private static final String SQL_GET_EMAIL_UPDATE_PASSWORD = "SELECT clients.email FROM clients "
-			+ "WHERE clients.status='VERIFY_PASSWORD'  LIMIT ? ";
-
-	private static final String SQL_GET_EMAIL_OF_USERS_IN_SURVEY = "SELECT p.email FROM participant AS p "
-			+ "INNER JOIN survey AS s ON p.client_id = s.client_id "
-			+ "WHERE  s.id = ? GROUP BY email";
-
-	private static final String SQL_GET_ID_NEW_SURVEYS = "SELECT id FROM survey WHERE status = 'NEW' LIMIT ?";
-
-	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey` SET `status`= 'DONE' WHERE status = 'NEW' LIMIT ?";
-
-	private static final String SQL_GET_EMAIL_OF_NEW_CLIENTS = "SELECT email FROM clients "
-			+ "WHERE clients.status='NEW'  LIMIT ? ";
-
 	private static final String SQL_INSERT_NOTIFICATION = "INSERT INTO notification(`from`,`cc`, `to`, `header`, `body`,`status`) VALUES (?,?,?,?,?,'NEW')";
 	
-	private static final String SQL_UPDATE_NEW_CLIENTS = "UPDATE clients SET status='DONE' WHERE status = ? LIMIT ?";
 	
 	
 	@Autowired
