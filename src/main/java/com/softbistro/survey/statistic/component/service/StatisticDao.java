@@ -2,6 +2,7 @@ package com.softbistro.survey.statistic.component.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,9 @@ public class StatisticDao implements IStatisticDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	@Autowired
+	private StatisticColumnFilter statisticColumnFilter;
+
 	private static final Logger LOGGER = Logger.getLogger(StatisticDao.class);
 
 	private static final String SQL_GET_SURVEY_STATISTIC_SHORT = "SELECT survey.id, survey.name, survey.start_time, survey.finish_time, COUNT(ss.id) AS participant_count ,"
@@ -44,6 +48,14 @@ public class StatisticDao implements IStatisticDao {
 			+ "WHERE survey.id= ? AND survey.delete=0 AND cqss.delete=0 AND question_sections.delete=0 AND p.delete=0 AND cgs.delete=0 AND `group`.delete=0 "
 			+ "AND attributes.delete=0 AND av.delete=0";
 	
+
+	private static final String SQL_GET_STATISTIC_FILTERS_FOR_EXPORT = "SELECT group`.group_name, attributes.attribute FROM answers  LEFT JOIN questions "
+			+ "ON answers.question_id = questions.id LEFT JOIN survey AS survey ON survey.id = questions.survey_id LEFT JOIN connect_question_section_survey "
+			+ "AS cqss ON survey.id = cqss.survey_id LEFT JOIN question_sections ON question_sections.id = cqss.question_section_id LEFT JOIN participant "
+			+ "AS p ON p.id = answers.participant_id LEFT JOIN connect_group_survey AS cgs ON cgs.survey_id = survey.id LEFT JOIN `group` ON "
+			+ "`group`.id = cgs.group_id LEFT JOIN attributes ON attributes.group_id = `group`.id LEFT JOIN attribute_values AS av ON av.attribute_id = attributes.id "
+			+ "WHERE survey.id= ? AND survey.delete=0 AND cqss.delete=0 AND question_sections.delete=0 AND p.delete=0 AND cgs.delete=0 AND `group`.delete=0 "
+			+ "AND attributes.delete=0 AND av.delete=0";
 
 	/**
 	 * Get answers on question from survey
@@ -102,12 +114,34 @@ public class StatisticDao implements IStatisticDao {
 	/**
 	 * Get Statistic Filters for Export statistic on google sheets
 	 * 
-	 * @param
+	 * @param surveyId
+	 * 
+	 * @param surveyId
 	 * @return statisticColumnFilter
 	 */
 	@Override
-	@SuppressWarnings("static-access")
-	public List<String> getStatisticColumnFilters() {
-		return new StatisticColumnFilter().getFilterlist();
+	public List<String> getStatisticColumnFilters(Integer surveyId) {
+
+		try {
+
+			List<Map<String, Object>> rawFilters = jdbcTemplate.query(SQL_GET_STATISTIC_FILTERS_FOR_EXPORT,
+					new ColumnMapRowMapper(), surveyId);
+			
+			List<String> filters = new ArrayList<String>();
+			
+			for (Map<String, Object> filter : rawFilters){
+
+			}
+
+		}
+
+		catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return null;
+		}
+
+		return statisticColumnFilter.getFilterList();
+
 	}
 }

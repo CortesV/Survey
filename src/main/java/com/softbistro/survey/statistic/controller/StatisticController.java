@@ -76,7 +76,7 @@ public class StatisticController {
 		}
 
 		for (String filter : filters) {
-			if (!statisticService.getStatisticColumnFilters().contains(filter)) {
+			if (!statisticService.getStatisticColumnFilters(surveyId).contains(filter)) {
 				return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 			}
 		}
@@ -98,8 +98,8 @@ public class StatisticController {
 	 * @return
 	 */
 	@ApiOperation(value = "Get Statistic Filters for Export statistic on google sheets", notes = "Get column filters for export statistic on google sheets ", tags = "Statistic")
-	@RequestMapping(value = "/filters/", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<List<String>> getStatisticFilters(@RequestHeader String token) {
+	@RequestMapping(value = "/filters/{survey_id}/", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<String>> getStatisticFilters(@PathVariable("survey_id") Integer surveyId, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
@@ -108,7 +108,7 @@ public class StatisticController {
 
 		try {
 
-			return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(), HttpStatus.OK);
+			return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(surveyId), HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
 			return new ResponseEntity<List<String>>(HttpStatus.INTERNAL_SERVER_ERROR);

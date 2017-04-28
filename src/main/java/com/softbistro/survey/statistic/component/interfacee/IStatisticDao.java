@@ -36,5 +36,5 @@ public interface IStatisticDao {
 	 * @param
 	 * @return statisticColumnFilter
 	 */
-	public List<String> getStatisticColumnFilters();
+	public List<String> getStatisticColumnFilters(Integer surveyId);
 }
