@@ -83,7 +83,7 @@ public class NotificationIntegrationTest {
 		testClientNew.setPassword("1234");
 		
 		clientDao.saveClient(testClientNew);
-		assertThat(messageDao.getEmailOfNewClients().get(0)).isEqualTo(testClientNew.getEmail());
+		assertThat(clientDao.getEmailOfNewClients().get(0)).isEqualTo(testClientNew.getEmail());
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class NotificationIntegrationTest {
 		Client findServiceClient = findClientService.findByEmail(testClientPass);
 		testClientPass.setPassword("Manager");
 		clientDao.updatePassword(testClientPass, findServiceClient.getId());
-		assertThat(messageDao.getEmailOfNewPassword().get(0)).isEqualTo(testClientPass.getEmail());
+		assertThat(clientDao.getEmailOfNewPassword().get(0)).isEqualTo(testClientPass.getEmail());
 	}
 	
 	/**
@@ -116,7 +116,7 @@ public class NotificationIntegrationTest {
 		String participantEmail = "eugene@kushta.eu";
 		
 		surveyService.start(surveyId);
-		assertThat(messageDao.getEmailsForSendingSurvey().get(0)).isEqualTo(participantEmail);
+		assertThat(clientDao.getEmailsForSendingSurvey().get(0)).isEqualTo(participantEmail);
 	}
 	
 	/**

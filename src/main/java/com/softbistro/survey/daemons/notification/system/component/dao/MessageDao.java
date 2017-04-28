@@ -58,9 +58,6 @@ public class MessageDao implements ISendingMessage {
 	@Qualifier("jdbcNotificationSystem")
 	private JdbcTemplate jdbcTemplateNotification;
 	
-	@Autowired
-	@Qualifier("jdbcSurvey")
-	private JdbcTemplate jdbcTemplateClient;	
 	
 	/**
 	 * Need for getting e-mails in string format from database
@@ -97,79 +94,6 @@ public class MessageDao implements ISendingMessage {
 		return emailsForSending;
 	}
 	
-	/**
-	 *For getting mails of users that were registered or changed password
-	 * @author alex_alokhin
-	 *
-	 */
-	public class ConnectToDBforRegistrationAndPass implements RowMapper<String> {
-		
-		@Override
-		public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return rs.getString(1) ;
-		}
-	}
-
-	
-	/**
-	 * Get mails of clients that change password 
-	 * @return - list of mails
-	 * 
-	 * @author alex_alokhin
-	 */
-	@Override
-	public ArrayList<String> getEmailOfNewPassword() {
-		ArrayList<String> clientsEmails = new ArrayList<>();
-		clientsEmails = (ArrayList<String>) jdbcTemplateClient.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new ConnectToDBforRegistrationAndPass(),
-				countOfRecords);
-		jdbcTemplateClient.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
-		
-		return clientsEmails;
-	}
-
-	/**
-	 * Get mails of clients that have registration process
-	 * @return - list of mails
-	 * 
-	 * @author alex_alokhin
-	 */
-	@Override
-	public ArrayList<String> getEmailOfNewClients() {
-		ArrayList<String> clientsEmails = new ArrayList<>();
-		clientsEmails = (ArrayList<String>) jdbcTemplateClient.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBforRegistrationAndPass(),
-				countOfRecords);
-		jdbcTemplateClient.update(SQL_UPDATE_NEW_CLIENTS, "NEW", countOfRecords);
-		
-		return clientsEmails;
-	}
-	
-
-	/**
-	 * Get mails of clients that started the survey
-	 * @return - list of mails
-	 * 
-	 * @author alex_alokhin
-	 */
-	@Override
-	public ArrayList<String> getEmailsForSendingSurvey() {
-		ArrayList<String> emailsOfUsers = new ArrayList<>();
-		for (int surveyId : getSurveysId()) {
-			emailsOfUsers.addAll(jdbcTemplateClient.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDBforRegistrationAndPass(),
-					surveyId));
-		}
-		
-		return emailsOfUsers;
-	}
-
-	private List<Integer> getSurveysId() {
-		List<Integer> surveysId = new ArrayList<>();
-		surveysId = jdbcTemplateClient.queryForList(SQL_GET_ID_NEW_SURVEYS, Integer.class, countOfRecords);
-		jdbcTemplateClient.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
-		
-		return surveysId;
-	}
-	
-
 	/**
 	 * Insert notification into table
 	 * @param notification - new record

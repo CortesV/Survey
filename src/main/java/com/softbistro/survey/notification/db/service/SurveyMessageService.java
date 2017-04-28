@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
 import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
@@ -34,20 +35,23 @@ public class SurveyMessageService implements Runnable, ICreateMessage {
 	@Autowired
 	private ISendingMessage iSendingMessage;
 
+	@Autowired
+	private IClient iClient;
+	
 	/**
 	 * Data about account that will sending messages
 	 */
 	@Value("${survey.mail.username}")
-	protected String username;
+	private String username;
 
 	@Value("${survey.text.for.sending.url}")
-	protected String url;
+	private String url;
 	
 	/**
 	 * Sending message to database
 	 */
 	public void send() {
-		List<String> emails = iSendingMessage.getEmailsForSendingSurvey();
+		List<String> emails = iClient.getEmailsForSendingSurvey();
 
 		for (int emailIndex = 0; emailIndex < emails.size(); emailIndex++) {
 			String uuid = UUID.randomUUID().toString();

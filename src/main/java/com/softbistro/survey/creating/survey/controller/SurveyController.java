@@ -196,11 +196,11 @@ public class SurveyController {
 	 */
 	@ApiOperation(value = "Start Survey By Id", notes = "Start survey by survey id", tags = "Survey")
 	@RequestMapping(value = "/start/{survey_id}/", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Object> start(@PathVariable(value = "survey_id") Integer surveyId,
-			@RequestHeader String token) {
-		if (!authorizationService.checkAccess(token)) {
-			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-		}
+	public ResponseEntity<Object> start(@PathVariable(value = "survey_id") Integer surveyId/*,
+			@RequestHeader String token*/) {
+//		if (!authorizationService.checkAccess(token)) {
+//			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+//		}
 
 		try {
 			surveyService.start(surveyId);

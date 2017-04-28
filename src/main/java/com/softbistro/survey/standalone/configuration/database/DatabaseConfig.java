@@ -21,21 +21,19 @@ public class DatabaseConfig {
 	}
 
 	@Bean(name = "jdbcNotificationSystem")
-    @Autowired
 	public JdbcTemplate postgresJdbcTemplate(@Qualifier("dsNotificationSystem") DataSource dsPostgres) {
 		return new JdbcTemplate(dsPostgres);
 	}
 	
+	@Primary	
 	@Bean(name = "dsSurvey")
-	@Primary
 	@ConfigurationProperties(prefix = "spring.ds_survey")
 	public DataSource mysqlDataSource() {
 		return DataSourceBuilder.create().build();
 	}
-
-	@Bean(name = "jdbcSurvey")
+	
 	@Primary
-	@Autowired
+	@Bean(name = "jdbcSurvey")
 	public JdbcTemplate jdbcTemplate(@Qualifier("dsSurvey") DataSource dsSurvey) {
 		return new JdbcTemplate(dsSurvey);
 	}

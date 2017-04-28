@@ -169,13 +169,13 @@ public class ClientController {
 	 */
 	@ApiOperation(value = "Update Client Password By Id", notes = "Update Client password by password and client id", tags = "Client")
 	@RequestMapping(value = "/password/{id}", method = RequestMethod.PUT, produces = "application/json")
-	public ResponseEntity<Client> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id,
-			@RequestHeader String token) {
+	public ResponseEntity<Client> updatePassword(@RequestBody Client client, @PathVariable("id") Integer id/*,
+			@RequestHeader String token*/) {
 
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
+//		if (!authorizationService.checkAccess(token)) {
+//
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		}
 		try {
 
 			clientService.updatePassword(client, id);
