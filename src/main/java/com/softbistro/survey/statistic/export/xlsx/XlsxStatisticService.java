@@ -20,7 +20,6 @@ import com.softbistro.survey.statistic.component.entity.ParticipantAttributes;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 import com.softbistro.survey.statistic.component.interfacee.IExportFile;
 import com.softbistro.survey.statistic.component.service.GeneralStatisticDao;
-import com.softbistro.survey.statistic.service.StatisticService;
 
 /**
  * Export data to XLSX file

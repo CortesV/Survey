@@ -38,8 +38,16 @@ public class NotificationService implements Runnable {
 
 		List<Notification> messages = iSendingMessage.getEmailsForSending();
 
+		iSendingMessage.updateStatusMessagesToInProcess();
+		log.info(String.format("Status the list of messages was updated on 'IN_PROCESS'. Size of list: %s.",
+				messages.size()));
+
+		while (messages.isEmpty()) {
+			Thread.yield();
+		}
+
 		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
-			
+
 			username = messages.get(emailIndex).getSenderEmail();
 			password = messages.get(emailIndex).getSenderPassword();
 
@@ -49,13 +57,16 @@ public class NotificationService implements Runnable {
 				}
 			});
 
-			Thread thread = new Thread(new MessageEmailThread(session, messages, emailIndex,
-					messages.get(emailIndex).getHeader(), messages.get(emailIndex).getBody(), username));
+			Thread thread = new Thread(
+					new MessageEmailThread(session, messages, emailIndex, messages.get(emailIndex).getHeader(),
+							messages.get(emailIndex).getBody(), username, iSendingMessage));
+			thread.setDaemon(true);
 			thread.start();
-			log.info(String.format("Sender email: %s | Receiver email: %s", messages.get(emailIndex).getSenderEmail(),
-					messages.get(emailIndex).getReceiverEmail()));
-		}
 
+			log.info(String.format("Sender email: %s | Receiver email: %s | Header: %s",
+					messages.get(emailIndex).getSenderEmail(), messages.get(emailIndex).getReceiverEmail(),
+					messages.get(emailIndex).getHeader()));
+		}
 	}
 
 	@Override

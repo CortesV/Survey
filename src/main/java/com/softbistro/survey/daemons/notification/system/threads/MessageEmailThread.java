@@ -9,7 +9,11 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
 import com.softbistro.survey.daemons.notification.system.interfaces.ISending;
 
 public class MessageEmailThread implements Runnable, ISending {
@@ -19,16 +23,20 @@ public class MessageEmailThread implements Runnable, ISending {
 	private String messageTheme;
 	private String messageText;
 	private String username;
+	private ISendingMessage iSendingMessage;
 
 	public MessageEmailThread(Session session, List<Notification> messages, int emailIndex, String messageTheme,
-			String messageText, String username) {
+			String messageText, String username, ISendingMessage iSendingMessage) {
 		this.session = session;
 		this.messages = messages;
 		this.emailIndex = emailIndex;
 		this.messageTheme = messageTheme;
 		this.messageText = messageText;
 		this.username = username;
+		this.iSendingMessage = iSendingMessage;
 	}
+
+	private Logger log = LogManager.getLogger(getClass());
 
 	/**
 	 * Sending message on email about registration<br>
@@ -47,8 +55,16 @@ public class MessageEmailThread implements Runnable, ISending {
 			message.setText(messageText);
 
 			Transport.send(message);
-			System.out.println("Message sent.");
+
+			iSendingMessage.updateStatusMessagesToProcessed();
+			log.info("Status of message was updated on 'PROCESSED'. | Message sent.");
+
 		} catch (MessagingException e) {
+
+			iSendingMessage.updateStatusMessagesToError();
+			Thread.currentThread().interrupt();
+			log.info("Status of message was updated on 'ERROR'. | Thread is interrupted.");
+
 			e.printStackTrace();
 		}
 	}

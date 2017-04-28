@@ -28,7 +28,8 @@ public class StartNotificationSystem {
 	public void test() {
 
 		Thread registrationThread = new Thread(context.getBean(NotificationService.class));
-
+		
+		registrationThread.setDaemon(true);
 		registrationThread.start();
 		log.info("Notification system thread: " + registrationThread.getName());
 

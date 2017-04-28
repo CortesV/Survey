@@ -17,6 +17,33 @@ public interface ISendingMessage {
 	public List<Notification> getEmailsForSending();
 	
 	/**
+	 * Update status on emails that need 
+	 * to resending to "NEW"
+	 */
+	public void updateStatusMessagesToNew();
+
+	/**
+	 * Update status on emails that need 
+	 * to resending to "NEW"
+	 * @author yagi
+	 */
+	public void updateStatusMessagesToInProcess();
+	
+	/**
+	 * Update status on emails that need 
+	 * to send to "IN_PROCESS"
+	 * @author yagi
+	 */
+	public void updateStatusMessagesToProcessed();
+	
+	/**
+	 * Update status on emails that has errors to "ERROR"
+	 * 
+	 * @author yagi
+	 */
+	public void updateStatusMessagesToError();
+
+	/**
 	 * Insert notification into table
 	 * @param notification - new record
 	 * 
