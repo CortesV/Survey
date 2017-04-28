@@ -12,25 +12,10 @@ import java.util.Map;
  */
 public class StatisticColumnFilter {
 
-	private static final ArrayList<String> filterList = new ArrayList<String>();
+	private ArrayList<String> filterList = new ArrayList<String>();
 	private static final Map<String, String> filtersMap = new HashMap<String, String>();
-	
+
 	static {
-
-		filterList.add("SurveyID");
-		filterList.add("SurveyName");
-		filterList.add("ParticipantFirstName");
-		filterList.add("ParticipantLastName");
-		filterList.add("QuestionGroupName");
-		filterList.add("QuestionName");
-		filterList.add("ParticipantID");
-		filterList.add("Answer");
-		filterList.add("Comment");
-		filterList.add("AnswerDateAndTime");
-		filterList.add("ParticipantGroup");
-		filterList.add("ParticipantAttributeName");
-		filterList.add("ParticipantAttributeValue");
-
 		filtersMap.put("SurveyID", "survey_id");
 		filtersMap.put("SurveyName", "survey_name");
 		filtersMap.put("ParticipantFirstName", "first_name");
@@ -50,7 +35,12 @@ public class StatisticColumnFilter {
 		return filtersMap;
 	}
 
-	public static ArrayList<String> getFilterlist() {
+	public ArrayList<String> getFilterList() {
 		return filterList;
 	}
+
+	public void setFilterList(ArrayList<String> filterList) {
+		this.filterList = filterList;
+	}
+
 }
