@@ -75,12 +75,6 @@ public class StatisticController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		for (String filter : filters) {
-			if (!statisticService.getStatisticColumnFilters(surveyId).contains(filter)) {
-				return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-			}
-		}
-
 		try {
 			Map<String, String> responseValue = new HashMap<String, String>();
 			responseValue.put("URL", statisticService.export(surveyId, filters));

@@ -34,6 +34,9 @@ public class SheetsService {
 
 	@Autowired
 	private GoogleAuthorization googleAuthorization;
+	
+	@Autowired
+	private StatisticColumnFilter statisticColumnFilter;
 
 	private static final Logger LOG = Logger.getLogger(SheetsService.class);
 
@@ -126,11 +129,17 @@ public class SheetsService {
 				for (int column = 0; column < filters.size(); column++) {
 					String header = arrHeadersColumn.get(column);
 
-					if (filters.contains(header) & !isAttributeNext) {
+					if (!statisticColumnFilter.getFilterList().contains(header)){
+						isAttributeNext = true;}
+					
+				
+					if (statisticColumnFilter.getFilterList().contains(header) & !isAttributeNext) {
 
 						fillValue(newRow, header, String.valueOf(list.get(numberOfRecord)
 								.get(new StatisticColumnFilter().getFiltersMap().get(filters.get(column)))));
+						
 
+						
 					}
 
 					else {
@@ -180,20 +189,10 @@ public class SheetsService {
 		try {
 
 			for (String filter : filters) {
-				if (filter.equals("Attribute")) {
-					for (int count = 0; count < list.size(); count++) {
 
-						String newRow = (list.get(count).get("group_name").toString()
-								+ list.get(count).get("attribute").toString()).replaceAll("[^\\p{Alpha}\\p{Digit}]+",
-										"");
-						if (!arrNames.contains(newRow))
-							arrNames.add(newRow);
-					}
-
-				} else {
 					arrNames.add(filter);
 				}
-			}
+			
 
 			CellEntry cellEntry;
 
