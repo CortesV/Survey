@@ -53,7 +53,7 @@ public class StatisticColumnFilter {
 		return filtersMap;
 	}
 
-	public List<String> getFilterList() {
+	public static List<String> getFilterList() {
 		return filterList;
 	}
 }
