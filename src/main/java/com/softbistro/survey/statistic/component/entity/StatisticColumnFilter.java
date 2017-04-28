@@ -27,9 +27,8 @@ public class StatisticColumnFilter {
 		filterList.add("Answer");
 		filterList.add("Comment");
 		filterList.add("AnswerDateAndTime");
-		filterList.add("ParticipantGroup");
-		filterList.add("ParticipantAttributeName");
-		filterList.add("ParticipantAttributeValue");
+		filterList.add("Attribute");
+
 
 		filtersMap.put("SurveyID", "survey_id");
 		filtersMap.put("SurveyName", "survey_name");
@@ -41,9 +40,8 @@ public class StatisticColumnFilter {
 		filtersMap.put("Answer", "answer_value");
 		filtersMap.put("Comment", "comment");
 		filtersMap.put("AnswerDateAndTime", "answer_datetime");
-		filtersMap.put("ParticipantGroup", "group_name");
-		filtersMap.put("ParticipantAttributeName", "attribute");
-		filtersMap.put("ParticipantAttributeValue", "attribute_value");
+		filtersMap.put("Attribute", "attribute");
+
 	}
 
 	public static Map<String, String> getFiltersMap() {

@@ -115,17 +115,48 @@ public class SheetsService {
 
 			CellFeed cellFeed = spreadsheetService.getFeed(celledUrl, CellFeed.class);
 
-			List<String> arrHeadersColumn = generateHeadersColumn(cellFeed, filters);
+			List<String> arrHeadersColumn = generateHeadersColumn(cellFeed, filters, list);
 
 			ListEntry newRow = new ListEntry();
+
+			Boolean isAttributeNext = false;
 
 			for (int numberOfRecord = 0; numberOfRecord < list.size(); numberOfRecord++) {
 
 				for (int column = 0; column < filters.size(); column++) {
-					fillValue(newRow, arrHeadersColumn.get(column), String.valueOf(list.get(numberOfRecord)
-							.get(new StatisticColumnFilter().getFiltersMap().get(filters.get(column)))));
+					String header = arrHeadersColumn.get(column);
+
+					if (filters.contains(header) & !isAttributeNext) {
+
+						fillValue(newRow, header, String.valueOf(list.get(numberOfRecord)
+								.get(new StatisticColumnFilter().getFiltersMap().get(filters.get(column)))));
+
+					}
+
+					else {
+
+						header = (list.get(numberOfRecord).get("group_name").toString()
+								+ list.get(numberOfRecord).get("attribute").toString())
+										.replaceAll("[^\\p{Alpha}\\p{Digit}]+", "");
+
+						fillValue(newRow, header, String.valueOf(list.get(numberOfRecord).get("attribute_value")));
+
+					}
 				}
-				spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
+				if ((!((numberOfRecord == 0)
+						|| (numberOfRecord > 0 && (String.valueOf(list.get(numberOfRecord).get("answer_id"))
+								.equals(String.valueOf(list.get(0).get("answer_id")))))
+						|| (numberOfRecord > 0 && (String.valueOf(list.get(numberOfRecord).get("answer_id"))
+								.equals(String.valueOf(list.get(numberOfRecord - 1).get("answer_id"))))))
+						|| !((String.valueOf(list.get(numberOfRecord).get("answer_id"))
+								.equals(String.valueOf(list.get(numberOfRecord + 1).get("answer_id"))))))) {
+					
+					spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
+					
+					isAttributeNext = false;
+					newRow = new ListEntry();
+				}
+
 			}
 
 		} catch (ServiceException | IOException e) {
@@ -143,13 +174,25 @@ public class SheetsService {
 
 	}
 
-	public List<String> generateHeadersColumn(CellFeed cellFeed, List<String> filters) {
+	public List<String> generateHeadersColumn(CellFeed cellFeed, List<String> filters, List<Map<String, Object>> list) {
 		List<String> arrNames = new LinkedList<>();
 
 		try {
 
 			for (String filter : filters) {
-				arrNames.add(filter);
+				if (filter.equals("Attribute")) {
+					for (int count = 0; count < list.size(); count++) {
+
+						String newRow = (list.get(count).get("group_name").toString()
+								+ list.get(count).get("attribute").toString()).replaceAll("[^\\p{Alpha}\\p{Digit}]+",
+										"");
+						if (!arrNames.contains(newRow))
+							arrNames.add(newRow);
+					}
+
+				} else {
+					arrNames.add(filter);
+				}
 			}
 
 			CellEntry cellEntry;
