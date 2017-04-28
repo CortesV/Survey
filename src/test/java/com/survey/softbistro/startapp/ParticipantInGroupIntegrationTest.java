@@ -21,10 +21,11 @@ import com.softbistro.survey.participant.components.dao.ParticipantInGroupDao;
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.entity.ParticipantInGroup;
-import com.softbistro.survey.startapp.SurveySoftBistroApplication;
+import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test for participant in group
+ * 
  * @author cortes
  *
  */
@@ -77,12 +78,12 @@ public class ParticipantInGroupIntegrationTest {
 		Integer idGroup = groupDao.setGroup(groupTest);
 
 		participantInGroupTest.setGroupId(idGroup);
-		//participantInGroupTest.setParticipantId(idParticipant);
-		
+		// participantInGroupTest.setParticipantId(idParticipant);
+
 		List<Integer> batch = new ArrayList<>();
 		batch.add(idParticipant);
 		participantInGroupTest.setParticipantsId(batch);
-		
+
 		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
 		assertEquals(participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId()).size(), 1);
 	}

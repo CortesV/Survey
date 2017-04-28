@@ -24,6 +24,7 @@ import com.softbistro.survey.statistic.component.interfacee.IStatisticDao;
  */
 @Repository
 public class StatisticDao implements IStatisticDao {
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
