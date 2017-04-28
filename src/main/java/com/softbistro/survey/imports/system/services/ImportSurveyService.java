@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +28,16 @@ public class ImportSurveyService {
 	@Autowired
 	private CSVImport csvImport;
 
+	private static final Logger LOGGER = Logger.getLogger(ImportSurveyService.class);
+	private Integer generatedSurveyId = 0;
+
 	/**
 	 * Select service for working with file by format
 	 * 
 	 * @param request
 	 * @param clientId
 	 */
-	public void importFile(HttpServletRequest request, Integer clientId) {
+	public Integer importFile(HttpServletRequest request, Integer clientId) {
 
 		try {
 			Part filePart = request.getPart("file");
@@ -43,11 +47,13 @@ public class ImportSurveyService {
 
 			IImportSurvey iImportSurvey = selectImportServiceRealization(format);
 
-			iImportSurvey.fromFile(filePart, clientId);
+			generatedSurveyId = iImportSurvey.fromFile(filePart, clientId);
 
 		} catch (IOException | ServletException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
+
+		return generatedSurveyId;
 	}
 
 	private IImportSurvey selectImportServiceRealization(String format) {

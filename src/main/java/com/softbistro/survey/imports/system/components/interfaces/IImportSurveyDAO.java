@@ -4,10 +4,10 @@ import com.softbistro.survey.imports.system.components.entities.ImportSurvey;
 
 /**
  * Save survey into db
- *  
+ * 
  * @author olegnovatskiy
  */
-public interface ISurveyDAO {
+public interface IImportSurveyDAO {
 
 	/**
 	 * Save survey to db.
@@ -15,6 +15,6 @@ public interface ISurveyDAO {
 	 * @param survey
 	 * @return Integer status of saving
 	 */
-	public void saveSurvey(ImportSurvey savedSurvey);
-	
+	public Integer saveSurvey(ImportSurvey savedSurvey);
+
 }

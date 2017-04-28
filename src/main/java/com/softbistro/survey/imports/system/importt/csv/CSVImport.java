@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import com.csvreader.CsvReader;
 import com.softbistro.survey.imports.system.components.entities.ImportGroupQuestions;
 import com.softbistro.survey.imports.system.components.entities.ImportSurvey;
-import com.softbistro.survey.imports.system.components.interfaces.ISurveyDAO;
+import com.softbistro.survey.imports.system.components.interfaces.IImportSurveyDAO;
 import com.softbistro.survey.imports.system.interfaces.IImportSurvey;
 import com.softbistro.survey.question.components.entity.Question;
 
@@ -49,7 +49,9 @@ public class CSVImport implements IImportSurvey {
 	private static final String SURVEY_FINISH_TIME = "Finish";
 
 	@Autowired
-	private ISurveyDAO iSurveyDAO;
+	private IImportSurveyDAO iSurveyDAO;
+
+	private Integer generatedSurveyId = 0;
 
 	/**
 	 * Import survey from file of CSV format.
@@ -58,11 +60,11 @@ public class CSVImport implements IImportSurvey {
 	 * @return
 	 */
 	@Override
-	public void fromFile(Part filePart, Integer clientId) {
+	public Integer fromFile(Part filePart, Integer clientId) {
 		try {
 			ImportSurvey importSurvey = prepareSurvey(filePart, clientId);
 
-			iSurveyDAO.saveSurvey(importSurvey);
+			generatedSurveyId = iSurveyDAO.saveSurvey(importSurvey);
 
 		} catch (TypeConstraintException | IOException e) {
 			LOGGER.error(e.getMessage());
@@ -73,6 +75,7 @@ public class CSVImport implements IImportSurvey {
 				LOGGER.error(e.getMessage());
 			}
 		}
+		return generatedSurveyId;
 
 	}
 

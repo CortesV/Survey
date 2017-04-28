@@ -1,5 +1,8 @@
 package com.softbistro.survey.imports.system.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
@@ -52,9 +55,9 @@ public class ImportSurveyController {
 		}
 
 		try {
-
-			importSurveyService.importFile(request, clientId);
-			return new ResponseEntity<>(HttpStatus.OK);
+			Map<String, Integer> responseSurveyId = new HashMap<>();
+			responseSurveyId.put("surveyId", importSurveyService.importFile(request, clientId));
+			return new ResponseEntity<>(responseSurveyId, HttpStatus.OK);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

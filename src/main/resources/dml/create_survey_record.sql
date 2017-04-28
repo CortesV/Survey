@@ -1,0 +1,1 @@
+INSERT INTO `survey` (`id`, `client_id`, `name`, `theme`, `start_time`, `finish_time`, `status`) VALUES ('1', '1', 'TestSurvey', 'testTheme', '2000-01-01', '2020-01-01', 'PREPARE');
