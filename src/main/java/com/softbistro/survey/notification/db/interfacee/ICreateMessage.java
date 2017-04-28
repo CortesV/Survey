@@ -4,7 +4,6 @@ package com.softbistro.survey.notification.db.interfacee;
  * 
  * @author zviproject,alex_alokhin
  *
- * @param <T>
  */
 public interface ICreateMessage {
 	
