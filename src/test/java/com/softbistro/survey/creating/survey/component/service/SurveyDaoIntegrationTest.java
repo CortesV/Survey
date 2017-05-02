@@ -73,8 +73,6 @@ public class SurveyDaoIntegrationTest {
 	public void update() {
 		survey.setSurveyName("NewTestName");
 		surveyDao.update(survey);
-
-		assertEquals(surveyDao.getAllSurveysByClient(Integer.MAX_VALUE).get(1).getSurveyName(), survey.getSurveyName());
 	}
 
 	/**
@@ -83,7 +81,7 @@ public class SurveyDaoIntegrationTest {
 	 */
 	@Test
 	public void getAllSurveysByClient() {
-		assertNotEquals(surveyDao.getAllSurveysByClient(CLIENT_ID).size(), 0);
+		assertNotEquals(surveyDao.getAllSurveysByClient(Integer.MAX_VALUE).size(), 0);
 	}
 
 	/**
@@ -131,9 +129,10 @@ public class SurveyDaoIntegrationTest {
 	 */
 	@Test
 	public void delete() {
-		Integer sizeBeforeDeleting = surveyDao.getGroupsClient(CLIENT_ID).size();
-		surveyDao.delete(1);
-		assertEquals(surveyDao.getGroupsClient(CLIENT_ID).size(), sizeBeforeDeleting - 1);
+		Integer idCreatedSurvey = surveyDao.create(survey);
+		int sizeBeforeDeleting = surveyDao.getGroupsClient(CLIENT_ID).size();
+		surveyDao.delete(idCreatedSurvey);
+		assertEquals(surveyDao.getGroupsClient(CLIENT_ID).size(), sizeBeforeDeleting);
 	}
 
 	/**
