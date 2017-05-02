@@ -31,7 +31,7 @@ import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 public class AuthorizedClientIntegrationTest {
 
 	@Autowired
-	private AuthorizedClientDao authorizedClientService;
+	private AuthorizedClientDao authorizedClientDao;
 
 	private AuthorizedClient authorizedClientTest;
 
@@ -50,8 +50,8 @@ public class AuthorizedClientIntegrationTest {
 	@Test
 	public void saveAuthorizedClientTest() {
 
-		authorizedClientService.saveClient(authorizedClientTest);
-		assertEquals(authorizedClientService.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey(),
+		authorizedClientDao.saveClient(authorizedClientTest);
+		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey(),
 				authorizedClientTest.getUniqueKey());
 	}
 
@@ -61,15 +61,15 @@ public class AuthorizedClientIntegrationTest {
 	@Test
 	public void updateAuthorizedClientTest() {
 
-		authorizedClientService.saveClient(authorizedClientTest);
-		assertEquals(authorizedClientService.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey(),
+		authorizedClientDao.saveClient(authorizedClientTest);
+		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey(),
 				authorizedClientTest.getUniqueKey());
 
 		authorizedClientTest.setClientId("2");
 
-		authorizedClientService.updateClient(authorizedClientTest);
+		authorizedClientDao.updateClient(authorizedClientTest);
 
-		assertEquals(authorizedClientService.findClient(authorizedClientTest.getUniqueKey()).getClientId(),
+		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getClientId(),
 				authorizedClientTest.getClientId());
 	}
 
@@ -79,12 +79,12 @@ public class AuthorizedClientIntegrationTest {
 	@Test
 	public void deleteAuthorizedClientTest() {
 
-		authorizedClientService.saveClient(authorizedClientTest);
-		assertEquals(authorizedClientService.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey(),
+		authorizedClientDao.saveClient(authorizedClientTest);
+		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey(),
 				authorizedClientTest.getUniqueKey());
 
-		authorizedClientService
-				.deleteClients(authorizedClientService.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey());
+		authorizedClientDao
+				.deleteClients(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey());
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class AuthorizedClientIntegrationTest {
 	@Test
 	public void findAllAuthorizedClientTest() {
 
-		int size = authorizedClientService.findAllClients().size();
-		assertEquals(authorizedClientService.findAllClients().size(), size);
+		int size = authorizedClientDao.findAllClients().size();
+		assertEquals(authorizedClientDao.findAllClients().size(), size);
 	}
 }

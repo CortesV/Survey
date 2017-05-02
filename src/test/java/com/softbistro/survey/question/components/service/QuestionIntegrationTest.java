@@ -2,7 +2,6 @@ package com.softbistro.survey.question.components.service;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.question.components.entity.Question;
-import com.softbistro.survey.question.components.service.QuestionDao;
 import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
@@ -31,14 +29,35 @@ import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 public class QuestionIntegrationTest {
 
 	@Autowired
-	private QuestionDao questionService;
+	private QuestionDao questionDao;
 
-	private Question testQuestion;
+	private final Integer QUESTION_ID = 1;
 
-	@Before
-	public void setUp() {
+	/**
+	 * Test of save question to database
+	 */
+	@Test
+	public void saveQuestionTest() {
 
-		testQuestion = new Question();
+		assertEquals(questionDao.findQuestionById(QUESTION_ID).getQuestion(), "IntegrationTestQuestion");
+	}
+
+	/**
+	 * Test of find question in database by id
+	 */
+	@Test
+	public void findQuestionTest() {
+
+		assertEquals(questionDao.findQuestionById(QUESTION_ID).getQuestion(), "IntegrationTestQuestion");
+	}
+
+	/**
+	 * Test of update question
+	 */
+	@Test
+	public void updateQuestionTest() {
+		Question testQuestion = new Question();
+
 		testQuestion.setSurveyId(1);
 		testQuestion.setQuestion("Question");
 		testQuestion.setDescriptionShort("descriptionShort");
@@ -48,38 +67,9 @@ public class QuestionIntegrationTest {
 		testQuestion.setQuestionChoices("questionChoices");
 		testQuestion.setRequiredComment(true);
 		testQuestion.setRequired(true);
-	}
 
-	/**
-	 * Test of save question to database
-	 */
-	@Test
-	public void saveQuestionTest() {
-
-		Integer id = questionService.saveQuestion(testQuestion);
-		assertEquals(questionService.findQuestionById(id).getQuestion(), testQuestion.getQuestion());
-	}
-
-	/**
-	 * Test of find question in database by id
-	 */
-	@Test
-	public void findQuestionTest() {
-
-		Integer id = questionService.saveQuestion(testQuestion);
-		assertEquals(questionService.findQuestionById(id).getId(), id);
-	}
-
-	/**
-	 * Test of update question
-	 */
-	@Test
-	public void updateQuestionTest() {
-
-		Integer id = questionService.saveQuestion(testQuestion);
-		testQuestion.setQuestion("Question-Question");
-		questionService.updateQuestion(testQuestion, id);
-		assertEquals(questionService.findQuestionById(id).getQuestion(), testQuestion.getQuestion());
+		questionDao.updateQuestion(testQuestion, QUESTION_ID);
+		assertEquals(questionDao.findQuestionById(QUESTION_ID).getQuestion(), testQuestion.getQuestion());
 	}
 
 	/**
@@ -87,9 +77,7 @@ public class QuestionIntegrationTest {
 	 */
 	@Test
 	public void deleteQuestionTest() {
-
-		Integer id = questionService.saveQuestion(testQuestion);
-		questionService.deleteQuestion(id);
-		assertEquals(questionService.findQuestionById(id), null);
+		questionDao.deleteQuestion(QUESTION_ID);
+		assertEquals(questionDao.findQuestionById(QUESTION_ID), null);
 	}
 }

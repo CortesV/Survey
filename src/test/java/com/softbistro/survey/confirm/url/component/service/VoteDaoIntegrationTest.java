@@ -1,6 +1,6 @@
 package com.softbistro.survey.confirm.url.component.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -16,9 +16,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.confirm.url.component.entity.Answer;
-import com.softbistro.survey.confirm.url.component.entity.VotePage;
-import com.softbistro.survey.confirm.url.component.service.VoteDao;
-import com.softbistro.survey.question.components.service.QuestionDao;
 import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
@@ -36,9 +33,6 @@ import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 public class VoteDaoIntegrationTest {
 
 	@Autowired
-	private QuestionDao questionDao;
-
-	@Autowired
 	private VoteDao voteDao;
 
 	private static final String UUID_FOR_TEST = "51695b96-21df-4c95-9585-222cdec18556";
@@ -48,8 +42,7 @@ public class VoteDaoIntegrationTest {
 	 */
 	@Test
 	public void getVotePageTest() {
-		List<VotePage> votePages = voteDao.getVotePage(UUID_FOR_TEST);
-		assertEquals(votePages.size(), 1);
+		assertNotEquals(voteDao.getVotePage(UUID_FOR_TEST).size(), 0);
 
 	}
 

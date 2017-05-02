@@ -1,9 +1,7 @@
 package com.softbistro.survey.participant.component.service;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,12 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softbistro.survey.participant.dao.GroupDao;
-import com.softbistro.survey.participant.dao.ParticipantDao;
-import com.softbistro.survey.participant.dao.ParticipantInGroupDao;
-import com.softbistro.survey.participant.entity.Group;
-import com.softbistro.survey.participant.entity.Participant;
-import com.softbistro.survey.participant.entity.ParticipantInGroup;
+import com.softbistro.survey.participant.component.entity.ParticipantInGroup;
 import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
@@ -40,32 +33,17 @@ public class ParticipantInGroupIntegrationTest {
 	@Autowired
 	private ParticipantInGroupDao participantInGroupDao;
 
-	@Autowired
-	private ParticipantDao participantDao;
-
-	@Autowired
-	private GroupDao groupDao;
-
-	private Group groupTest;
+	private final Integer PARTICIPANT_ID = 1;
 
 	private ParticipantInGroup participantInGroupTest;
-
-	private Participant participantTest;
 
 	@Before
 	public void setUp() {
 
 		participantInGroupTest = new ParticipantInGroup();
 
-		participantTest = new Participant();
-		participantTest.setClientId(Integer.MAX_VALUE);
-		participantTest.setFirstName("firstName");
-		participantTest.setLastName("lastName");
-		participantTest.seteMail("eMail");
-
-		groupTest = new Group();
-		groupTest.setClientId(Integer.MAX_VALUE);
-		groupTest.setGroupName("groupName");
+		participantInGroupTest.setParticipantId(PARTICIPANT_ID);
+		participantInGroupTest.setGroupId(1);
 	}
 
 	/**
@@ -74,18 +52,8 @@ public class ParticipantInGroupIntegrationTest {
 	@Test
 	public void saveParticipantInGroupTest() {
 
-		Integer idParticipant = participantDao.setParticipant(participantTest);
-		Integer idGroup = groupDao.setGroup(groupTest);
-
-		participantInGroupTest.setGroupId(idGroup);
-		// participantInGroupTest.setParticipantId(idParticipant);
-
-		List<Integer> batch = new ArrayList<>();
-		batch.add(idParticipant);
-		participantInGroupTest.setParticipantsId(batch);
-
 		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
-		assertEquals(participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId()).size(), 1);
+		assertNotEquals(participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId()).size(), 0);
 	}
 
 	/**
@@ -93,25 +61,12 @@ public class ParticipantInGroupIntegrationTest {
 	 */
 	@Test
 	public void deleteParticipantInGroupTest() {
+		Integer sizeBeforeDeleting = participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId())
+				.size();
 
-		Integer idParticipant = participantDao.setParticipant(participantTest);
-		Integer idGroup = groupDao.setGroup(groupTest);
-
-		participantInGroupTest.setGroupId(idGroup);
-
-		List<Integer> batch = new ArrayList<>();
-		batch.add(idParticipant);
-		participantInGroupTest.setParticipantsId(batch);
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
-
-		batch.add(Integer.MAX_VALUE);
-		participantInGroupTest.setParticipantsId(batch);
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
-
-		participantInGroupDao.deletingParticipantfromGroup(participantInGroupTest.getGroupId(),
-				participantInGroupTest.getParticipantId());
-
-		assertEquals(participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId()).size(), 2);
+		participantInGroupDao.deletingParticipantfromGroup(1, 1);
+		assertEquals(participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId()).size(),
+				sizeBeforeDeleting - 1);
 	}
 
 	/**
@@ -120,13 +75,6 @@ public class ParticipantInGroupIntegrationTest {
 	@Test
 	public void getParticipantGroupsTest() {
 
-		Integer idParticipant = participantDao.setParticipant(participantTest);
-		Integer idGroup = groupDao.setGroup(groupTest);
-		participantInGroupTest.setGroupId(idGroup);
-		List<Integer> batch = new ArrayList<>();
-		batch.add(idParticipant);
-		participantInGroupTest.setParticipantsId(batch);
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
-		assertEquals(participantInGroupDao.getParticipantGroups(idParticipant).size(), 1);
+		assertNotEquals(participantInGroupDao.getParticipantGroups(PARTICIPANT_ID).size(), 0);
 	}
 }

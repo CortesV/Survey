@@ -1,9 +1,7 @@
 package com.softbistro.survey.participant.component.service;
 
 import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,20 +13,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softbistro.survey.participant.dao.AttributeValuesDao;
-import com.softbistro.survey.participant.dao.AttributesDao;
-import com.softbistro.survey.participant.dao.GroupDao;
-import com.softbistro.survey.participant.dao.ParticipantDao;
-import com.softbistro.survey.participant.dao.ParticipantInGroupDao;
-import com.softbistro.survey.participant.entity.AttributeValues;
-import com.softbistro.survey.participant.entity.Attributes;
-import com.softbistro.survey.participant.entity.Group;
-import com.softbistro.survey.participant.entity.Participant;
-import com.softbistro.survey.participant.entity.ParticipantInGroup;
+import com.softbistro.survey.participant.component.entity.AttributeValues;
 import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test for attributes values
+ * 
  * @author cortes
  *
  */
@@ -39,27 +29,11 @@ import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 @WebAppConfiguration
 @Transactional
 public class AttributesValuesIntegrationTest {
-	
-	@Autowired
-	private ParticipantDao participantDao;
-	
-	@Autowired
-	private GroupDao groupDao;
-	
-	@Autowired
-	private ParticipantInGroupDao participantInGroupDao;
-	
-	@Autowired
-	private AttributesDao attributesDao;
-	
 	@Autowired
 	private AttributeValuesDao attributeValuesDao;
 
+	private final Integer ATTRIBUTE_VALUES_ID = 1;
 	private AttributeValues attributeValuesTest;
-	private Attributes attributesTest;
-	private Group groupTest;
-	private Participant participantTest;	
-	private ParticipantInGroup participantInGroupTest;
 
 	@Before
 	public void setUp() {
@@ -68,80 +42,48 @@ public class AttributesValuesIntegrationTest {
 		attributeValuesTest.setAttributeId(Integer.MAX_VALUE);
 		attributeValuesTest.setParticipantId(Integer.MAX_VALUE);
 		attributeValuesTest.setValue("value");
-		
-		participantTest = new Participant();
-		participantTest.setClientId(Integer.MAX_VALUE);
-		participantTest.setFirstName("firstName");
-		participantTest.setLastName("lastName");
-		participantTest.seteMail("eMail");
-		
-		groupTest = new Group();
-		groupTest.setClientId(Integer.MAX_VALUE);
-		groupTest.setGroupName("groupName");
-		
-		participantInGroupTest = new ParticipantInGroup();
-		attributesTest = new Attributes();
 	}
-	
+
 	/**
 	 * Test save attributes values
 	 */
 	@Test
 	public void saveAttributeTest() {
-		
+
 		Integer id = attributeValuesDao.setAttributeValues(attributeValuesTest);
 		assertEquals(attributeValuesDao.getAttributeValuesById(id).getValue(), attributeValuesTest.getValue());
 	}
-	
+
 	/**
 	 * Test update attributes values
 	 */
 	@Test
 	public void updateAttributeTest() {
-		
-		Integer id = attributeValuesDao.setAttributeValues(attributeValuesTest);
+
 		attributeValuesTest.setValue("Update attribute value");
-		attributeValuesDao.updateAttributeValuesById(attributeValuesTest, id);
-		assertEquals(attributeValuesDao.getAttributeValuesById(id).getValue(), attributeValuesTest.getValue());
+
+		attributeValuesDao.updateAttributeValuesById(attributeValuesTest, ATTRIBUTE_VALUES_ID);
+
+		assertEquals(attributeValuesDao.getAttributeValuesById(ATTRIBUTE_VALUES_ID).getValue(),
+				attributeValuesTest.getValue());
 	}
-	
+
 	/**
 	 * Test delete attributes values
 	 */
 	@Test
 	public void deleteAttributeTest() {
-		
-		Integer id = attributeValuesDao.setAttributeValues(attributeValuesTest);
-		attributeValuesDao.deleteAttributeValuesById(id);
-		assertEquals(attributeValuesDao.getAttributeValuesById(id), null);
+
+		attributeValuesDao.deleteAttributeValuesById(ATTRIBUTE_VALUES_ID);
+		assertEquals(attributeValuesDao.getAttributeValuesById(ATTRIBUTE_VALUES_ID), null);
 	}
-	
+
 	/**
 	 * Test getting all attribute values of participant in group
 	 */
 	@Test
 	public void getParticipantAttributesInGroupTest() {
-		
-		Integer idParticipant = participantDao.setParticipant(participantTest);
-		Integer idGroup = groupDao.setGroup(groupTest);
-		
-		attributesTest.setGroupId(idGroup);
-		attributesTest.setAttribute("attribute");
-		Integer idAttribute = attributesDao.setAttribute(attributesTest);
-		
-		attributeValuesTest.setParticipantId(idParticipant);
-		attributeValuesTest.setAttributeId(idAttribute);
-		attributeValuesTest.setValue("value");
-		attributeValuesDao.setAttributeValues(attributeValuesTest);
-		
-		participantInGroupTest.setGroupId(idGroup);
-		
-		List<Integer> batch = new ArrayList<>();
-		batch.add(idParticipant);
-		participantInGroupTest.setParticipantsId(batch);
-		
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
 
-		assertEquals(attributeValuesDao.getParticipantAttributesInGroup(idGroup, idParticipant).size(), 1);
+		assertNotEquals(attributeValuesDao.getParticipantAttributesInGroup(1, 1).size(), 0);
 	}
 }

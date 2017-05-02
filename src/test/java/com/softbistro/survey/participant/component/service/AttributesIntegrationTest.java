@@ -1,6 +1,7 @@
 package com.softbistro.survey.participant.component.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,12 +13,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.softbistro.survey.participant.dao.AttributesDao;
-import com.softbistro.survey.participant.entity.Attributes;
+import com.softbistro.survey.participant.component.entity.Attributes;
 import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test for attributes dao
+ * 
  * @author cortes
  *
  */
@@ -33,6 +34,8 @@ public class AttributesIntegrationTest {
 
 	private Attributes attributesTest;
 
+	private final Integer ATTRIBUTES_ID = 1;
+
 	@Before
 	public void setUp() {
 
@@ -46,41 +49,43 @@ public class AttributesIntegrationTest {
 	 */
 	@Test
 	public void saveAttributeTest() {
-		
+
 		Integer id = attributesDao.setAttribute(attributesTest);
 		assertEquals(attributesDao.getAttributeById(id).getAttribute(), attributesTest.getAttribute());
 	}
-	
+
 	/**
 	 * Test update attributes
 	 */
 	@Test
 	public void updateAttributeTest() {
-		
-		Integer id = attributesDao.setAttribute(attributesTest);		
+
+		attributesDao.setAttribute(attributesTest);
 		attributesTest.setAttribute("Update attribute");
-		attributesDao.updateAttributes(attributesTest, id);
-		assertEquals(attributesDao.getAttributeById(id).getAttribute(), attributesTest.getAttribute());
+
+		attributesDao.updateAttributes(attributesTest, ATTRIBUTES_ID);
+
+		assertEquals(attributesDao.getAttributeById(ATTRIBUTES_ID).getAttribute(), attributesTest.getAttribute());
 	}
-	
+
 	/**
 	 * Test delete attributes
 	 */
 	@Test
 	public void deleteAttributeTest() {
-		
-		Integer id = attributesDao.setAttribute(attributesTest);
-		attributesDao.deleteAttributes(id);
-		assertEquals(attributesDao.getAttributeById(id), null);
+
+		attributesDao.deleteAttributes(ATTRIBUTES_ID);
+		assertEquals(attributesDao.getAttributeById(ATTRIBUTES_ID), null);
 	}
-	
+
 	/**
 	 * Test get all attributes by groups
 	 */
 	@Test
 	public void getByGroupAttributeTest() {
-		
-		Integer id = attributesDao.setAttribute(attributesTest);
-		assertEquals(attributesDao.getAttributesByGroup(attributesDao.getAttributeById(id).getGroupId()).size(), 1);
+
+		assertNotEquals(
+				attributesDao.getAttributesByGroup(attributesDao.getAttributeById(ATTRIBUTES_ID).getGroupId()).size(),
+				0);
 	}
 }
