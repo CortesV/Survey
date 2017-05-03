@@ -27,7 +27,7 @@ public class SurveyDao implements ISurveyDao {
 	private static final String SQL_UPDATE_NAME_OF_SURVEY = "UPDATE survey "
 			+ "SET survey.client_id=?, survey.name =?, survey.theme=?, "
 			+ "survey.start_time=?, survey.finish_time=? WHERE survey.id = ?";
-	private static final String SQL_GET_LIST_OF_SURVEYS = "SELECT * FROM survey WHERE client_id = ? AND survey.delete = 0";
+	private static final String SQL_GET_LIST_OF_SURVEYS = "SELECT * FROM survey WHERE client_id = ? AND 'delete' = 0";
 	private static final String SQL_GET_LIST_OF_GROUPS_CLIENT = "SELECT * FROM `group` WHERE client_id = ? AND `delete`=0";
 	private static final String SQL_ADD_GROUP_TO_SURVEY = "INSERT INTO connect_group_survey (survey_id, group_id) VALUES(?,?) ";
 	private static final String SQL_GET_LIST_OF_GROUPS_SURVEY = "SELECT group.id, group.client_id, group.group_name FROM `group` INNER JOIN connect_group_survey AS cgs "
