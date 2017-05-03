@@ -1,7 +1,6 @@
 package com.softbistro.survey.question.components.interfaces;
 
 import com.softbistro.survey.question.components.entity.Question;
-import com.softbistro.survey.response.Response;
 
 /**
  * 
@@ -17,7 +16,7 @@ public interface IQuestion {
 	 *            id - id of question
 	 * @return return - all information about question
 	 */
-	public Response findQuestionById(Long id);
+	public Question findQuestionById(Integer id);
 
 	/**
 	 * Save client to database
@@ -27,7 +26,7 @@ public interface IQuestion {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public Response saveQuestion(Question question);
+	public Integer saveQuestion(Question question);
 
 	/**
 	 * Delete question from database by id of question
@@ -36,7 +35,7 @@ public interface IQuestion {
 	 *            of question
 	 * @return return - status of execution this method
 	 */
-	public Response deleteQuestion(Long id);
+	public void deleteQuestion(Integer id);
 
 	/**
 	 * Update information of question
@@ -48,5 +47,5 @@ public interface IQuestion {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
-	public Response updateQuestion(Question question, Long id);
+	public void updateQuestion(Question question, Integer id);
 }

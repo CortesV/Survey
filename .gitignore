@@ -1,7 +1,6 @@
-
-.gradle
+.gradle/
 /build/
-!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/
 /gradle/
 /bin/
 
@@ -12,6 +11,7 @@
 .project
 .settings
 .springBeans
+.google_apis/
 
 ### IntelliJ IDEA ###
 .idea
@@ -27,3 +27,5 @@ dist/
 nbdist/
 .nb-gradle/
 /bin/
+/.gradle/
+

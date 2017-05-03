@@ -1,10 +1,9 @@
 package com.softbistro.survey.client.manage.components.entity;
 
 import java.io.Serializable;
-import java.sql.Date;
-import java.util.List;
 
-import com.softbistro.survey.client.auth.configuration.oauth2.security.AuthorityName;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * Simple JavaBean object that represents a Client
@@ -13,25 +12,53 @@ import com.softbistro.survey.client.auth.configuration.oauth2.security.Authority
  * @version 1.0
  *
  */
+@JsonInclude(Include.NON_NULL)
 public class Client implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Long id;
-	private String clientName;
-	private String password;
-	private String email;
-	private String status;
-	private Boolean activated;
-	private List<AuthorityName> authorities;
-	private Date lastPasswordResetDate;
+	private Integer id;
 
-	public Long getId() {
+	private String facebookId;
+
+	private String googleId;
+
+	private String clientName;
+
+	private String password;
+
+	private String email;
+	/**
+	 * This field that represent authorization token
+	 */
+	private String token;
+	/**
+	 * This field identify of network from which client is authorized
+	 */
+	private String flag;
+
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getFacebookId() {
+		return facebookId;
+	}
+
+	public void setFacebookId(String facebookId) {
+		this.facebookId = facebookId;
+	}
+
+	public String getGoogleId() {
+		return googleId;
+	}
+
+	public void setGoogleId(String googleId) {
+		this.googleId = googleId;
 	}
 
 	public String getClientName() {
@@ -58,36 +85,27 @@ public class Client implements Serializable {
 		this.email = email;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getFlag() {
+		return flag;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setFlag(String flag) {
+		this.flag = flag;
 	}
 
-	public Boolean isActivated() {
-		return activated;
+	public String getToken() {
+		return token;
 	}
 
-	public void setActivated(Boolean activated) {
-		this.activated = activated;
+	public void setToken(String token) {
+		this.token = token;
 	}
 
-	public List<AuthorityName> getAuthorities() {
-		return authorities;
-	}
-
-	public void setAuthorities(List<AuthorityName> authorities) {
-		this.authorities = authorities;
-	}
-
-	public Date getLastPasswordResetDate() {
-		return lastPasswordResetDate;
-	}
-
-	public void setLastPasswordResetDate(Date lastPasswordResetDate) {
-		this.lastPasswordResetDate = lastPasswordResetDate;
+	@Override
+	public String toString() {
+		return "Client [id=" + id + ", facebookId=" + facebookId + ", googleId=" + googleId + ", clientName="
+				+ clientName + ", password=" + password + ", email=" + email + ", token=" + token + ", flag=" + flag
+				+ "]";
 	}
 
 }

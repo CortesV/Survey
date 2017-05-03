@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.question.components.entity.Question;
 import com.softbistro.survey.question.components.interfaces.IQuestion;
-import com.softbistro.survey.response.Response;
 
 @Service
 public class QuestionService {
@@ -20,7 +19,7 @@ public class QuestionService {
 	 *            id - id of question
 	 * @return return - all information about question
 	 */
-	public Response findQuestionById(Long id) {
+	public Question findQuestionById(Integer id) {
 
 		return iQuestion.findQuestionById(id);
 	}
@@ -33,7 +32,7 @@ public class QuestionService {
 	 *            database
 	 * @return return - status of execution this method
 	 */
-	public Response saveQuestion(Question question) {
+	public Integer saveQuestion(Question question) {
 
 		return iQuestion.saveQuestion(question);
 	}
@@ -45,9 +44,9 @@ public class QuestionService {
 	 *            of question
 	 * @return return - status of execution this method
 	 */
-	public Response deleteQuestion(Long id) {
+	public void deleteQuestion(Integer id) {
 
-		return iQuestion.deleteQuestion(id);
+		iQuestion.deleteQuestion(id);
 	}
 
 	/**
@@ -60,8 +59,8 @@ public class QuestionService {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
-	public Response updateQuestion(Question question, Long id) {
+	public void updateQuestion(Question question, Integer id) {
 
-		return iQuestion.updateQuestion(question, id);
+		iQuestion.updateQuestion(question, id);
 	}
 }

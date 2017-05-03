@@ -7,30 +7,42 @@ package com.softbistro.survey.question.components.entity;
  *
  */
 public class Question {
-	
-	private Long id;
-	private Long surveyId;
+
+	private Integer id;
+
+	private Integer surveyId;
+
 	private String question;
+
 	private String descriptionShort;
+
 	private String descriptionLong;
-	private Long questionSectionId;
+
+	private Integer questionSectionId;
+
 	private String answerType;
+
 	private String questionChoices;
+
 	private Boolean required;
 
-	public Long getId() {
+	private Boolean requiredComment;
+
+	private String groupName;
+
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
-	public Long getSurveyId() {
+	public Integer getSurveyId() {
 		return surveyId;
 	}
 
-	public void setSurveyId(Long survey_id) {
+	public void setSurveyId(Integer survey_id) {
 		this.surveyId = survey_id;
 	}
 
@@ -58,11 +70,11 @@ public class Question {
 		this.descriptionLong = descriptionLong;
 	}
 
-	public Long getQuestionSectionId() {
+	public Integer getQuestionSectionId() {
 		return questionSectionId;
 	}
 
-	public void setQuestionSectionId(Long questionSectionId) {
+	public void setQuestionSectionId(Integer questionSectionId) {
 		this.questionSectionId = questionSectionId;
 	}
 
@@ -90,4 +102,19 @@ public class Question {
 		this.required = required;
 	}
 
+	public Boolean isRequiredComment() {
+		return requiredComment;
+	}
+
+	public void setRequiredComment(Boolean requiredComment) {
+		this.requiredComment = requiredComment;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
 }
