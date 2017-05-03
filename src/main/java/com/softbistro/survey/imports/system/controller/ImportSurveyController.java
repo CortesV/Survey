@@ -1,23 +1,24 @@
 package com.softbistro.survey.imports.system.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softbistro.survey.client.auth.service.AuthorizationService;
-import com.softbistro.survey.imports.system.interfaces.IImportSurvey;
+import com.softbistro.survey.imports.system.services.ImportSurveyService;
 
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import springfox.documentation.annotations.ApiIgnore;
 
 /**
  * Controller for import survey
@@ -25,14 +26,14 @@ import springfox.documentation.annotations.ApiIgnore;
  * @author olegnovatskiy
  */
 @RestController
-@RequestMapping("/rest/survey/v1/importsurvey")
+@RequestMapping("/rest/survey/v1/import")
 public class ImportSurveyController {
 
 	private static final Logger LOGGER = Logger.getLogger(ImportSurveyController.class);
 
 	@Autowired
-	private IImportSurvey iImportSurvey;
-	
+	private ImportSurveyService importSurveyService;
+
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -43,21 +44,20 @@ public class ImportSurveyController {
 	 * @param clientId
 	 * @return Response
 	 */
-	@ApiOperation(value = "Import Survey", notes = "Import survey from csv file", tags = "Import")
-	@RequestMapping(value = "/import", method = RequestMethod.POST, produces = "application/json")
-	@ApiImplicitParam(dataType = "HttpServletRequest")
+	@ApiOperation(value = "Import Survey", notes = "Import survey from file", tags = "Import")
+	@RequestMapping(value = "/survey/{client_id}", method = RequestMethod.POST)
 	public ResponseEntity<Object> importSurvey(HttpServletRequest request,
-			@RequestParam(name = "clientId") Long clientId, @RequestHeader String token) {
+			@PathVariable(name = "client_id") Integer clientId, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
-		try {
 
-			iImportSurvey.importSyrveyCSV(request, clientId);
-			return new ResponseEntity<>(HttpStatus.OK);
+		try {
+			Map<String, Integer> responseSurveyId = new HashMap<>();
+			responseSurveyId.put("surveyId", importSurveyService.importFile(request, clientId));
+			return new ResponseEntity<>(responseSurveyId, HttpStatus.OK);
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());

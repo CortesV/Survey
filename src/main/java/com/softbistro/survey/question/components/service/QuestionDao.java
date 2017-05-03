@@ -91,7 +91,7 @@ public class QuestionDao implements IQuestion {
 	}
 
 	/**
-	 * Save client to database
+	 * Save question to database
 	 * 
 	 * @param question
 	 *            question - all information about question that will write to

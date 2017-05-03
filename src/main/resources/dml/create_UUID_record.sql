@@ -1,0 +1,1 @@
+INSERT INTO `sending_survey` (`url`, `survey_id`, `participant_id`, `working_time`, `answer_status`) VALUES ('51695b96-21df-4c95-9585-222cdec18556', '1', '2', '2030-01-01', 'NEW');

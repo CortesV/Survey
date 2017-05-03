@@ -25,7 +25,7 @@ import com.softbistro.survey.participant.components.entity.Attributes;
 import com.softbistro.survey.participant.components.entity.Group;
 import com.softbistro.survey.participant.components.entity.Participant;
 import com.softbistro.survey.participant.components.entity.ParticipantInGroup;
-import com.softbistro.survey.startapp.SurveySoftBistroApplication;
+import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
  * Integration test for attributes values
