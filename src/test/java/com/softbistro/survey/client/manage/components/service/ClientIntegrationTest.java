@@ -14,7 +14,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
-import com.softbistro.survey.client.manage.components.service.ClientDao;
 import com.softbistro.survey.client.manage.service.FindClientService;
 import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
@@ -33,7 +32,7 @@ import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 public class ClientIntegrationTest {
 
 	@Autowired
-	private ClientDao clientService;
+	private ClientDao clientDao;
 
 	@Autowired
 	private FindClientService findClientService;
@@ -50,7 +49,7 @@ public class ClientIntegrationTest {
 		testClient.setGoogleId("googleId");
 		testClient.setFlag("google");
 
-		clientService.saveClient(testClient);
+		clientDao.saveClient(testClient);
 	}
 
 	/**
@@ -59,8 +58,7 @@ public class ClientIntegrationTest {
 	@Test
 	public void saveClientTest() {
 
-		assertThat(findClientService.findByEmail(testClient).getEmail()).as("Email = ")
-				.isEqualTo(testClient.getEmail());
+		assertThat(findClientService.findByEmail(testClient).getEmail()).as("Email = ").isEqualTo(testClient.getEmail());
 	}
 
 	/**
@@ -69,8 +67,8 @@ public class ClientIntegrationTest {
 	@Test
 	public void getClientTest() {
 
-		assertThat(clientService.findClient(findClientService.findByEmail(testClient).getId()).getEmail())
-				.as("Email = ").isEqualTo(testClient.getEmail());
+		assertThat(clientDao.findClient(findClientService.findByEmail(testClient).getId()).getEmail()).as("Email = ")
+				.isEqualTo(testClient.getEmail());
 	}
 
 	/**
@@ -82,9 +80,10 @@ public class ClientIntegrationTest {
 		Client findServiceClient = findClientService.findByEmail(testClient);
 		testClient.setClientName("Manager");
 		testClient.setEmail("Manager@gmail.com");
-		testClient.setPassword("Manager");		
-		clientService.updateClient(testClient, findServiceClient.getId());
-		assertThat(clientService.findClient(findServiceClient.getId()).getEmail()).as("Email = ").isEqualTo(testClient.getEmail());
+		testClient.setPassword("Manager");
+		clientDao.updateClient(testClient, findServiceClient.getId());
+		assertThat(clientDao.findClient(findServiceClient.getId()).getEmail()).as("Email = ")
+				.isEqualTo(testClient.getEmail());
 	}
 
 	/**
@@ -93,7 +92,7 @@ public class ClientIntegrationTest {
 	@Test
 	public void deleteClientTest() {
 
-		clientService.deleteClient(findClientService.findByEmail(testClient).getId());
+		clientDao.deleteClient(findClientService.findByEmail(testClient).getId());
 		assertThat(findClientService.findByEmail(testClient)).as("Object = ").isEqualTo(null);
 	}
 
@@ -106,10 +105,11 @@ public class ClientIntegrationTest {
 		Client findServiceClient = findClientService.findByEmail(testClient);
 
 		testClient.setPassword("Manager");
-		clientService.updatePassword(testClient, findServiceClient.getId());
+		clientDao.updatePassword(testClient, findServiceClient.getId());
 
 		String md5HexPassword = DigestUtils.md5Hex(testClient.getPassword());
-		assertThat(clientService.findClient(findServiceClient.getId()).getPassword()).as("Password = ").isEqualTo(md5HexPassword);
+		assertThat(clientDao.findClient(findServiceClient.getId()).getPassword()).as("Password = ")
+				.isEqualTo(md5HexPassword);
 	}
 
 	/**
@@ -123,9 +123,10 @@ public class ClientIntegrationTest {
 		testClient.setPassword(null);
 		testClient.setFacebookId("facebookId");
 		testClient.setFlag("facebook");
-		clientService.saveSocialClient(testClient);
+		clientDao.saveSocialClient(testClient);
 
-		assertThat(findClientService.findClient(testClient).getFacebookId()).as("FacebookId = ").isEqualTo(testClient.getFacebookId());
+		assertThat(findClientService.findClient(testClient).getFacebookId()).as("FacebookId = ")
+				.isEqualTo(testClient.getFacebookId());
 
 	}
 
@@ -140,9 +141,10 @@ public class ClientIntegrationTest {
 		testClient.setId(findServiceClient.getId());
 		testClient.setFacebookId("facebookId");
 		testClient.setGoogleId(null);
-		
-		clientService.addSocialInfo(testClient);
+
+		clientDao.addSocialInfo(testClient);
 		findServiceClient = findClientService.findByEmail(testClient);
-		assertThat(clientService.findClient(findServiceClient.getId()).getFacebookId()).as("FacebookId = ").isEqualTo(testClient.getFacebookId());
+		assertThat(clientDao.findClient(findServiceClient.getId()).getFacebookId()).as("FacebookId = ")
+				.isEqualTo(testClient.getFacebookId());
 	}
 }
