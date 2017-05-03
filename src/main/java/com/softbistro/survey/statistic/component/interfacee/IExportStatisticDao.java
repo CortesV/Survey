@@ -1,9 +1,5 @@
 package com.softbistro.survey.statistic.component.interfacee;
 
-import java.util.List;
-
-import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
-
 /**
  * Methods for working with statistic
  * 
