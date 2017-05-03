@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.softbistro.survey.statistic.component.interfacee.IExportFile;
 import com.softbistro.survey.statistic.component.service.JsonStatisticDao;
 import com.softbistro.survey.statistic.export.StoreDataToFile;
-import com.softbistro.survey.statistic.service.StatisticService;
 
 /**
  * Export data to JSON file
