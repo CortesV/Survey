@@ -92,8 +92,9 @@ public class QuestionSectionIntegrationTest {
 	 */
 	@Test
 	public void addQuestionSectionToSurveyTest() {
+		Integer sizeBeforeAdding = questionSectionDao.getQuestionSectionBySurveyId(SURVEY_ID).size();
 		questionSectionDao.addQuestionSectionToSurvey(QUESTION_SECTION_ID, SURVEY_ID);
-		assertEquals(questionSectionDao.getQuestionSectionBySurveyId(SURVEY_ID).size(), 1);
+		assertEquals(questionSectionDao.getQuestionSectionBySurveyId(SURVEY_ID).size(), sizeBeforeAdding + 1);
 	}
 
 	/**

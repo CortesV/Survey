@@ -61,11 +61,10 @@ public class ParticipantInGroupIntegrationTest {
 	 */
 	@Test
 	public void deleteParticipantInGroupTest() {
-		Integer sizeBeforeDeleting = participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId())
-				.size();
+		int sizeBeforeDeleting = participantInGroupDao.getParticipantGroups(PARTICIPANT_ID).size();
 
 		participantInGroupDao.deletingParticipantfromGroup(1, 1);
-		assertEquals(participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId()).size(),
+		assertEquals(participantInGroupDao.getParticipantGroups(PARTICIPANT_ID).size(),
 				sizeBeforeDeleting - 1);
 	}
 

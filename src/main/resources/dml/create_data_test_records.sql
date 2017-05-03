@@ -23,3 +23,5 @@ INSERT IGNORE INTO `question_sections`(`id`, `client_id`, `section_name`, `descr
 INSERT IGNORE INTO `survey`(`id`, `client_id`, `name`, `theme`, `start_time`, `finish_time`, `status`) VALUES(1, 1, 'IntegrationTestName', 'IntegrationTestTheme', '2017-04-28', '2017-04-28', 'NEW');
 
 INSERT IGNORE INTO `connect_group_survey`(`id`, `survey_id`, `group_id`) VALUES(1, 1, 1);
+
+INSERT IGNORE INTO connect_question_section_survey (question_section_id, survey_id) VALUES(1, 1);

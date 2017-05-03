@@ -32,6 +32,9 @@ import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 @WebAppConfiguration
 @Transactional
 public class NotificationIntegrationTest {
+	
+	private final static Integer SURVEY_ID = 1;
+	private final static String PARTICIPANT_EMAIL = "softbistrosurvey@gmail.com";
 
 	@Autowired
 	private MessageDao messageDao;
@@ -112,11 +115,9 @@ public class NotificationIntegrationTest {
 	 */
 	@Test
 	public void getEmailsForSendingSurveyTest(){
-		int surveyId = 10;
-		String participantEmail = "eugene@kushta.eu";
 		
-		surveyService.start(surveyId);
-		assertThat(clientDao.getEmailsForSendingSurvey().get(0)).isEqualTo(participantEmail);
+		surveyService.start(SURVEY_ID);
+		assertThat(clientDao.getEmailsForSendingSurvey().get(0)).isEqualTo(PARTICIPANT_EMAIL);
 	}
 	
 	/**

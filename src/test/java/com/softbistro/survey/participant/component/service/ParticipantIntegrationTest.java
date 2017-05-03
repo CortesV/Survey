@@ -101,7 +101,7 @@ public class ParticipantIntegrationTest {
 	@Test
 	public void selectClientAllParticipantsTest() {
 
-		assertEquals(participantDao.selectClientAllParticipants(1).size(), 1);
+		assertNotEquals(participantDao.selectClientAllParticipants(1).size(), 0);
 	}
 
 }

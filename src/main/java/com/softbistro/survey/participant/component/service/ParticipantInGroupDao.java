@@ -40,7 +40,7 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 			+ "LEFT JOIN `group` AS g ON g.id = cgp.group_id WHERE g.id = ? AND p.`delete` = 0";
 
 	private static final String SQL_FOR_GETTING_PARTICIPANT_GROUPS = "SELECT g.id, g.client_id, group_name FROM `group` AS g "
-			+ "LEFT JOIN connect_group_participant AS c ON g.id=c.group_id WHERE c.participant_id = ? AND g.delete = 0";
+			+ "LEFT JOIN connect_group_participant AS c ON g.id=c.group_id WHERE c.participant_id = ? AND c.delete = 0";
 
 	/**
 	 * Method for getting all participant by group
