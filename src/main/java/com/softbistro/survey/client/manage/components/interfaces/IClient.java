@@ -1,6 +1,7 @@
 package com.softbistro.survey.client.manage.components.interfaces;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
 
@@ -104,7 +105,7 @@ public interface IClient {
 	 * 
 	 * @author alex_alokhin
 	 */
-	public ArrayList<String> getEmailOfNewPassword();
+	public List<String> getEmailOfNewPassword();
 
 	/**
 	 * Get mails of clients that have registration process
@@ -112,7 +113,7 @@ public interface IClient {
 	 * 
 	 * @author alex_alokhin
 	 */
-	public ArrayList<String> getEmailOfNewClients();
+	public List<String> getEmailOfNewClients();
 
 	/**
 	 * Get mails of clients that started the survey
@@ -120,7 +121,7 @@ public interface IClient {
 	 * 
 	 * @author alex_alokhin
 	 */
-	ArrayList<String> getEmailsForSendingSurvey();
+	public List<String> getEmailsForSendingSurvey();
 
 	
 }

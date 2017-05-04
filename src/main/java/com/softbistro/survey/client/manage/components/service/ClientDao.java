@@ -38,12 +38,11 @@ public class ClientDao implements IClient {
 
 	@Value("${count.of.records}")
 	private int countOfRecords;
-	
+
 	private static final String SQL_GET_ID_NEW_SURVEYS = "SELECT id FROM survey WHERE status = 'NEW' LIMIT ?";
 	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey` SET `status`= 'DONE' WHERE status = 'NEW' LIMIT ?";
 	private static final String SQL_GET_EMAIL_OF_USERS_IN_SURVEY = "SELECT p.email FROM participant AS p "
-			+ "INNER JOIN survey AS s ON p.client_id = s.client_id "
-			+ "WHERE  s.id = ? GROUP BY email";
+			+ "INNER JOIN survey AS s ON p.client_id = s.client_id " + "WHERE  s.id = ? GROUP BY email";
 	private static final String SQL_GET_EMAIL_OF_NEW_CLIENTS = "SELECT email FROM clients "
 			+ "WHERE clients.status='NEW'  LIMIT ? ";
 	private static final String SQL_GET_EMAIL_UPDATE_PASSWORD = "SELECT clients.email FROM clients "
@@ -95,18 +94,19 @@ public class ClientDao implements IClient {
 	}
 
 	/**
-	 *For getting mails of users  
+	 * For getting mails of users
+	 * 
 	 * @author alex_alokhin
 	 *
 	 */
 	public class ConnectToDBForMail implements RowMapper<String> {
-		
+
 		@Override
 		public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return rs.getString(1) ;
+			return rs.getString(1);
 		}
 	}
-	
+
 	/**
 	 * Save client to database
 	 * 
@@ -126,7 +126,7 @@ public class ClientDao implements IClient {
 			}
 
 			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
-			
+
 			KeyHolder holder = new GeneratedKeyHolder();
 
 			jdbc.update(new PreparedStatementCreator() {
@@ -135,11 +135,11 @@ public class ClientDao implements IClient {
 				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
 					PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CLIENT,
 							Statement.RETURN_GENERATED_KEYS);
-					
+
 					preparedStatement.setString(1, client.getClientName());
 					preparedStatement.setString(2, md5HexPassword);
 					preparedStatement.setString(3, client.getEmail());
-				
+
 					return preparedStatement;
 				}
 			}, holder);
@@ -384,7 +384,7 @@ public class ClientDao implements IClient {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Method that add social data from social networks to exist client
 	 * 
@@ -412,62 +412,63 @@ public class ClientDao implements IClient {
 			return;
 		}
 	}
-	
+
 	/**
-	 * Get mails of clients that change password 
+	 * Get mails of clients that change password
+	 * 
 	 * @return - list of mails
 	 * 
 	 * @author alex_alokhin
 	 */
 	@Override
-	public ArrayList<String> getEmailOfNewPassword() {
-		ArrayList<String> clientsEmails = new ArrayList<>();
+	public List<String> getEmailOfNewPassword() {
+		List<String> clientsEmails = new ArrayList<>();
 		clientsEmails = (ArrayList<String>) jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new ConnectToDBForMail(),
 				countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
-		
+
 		return clientsEmails;
 	}
-	
+
 	/**
 	 * Get mails of clients that have registration process
+	 * 
 	 * @return - list of mails
 	 * 
 	 * @author alex_alokhin
 	 */
 	@Override
-	public ArrayList<String> getEmailOfNewClients() {
-		ArrayList<String> clientsEmails = new ArrayList<>();
-		clientsEmails = (ArrayList<String>) jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(),
-				countOfRecords);
+	public List<String> getEmailOfNewClients() {
+
+		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(), countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "NEW", countOfRecords);
-		
+
 		return clientsEmails;
 	}
-	
+
 	/**
 	 * Get mails of clients that started the survey
+	 * 
 	 * @return - list of mails
 	 * 
 	 * @author alex_alokhin
 	 */
 	@Override
-	public ArrayList<String> getEmailsForSendingSurvey() {
-		ArrayList<String> emailsOfUsers = new ArrayList<>();
+	public List<String> getEmailsForSendingSurvey() {
+
+		List<String> emailsOfUsers = new ArrayList<>();
 		for (int surveyId : getSurveysId()) {
-			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDBForMail(),
-					surveyId));
+			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDBForMail(), surveyId));
 		}
-		
+
 		return emailsOfUsers;
 	}
-	
+
 	private List<Integer> getSurveysId() {
-		List<Integer> surveysId = new ArrayList<>();
-		surveysId = jdbc.queryForList(SQL_GET_ID_NEW_SURVEYS, Integer.class, countOfRecords);
+		List<Integer> surveysId = jdbc.queryForList(SQL_GET_ID_NEW_SURVEYS, Integer.class, countOfRecords);
 		jdbc.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
-		
+
 		return surveysId;
 	}
-	
+
 }

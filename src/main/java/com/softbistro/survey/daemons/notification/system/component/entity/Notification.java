@@ -9,6 +9,30 @@ public class Notification {
 	private String header;
 	private String body;
 
+	public Notification(String senderEmail, String receiverEmail, String header, String body) {
+		super();
+		this.senderEmail = senderEmail;
+		this.receiverEmail = receiverEmail;
+		this.header = header;
+		this.body = body;
+	}
+
+	public Notification(String senderEmail, String senderPassword, String senderDescription, String receiverCCEmail,
+			String receiverEmail, String header, String body) {
+		super();
+		this.senderEmail = senderEmail;
+		this.senderPassword = senderPassword;
+		this.senderDescription = senderDescription;
+		this.receiverCCEmail = receiverCCEmail;
+		this.receiverEmail = receiverEmail;
+		this.header = header;
+		this.body = body;
+	}
+
+	public Notification() {
+		super();
+	}
+
 	public String getSenderEmail() {
 		return senderEmail;
 	}
