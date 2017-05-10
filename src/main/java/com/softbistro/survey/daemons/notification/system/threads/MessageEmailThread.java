@@ -59,7 +59,7 @@ public class MessageEmailThread implements Runnable, ISending {
 			iSendingMessage.updateStatusMessagesToProcessed();
 			log.info("Status of message was updated on 'PROCESSED'. | Message sent.");
 
-		} catch (MessagingException e) {
+		} catch (MessagingException | NullPointerException e) {
 
 			iSendingMessage.updateStatusMessagesToError();
 			Thread.currentThread().interrupt();

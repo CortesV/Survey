@@ -53,11 +53,8 @@ public class NotificationService implements Runnable {
 				}
 			});
 
-			Thread thread = new Thread(
-					new MessageEmailThread(session, messages, emailIndex, messages.get(emailIndex).getHeader(),
-							messages.get(emailIndex).getBody(), username, iSendingMessage));
-			thread.setDaemon(true);
-			thread.start();
+			new Thread(new MessageEmailThread(session, messages, emailIndex, messages.get(emailIndex).getHeader(),
+					messages.get(emailIndex).getBody(), username, iSendingMessage)).start();
 
 			log.info(String.format("Sender email: %s | Receiver email: %s | Header: %s",
 					messages.get(emailIndex).getSenderEmail(), messages.get(emailIndex).getReceiverEmail(),
