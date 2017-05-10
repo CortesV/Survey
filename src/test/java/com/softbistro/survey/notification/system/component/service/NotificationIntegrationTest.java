@@ -97,14 +97,20 @@ public class NotificationIntegrationTest {
 	 */
 	@Test
 	public void getEmailOfNewPasswordTest(){
-		Client testClientPass = new Client();
-		testClientPass.setClientName("sanyaSANYA");
-		testClientPass.setEmail("sashaalohin@ukr.net");
 		
-		Client findServiceClient = findClientService.findByEmail(testClientPass);
-		testClientPass.setPassword("Manager");
-		clientDao.updatePassword(testClientPass, findServiceClient.getId());
-		assertThat(clientDao.getEmailOfNewPassword().get(0)).isEqualTo(testClientPass.getEmail());
+		Client testClient = new Client();
+		testClient.setClientName("SurveyManager");
+		testClient.setEmail("SurveyManager@gmail.com");
+		testClient.setPassword("SurveyManager");
+		testClient.setGoogleId("googleId");
+		testClient.setFlag("google");
+
+		Integer clientId = clientDao.saveClient(testClient);
+		
+		Client findServiceClient = clientDao.findClient(clientId);
+		testClient.setPassword("Manager");
+		clientDao.updatePassword(testClient, findServiceClient.getId());
+		assertThat(clientDao.getEmailOfNewPassword().get(0)).isEqualTo(testClient.getEmail());
 	}
 	
 	/**

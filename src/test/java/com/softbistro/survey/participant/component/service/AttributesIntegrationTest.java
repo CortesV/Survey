@@ -85,7 +85,10 @@ public class AttributesIntegrationTest {
 	public void getByGroupAttributeTest() {
 
 		assertNotEquals(
-				attributesDao.getAttributesByGroup(attributesDao.getAttributeById(ATTRIBUTES_ID).getGroupId()).size(),
+				attributesDao.getAttributesByGroup
+				(attributesDao.getAttributeById
+						(ATTRIBUTES_ID).getGroupId()
+						).size(),
 				0);
 	}
 }

@@ -38,6 +38,8 @@ public class ClientIntegrationTest {
 	private FindClientService findClientService;
 
 	private Client testClient;
+	
+	private Integer clientId;
 
 	@Before
 	public void setUp() {
@@ -49,7 +51,7 @@ public class ClientIntegrationTest {
 		testClient.setGoogleId("googleId");
 		testClient.setFlag("google");
 
-		clientDao.saveClient(testClient);
+		clientId = clientDao.saveClient(testClient);
 	}
 
 	/**
@@ -58,7 +60,7 @@ public class ClientIntegrationTest {
 	@Test
 	public void saveClientTest() {
 
-		assertThat(findClientService.findByEmail(testClient).getEmail()).as("Email = ").isEqualTo(testClient.getEmail());
+		assertThat(clientDao.findClient(clientId).getEmail()).as("Email = ").isEqualTo(testClient.getEmail());
 	}
 
 	/**
@@ -67,7 +69,7 @@ public class ClientIntegrationTest {
 	@Test
 	public void getClientTest() {
 
-		assertThat(clientDao.findClient(findClientService.findByEmail(testClient).getId()).getEmail()).as("Email = ")
+		assertThat(clientDao.findClient(clientId).getEmail()).as("Email = ")
 				.isEqualTo(testClient.getEmail());
 	}
 
@@ -77,7 +79,7 @@ public class ClientIntegrationTest {
 	@Test
 	public void updateClientTest() {
 
-		Client findServiceClient = findClientService.findByEmail(testClient);
+		Client findServiceClient = clientDao.findClient(clientId);
 		testClient.setClientName("Manager");
 		testClient.setEmail("Manager@gmail.com");
 		testClient.setPassword("Manager");
@@ -92,7 +94,7 @@ public class ClientIntegrationTest {
 	@Test
 	public void deleteClientTest() {
 
-		clientDao.deleteClient(findClientService.findByEmail(testClient).getId());
+		clientDao.deleteClient(clientId);
 		assertThat(findClientService.findByEmail(testClient)).as("Object = ").isEqualTo(null);
 	}
 
@@ -105,10 +107,10 @@ public class ClientIntegrationTest {
 		Client findServiceClient = findClientService.findByEmail(testClient);
 
 		testClient.setPassword("Manager");
-		clientDao.updatePassword(testClient, findServiceClient.getId());
+		clientDao.updatePassword(testClient, clientId);
 
 		String md5HexPassword = DigestUtils.md5Hex(testClient.getPassword());
-		assertThat(clientDao.findClient(findServiceClient.getId()).getPassword()).as("Password = ")
+		assertThat(clientDao.findClient(clientId).getPassword()).as("Password = ")
 				.isEqualTo(md5HexPassword);
 	}
 
@@ -136,7 +138,7 @@ public class ClientIntegrationTest {
 	@Test
 	public void addSocInfoTest() {
 
-		Client findServiceClient = findClientService.findByEmail(testClient);
+		Client findServiceClient = clientDao.findClient(clientId);
 
 		testClient.setId(findServiceClient.getId());
 		testClient.setFacebookId("facebookId");
@@ -144,7 +146,7 @@ public class ClientIntegrationTest {
 
 		clientDao.addSocialInfo(testClient);
 		findServiceClient = findClientService.findByEmail(testClient);
-		assertThat(clientDao.findClient(findServiceClient.getId()).getFacebookId()).as("FacebookId = ")
+		assertThat(clientDao.findClient(clientId).getFacebookId()).as("FacebookId = ")
 				.isEqualTo(testClient.getFacebookId());
 	}
 }
