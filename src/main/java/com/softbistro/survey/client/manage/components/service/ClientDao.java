@@ -50,7 +50,7 @@ public class ClientDao implements IClient {
 			+ "WHERE clients.status='VERIFY_PASSWORD'  LIMIT ? ";
 	private static final String SQL_UPDATE_NEW_CLIENTS = "UPDATE clients SET status='DONE' WHERE status = ? LIMIT ?";
 	private static final String SELECT_CLIENT_FIRST_PART = "SELECT * FROM clients  WHERE clients.";
-	private static final String SELECT_CLIENT_SECOND_PART = " = ? and clients.`delete` = 0";
+	private static final String SELECT_CLIENT_SECOND_PART = " = ? AND clients.`delete` = 0 AND clients.status='DONE'";
 	private static final String FIND_CLIENT_BY_ID = "SELECT * FROM clients  WHERE clients.id = ? and clients.`delete` = 0";
 	private static final String FIND_CLIENT = "SELECT * FROM clients  WHERE clients.email = ? or clients.client_name = ? and clients.`delete` = 0";
 	private static final String SAVE_CLIENT = "INSERT INTO clients (client_name, password, email,status) VALUES(?, ?, ?,'NEW')";
