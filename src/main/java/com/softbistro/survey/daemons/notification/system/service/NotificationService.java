@@ -42,9 +42,9 @@ public class NotificationService implements Runnable {
 		log.info(String.format("Status the list of messages was updated on 'IN_PROCESS'. Size of list: %s.",
 				messages.size()));
 
-		while (messages.isEmpty()) {
+		/*while (messages.isEmpty()) {
 			Thread.yield();
-		}
+		}*/
 
 		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
 

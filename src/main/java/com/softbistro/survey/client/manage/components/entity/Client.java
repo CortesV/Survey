@@ -37,6 +37,18 @@ public class Client implements Serializable {
 	 */
 	private String flag;
 
+	public Client() {
+
+	}
+
+	public Client(Integer id, String clientName, String email, String token) {
+
+		this.id = id;
+		this.clientName = clientName;
+		this.email = email;
+		this.token = token;
+	}
+
 	public Integer getId() {
 		return id;
 	}

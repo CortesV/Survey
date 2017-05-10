@@ -39,7 +39,7 @@ public class AuthorizedClientIntegrationTest {
 	public void setUp() {
 
 		authorizedClientTest = new AuthorizedClient();
-		authorizedClientTest.setUniqueKey("c428d4bc-fde5-4eef-b4cb-b8f48a72ffb2");
+		authorizedClientTest.setToken("c428d4bc-fde5-4eef-b4cb-b8f48a72ffb2");
 		authorizedClientTest.setClientId("1");
 		authorizedClientTest.setTimeValidKey(10);
 	}
@@ -51,8 +51,8 @@ public class AuthorizedClientIntegrationTest {
 	public void saveAuthorizedClientTest() {
 
 		authorizedClientDao.saveClient(authorizedClientTest);
-		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey(),
-				authorizedClientTest.getUniqueKey());
+		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getToken()).getToken(),
+				authorizedClientTest.getToken());
 	}
 
 	/**
@@ -62,14 +62,14 @@ public class AuthorizedClientIntegrationTest {
 	public void updateAuthorizedClientTest() {
 
 		authorizedClientDao.saveClient(authorizedClientTest);
-		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey(),
-				authorizedClientTest.getUniqueKey());
+		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getToken()).getToken(),
+				authorizedClientTest.getToken());
 
 		authorizedClientTest.setClientId("2");
 
 		authorizedClientDao.updateClient(authorizedClientTest);
 
-		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getClientId(),
+		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getToken()).getClientId(),
 				authorizedClientTest.getClientId());
 	}
 
@@ -80,11 +80,11 @@ public class AuthorizedClientIntegrationTest {
 	public void deleteAuthorizedClientTest() {
 
 		authorizedClientDao.saveClient(authorizedClientTest);
-		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey(),
-				authorizedClientTest.getUniqueKey());
+		assertEquals(authorizedClientDao.findClient(authorizedClientTest.getToken()).getToken(),
+				authorizedClientTest.getToken());
 
 		authorizedClientDao
-				.deleteClients(authorizedClientDao.findClient(authorizedClientTest.getUniqueKey()).getUniqueKey());
+				.deleteClients(authorizedClientDao.findClient(authorizedClientTest.getToken()).getToken());
 	}
 
 	/**

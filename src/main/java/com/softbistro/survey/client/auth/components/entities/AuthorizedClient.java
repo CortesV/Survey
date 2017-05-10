@@ -18,7 +18,7 @@ public class AuthorizedClient implements Serializable {
 	/**
 	 * uniqueKey - UUID key that represent token for authorized client
 	 */
-	private String uniqueKey;
+	private String token;
 
 	/**
 	 * timeValidKey - time of life uniqueKey in minutes
@@ -29,19 +29,19 @@ public class AuthorizedClient implements Serializable {
 
 	}
 
-	public AuthorizedClient(String uniqueKey, String clientId, Integer timeValidKey) {
+	public AuthorizedClient(String token, String clientId, Integer timeValidKey) {
 
 		this.clientId = clientId;
-		this.uniqueKey = uniqueKey;
+		this.token = token;
 		this.timeValidKey = timeValidKey;
 	}
 
-	public String getUniqueKey() {
-		return uniqueKey;
+	public String getToken() {
+		return token;
 	}
 
-	public void setUniqueKey(String uniqueKey) {
-		this.uniqueKey = uniqueKey;
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 	public Integer getTimeValidKey() {
@@ -62,7 +62,7 @@ public class AuthorizedClient implements Serializable {
 
 	@Override
 	public String toString() {
-		return "AuthorizedClient [clientId=" + clientId + ", uniqueKey=" + uniqueKey + ", timeValidKey=" + timeValidKey
+		return "AuthorizedClient [clientId=" + clientId + ", uniqueKey=" + token + ", timeValidKey=" + timeValidKey
 				+ "]";
 	}
 

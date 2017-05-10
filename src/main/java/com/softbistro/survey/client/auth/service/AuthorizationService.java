@@ -10,9 +10,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.auth.components.entities.AuthorizedClient;
+import com.softbistro.survey.client.auth.components.interfaces.Functional;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
 import com.softbistro.survey.client.manage.service.FindClientService;
+import static java.util.Optional.ofNullable;
+
+import java.util.Optional;
 
 /**
  * Service for authorization of client
@@ -28,7 +32,7 @@ public class AuthorizationService {
 	private static final String GOOGLE = "google";
 
 	private static final String WRONG_PASS_OR_CLIENT_EXIST = "Simple auth answer --- Wrong password or this client doesn't exist in database";
-	private static final String SIMPLE_AUTH = "Simple auth answer --- ";
+	private static final String SIMPLE_AUTH = "Simple auth answer --- client was authorized";
 	private static final String SOCIAL_AUTH = "Social auth answer --- ";
 	private static final String SIMPLE_AUTH_EXCEPTION = "Simple auth exception --- ";
 	private static final String SOCIAL_AUTH_EXCEPTION = "Social auth exception --- ";
@@ -37,7 +41,6 @@ public class AuthorizationService {
 	private static final String WRONG_FACEBOOK = "Something wrong with facebook id";
 	private static final String WRONG_GOOGLE = "Something wrong with google id";
 	private static final String WRONG_EMAIL = "Something wrong with email";
-	
 
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
@@ -58,7 +61,7 @@ public class AuthorizationService {
 	 *            client - information about client
 	 * @return return - information about client that is authorized
 	 */
-	public Client simpleAthorization(Client requestClient) {
+	public Client simpleAthorization1(Client requestClient) {
 
 		AuthorizedClient authorizedClient;
 		Client responseClient;
@@ -78,14 +81,41 @@ public class AuthorizationService {
 			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
 			authorizedClientService.saveClient(authorizedClient);
 
-			responseClient = new Client();
-			responseClient.setId(resultFindClient.getId());
-			responseClient.setClientName(resultFindClient.getClientName());
-			responseClient.setEmail(resultFindClient.getEmail());
-			responseClient.setToken(authorizedClient.getUniqueKey());
+			responseClient = new Client(resultFindClient.getId(), resultFindClient.getClientName(),
+					resultFindClient.getEmail(), authorizedClient.getToken());
 
 			LOGGER.info(SIMPLE_AUTH + responseClient.toString());
 			return responseClient;
+
+		} catch (Exception e) {
+
+			LOGGER.error(SIMPLE_AUTH_EXCEPTION, e);
+			return null;
+		}
+
+	}
+
+	public Client simpleAthorization(Client requestClient) {
+
+		try {
+
+			Optional<Client> resultFindClient = Optional.ofNullable(findClientService.findByEmail(requestClient));
+
+			return resultFindClient
+					.filter(client -> client.getPassword().equals(DigestUtils.md5Hex(requestClient.getPassword())))
+					.map(client -> {
+						String token = UUID.randomUUID().toString();
+						authorizedClientService.saveClient(new AuthorizedClient(token,
+								resultFindClient.map(Client::getId).get().toString(), timeValidKey));
+						LOGGER.info(SIMPLE_AUTH);
+						return new Client(resultFindClient.map(Client::getId).get(),
+								resultFindClient.map(Client::getClientName).get(),
+								resultFindClient.map(Client::getEmail).get(), token);
+					}).orElseGet(() -> {
+
+						LOGGER.info(WRONG_PASS_OR_CLIENT_EXIST);
+						return null;
+					});
 
 		} catch (Exception e) {
 
@@ -103,7 +133,7 @@ public class AuthorizationService {
 	 *            client - information about client
 	 * @return return - information about client that is authorized
 	 */
-	public Client socialAuthorization(Client requestClient) {
+	public Client socialAuthorization1(Client requestClient) {
 
 		AuthorizedClient authorizedClient;
 		Client responseClient;
@@ -154,11 +184,71 @@ public class AuthorizationService {
 			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
 			authorizedClientService.saveClient(authorizedClient);
 
-			responseClient = new Client();
-			responseClient.setId(resultFindClient.getId());
-			responseClient.setClientName(resultFindClient.getClientName());
-			responseClient.setEmail(resultFindClient.getEmail());
-			responseClient.setToken(authorizedClient.getUniqueKey());
+			responseClient = new Client(resultFindClient.getId(), resultFindClient.getClientName(),
+					resultFindClient.getEmail(), authorizedClient.getToken());
+
+			LOGGER.info(SOCIAL_AUTH + responseClient.toString());
+			return responseClient;
+
+		} catch (Exception e) {
+
+			LOGGER.error(SOCIAL_AUTH_EXCEPTION, e);
+			return null;
+		}
+
+	}
+
+	public Client socialAuthorization(Client requestClient) {
+
+		AuthorizedClient authorizedClient;
+		Client responseClient;
+		try {
+
+			clientService.saveSocialClient(requestClient);
+
+			if (!checkFlag(requestClient)) {
+
+				LOGGER.info(SOCIAL_AUTH + BAD_FLAG);
+				return null;
+			}
+
+			Client resultFindClient = findClientService.findClient(requestClient);
+
+			if (resultFindClient == null) {
+
+				LOGGER.info(SOCIAL_AUTH + NOT_EXIST_IN_DB);
+				return null;
+			}
+
+			if (resultFindClient.getFacebookId() != null
+					&& !resultFindClient.getFacebookId().equals(requestClient.getFacebookId())
+					&& StringUtils.isNotBlank(requestClient.getFacebookId())) {
+
+				LOGGER.info(SOCIAL_AUTH + WRONG_FACEBOOK);
+				return null;
+			}
+
+			if (resultFindClient.getGoogleId() != null
+					&& !resultFindClient.getGoogleId().equals(requestClient.getGoogleId())
+					&& StringUtils.isNotBlank(requestClient.getGoogleId())) {
+
+				LOGGER.info(SOCIAL_AUTH + WRONG_GOOGLE);
+				return null;
+			}
+
+			if (resultFindClient.getEmail() != null && !resultFindClient.getEmail().equals(requestClient.getEmail())
+					&& StringUtils.isNotBlank(requestClient.getEmail())) {
+
+				LOGGER.info(SOCIAL_AUTH + WRONG_EMAIL);
+				return null;
+			}
+
+			String uniqueKey = UUID.randomUUID().toString();
+			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
+			authorizedClientService.saveClient(authorizedClient);
+
+			responseClient = new Client(resultFindClient.getId(), resultFindClient.getClientName(),
+					resultFindClient.getEmail(), authorizedClient.getToken());
 
 			LOGGER.info(SOCIAL_AUTH + responseClient.toString());
 			return responseClient;
@@ -180,7 +270,7 @@ public class AuthorizationService {
 	 */
 	public boolean checkAccess(String token) {
 
-		AuthorizedClient authorizedClient = authorizedClientService.findClient(token);
+		/*AuthorizedClient authorizedClient = authorizedClientService.findClient(token);
 
 		if (authorizedClient == null) {
 
@@ -189,7 +279,15 @@ public class AuthorizationService {
 
 		authorizedClient.setTimeValidKey(authorizedClient.getTimeValidKey());
 		authorizedClientService.saveClient(authorizedClient);
-		return true;
+		return true;*/
+		
+		Optional<AuthorizedClient> authorizedClient = Optional.ofNullable(authorizedClientService.findClient(token));
+		return authorizedClient.map(client -> {
+			
+			client.setTimeValidKey(client.getTimeValidKey());
+			authorizedClientService.saveClient(client);
+			return true;
+		}).orElse(false);
 	}
 
 	/**
