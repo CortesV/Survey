@@ -53,12 +53,8 @@ public class QuestionDao implements IQuestion {
 	public Question findQuestionById(Integer id) {
 
 		try {
-
-			List<Question> questionList = jdbc.query(SELECT_QUESTION_BY_ID, new BeanPropertyRowMapper<>(Question.class),
-					id);
-
-			return questionList.isEmpty() ? null : questionList.get(0);
-
+			return Optional.ofNullable(jdbc.query(SELECT_QUESTION_BY_ID, new BeanPropertyRowMapper<>(Question.class),
+					id)).get().stream().findFirst().orElse(null);
 		} catch (Exception e) {
 
 			LOGGER.debug(e.getMessage());
