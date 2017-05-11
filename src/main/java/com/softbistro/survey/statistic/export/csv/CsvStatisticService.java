@@ -2,8 +2,8 @@ package com.softbistro.survey.statistic.export.csv;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,6 @@ public class CsvStatisticService implements IExportFile {
 		File file = null;
 		CsvWriter csvWriter;
 		List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();
-		ParticipantAttributes attr;
 		try {
 			file = new File(FILE_PATH + extension);
 			if (!file.exists()) {
@@ -60,34 +59,39 @@ public class CsvStatisticService implements IExportFile {
 				csvWriter.write(columns[i]);
 			}
 			csvWriter.endRecord();
+			surveyStatisticExport.stream().forEach(survey -> {
+				try {
+					ParticipantAttributes attribute;
 
-			for (SurveyStatisticExport survey : surveyStatisticExport) {
-				csvWriter.write(String.valueOf(survey.getId()));
-				csvWriter.write(survey.getName());
-				csvWriter.write(String.valueOf(survey.getParticipantId()));
-				csvWriter.write(survey.getFirstName());
-				csvWriter.write(survey.getLastName());
-				csvWriter.write(survey.getGroupName());
-				csvWriter.write(survey.getQuestionName());
-				csvWriter.write(survey.getAnswer());
-				csvWriter.write(survey.getComment());
-				csvWriter.write(String.valueOf(survey.getAnswerDateTime()));
-
-				for (int i = 0; i < survey.getParticipantAttribute().size(); i++) {
-					if (i != 0) {
-						csvWriter.endRecord();
-						for (int j = 0; j < 10; j++) {
-							csvWriter.write(null);
+					csvWriter.write(String.valueOf(survey.getId()));
+					csvWriter.write(survey.getName());
+					csvWriter.write(String.valueOf(survey.getParticipantId()));
+					csvWriter.write(survey.getFirstName());
+					csvWriter.write(survey.getLastName());
+					csvWriter.write(survey.getGroupName());
+					csvWriter.write(survey.getQuestionName());
+					csvWriter.write(survey.getAnswer());
+					csvWriter.write(survey.getComment());
+					csvWriter.write(String.valueOf(survey.getAnswerDateTime()));
+					for (int i = 0; i < survey.getParticipantAttribute().size(); i++) {
+						if (i != 0) {
+							csvWriter.endRecord();
+							for (int j = 0; j < 10; j++) {
+								csvWriter.write(null);
+							}
 						}
+
+						attribute = survey.getParticipantAttribute().get(i);
+						csvWriter.write(attribute.getName());
+						csvWriter.write(attribute.getValue());
 					}
 
-					attr = survey.getParticipantAttribute().get(i);
-					csvWriter.write(attr.getName());
-					csvWriter.write(attr.getValue());
+					csvWriter.endRecord();
+				} catch (IOException e) {
+					LOG.error(e.getMessage());
 				}
 
-				csvWriter.endRecord();
-			}
+			});
 
 			csvWriter.close();
 		} catch (Exception e) {
