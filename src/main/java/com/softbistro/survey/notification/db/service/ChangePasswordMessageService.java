@@ -47,10 +47,23 @@ public class ChangePasswordMessageService implements ICreateMessage {
 	 */
 	@Override
 	public void send() {
+<<<<<<< HEAD
 		List<String> emails = iClient.getEmailOfNewPassword();
 		emails.stream().forEach(email -> {
 			Notification notification = new Notification(username, email, generateThemeForMessage(),
 					generateTextForMessage(email));
+=======
+		
+		List<String> emails = iClient.getEmailOfNewPassword();
+		for (int emailIndex = 0; emailIndex < emails.size(); emailIndex++) {
+			String uuid = UUID.randomUUID().toString();
+			Notification notification = new Notification();
+			notification.setSenderEmail(username);
+			notification.setBody(generateTextForMessage(emails.get(emailIndex), uuid));
+			notification.setHeader(generateThemeForMessage());
+			notification.setReceiverEmail(emails.get(emailIndex));
+			
+>>>>>>> 4ff1fa7414153bf516561a79aad56237ca015ecc
 			iSendingMessage.insertIntoNotification(notification);
 			log.info(String.format("Password email: %s", email));
 		});

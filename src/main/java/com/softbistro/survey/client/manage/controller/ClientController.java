@@ -79,15 +79,17 @@ public class ClientController {
 	 */
 	@ApiOperation(value = "Create new Client", notes = "Create new Client instanse by client name, password, email", tags = "Client")
 	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<Client> saveClient(@RequestBody Client client) {
+	public ResponseEntity<Object> saveClient(@RequestBody Client client) {
 
 		try {
-			if(clientService.saveClient(client) == null) {
+			
+			Integer id = clientService.saveClient(client);
+			if(id == null) {
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 			else{
 				registrationService.send();
-				return new ResponseEntity<>(HttpStatus.CREATED);
+				return new ResponseEntity<>(id, HttpStatus.CREATED);
 			}
 		} catch (Exception e) {
 
