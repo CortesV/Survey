@@ -407,10 +407,7 @@ public class ClientDao implements IClient {
 	 */
 	@Override
 	public List<String> getEmailOfNewPassword() {
-<<<<<<< HEAD
 
-=======
->>>>>>> 05c7ba4d91f745ae62fc8fb0468a2f53c42ff1ba
 		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new ConnectToDBForMail(),
 				countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
@@ -427,13 +424,9 @@ public class ClientDao implements IClient {
 	 */
 	@Override
 	public List<String> getEmailOfNewClients() {
-<<<<<<< HEAD
 
 		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(), countOfRecords);
-=======
-		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(),
-				countOfRecords);
->>>>>>> 05c7ba4d91f745ae62fc8fb0468a2f53c42ff1ba
+
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "NEW", countOfRecords);
 
 		return clientsEmails;
@@ -452,25 +445,17 @@ public class ClientDao implements IClient {
 		List<String> emailsOfUsers = new ArrayList<>();
 
 		for (int surveyId : getSurveysId()) {
-<<<<<<< HEAD
-			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDBForMail(), surveyId));
-=======
-			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new BeanPropertyRowMapper<>(String.class), surveyId));
->>>>>>> 05c7ba4d91f745ae62fc8fb0468a2f53c42ff1ba
+
+			emailsOfUsers.addAll(
+					jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new BeanPropertyRowMapper<>(String.class), surveyId));
+
 		}
 
 		return emailsOfUsers;
 	}
 
-	<<<<<<<HEAD
-
 	public List<Integer> getSurveysId() {
 
-=======
-
-	private List<Integer> getSurveysId() {
-		
->>>>>>> 05c7ba4d91f745ae62fc8fb0468a2f53c42ff1ba
 		List<Integer> surveysId = jdbc.queryForList(SQL_GET_ID_NEW_SURVEYS, Integer.class, countOfRecords);
 		jdbc.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
 
