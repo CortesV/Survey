@@ -91,9 +91,7 @@ public class GroupDao implements IGroup {
 					jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_ID, new BeanPropertyRowMapper<>(Group.class), groupId))
 					.get().stream().findFirst().orElse(null);
 		}
-
 		catch (Exception e) {
-
 			LOGGER.error(e.getMessage());
 			return null;
 		}
@@ -112,9 +110,7 @@ public class GroupDao implements IGroup {
 			return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT,
 					new BeanPropertyRowMapper<>(Group.class), clientId)).filter(group->!group.isEmpty()).orElse(null);
 		}
-
 		catch (Exception e) {
-
 			LOGGER.error(e.getMessage());
 			return null;
 		}
