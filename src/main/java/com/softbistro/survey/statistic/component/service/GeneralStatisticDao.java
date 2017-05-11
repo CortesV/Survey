@@ -2,7 +2,6 @@ package com.softbistro.survey.statistic.component.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +40,8 @@ public class GeneralStatisticDao {
 	 * @return  - list of surveys statistic 
 	 */
 	public List<SurveyStatisticExport> getAllStatistic(){
-		List<SurveyStatisticExport> surveyStatisticExport = new ArrayList<>();
 
-		surveyStatisticExport = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT,
+		 List<SurveyStatisticExport> surveyStatisticExport = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT,
 				new RowMapper<SurveyStatisticExport>() {
 
 					@Override

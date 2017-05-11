@@ -1,14 +1,11 @@
 package com.softbistro.survey.statistic.component.service;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 import com.softbistro.survey.statistic.component.interfacee.IExportStatisticDao;
 
 /**
@@ -33,8 +30,7 @@ public class JsonStatisticDao implements IExportStatisticDao {
 	public String export() {
 		try {
 			Gson gson = new GsonBuilder().setPrettyPrinting().create();
-			List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();
-			return gson.toJson(surveyStatisticExport);
+			return gson.toJson(generalStatisticDao.getAllStatistic());
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			return null;
