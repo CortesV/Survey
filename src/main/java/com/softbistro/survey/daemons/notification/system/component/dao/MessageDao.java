@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.daemons.notification.system.component.entity.NotificationRowMapper;
 import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
 
 /**
@@ -54,7 +54,7 @@ public class MessageDao implements ISendingMessage {
 	 */
 	@Override
 	public List<Notification> getEmailsForSending() {
-		return jdbcTemplateNotification.query(SQL_GET_LIST_EMAIL_NEED_TO_SEND, new NotificationRowMapper(),countOfRecords);
+		return jdbcTemplateNotification.query(SQL_GET_LIST_EMAIL_NEED_TO_SEND, new BeanPropertyRowMapper<>(Notification.class),countOfRecords);
 	}
 
 	/**

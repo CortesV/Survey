@@ -69,6 +69,20 @@ public class ClientDao implements IClient {
 	FindClientService findClientService;
 
 	/**
+	 * For getting mails of users
+	 * 
+	 * @author alex_alokhin
+	 *
+	 */
+	public class ConnectToDBForMail implements RowMapper<String> {
+
+		@Override
+		public String mapRow(ResultSet rs, int rowNum) throws SQLException {
+			return rs.getString(1);
+		}
+	}
+	
+	/**
 	 * Find client in database by id of client
 	 * 
 	 * @param email
@@ -91,20 +105,6 @@ public class ClientDao implements IClient {
 			return null;
 		}
 
-	}
-
-	/**
-	 * For getting mails of users
-	 * 
-	 * @author alex_alokhin
-	 *
-	 */
-	public class ConnectToDBForMail implements RowMapper<String> {
-
-		@Override
-		public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return rs.getString(1);
-		}
 	}
 
 	/**
@@ -423,7 +423,7 @@ public class ClientDao implements IClient {
 	@Override
 	public List<String> getEmailOfNewPassword() {
 		List<String> clientsEmails = new ArrayList<>();
-		clientsEmails = (ArrayList<String>) jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new ConnectToDBForMail(),
+		clientsEmails = (ArrayList<String>) jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new BeanPropertyRowMapper<>(String.class),
 				countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
 
@@ -440,7 +440,7 @@ public class ClientDao implements IClient {
 	@Override
 	public List<String> getEmailOfNewClients() {
 
-		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(), countOfRecords);
+		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new BeanPropertyRowMapper<>(String.class), countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "NEW", countOfRecords);
 
 		return clientsEmails;
@@ -458,7 +458,7 @@ public class ClientDao implements IClient {
 
 		List<String> emailsOfUsers = new ArrayList<>();
 		for (int surveyId : getSurveysId()) {
-			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDBForMail(), surveyId));
+			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new BeanPropertyRowMapper<>(String.class), surveyId));
 		}
 
 		return emailsOfUsers;

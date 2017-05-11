@@ -30,7 +30,6 @@ public class Notification {
 	}
 
 	public Notification() {
-		super();
 	}
 
 	public String getSenderEmail() {
