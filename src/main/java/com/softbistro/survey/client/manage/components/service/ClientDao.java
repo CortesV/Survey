@@ -420,9 +420,9 @@ public class ClientDao implements IClient {
 	 * @author alex_alokhin
 	 */
 	@Override
-	public ArrayList<String> getEmailOfNewPassword() {
-		ArrayList<String> clientsEmails = new ArrayList<>();
-		clientsEmails = (ArrayList<String>) jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new ConnectToDBForMail(),
+	public List<String> getEmailOfNewPassword() {
+		
+		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new ConnectToDBForMail(),
 				countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
 		
@@ -436,9 +436,9 @@ public class ClientDao implements IClient {
 	 * @author alex_alokhin
 	 */
 	@Override
-	public ArrayList<String> getEmailOfNewClients() {
-		ArrayList<String> clientsEmails = new ArrayList<>();
-		clientsEmails = (ArrayList<String>) jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(),
+	public List<String> getEmailOfNewClients() {
+		
+		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(),
 				countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "NEW", countOfRecords);
 		
@@ -452,8 +452,10 @@ public class ClientDao implements IClient {
 	 * @author alex_alokhin
 	 */
 	@Override
-	public ArrayList<String> getEmailsForSendingSurvey() {
-		ArrayList<String> emailsOfUsers = new ArrayList<>();
+	public List<String> getEmailsForSendingSurvey() {
+		
+		List<String> emailsOfUsers = new ArrayList<>();
+		
 		for (int surveyId : getSurveysId()) {
 			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new ConnectToDBForMail(),
 					surveyId));
@@ -462,9 +464,9 @@ public class ClientDao implements IClient {
 		return emailsOfUsers;
 	}
 	
-	private List<Integer> getSurveysId() {
-		List<Integer> surveysId = new ArrayList<>();
-		surveysId = jdbc.queryForList(SQL_GET_ID_NEW_SURVEYS, Integer.class, countOfRecords);
+	public List<Integer> getSurveysId() {
+		
+		List<Integer> surveysId = jdbc.queryForList(SQL_GET_ID_NEW_SURVEYS, Integer.class, countOfRecords);
 		jdbc.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
 		
 		return surveysId;

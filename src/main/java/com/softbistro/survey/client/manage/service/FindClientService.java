@@ -39,6 +39,7 @@ public class FindClientService {
 			credential = client.getFacebookId();
 			template = FACEBOOK_ID;
 		} else if (StringUtils.isNotBlank(client.getGoogleId())) {
+			
 			credential = client.getGoogleId();
 			template = GOOGLE_ID;
 		}

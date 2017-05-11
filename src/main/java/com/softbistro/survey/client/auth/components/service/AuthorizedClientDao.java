@@ -49,7 +49,7 @@ public class AuthorizedClientDao implements IAuthorizedClientRepository {
 	@Override
 	public void saveClient(AuthorizedClient client) {
 
-		hashOps.put(OBJECT_KEY, client.getUniqueKey(), client);
+		hashOps.put(OBJECT_KEY, client.getToken(), client);
 		redisTemplate.expire(OBJECT_KEY, client.getTimeValidKey(), TimeUnit.MINUTES);
 	}
 
@@ -63,7 +63,7 @@ public class AuthorizedClientDao implements IAuthorizedClientRepository {
 	@Override
 	public void updateClient(AuthorizedClient client) {
 
-		hashOps.put(OBJECT_KEY, client.getUniqueKey(), client);
+		hashOps.put(OBJECT_KEY, client.getToken(), client);
 		redisTemplate.expire(OBJECT_KEY, client.getTimeValidKey(), TimeUnit.SECONDS);
 	}
 

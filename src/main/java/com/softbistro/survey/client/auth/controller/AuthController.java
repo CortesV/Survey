@@ -1,5 +1,8 @@
 package com.softbistro.survey.client.auth.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +43,7 @@ public class AuthController {
 
 	@Autowired
 	private AuthorizedClientService authorizedClientService;
-	
+
 	@Autowired
 	private ClientService clientService;
 

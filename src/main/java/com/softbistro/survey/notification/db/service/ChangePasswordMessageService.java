@@ -1,6 +1,6 @@
 package com.softbistro.survey.notification.db.service;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.log4j.LogManager;
@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
-import com.softbistro.survey.client.manage.components.service.ClientDao;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
 import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
@@ -48,7 +47,8 @@ public class ChangePasswordMessageService implements Runnable, ICreateMessage {
 	 */
 	@Override
 	public void send() {
-		ArrayList<String> emails = iClient.getEmailOfNewPassword();
+		
+		List<String> emails = iClient.getEmailOfNewPassword();
 		for (int emailIndex = 0; emailIndex < emails.size(); emailIndex++) {
 			String uuid = UUID.randomUUID().toString();
 			Notification notification = new Notification();
