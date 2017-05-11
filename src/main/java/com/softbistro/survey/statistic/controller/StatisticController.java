@@ -108,11 +108,11 @@ public class StatisticController {
 	 */
 	@ApiOperation(value = "Export statistic about surveys to file with specified extension", notes = "Export statistic about surveys to temporaty file", tags = "Statistic")
 	@RequestMapping(value = "/data/{extension}", method = RequestMethod.POST)
-	public ResponseEntity<Object> exportSurveyStatistic(/*@RequestHeader String token,*/ @PathVariable("extension") String extension) {
+	public ResponseEntity<Object> exportSurveyStatistic(@RequestHeader String token, @PathVariable("extension") String extension) {
  		
-		/*if (!authorizationService.checkAccess(token)) {
+		if (!authorizationService.checkAccess(token)) {
  			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
- 		}*/
+ 		}
 		
 		try {
 

@@ -1,19 +1,18 @@
 package com.softbistro.survey.statistic.component.service;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.statistic.component.entity.StatisticColumnFilter;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
+import com.softbistro.survey.statistic.component.entity.SurveyStatisticShortMapper;
 import com.softbistro.survey.statistic.component.interfacee.IStatisticDao;
 
 /**
@@ -55,23 +54,7 @@ public class StatisticDao implements IStatisticDao {
 	@Override
 	public SurveyStatisticShort survey(Integer surveyId) {
 		SurveyStatisticShort surveyStatisticShort = jdbcTemplate.queryForObject(SQL_GET_SURVEY_STATISTIC_SHORT,
-				new RowMapper<SurveyStatisticShort>() {
-
-					@Override
-					public SurveyStatisticShort mapRow(ResultSet rs, int rowNum) throws SQLException {
-						SurveyStatisticShort shortSurvey = new SurveyStatisticShort();
-						shortSurvey.setId(rs.getInt(1));
-						shortSurvey.setName(rs.getString(2));
-						shortSurvey.setStartTimeOfSurvey(rs.getDate(3));
-						shortSurvey.setFinishTimeOfSurvey(rs.getDate(4));
-						shortSurvey.setParticipantCount(rs.getInt(5));
-						shortSurvey.setParticipantVoted(rs.getInt(6));
-
-						shortSurvey.setParticipanNotVoted(rs.getInt(5) - rs.getInt(6));
-						return shortSurvey;
-					}
-
-				}, surveyId, surveyId, surveyId);
+				new SurveyStatisticShortMapper(), surveyId, surveyId, surveyId);
 
 		return surveyStatisticShort;
 	}
@@ -85,11 +68,10 @@ public class StatisticDao implements IStatisticDao {
 	@Override
 	public List<Map<String, Object>> export(Integer surveyId) {
 		try {
+			Optional<List<Map<String, Object>>> export = Optional
+					.ofNullable(jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT, new ColumnMapRowMapper(), surveyId));
 
-			List<Map<String, Object>> export = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT,
-					new ColumnMapRowMapper(), surveyId);
-
-			return export.isEmpty() ? null : export;
+			return export.orElse(null);
 		}
 
 		catch (Exception e) {

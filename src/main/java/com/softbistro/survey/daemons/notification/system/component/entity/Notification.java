@@ -10,7 +10,6 @@ public class Notification {
 	private String body;
 
 	public Notification(String senderEmail, String receiverEmail, String header, String body) {
-		super();
 		this.senderEmail = senderEmail;
 		this.receiverEmail = receiverEmail;
 		this.header = header;
@@ -19,7 +18,6 @@ public class Notification {
 
 	public Notification(String senderEmail, String senderPassword, String senderDescription, String receiverCCEmail,
 			String receiverEmail, String header, String body) {
-		super();
 		this.senderEmail = senderEmail;
 		this.senderPassword = senderPassword;
 		this.senderDescription = senderDescription;
