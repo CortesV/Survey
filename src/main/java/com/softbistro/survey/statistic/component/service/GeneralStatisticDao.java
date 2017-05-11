@@ -41,9 +41,8 @@ public class GeneralStatisticDao {
 	 * @return  - list of surveys statistic 
 	 */
 	public List<SurveyStatisticExport> getAllStatistic(){
-		List<SurveyStatisticExport> surveyStatisticExport = new ArrayList<>();
 
-		surveyStatisticExport = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT,
+		 List<SurveyStatisticExport> surveyStatisticExport = jdbcTemplate.query(SQL_GET_STATISTIC_FOR_EXPORT,
 				new RowMapper<SurveyStatisticExport>() {
 
 					@Override

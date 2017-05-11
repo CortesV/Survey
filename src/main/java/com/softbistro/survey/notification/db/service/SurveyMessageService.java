@@ -29,7 +29,7 @@ import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
  */
 @Service
 @Scope("prototype")
-public class SurveyMessageService implements Runnable, ICreateMessage {
+public class SurveyMessageService implements ICreateMessage {
 	private static final Logger log = LogManager.getLogger(SurveyMessageService.class);
 
 	@Autowired
@@ -53,18 +53,11 @@ public class SurveyMessageService implements Runnable, ICreateMessage {
 	public void send() {
 		List<String> emails = iClient.getEmailsForSendingSurvey();
 
-		for (int emailIndex = 0; emailIndex < emails.size(); emailIndex++) {
-			String uuid = UUID.randomUUID().toString();
-			Notification notification = new Notification();
-			notification.setSenderEmail(username);
-			notification.setBody(generateTextForMessage(emails.get(emailIndex), uuid));
-			notification.setHeader(generateThemeForMessage());
-			notification.setReceiverEmail(emails.get(emailIndex));
-			
+		emails.stream().forEach(email -> {
+			Notification notification = new Notification(username,email,generateThemeForMessage(),generateTextForMessage(email));
 			iSendingMessage.insertIntoNotification(notification);
-			log.info(String.format("Password email: %s", emails.get(emailIndex)));
-
-		}
+			log.info(String.format("Participant email: %s", email));
+		});
 	}
 	
 	/**
@@ -73,12 +66,11 @@ public class SurveyMessageService implements Runnable, ICreateMessage {
 	 * @param email, uuid
 	 */
 	@Override
-	public String generateTextForMessage(String email, String uuid) {
-		String urlForVote = url + uuid;
+	public String generateTextForMessage(String email) {
+		String urlForVote = url + UUID.randomUUID().toString();
 
 		String textMessage = String.format(
-				"Participant with mail \"%s\" started survey\nYou can vote by clicking on URL : %s",
-				email, urlForVote);
+				"Participant with mail \"%s\" started survey\nYou can vote by clicking on URL : %s",email, urlForVote);
 		return textMessage;
 	}
 
@@ -88,11 +80,6 @@ public class SurveyMessageService implements Runnable, ICreateMessage {
 	@Override
 	public String generateThemeForMessage() {
 		return String.format("Survey");
-	}
-
-	@Override
-	public void run() {
-		send();
 	}
 
 }
