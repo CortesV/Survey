@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
@@ -30,7 +32,7 @@ import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
  */
 @Service
 @Scope("prototype")
-public class RegistrationMessageServise implements Runnable, ICreateMessage {
+public class RegistrationMessageServise implements ICreateMessage {
 	private Logger log = LogManager.getLogger(getClass());
 
 	@Autowired
@@ -53,31 +55,23 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage {
 	 */
 	@Override
 	public void send() {
-
 		List<String> emails = iClient.getEmailOfNewClients();
-
-		for (int emailIndex = 0; emailIndex < emails.size(); emailIndex++) {
-			String uuid = UUID.randomUUID().toString();
-			Notification notification = new Notification();
-			notification.setSenderEmail(username);
-			notification.setBody(generateTextForMessage(emails.get(emailIndex), uuid));
-			notification.setHeader(generateThemeForMessage());
-			notification.setReceiverEmail(emails.get(emailIndex));
+		emails.stream().forEach(email -> {
+			Notification notification = new Notification(username,email,generateThemeForMessage(),generateTextForMessage(email));
 
 			iSendingMessage.insertIntoNotification(notification);
-			log.info(String.format("Password email: %s", emails.get(emailIndex)));
-		}
+			log.info(String.format("Registration email: %s", email));
+		});
 	}
 
 	/**
 	 * Generate text for message
 	 * 
-	 * @param email,
-	 *            uuid
+	 * @param email
 	 */
 	@Override
-	public String generateTextForMessage(String email, String uuid) {
-		String urlForVote = url + uuid;
+	public String generateTextForMessage(String email) {
+		String urlForVote = url + UUID.randomUUID().toString();
 
 		String textMessage = String.format(
 				"Registration new account with email \"%s\" \n" + "For confirm click on URL : %s", email, urlForVote);
@@ -92,9 +86,7 @@ public class RegistrationMessageServise implements Runnable, ICreateMessage {
 		return String.format("Registration");
 	}
 
-	@Override
-	public void run() {
-		send();
-	}
-
+	
+	
+	
 }
