@@ -68,19 +68,6 @@ public class ClientDao implements IClient {
 	@Autowired
 	FindClientService findClientService;
 
-	/**
-	 * For getting mails of users
-	 * 
-	 * @author alex_alokhin
-	 *
-	 */
-	public class ConnectToDBForMail implements RowMapper<String> {
-
-		@Override
-		public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return rs.getString(1);
-		}
-	}
 	
 	/**
 	 * Find client in database by id of client
@@ -125,7 +112,6 @@ public class ClientDao implements IClient {
 				return null;
 			}
 
-			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
 
 			KeyHolder holder = new GeneratedKeyHolder();
 
@@ -137,7 +123,7 @@ public class ClientDao implements IClient {
 							Statement.RETURN_GENERATED_KEYS);
 
 					preparedStatement.setString(1, client.getClientName());
-					preparedStatement.setString(2, md5HexPassword);
+					preparedStatement.setString(2, DigestUtils.md5Hex(client.getPassword()));
 					preparedStatement.setString(3, client.getEmail());
 
 					return preparedStatement;
@@ -422,7 +408,7 @@ public class ClientDao implements IClient {
 	 */
 	@Override
 	public List<String> getEmailOfNewPassword() {
-		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new ConnectToDBForMail(),
+		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new BeanPropertyRowMapper<>(String.class),
 				countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
 
@@ -438,7 +424,7 @@ public class ClientDao implements IClient {
 	 */
 	@Override
 	public List<String> getEmailOfNewClients() {
-		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(),
+		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new BeanPropertyRowMapper<>(String.class),
 				countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "NEW", countOfRecords);
 
