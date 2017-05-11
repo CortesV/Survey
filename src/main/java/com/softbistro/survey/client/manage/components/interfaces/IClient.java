@@ -1,6 +1,5 @@
 package com.softbistro.survey.client.manage.components.interfaces;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
