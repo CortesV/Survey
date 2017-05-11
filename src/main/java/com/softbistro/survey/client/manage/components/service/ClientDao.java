@@ -94,20 +94,6 @@ public class ClientDao implements IClient {
 	}
 
 	/**
-	 * For getting mails of users
-	 * 
-	 * @author alex_alokhin
-	 *
-	 */
-	public class ConnectToDBForMail implements RowMapper<String> {
-
-		@Override
-		public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-			return rs.getString(1);
-		}
-	}
-
-	/**
 	 * Save client to database
 	 * 
 	 * @param client
