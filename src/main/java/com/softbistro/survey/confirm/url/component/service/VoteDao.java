@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import com.mysql.cj.mysqlx.protobuf.MysqlxDatatypes.Array;
 import com.softbistro.survey.confirm.url.component.entity.Answer;
 import com.softbistro.survey.confirm.url.component.entity.UuidInformation;
 import com.softbistro.survey.confirm.url.component.entity.VotePage;
@@ -114,26 +116,9 @@ public class VoteDao implements IVote {
 					new RowMapper<VotePage>() {
 
 						@Override
-						public VotePage mapRow(ResultSet rs, int rowNum) throws SQLException {
+						public VotePage mapRow(ResultSet rs, int rowNum) throws SQLException {			
 							
-							VotePage votePage = new VotePage();
-
-							List<String> choiseForQuestion = new ArrayList<>();
-
-							String allChoiseForQuestion = rs.getString(3);
-
-							for (String retval : allChoiseForQuestion.split("/")) {
-								choiseForQuestion.add(retval);
-							}
-
-							votePage.setQuestionName(rs.getString(1));
-							votePage.setRequired(rs.getInt(2));
-							votePage.setQuestionAnswers(choiseForQuestion);
-							votePage.setAnswerType(rs.getString(4));
-							votePage.setRequiredComment(rs.getInt(5));
-							votePage.setId(rs.getInt(6));
-
-							return votePage;
+							return getQuestionsInfo(rs);
 						}
 
 					}, uuidInformation.getSurveyId());
@@ -145,4 +130,24 @@ public class VoteDao implements IVote {
 		}
 	}
 
+	private VotePage getQuestionsInfo(ResultSet rs) throws SQLException{
+		
+		
+		VotePage votePage = new VotePage();
+
+		List<String> choiseForQuestion = new ArrayList<>();
+
+		String allChoiseForQuestion = rs.getString(3);
+		
+		Arrays.asList(allChoiseForQuestion.split("/")).stream().forEach(retval -> choiseForQuestion.add(retval));
+		
+		votePage.setQuestionName(rs.getString(1));
+		votePage.setRequired(rs.getInt(2));
+		votePage.setQuestionAnswers(choiseForQuestion);
+		votePage.setAnswerType(rs.getString(4));
+		votePage.setRequiredComment(rs.getInt(5));
+		votePage.setId(rs.getInt(6));
+		
+		return votePage;
+	}
 }

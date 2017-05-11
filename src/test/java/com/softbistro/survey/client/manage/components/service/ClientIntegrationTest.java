@@ -58,8 +58,8 @@ public class ClientIntegrationTest {
 	 * Method that test save client to database
 	 */
 	@Test
-	public void saveClientTest() {
-
+	public void saveClientTest() {		
+		
 		assertThat(clientDao.findClient(clientId).getEmail()).as("Email = ").isEqualTo(testClient.getEmail());
 	}
 
