@@ -38,7 +38,7 @@ public class ImportSurveyController {
 	private AuthorizationService authorizationService;
 
 	/**
-	 * Importing survey from selected file of csv type to datadase.
+	 * Importing survey from selected file of csv type to database.
 	 * 
 	 * @param request
 	 * @param clientId
