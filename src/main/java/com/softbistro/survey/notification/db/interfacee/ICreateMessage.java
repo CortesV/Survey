@@ -22,7 +22,7 @@ public interface ICreateMessage {
 	/**
 	 * Generate text for message
 	 * 
-	 * @param email, uuid
+	 * @param email
 	 */
 	public String generateTextForMessage(String email);
 	

@@ -63,7 +63,7 @@ public class SurveyMessageService implements ICreateMessage {
 	/**
 	 * Generate text for message
 	 * 
-	 * @param email, uuid
+	 * @param email
 	 */
 	@Override
 	public String generateTextForMessage(String email) {
