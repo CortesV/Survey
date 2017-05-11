@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -81,7 +82,7 @@ public class ClientDao implements IClient {
 			return rs.getString(1);
 		}
 	}
-	
+
 	/**
 	 * Find client in database by id of client
 	 * 
@@ -94,10 +95,9 @@ public class ClientDao implements IClient {
 
 		try {
 
-			Client client = (Client) jdbc.queryForObject(FIND_CLIENT_BY_ID, new BeanPropertyRowMapper(Client.class),
+			Client findClient = jdbc.queryForObject(FIND_CLIENT_BY_ID, new BeanPropertyRowMapper<Client>(Client.class),
 					id);
-
-			return client == null ? null : client;
+			return Optional.ofNullable(findClient).map(client -> client).orElse(null);
 
 		} catch (Exception e) {
 
@@ -125,8 +125,6 @@ public class ClientDao implements IClient {
 				return null;
 			}
 
-			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
-
 			KeyHolder holder = new GeneratedKeyHolder();
 
 			jdbc.update(new PreparedStatementCreator() {
@@ -137,7 +135,7 @@ public class ClientDao implements IClient {
 							Statement.RETURN_GENERATED_KEYS);
 
 					preparedStatement.setString(1, client.getClientName());
-					preparedStatement.setString(2, md5HexPassword);
+					preparedStatement.setString(2, DigestUtils.md5Hex(client.getPassword()));
 					preparedStatement.setString(3, client.getEmail());
 
 					return preparedStatement;
@@ -167,15 +165,11 @@ public class ClientDao implements IClient {
 		try {
 
 			Client resultFindClient = findClientService.findClient(client);
-
 			if (resultFindClient == null) {
-
 				return socialSaveClientNotExist(client);
 			} else {
-
 				return socialSaveClientExist(client, resultFindClient);
 			}
-
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
@@ -269,7 +263,7 @@ public class ClientDao implements IClient {
 			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper<>(Client.class),
 					client.getEmail(), client.getClientName());
 
-			return clientList.isEmpty() ? null : clientList.get(0);
+			return clientList.stream().findFirst().orElse(null);
 
 		} catch (Exception e) {
 
@@ -290,24 +284,17 @@ public class ClientDao implements IClient {
 		try {
 
 			Client resultFindClient = findClientService.findByEmail(client);
-
 			if (resultFindClient != null) {
-
 				return null;
 			}
-
 			if (client.getFlag().equals(FACEBOOK)) {
 
 				jdbc.update(SAVE_FACEBOOK_CLIENT, client.getClientName(), client.getFacebookId(), client.getEmail());
-				return client;
 			}
-
 			if (client.getFlag().equals(GOOGLE)) {
 
 				jdbc.update(SAVE_GOOGLE_CLIENT, client.getClientName(), client.getGoogleId(), client.getEmail());
-				return client;
 			}
-
 			return client;
 
 		} catch (Exception e) {
@@ -374,10 +361,9 @@ public class ClientDao implements IClient {
 		try {
 
 			List<Client> clientList = jdbc.query(SELECT_CLIENT_FIRST_PART + template + SELECT_CLIENT_SECOND_PART,
-					new BeanPropertyRowMapper(Client.class), value);
+					new BeanPropertyRowMapper<Client>(Client.class), value);
 
 			return clientList.isEmpty() ? null : clientList.get(0);
-
 		} catch (Exception e) {
 
 			LOGGER.error(e.getMessage());
@@ -409,7 +395,6 @@ public class ClientDao implements IClient {
 			updateClient.setGoogleId(socialClient.getGoogleId());
 			updateClient(updateClient, updateClient.getId());
 			LOGGER.info(ADD_SOC_INFO);
-			return;
 		}
 	}
 
@@ -422,6 +407,7 @@ public class ClientDao implements IClient {
 	 */
 	@Override
 	public List<String> getEmailOfNewPassword() {
+
 		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new ConnectToDBForMail(),
 				countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
@@ -438,8 +424,9 @@ public class ClientDao implements IClient {
 	 */
 	@Override
 	public List<String> getEmailOfNewClients() {
-		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(),
-				countOfRecords);
+
+		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new ConnectToDBForMail(), countOfRecords);
+
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "NEW", countOfRecords);
 
 		return clientsEmails;
@@ -456,16 +443,19 @@ public class ClientDao implements IClient {
 	public List<String> getEmailsForSendingSurvey() {
 
 		List<String> emailsOfUsers = new ArrayList<>();
-		
+
 		for (int surveyId : getSurveysId()) {
-			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new BeanPropertyRowMapper<>(String.class), surveyId));
+
+			emailsOfUsers.addAll(
+					jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new BeanPropertyRowMapper<>(String.class), surveyId));
+
 		}
 
 		return emailsOfUsers;
 	}
 
-	private List<Integer> getSurveysId() {
-		
+	public List<Integer> getSurveysId() {
+
 		List<Integer> surveysId = jdbc.queryForList(SQL_GET_ID_NEW_SURVEYS, Integer.class, countOfRecords);
 		jdbc.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
 
