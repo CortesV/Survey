@@ -39,9 +39,9 @@ public class AuthorizationService {
 	private static final String SOCIAL_AUTH_EXCEPTION = "Social auth exception --- ";
 	private static final String BAD_FLAG = "Bad flag";
 	private static final String NOT_EXIST_IN_DB = "Can not find client in database";
-	private static final String WRONG_FACEBOOK = "Something wrong with facebook id";
-	private static final String WRONG_GOOGLE = "Something wrong with google id";
-	private static final String WRONG_EMAIL = "Something wrong with email";
+	private static final String FACEBOOK_STATUS = "facebook status ";
+	private static final String GOOGLE_STATUS = "google status ";
+	private static final String EMAIL_STATUS = "email status ";
 
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
@@ -103,8 +103,6 @@ public class AuthorizationService {
 	 */
 	public Client socialAuthorization(Client requestClient) {
 
-		AuthorizedClient authorizedClient;
-		Client responseClient;
 		try {
 
 			clientService.saveSocialClient(requestClient);
@@ -117,88 +115,13 @@ public class AuthorizationService {
 
 			Optional<Client> resultFindClient = Optional.ofNullable(findClientService.findClient(requestClient));
 
-			if (resultFindClient == null) {
-
-				LOGGER.info(SOCIAL_AUTH + NOT_EXIST_IN_DB);
-				return null;
-			}
-
+			return resultFindClient.map(client -> getInformationAfterSocialAuthotization(client)).orElse(null);
 			
-			return resultFindClient.filter(predicate);//resultFindClient.map(Client::getFacebookId).filter(checkOnWrongFacebookId(resultFindClient, requestClient));
-			
-			/*if (resultFindClient.getGoogleId() != null
-					&& !resultFindClient.getGoogleId().equals(requestClient.getGoogleId())
-					&& StringUtils.isNotBlank(requestClient.getGoogleId())) {
-
-				LOGGER.info(SOCIAL_AUTH + WRONG_GOOGLE);
-				return null;
-			}
-
-			if (resultFindClient.getEmail() != null && !resultFindClient.getEmail().equals(requestClient.getEmail())
-					&& StringUtils.isNotBlank(requestClient.getEmail())) {
-
-				LOGGER.info(SOCIAL_AUTH + WRONG_EMAIL);
-				return null;
-			}
-
-			String uniqueKey = UUID.randomUUID().toString();
-			authorizedClient = new AuthorizedClient(uniqueKey, resultFindClient.getId().toString(), timeValidKey);
-			authorizedClientService.saveClient(authorizedClient);
-
-			responseClient = new Client(resultFindClient.getId(), resultFindClient.getClientName(),
-					resultFindClient.getEmail(), authorizedClient.getToken());
-
-			LOGGER.info(SOCIAL_AUTH + responseClient.toString());
-			return responseClient;*/
-
 		} catch (Exception e) {
 
 			LOGGER.error(SOCIAL_AUTH_EXCEPTION, e);
 			return null;
 		}
-	}
-
-	private Client checkOnExistClient() {
-
-		LOGGER.info(SOCIAL_AUTH + NOT_EXIST_IN_DB);
-		return null;
-	}
-
-	private Predicate<Client> checkOnWrongFacebookId(Client databaseClient, Client requestClient) {
-
-		return client -> Optional.of(databaseClient).isPresent() && !client.getFacebookId().equals(requestClient.getFacebookId())
-				&& StringUtils.isNotBlank(requestClient.getFacebookId());
-	}
-
-	private Client logWrongFacebookId() {
-
-		LOGGER.info(SOCIAL_AUTH + WRONG_FACEBOOK);
-		return null;
-	}
-
-	private Predicate<Client> checkOnWrongGoogleId(Client requestClient) {
-
-		return client -> !client.getGoogleId().equals(requestClient.getGoogleId())
-				&& StringUtils.isNotBlank(requestClient.getGoogleId());
-		
-	}
-	
-	private Client logWrongGoogleId() {
-
-		LOGGER.info(SOCIAL_AUTH + WRONG_GOOGLE);
-		return null;
-	}
-
-	private Predicate<Client> checkOnWrongEmail(Client requestClient) {
-
-		return client -> !client.getEmail().equals(requestClient.getEmail())
-				&& StringUtils.isNotBlank(requestClient.getEmail());
-	}
-	
-	private Client logWrongEmail() {
-
-		LOGGER.info(SOCIAL_AUTH + WRONG_EMAIL);
-		return null;
 	}
 	
 	private Client getInformationAfterSocialAuthotization(Client databaseClient) {
