@@ -103,7 +103,7 @@ public class ImportSurveyDao implements IImportSurveyDAO {
 		}
 		return generatedSurveyId;
 
-	}
+	}	
 
 	private void insertGroups(Connection connection, ImportSurvey importSurvey) {
 		try {
@@ -111,37 +111,43 @@ public class ImportSurveyDao implements IImportSurveyDAO {
 
 			Set<String> groupsName = importSurvey.getGroups().keySet();
 
-			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_GROUP,
-					Statement.RETURN_GENERATED_KEYS);
-
-			ResultSet keys;
-
-			// Insert group in the database and connect it to survey
-			for (String groupName : groupsName) {
-				preparedStatement.setString(1, groupName);
-				preparedStatement.executeUpdate();
-
-				keys = preparedStatement.getGeneratedKeys();
-
-				Integer generatedId = 0;
-				if (keys.next()) {
-					generatedId = keys.getInt(1);
-				}
-
-				groups.put(groupName, generatedId);
-
-				// Connect group to survey
-				jdbcTemplate.update(SQL_CONNECT_GROUP_OF_QUESTIONS_TO_SURVEY, groups.get(groupName),
-						importSurvey.getId());
-			}
+			groupsName.stream().forEach(groupName -> connectGroupQuestionAndSurvey(connection, importSurvey, groupName, groups));
 
 			importSurvey.setGroups(groups);
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 		}
 
 	}
+	
+	private void connectGroupQuestionAndSurvey(Connection connection, ImportSurvey importSurvey, String groupName, Map<String, Integer> groups){
+		
+		try{
+			
+			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_GROUP,
+					Statement.RETURN_GENERATED_KEYS);
+			ResultSet keys;
+			
+			preparedStatement.setString(1, groupName);
+			preparedStatement.executeUpdate();
+			keys = preparedStatement.getGeneratedKeys();
 
+			Integer generatedId = 0;
+			if (keys.next()) {
+				generatedId = keys.getInt(1);
+			}
+
+			groups.put(groupName, generatedId);
+
+			// Connect group to survey
+			jdbcTemplate.update(SQL_CONNECT_GROUP_OF_QUESTIONS_TO_SURVEY, groups.get(groupName),
+					importSurvey.getId());
+			
+		}catch (SQLException e) {
+			LOGGER.error(e.getMessage());
+		}
+	}
+	
 	private void insertQuestions(ImportSurvey importSurvey) {
 		jdbcTemplate.batchUpdate(SQL_INSERT_QUESTION, new BatchPreparedStatementSetter() {
 

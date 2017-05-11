@@ -1,7 +1,7 @@
 package com.softbistro.survey.client.auth.service;
 
+import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Predicate;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,13 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.auth.components.entities.AuthorizedClient;
-import com.softbistro.survey.client.auth.components.interfaces.Functional;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.service.ClientService;
 import com.softbistro.survey.client.manage.service.FindClientService;
-import static java.util.Optional.ofNullable;
-
-import java.util.Optional;
 
 /**
  * Service for authorization of client
@@ -38,10 +34,6 @@ public class AuthorizationService {
 	private static final String SIMPLE_AUTH_EXCEPTION = "Simple auth exception --- ";
 	private static final String SOCIAL_AUTH_EXCEPTION = "Social auth exception --- ";
 	private static final String BAD_FLAG = "Bad flag";
-	private static final String NOT_EXIST_IN_DB = "Can not find client in database";
-	private static final String FACEBOOK_STATUS = "facebook status ";
-	private static final String GOOGLE_STATUS = "google status ";
-	private static final String EMAIL_STATUS = "email status ";
 
 	@Value("${redis.life.token}")
 	private Integer timeValidKey;
@@ -105,13 +97,15 @@ public class AuthorizationService {
 
 		try {
 
-			clientService.saveSocialClient(requestClient);
+			
 
 			if (!checkFlag(requestClient)) {
 
 				LOGGER.info(SOCIAL_AUTH + BAD_FLAG);
 				return null;
 			}
+			
+			clientService.saveSocialClient(requestClient);
 
 			Optional<Client> resultFindClient = Optional.ofNullable(findClientService.findClient(requestClient));
 
