@@ -48,7 +48,7 @@ public class Client implements Serializable {
 		this.email = email;
 		this.token = token;
 	}
-
+	
 	public Integer getId() {
 		return id;
 	}

@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.service.ClientDao;
-import com.softbistro.survey.client.manage.service.FindClientService;
 import com.softbistro.survey.creating.survey.service.SurveyService;
 import com.softbistro.survey.daemons.notification.system.component.dao.MessageDao;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
@@ -43,9 +42,6 @@ public class NotificationIntegrationTest {
 	
 	@Autowired
 	private ClientDao clientDao;
-	
-	@Autowired
-	private FindClientService findClientService;
 	
 	@Autowired
 	private SurveyService surveyService;
@@ -83,12 +79,11 @@ public class NotificationIntegrationTest {
 	@Test
 	public void getEmailOfNewClientsTest(){
 		Client testClientNew = new Client();
-		testClientNew.setClientName("vanyasv");
-		testClientNew.setEmail("vanss@gmail.come");
+		testClientNew.setClientName("vanyas");
+		testClientNew.setEmail("vanss@gmail.com");
 		testClientNew.setPassword("1234");
-		
 		clientDao.saveClient(testClientNew);
-		assertThat(clientDao.getEmailOfNewClients().get(0)).isEqualTo(testClientNew.getEmail());
+		assertThat(clientDao.getEmailOfNewClients().stream().filter(client -> client.equals(testClientNew.getEmail())).findFirst().isPresent());
 	}
 
 	/**

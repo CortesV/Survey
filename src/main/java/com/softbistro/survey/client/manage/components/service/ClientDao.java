@@ -67,7 +67,7 @@ public class ClientDao implements IClient {
 	private JdbcTemplate jdbc;
 
 	@Autowired
-	FindClientService findClientService;
+	private FindClientService findClientService;
 
 	/**
 	 * Find client in database by id of client
@@ -393,8 +393,9 @@ public class ClientDao implements IClient {
 	 */
 	@Override
 	public List<String> getEmailOfNewPassword() {
-		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, new BeanPropertyRowMapper<>(String.class),
-				countOfRecords);
+		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, (rs, rowNum) -> {
+			return rs.getString(1);
+		}, countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
 
 		return clientsEmails;
@@ -409,8 +410,9 @@ public class ClientDao implements IClient {
 	 */
 	@Override
 	public List<String> getEmailOfNewClients() {
-		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, new BeanPropertyRowMapper<>(String.class),
-				countOfRecords);
+		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, (rs, rowNum) -> {
+			return rs.getString(1);
+		}, countOfRecords);
 		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "NEW", countOfRecords);
 
 		return clientsEmails;
@@ -430,8 +432,9 @@ public class ClientDao implements IClient {
 
 		for (int surveyId : getSurveysId()) {
 
-			emailsOfUsers.addAll(
-					jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, new BeanPropertyRowMapper<>(String.class), surveyId));
+			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, (rs, rowNum) -> {
+				return rs.getString(1);
+			}, surveyId));
 
 		}
 

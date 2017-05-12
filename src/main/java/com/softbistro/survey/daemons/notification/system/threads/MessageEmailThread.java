@@ -1,6 +1,7 @@
 package com.softbistro.survey.daemons.notification.system.threads;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -48,6 +49,12 @@ public class MessageEmailThread implements Runnable, ISending {
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(username));
 
+			String ReceiverCCEmail = messages.get(emailIndex).getReceiverCCEmail();
+
+			if (Objects.nonNull(ReceiverCCEmail)) {
+				message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(ReceiverCCEmail));
+			}
+
 			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse(messages.get(emailIndex).getReceiverEmail()));
 
@@ -57,13 +64,12 @@ public class MessageEmailThread implements Runnable, ISending {
 			Transport.send(message);
 
 			iSendingMessage.updateStatusMessagesToProcessed();
-			log.info("Status of message was updated on 'PROCESSED'. | Message sent.");
+			log.info("NotSys | Status of message was updated on 'PROCESSED'. | Message sent.");
 
 		} catch (MessagingException e) {
 
 			iSendingMessage.updateStatusMessagesToError();
-			Thread.currentThread().interrupt();
-			log.info("Status of message was updated on 'ERROR'. | Thread is interrupted.");
+			log.info("NotSys | Status of message was updated on 'ERROR'.");
 
 			e.printStackTrace();
 		}
