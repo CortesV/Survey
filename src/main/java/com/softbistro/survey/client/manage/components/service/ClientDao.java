@@ -413,7 +413,6 @@ public class ClientDao implements IClient {
 		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, (rs, rowNum) -> {
 			return rs.getString(1);
 		}, countOfRecords);
-		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "NEW", countOfRecords);
 
 		return clientsEmails;
 	}
