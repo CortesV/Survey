@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,15 +87,11 @@ public class GroupDao implements IGroup {
 	public Group getGroupByid(Integer groupId) {
 
 		try {
-
-			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_ID, new BeanPropertyRowMapper<>(Group.class),
-					groupId);
-
-			return list.isEmpty() ? null : list.get(0);
+			return Optional.ofNullable(
+					jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_ID, new BeanPropertyRowMapper<>(Group.class), groupId))
+					.get().stream().findFirst().orElse(null);
 		}
-
 		catch (Exception e) {
-
 			LOGGER.error(e.getMessage());
 			return null;
 		}
@@ -109,15 +107,10 @@ public class GroupDao implements IGroup {
 	public List<Group> getGroupsByClient(Integer clientId) {
 
 		try {
-
-			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT,
-					new BeanPropertyRowMapper<>(Group.class), clientId);
-
-			return list.isEmpty() ? null : list;
+			return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT,
+					new BeanPropertyRowMapper<>(Group.class), clientId)).filter(group->!group.isEmpty()).orElse(null);
 		}
-
 		catch (Exception e) {
-
 			LOGGER.error(e.getMessage());
 			return null;
 		}

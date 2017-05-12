@@ -3,6 +3,7 @@ package com.softbistro.survey.participant.component.service;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +53,10 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	public List<Participant> getParticipantsByGroup(Integer groupId) {
 
 		try {
-
-			List<Participant> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
-					new BeanPropertyRowMapper<>(Participant.class), groupId);
-
-			return list.isEmpty() ? null : list;
+			return Optional
+					.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
+							new BeanPropertyRowMapper<>(Participant.class), groupId))
+					.filter(participants -> !participants.isEmpty()).orElse(null);
 		}
 
 		catch (Exception e) {
@@ -130,10 +130,10 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	@Override
 	public List<Group> getParticipantGroups(Integer participantId) {
 		try {
-			List<Group> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_GROUPS,
-					new BeanPropertyRowMapper<>(Group.class), participantId);
-
-			return list.isEmpty() ? null : list;
+			return Optional
+					.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_GROUPS,
+							new BeanPropertyRowMapper<>(Group.class), participantId))
+					.filter(participants -> !participants.isEmpty()).orElse(null);
 		}
 
 		catch (Exception e) {

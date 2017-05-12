@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,26 +145,19 @@ public class SheetsService {
 	}
 
 	public List<String> generateHeadersColumn(CellFeed cellFeed, List<String> filters) {
-		List<String> arrNames = new LinkedList<>();
 
-		try {
-
-			for (String filter : filters) {
-				arrNames.add(filter);
-			}
-
-			CellEntry cellEntry;
-
+		List<String> arrNames = (LinkedList<String>)filters.stream().collect(Collectors.toList());
+		arrNames.forEach(name -> {
 			int cell = 1;
-			for (String name : arrNames) {
-
-				cellEntry = new CellEntry(1, cell++, name);
+			CellEntry cellEntry;
+			cellEntry = new CellEntry(1, cell++, name);
+			try {
 				cellFeed.insert(cellEntry);
+			} catch (ServiceException | IOException e) {
+				LOG.error("Generate headers " + e.getMessage());
 			}
 
-		} catch (ServiceException | IOException e) {
-			LOG.error("Generate headers " + e.getMessage());
-		}
+		});
 		return arrNames;
 	}
 

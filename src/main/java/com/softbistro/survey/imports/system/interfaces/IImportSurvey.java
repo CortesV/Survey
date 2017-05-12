@@ -10,7 +10,7 @@ import javax.servlet.http.Part;
 public interface IImportSurvey {
 
 	/**
-	 * Import survey from file diferent formats.
+	 * Import survey from file different formats.
 	 * 
 	 * @param importFileName
 	 * @return

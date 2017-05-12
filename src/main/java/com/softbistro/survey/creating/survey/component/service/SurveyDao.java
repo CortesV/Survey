@@ -49,23 +49,6 @@ public class SurveyDao implements ISurveyDao {
 	 */
 	private static Logger log = Logger.getLogger(SurveyDao.class.getName());
 
-	private class ListOfSurveys implements RowMapper<Survey> {
-
-		@Override
-		public Survey mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Survey survey = new Survey();
-			survey.setId(rs.getInt(1));
-			survey.setClientId(rs.getInt(2));
-			survey.setSurveyName(rs.getString(3));
-			survey.setSurveyTheme(rs.getString(4));
-			survey.setStartTime(rs.getDate(5));
-			survey.setFinishTime(rs.getDate(6));
-
-			return survey;
-		}
-
-	}
-
 	private class ListOfGroups implements RowMapper<Group> {
 
 		@Override
@@ -136,7 +119,7 @@ public class SurveyDao implements ISurveyDao {
 	 */
 	@Override
 	public List<Survey> getAllSurveysByClient(Integer clientId) {
-		return jdbcTemplate.query(SQL_GET_LIST_OF_SURVEYS, new ListOfSurveys(), clientId);
+		return jdbcTemplate.query(SQL_GET_LIST_OF_SURVEYS, new BeanPropertyRowMapper<>(Survey.class), clientId);
 	}
 
 	/**

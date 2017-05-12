@@ -91,6 +91,13 @@ public class ClientService {
 		iClient.updatePassword(client, id);
 	}
 
+	/**
+	 * Save information about client that authorized with help of social
+	 * networks
+	 * 
+	 * @param client
+	 * @return
+	 */
 	public void saveSocialClient(Client client) {
 
 		iClient.saveSocialClient(client);

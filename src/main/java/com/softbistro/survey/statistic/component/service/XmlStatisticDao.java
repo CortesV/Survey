@@ -1,12 +1,9 @@
 package com.softbistro.survey.statistic.component.service;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 import com.softbistro.survey.statistic.component.interfacee.IExportStatisticDao;
 import com.thoughtworks.xstream.XStream;
 
@@ -32,8 +29,7 @@ public class XmlStatisticDao implements IExportStatisticDao{
 	public String export() {
 		try {
 			XStream xstream = new XStream();
-			List<SurveyStatisticExport> surveyStatisticExport = generalStatisticDao.getAllStatistic();
-			return xstream.toXML(surveyStatisticExport);
+			return xstream.toXML(generalStatisticDao.getAllStatistic());
 		} catch (Exception e) {
 			LOG.error(e.getMessage());
 			return null;
