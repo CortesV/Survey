@@ -1,6 +1,7 @@
 package com.softbistro.survey.daemons.notification.system.threads;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -50,9 +51,8 @@ public class MessageEmailThread implements Runnable, ISending {
 
 			String ReceiverCCEmail = messages.get(emailIndex).getReceiverCCEmail();
 
-			if (ReceiverCCEmail != null && ReceiverCCEmail.length() != 0) {
-				message.setRecipients(Message.RecipientType.CC,
-						InternetAddress.parse(messages.get(emailIndex).getReceiverCCEmail()));
+			if (Objects.nonNull(ReceiverCCEmail)) {
+				message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(ReceiverCCEmail));
 			}
 
 			message.setRecipients(Message.RecipientType.TO,

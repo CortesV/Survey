@@ -45,24 +45,29 @@ public class NotificationService implements Runnable {
 					messages.size()));
 
 			messages.forEach(message -> {
-
-				username = message.getSenderEmail();
-				password = message.getSenderPassword();
-
-				Session session = Session.getInstance(propertiesSurvey, new Authenticator() {
-					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(username, password);
-					}
-				});
-
-				new Thread(new MessageEmailThread(session, messages, messages.indexOf(message), message.getHeader(),
-						message.getBody(), username, iSendingMessage)).start();
-
-				log.info(String.format("Sender email: %s | CC Receiver email: %s | Receiver email: %s | Header: %s",
-						message.getSenderEmail(), message.getReceiverCCEmail() ,message.getReceiverEmail(), message.getHeader()));
-
+				createSessionAndThreadForSendEmail(messages, messages.indexOf(message));
 			});
 		}
+
+	}
+
+	private void createSessionAndThreadForSendEmail(List<Notification> messages, int emailIndex) {
+		username = messages.get(emailIndex).getSenderEmail();
+		password = messages.get(emailIndex).getSenderPassword();
+
+		Session session = Session.getInstance(propertiesSurvey, new Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username, password);
+			}
+		});
+
+		new Thread(new MessageEmailThread(session, messages, emailIndex, messages.get(emailIndex).getHeader(),
+				messages.get(emailIndex).getBody(), username, iSendingMessage)).start();
+
+		log.info(String.format(
+				"NotSys | New thread | Sender email: %s | CC Receiver email: %s | Receiver email: %s | Header: %s",
+				messages.get(emailIndex).getSenderEmail(), messages.get(emailIndex).getReceiverCCEmail(),
+				messages.get(emailIndex).getReceiverEmail(), messages.get(emailIndex).getHeader()));
 
 	}
 
