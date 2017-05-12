@@ -39,27 +39,31 @@ public class NotificationService implements Runnable {
 		List<Notification> messages = iSendingMessage.getEmailsForSending();
 
 		iSendingMessage.updateStatusMessagesToInProcess();
-		log.info(String.format("Status the list of messages was updated on 'IN_PROCESS'. Size of list: %s.",
-				messages.size()));
 
-		for (int emailIndex = 0; emailIndex < messages.size(); emailIndex++) {
+		if (!messages.isEmpty()) {
+			log.info(String.format("Status the list of messages was updated on 'IN_PROCESS'. Size of list: %s.",
+					messages.size()));
 
-			username = messages.get(emailIndex).getSenderEmail();
-			password = messages.get(emailIndex).getSenderPassword();
+			messages.forEach(message -> {
 
-			Session session = Session.getInstance(propertiesSurvey, new Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(username, password);
-				}
+				username = message.getSenderEmail();
+				password = message.getSenderPassword();
+
+				Session session = Session.getInstance(propertiesSurvey, new Authenticator() {
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication(username, password);
+					}
+				});
+
+				new Thread(new MessageEmailThread(session, messages, messages.indexOf(message), message.getHeader(),
+						message.getBody(), username, iSendingMessage)).start();
+
+				log.info(String.format("Sender email: %s | CC Receiver email: %s | Receiver email: %s | Header: %s",
+						message.getSenderEmail(), message.getReceiverCCEmail() ,message.getReceiverEmail(), message.getHeader()));
+
 			});
-
-			new Thread(new MessageEmailThread(session, messages, emailIndex, messages.get(emailIndex).getHeader(),
-					messages.get(emailIndex).getBody(), username, iSendingMessage)).start();
-
-			log.info(String.format("Sender email: %s | Receiver email: %s | Header: %s",
-					messages.get(emailIndex).getSenderEmail(), messages.get(emailIndex).getReceiverEmail(),
-					messages.get(emailIndex).getHeader()));
 		}
+
 	}
 
 	@Override

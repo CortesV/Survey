@@ -57,13 +57,12 @@ public class MessageEmailThread implements Runnable, ISending {
 			Transport.send(message);
 
 			iSendingMessage.updateStatusMessagesToProcessed();
-			log.info("Status of message was updated on 'PROCESSED'. | Message sent.");
+			log.info("NotSys | Status of message was updated on 'PROCESSED'. | Message sent.");
 
-		} catch (MessagingException | NullPointerException e) {
+		} catch (MessagingException e) {
 
 			iSendingMessage.updateStatusMessagesToError();
-			Thread.currentThread().interrupt();
-			log.info("Status of message was updated on 'ERROR'. | Thread is interrupted.");
+			log.info("NotSys | Status of message was updated on 'ERROR'.");
 
 			e.printStackTrace();
 		}
