@@ -2,6 +2,8 @@ package com.softbistro.survey.notification.system.component.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -110,6 +112,8 @@ public class NotificationIntegrationTest {
 		Client findServiceClient = clientDao.findClient(clientId);
 		testClient.setPassword("Manager");
 		clientDao.updatePassword(testClient, findServiceClient.getId());
+		List<String> d = clientDao.getEmailOfNewPassword();
+		System.out.println(d);
 		assertThat(clientDao.getEmailOfNewPassword().get(0)).isEqualTo(testClient.getEmail());
 	}
 	
