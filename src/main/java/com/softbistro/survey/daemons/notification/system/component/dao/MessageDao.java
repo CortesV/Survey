@@ -107,7 +107,7 @@ public class MessageDao implements ISendingMessage {
 	 */
 	@Override
 	public void updateStatusMessagesToProcessed() {
-		jdbcTemplateNotification.update(SQL_UPDATE_LIST_EMAIL_TO_PROCESSED, "IN_PROCESS", countOfRecords);
+		jdbcTemplateNotification.update(SQL_UPDATE_LIST_EMAIL_TO_PROCESSED, "IN_PROCESS", 1);
 	}
 
 	/**

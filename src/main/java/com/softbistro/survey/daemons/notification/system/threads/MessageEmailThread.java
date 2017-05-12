@@ -48,6 +48,13 @@ public class MessageEmailThread implements Runnable, ISending {
 			Message message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(username));
 
+			String ReceiverCCEmail = messages.get(emailIndex).getReceiverCCEmail();
+
+			if (ReceiverCCEmail != null && ReceiverCCEmail.length() != 0) {
+				message.setRecipients(Message.RecipientType.CC,
+						InternetAddress.parse(messages.get(emailIndex).getReceiverCCEmail()));
+			}
+
 			message.setRecipients(Message.RecipientType.TO,
 					InternetAddress.parse(messages.get(emailIndex).getReceiverEmail()));
 
