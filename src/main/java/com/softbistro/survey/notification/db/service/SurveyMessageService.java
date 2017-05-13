@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.component.entity.NotificationClientSending;
+import com.softbistro.survey.daemons.notification.system.component.entity.NotificationSurveySending;
 import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
 import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 
@@ -37,7 +39,7 @@ public class SurveyMessageService implements ICreateMessage {
 
 	@Autowired
 	private IClient iClient;
-	
+
 	/**
 	 * Data about account that will sending messages
 	 */
@@ -46,31 +48,41 @@ public class SurveyMessageService implements ICreateMessage {
 
 	@Value("${survey.text.for.sending.url}")
 	private String url;
-	
+
 	/**
 	 * Sending message to database
 	 */
 	public void send() {
 		List<String> emails = iClient.getEmailsForSendingSurvey();
-
+		String uuid = UUID.randomUUID().toString();
 		emails.stream().forEach(email -> {
-			Notification notification = new Notification(username,email,generateThemeForMessage(),generateTextForMessage(email));
+			Notification notification = new Notification(username, email, generateThemeForMessage(),
+					generateTextForMessage(email, uuid));
 			iSendingMessage.insertIntoNotification(notification);
 			log.info(String.format("Participant email: %s", email));
 		});
+
+		List<NotificationSurveySending> ids = iClient.getIdStartedSurvey();
+		ids.stream().forEach(id -> {
+			NotificationSurveySending notificationSurveySending = new NotificationSurveySending(uuid,
+					id.getParticipantId(), id.getSurveyId());
+			iSendingMessage.insertIntoSendingSurvey(notificationSurveySending);
+		});
+
+		iClient.updateStatusOfSurvey();
 	}
-	
+
 	/**
 	 * Generate text for message
 	 * 
 	 * @param email
 	 */
 	@Override
-	public String generateTextForMessage(String email) {
-		String urlForVote = url + UUID.randomUUID().toString();
+	public String generateTextForMessage(String email, String uuid) {
+		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
-				"Participant with mail \"%s\" started survey\nYou can vote by clicking on URL : %s",email, urlForVote);
+				"Participant with mail \"%s\" started survey\nYou can vote by clicking on URL : %s", email, urlForVote);
 		return textMessage;
 	}
 

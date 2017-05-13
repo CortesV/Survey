@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.component.entity.NotificationClientSending;
 import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
 import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 
@@ -55,13 +56,22 @@ public class RegistrationMessageServise implements ICreateMessage {
 	 */
 	@Override
 	public void send() {
+		String uuid = UUID.randomUUID().toString();
 		List<String> emails = iClient.getEmailOfNewClients();
 		emails.stream().forEach(email -> {
-			Notification notification = new Notification(username,email,generateThemeForMessage(),generateTextForMessage(email));
-
+			Notification notification = new Notification(username, email, generateThemeForMessage(),
+					generateTextForMessage(email,uuid));
 			iSendingMessage.insertIntoNotification(notification);
 			log.info(String.format("Registration email: %s", email));
 		});
+			
+		List<Integer> ids = iClient.getIdOfNewClients();
+		ids.stream().forEach(id -> {
+			NotificationClientSending notificationSending = new NotificationClientSending(uuid, id);
+			iSendingMessage.insertIntoSendingClient(notificationSending);
+		});
+		
+		iClient.updateStatusOfNewClients();
 	}
 
 	/**
@@ -70,8 +80,8 @@ public class RegistrationMessageServise implements ICreateMessage {
 	 * @param email
 	 */
 	@Override
-	public String generateTextForMessage(String email) {
-		String urlForVote = url + UUID.randomUUID().toString();
+	public String generateTextForMessage(String email, String uuid) {
+		String urlForVote = url + uuid;
 
 		String textMessage = String.format(
 				"Registration new account with email \"%s\" \n" + "For confirm click on URL : %s", email, urlForVote);
@@ -86,7 +96,4 @@ public class RegistrationMessageServise implements ICreateMessage {
 		return String.format("Registration");
 	}
 
-	
-	
-	
 }

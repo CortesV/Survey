@@ -25,6 +25,7 @@ import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.client.manage.service.FindClientService;
+import com.softbistro.survey.daemons.notification.system.component.entity.NotificationSurveySending;
 
 /**
  * CRUD for entity Client
@@ -39,7 +40,12 @@ public class ClientDao implements IClient {
 
 	@Value("${count.of.records}")
 	private int countOfRecords;
-
+	private static final String SQL_GET_ID_OF_NEW_CLIENTS = "SELECT id FROM clients "
+			+ "WHERE clients.status='NEW'  LIMIT ? ";
+	private static final String SQL_GET_ID_UPDATE_PASSWORD = "SELECT id FROM clients "
+			+ "WHERE clients.status='VERIFY_PASSWORD'  LIMIT ? ";
+	private static final String SQL_GET_ID_OF_USERS_IN_SURVEY = "SELECT p.client_id, s.id FROM participant AS p "
+			+ "INNER JOIN survey AS s ON p.client_id = s.client_id " + "WHERE  s.id = ? GROUP BY email";
 	private static final String SQL_GET_ID_NEW_SURVEYS = "SELECT id FROM survey WHERE status = 'NEW' LIMIT ?";
 	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey` SET `status`= 'DONE' WHERE status = 'NEW' LIMIT ?";
 	private static final String SQL_GET_EMAIL_OF_USERS_IN_SURVEY = "SELECT p.email FROM participant AS p "
@@ -48,7 +54,7 @@ public class ClientDao implements IClient {
 			+ "WHERE clients.status='NEW'  LIMIT ? ";
 	private static final String SQL_GET_EMAIL_UPDATE_PASSWORD = "SELECT clients.email FROM clients "
 			+ "WHERE clients.status='VERIFY_PASSWORD'  LIMIT ? ";
-	private static final String SQL_UPDATE_NEW_CLIENTS = "UPDATE clients SET status='DONE' WHERE status = ? LIMIT ?";
+	private static final String SQL_UPDATE_STATUS_CLIENTS = "UPDATE clients SET status='IN_PROGRESS' WHERE status = ? LIMIT ?";
 	private static final String SELECT_CLIENT_FIRST_PART = "SELECT * FROM clients  WHERE clients.";
 	private static final String SELECT_CLIENT_SECOND_PART = " = ? AND clients.`delete` = 0 AND clients.status='DONE'";
 	private static final String FIND_CLIENT_BY_ID = "SELECT * FROM clients  WHERE clients.id = ? and clients.`delete` = 0";
@@ -396,7 +402,6 @@ public class ClientDao implements IClient {
 		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, (rs, rowNum) -> {
 			return rs.getString(1);
 		}, countOfRecords);
-		jdbc.update(SQL_UPDATE_NEW_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
 
 		return clientsEmails;
 	}
@@ -415,6 +420,81 @@ public class ClientDao implements IClient {
 		}, countOfRecords);
 
 		return clientsEmails;
+	}
+
+	/**
+	 * Get id of clients that have registration process
+	 * 
+	 * @return - list of id's
+	 * 
+	 * @author alex_alokhin
+	 */
+	@Override
+	public List<Integer> getIdOfNewClients() {
+		List<Integer> clientsEmails = jdbc.query(SQL_GET_ID_OF_NEW_CLIENTS, (rs, rowNum) -> {
+			return rs.getInt(1);
+		}, countOfRecords);
+
+		return clientsEmails;
+	}
+
+	/**
+	 * Get id of clients that change password
+	 * 
+	 * @return - list of id's
+	 * 
+	 * @author alex_alokhin
+	 */
+	@Override
+	public List<Integer> getIdOfChangePassword() {
+		List<Integer> clientsEmails = jdbc.query(SQL_GET_ID_UPDATE_PASSWORD, (rs, rowNum) -> {
+			return rs.getInt(1);
+		}, countOfRecords);
+
+		return clientsEmails;
+	}
+
+	/**
+	 * Update status of new client
+	 * 
+	 * @author alex_alokhin
+	 */
+	@Override
+	public void updateStatusOfNewClients() {
+		jdbc.update(SQL_UPDATE_STATUS_CLIENTS, "NEW", countOfRecords);
+	}
+
+	/**
+	 * Update status of clients that update password
+	 * 
+	 * @author alex_alokhin
+	 */
+	@Override
+	public void updateStatusOfUpdatePassword() {
+		jdbc.update(SQL_UPDATE_STATUS_CLIENTS, "VERIFY_PASSWORD", countOfRecords);
+	}
+
+	/**
+	 * Get id of clients that started survey
+	 * 
+	 * @return - list of id's
+	 * 
+	 * @author alex_alokhin
+	 */
+	@Override
+	public List<NotificationSurveySending> getIdStartedSurvey() {
+		List<NotificationSurveySending> survey = new ArrayList<>();
+		
+		for (int surveyId : getSurveysId()) {
+
+			survey.addAll(jdbc.query(SQL_GET_ID_OF_USERS_IN_SURVEY, (rs, rowNum) -> {
+				
+				return new NotificationSurveySending (rs.getInt(1),rs.getInt(2));
+			}, surveyId));
+
+		}
+		
+		return survey;
 	}
 
 	/**
@@ -443,9 +523,17 @@ public class ClientDao implements IClient {
 	public List<Integer> getSurveysId() {
 
 		List<Integer> surveysId = jdbc.queryForList(SQL_GET_ID_NEW_SURVEYS, Integer.class, countOfRecords);
-		jdbc.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
-
 		return surveysId;
+	}
+
+	/**
+	 * Update status of survey
+	 * 
+	 * @author alex_alokhin
+	 */
+	@Override
+	public void updateStatusOfSurvey() {
+		jdbc.update(SQL_UPDATE_LIST_ID_NEW_SURVEYS, countOfRecords);
 	}
 
 }
