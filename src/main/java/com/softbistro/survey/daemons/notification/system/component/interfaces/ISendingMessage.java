@@ -56,7 +56,7 @@ public interface ISendingMessage {
 	public void insertIntoNotification(Notification notification);
 
 	/**
-	 * Insert info about client
+	 * Insert info about notification
 	 * 
 	 * @param notification
 	 *            - new record
@@ -66,7 +66,7 @@ public interface ISendingMessage {
 	public void insertIntoSendingClient(NotificationClientSending notification);
 
 	/**
-	 * Insert info about client
+	 * Insert info about notification
 	 * 
 	 * @param notification
 	 *            - new record
@@ -76,7 +76,7 @@ public interface ISendingMessage {
 	public void insertIntoSendingPassword(NotificationClientSending notification);
 
 	/**
-	 * Insert info about client
+	 * Insert info about notification
 	 * 
 	 * @param notification
 	 *            - new record

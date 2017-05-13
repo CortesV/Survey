@@ -75,13 +75,14 @@ public class NotificationIntegrationTest {
 	 * @author alex_alokhin
 	 */
 	@Test
-	public void getEmailOfNewClientsTest(){
+	public void getNewClientsTest(){
 		Client testClientNew = new Client();
+		testClientNew.setId(111);
 		testClientNew.setClientName("vanyas");
 		testClientNew.setEmail("vanss@gmail.com");
 		testClientNew.setPassword("1234");
 		clientDao.saveClient(testClientNew);
-		assertThat(clientDao.getEmailOfNewClients().stream().filter(client -> client.equals(testClientNew.getEmail())).findFirst().isPresent());
+		assertThat(clientDao.getNewClients().stream().filter(client -> client.getEmail().equals(testClientNew.getEmail())&& client.getId().equals(testClientNew.getId())).findFirst().isPresent());
 	}
 
 	/**
@@ -105,7 +106,7 @@ public class NotificationIntegrationTest {
 		Client findServiceClient = clientDao.findClient(clientId);
 		testClient.setPassword("Manager");
 		clientDao.updatePassword(testClient, findServiceClient.getId());
-		assertThat(clientDao.getEmailOfNewPassword().get(0)).isEqualTo(testClient.getEmail());
+		assertThat(clientDao.getClientUpdatePassword().get(0).getEmail()).isEqualTo(testClient.getEmail());
 	}
 	
 	/**
@@ -115,10 +116,10 @@ public class NotificationIntegrationTest {
 	 * @author alex_alokhin
 	 */
 	@Test
-	public void getEmailsForSendingSurveyTest(){
+	public void getClientsForSendingSurveyTest(){
 		
 		surveyService.start(SURVEY_ID);
-		assertThat(clientDao.getEmailsForSendingSurvey().get(0)).isEqualTo(PARTICIPANT_EMAIL);
+		assertThat(clientDao.getClientsForSendingSurvey().get(0).getEmail()).isEqualTo(PARTICIPANT_EMAIL);
 	}
 	
 	/**

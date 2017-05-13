@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.softbistro.survey.client.manage.components.entity.ClientForSending;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.component.entity.NotificationClientSending;
@@ -53,23 +54,22 @@ public class SurveyMessageService implements ICreateMessage {
 	 * Sending message to database
 	 */
 	public void send() {
-		List<String> emails = iClient.getEmailsForSendingSurvey();
-		String uuid = UUID.randomUUID().toString();
-		emails.stream().forEach(email -> {
-			Notification notification = new Notification(username, email, generateThemeForMessage(),
-					generateTextForMessage(email, uuid));
+		List<NotificationSurveySending> clients = iClient.getClientsForSendingSurvey();
+
+		clients.stream().forEach(client -> {
+			String uuid = UUID.randomUUID().toString();
+
+			Notification notification = new Notification(username, client.getEmail(), generateThemeForMessage(),
+					generateTextForMessage(client.getEmail(), uuid));
 			iSendingMessage.insertIntoNotification(notification);
-			log.info(String.format("Participant email: %s", email));
-		});
 
-		List<NotificationSurveySending> ids = iClient.getIdStartedSurvey();
-		ids.stream().forEach(id -> {
-			NotificationSurveySending notificationSurveySending = new NotificationSurveySending(uuid,
-					id.getParticipantId(), id.getSurveyId());
-			iSendingMessage.insertIntoSendingSurvey(notificationSurveySending);
-		});
+			NotificationSurveySending notificationSending = new NotificationSurveySending(uuid, client.getParticipantId(),client.getSurveyId());
+			iSendingMessage.insertIntoSendingSurvey(notificationSending);
 
-		iClient.updateStatusOfSurvey();
+			iClient.updateStatusOfSurvey();
+
+			log.info(String.format("Client email that started survey : %s", client.getEmail()));
+		});
 	}
 
 	/**

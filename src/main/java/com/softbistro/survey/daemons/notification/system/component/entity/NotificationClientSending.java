@@ -1,5 +1,10 @@
 package com.softbistro.survey.daemons.notification.system.component.entity;
 
+/**
+ * Entity for sending_client table
+ * @author alex_alokhin
+ *
+ */
 public class NotificationClientSending {
 
 	private String url;
@@ -13,12 +18,6 @@ public class NotificationClientSending {
 		this.url = url;
 	}
 
-	public NotificationClientSending(String url, Integer clientId) {
-		super();
-		this.url = url;
-		this.clientId = clientId;
-	}
-
 	public Integer getClientId() {
 		return clientId;
 	}
@@ -26,4 +25,10 @@ public class NotificationClientSending {
 	public void setClientId(Integer clientId) {
 		this.clientId = clientId;
 	}
+
+	public NotificationClientSending(String url, Integer clientId) {
+		this.url = url;
+		this.clientId = clientId;
+	}
+
 }

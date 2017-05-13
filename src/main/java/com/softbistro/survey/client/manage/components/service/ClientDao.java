@@ -2,7 +2,6 @@ package com.softbistro.survey.client.manage.components.service;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +15,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.client.manage.components.entity.Client;
+import com.softbistro.survey.client.manage.components.entity.ClientForSending;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.client.manage.service.FindClientService;
 import com.softbistro.survey.daemons.notification.system.component.entity.NotificationSurveySending;
@@ -40,19 +39,12 @@ public class ClientDao implements IClient {
 
 	@Value("${count.of.records}")
 	private int countOfRecords;
-	private static final String SQL_GET_ID_OF_NEW_CLIENTS = "SELECT id FROM clients "
-			+ "WHERE clients.status='NEW'  LIMIT ? ";
-	private static final String SQL_GET_ID_UPDATE_PASSWORD = "SELECT id FROM clients "
-			+ "WHERE clients.status='VERIFY_PASSWORD'  LIMIT ? ";
-	private static final String SQL_GET_ID_OF_USERS_IN_SURVEY = "SELECT p.client_id, s.id FROM participant AS p "
-			+ "INNER JOIN survey AS s ON p.client_id = s.client_id " + "WHERE  s.id = ? GROUP BY email";
-	private static final String SQL_GET_ID_NEW_SURVEYS = "SELECT id FROM survey WHERE status = 'NEW' LIMIT ?";
 	private static final String SQL_UPDATE_LIST_ID_NEW_SURVEYS = "UPDATE `survey` SET `status`= 'DONE' WHERE status = 'NEW' LIMIT ?";
-	private static final String SQL_GET_EMAIL_OF_USERS_IN_SURVEY = "SELECT p.email FROM participant AS p "
-			+ "INNER JOIN survey AS s ON p.client_id = s.client_id " + "WHERE  s.id = ? GROUP BY email";
-	private static final String SQL_GET_EMAIL_OF_NEW_CLIENTS = "SELECT email FROM clients "
+	private static final String SQL_GET_INFO_OF_USERS_IN_SURVEY = "SELECT   p.client_id, s.id, p.email FROM participant AS p "
+			+ "INNER JOIN survey AS s ON p.client_id = s.client_id " + "WHERE  s.status = 'NEW' GROUP BY email";
+	private static final String SQL_GET_INFO_OF_NEW_CLIENTS = "SELECT id,email FROM clients "
 			+ "WHERE clients.status='NEW'  LIMIT ? ";
-	private static final String SQL_GET_EMAIL_UPDATE_PASSWORD = "SELECT clients.email FROM clients "
+	private static final String SQL_GET_INFO_UPDATE_PASSWORD = "SELECT id,email FROM clients "
 			+ "WHERE clients.status='VERIFY_PASSWORD'  LIMIT ? ";
 	private static final String SQL_UPDATE_STATUS_CLIENTS = "UPDATE clients SET status='IN_PROGRESS' WHERE status = ? LIMIT ?";
 	private static final String SELECT_CLIENT_FIRST_PART = "SELECT * FROM clients  WHERE clients.";
@@ -398,60 +390,26 @@ public class ClientDao implements IClient {
 	 * @author alex_alokhin
 	 */
 	@Override
-	public List<String> getEmailOfNewPassword() {
-		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_UPDATE_PASSWORD, (rs, rowNum) -> {
-			return rs.getString(1);
+	public List<ClientForSending> getClientUpdatePassword() {
+		return jdbc.query(SQL_GET_INFO_UPDATE_PASSWORD, (rs, rowNum) -> {
+			return new ClientForSending(rs.getInt(1), rs.getString(2));
 		}, countOfRecords);
 
-		return clientsEmails;
 	}
 
 	/**
-	 * Get mails of clients that have registration process
+	 * Get clients that have registration process
 	 * 
-	 * @return - list of mails
+	 * @return - list of clients
 	 * 
 	 * @author alex_alokhin
 	 */
 	@Override
-	public List<String> getEmailOfNewClients() {
-		List<String> clientsEmails = jdbc.query(SQL_GET_EMAIL_OF_NEW_CLIENTS, (rs, rowNum) -> {
-			return rs.getString(1);
+	public List<ClientForSending> getNewClients() {
+		return jdbc.query(SQL_GET_INFO_OF_NEW_CLIENTS, (rs, rowNum) -> {
+			return new ClientForSending(rs.getInt(1), rs.getString(2));
 		}, countOfRecords);
 
-		return clientsEmails;
-	}
-
-	/**
-	 * Get id of clients that have registration process
-	 * 
-	 * @return - list of id's
-	 * 
-	 * @author alex_alokhin
-	 */
-	@Override
-	public List<Integer> getIdOfNewClients() {
-		List<Integer> clientsEmails = jdbc.query(SQL_GET_ID_OF_NEW_CLIENTS, (rs, rowNum) -> {
-			return rs.getInt(1);
-		}, countOfRecords);
-
-		return clientsEmails;
-	}
-
-	/**
-	 * Get id of clients that change password
-	 * 
-	 * @return - list of id's
-	 * 
-	 * @author alex_alokhin
-	 */
-	@Override
-	public List<Integer> getIdOfChangePassword() {
-		List<Integer> clientsEmails = jdbc.query(SQL_GET_ID_UPDATE_PASSWORD, (rs, rowNum) -> {
-			return rs.getInt(1);
-		}, countOfRecords);
-
-		return clientsEmails;
 	}
 
 	/**
@@ -475,55 +433,19 @@ public class ClientDao implements IClient {
 	}
 
 	/**
-	 * Get id of clients that started survey
+	 * Get clients that started the survey
 	 * 
-	 * @return - list of id's
-	 * 
-	 * @author alex_alokhin
-	 */
-	@Override
-	public List<NotificationSurveySending> getIdStartedSurvey() {
-		List<NotificationSurveySending> survey = new ArrayList<>();
-		
-		for (int surveyId : getSurveysId()) {
-
-			survey.addAll(jdbc.query(SQL_GET_ID_OF_USERS_IN_SURVEY, (rs, rowNum) -> {
-				
-				return new NotificationSurveySending (rs.getInt(1),rs.getInt(2));
-			}, surveyId));
-
-		}
-		
-		return survey;
-	}
-
-	/**
-	 * Get mails of clients that started the survey
-	 * 
-	 * @return - list of mails
+	 * @return - list of clients
 	 * 
 	 * @author alex_alokhin
 	 */
 	@Override
-	public List<String> getEmailsForSendingSurvey() {
+	public List<NotificationSurveySending> getClientsForSendingSurvey() {
 
-		List<String> emailsOfUsers = new ArrayList<>();
+		return jdbc.query(SQL_GET_INFO_OF_USERS_IN_SURVEY, (rs, rowNum) -> {
+			return new NotificationSurveySending(rs.getInt(1), rs.getInt(2), rs.getString(3));
+		});
 
-		for (int surveyId : getSurveysId()) {
-
-			emailsOfUsers.addAll(jdbc.query(SQL_GET_EMAIL_OF_USERS_IN_SURVEY, (rs, rowNum) -> {
-				return rs.getString(1);
-			}, surveyId));
-
-		}
-
-		return emailsOfUsers;
-	}
-
-	public List<Integer> getSurveysId() {
-
-		List<Integer> surveysId = jdbc.queryForList(SQL_GET_ID_NEW_SURVEYS, Integer.class, countOfRecords);
-		return surveysId;
 	}
 
 	/**

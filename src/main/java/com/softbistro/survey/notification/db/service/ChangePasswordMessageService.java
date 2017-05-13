@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.softbistro.survey.client.manage.components.entity.ClientForSending;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.component.entity.NotificationClientSending;
@@ -48,23 +49,22 @@ public class ChangePasswordMessageService implements ICreateMessage {
 	 */
 	@Override
 	public void send() {
-		String uuid = UUID.randomUUID().toString();
-		List<String> emails = iClient.getEmailOfNewPassword();
-		emails.stream().forEach(email -> {
-			Notification notification = new Notification(username, email, generateThemeForMessage(),
-					generateTextForMessage(email,uuid));
-		
+		List<ClientForSending> clients = iClient.getClientUpdatePassword();
+
+		clients.stream().forEach(client -> {
+			String uuid = UUID.randomUUID().toString();
+
+			Notification notification = new Notification(username, client.getEmail(), generateThemeForMessage(),
+					generateTextForMessage(client.getEmail(), uuid));
 			iSendingMessage.insertIntoNotification(notification);
-			log.info(String.format("Password email: %s", email));
-		});
-		
-		List<Integer> ids = iClient.getIdOfChangePassword();
-		ids.stream().forEach(id -> {
-			NotificationClientSending notificationSending = new NotificationClientSending(uuid, id);
+
+			NotificationClientSending notificationSending = new NotificationClientSending(uuid, client.getId());
 			iSendingMessage.insertIntoSendingPassword(notificationSending);
+
+			iClient.updateStatusOfUpdatePassword();
+
+			log.info(String.format("Changed client password with email: %s", client.getEmail()));
 		});
-		
-		iClient.updateStatusOfUpdatePassword();
 	}
 
 	/**

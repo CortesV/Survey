@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.softbistro.survey.client.manage.components.entity.ClientForSending;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.component.entity.NotificationClientSending;
@@ -56,22 +57,24 @@ public class RegistrationMessageServise implements ICreateMessage {
 	 */
 	@Override
 	public void send() {
-		String uuid = UUID.randomUUID().toString();
-		List<String> emails = iClient.getEmailOfNewClients();
-		emails.stream().forEach(email -> {
-			Notification notification = new Notification(username, email, generateThemeForMessage(),
-					generateTextForMessage(email,uuid));
+		List<ClientForSending> clients = iClient.getNewClients();
+		
+		clients.stream().forEach(client -> {
+			String uuid = UUID.randomUUID().toString();
+			
+			Notification notification = new Notification(username, client.getEmail(), generateThemeForMessage(),
+					generateTextForMessage(client.getEmail(),uuid));
 			iSendingMessage.insertIntoNotification(notification);
-			log.info(String.format("Registration email: %s", email));
+			
+			NotificationClientSending notificationSending = new NotificationClientSending(uuid, client.getId());
+			iSendingMessage.insertIntoSendingClient(notificationSending);
+			
+			iClient.updateStatusOfNewClients();
+			
+			log.info(String.format("Registration email: %s", client.getEmail()));
 		});
 			
-		List<Integer> ids = iClient.getIdOfNewClients();
-		ids.stream().forEach(id -> {
-			NotificationClientSending notificationSending = new NotificationClientSending(uuid, id);
-			iSendingMessage.insertIntoSendingClient(notificationSending);
-		});
 		
-		iClient.updateStatusOfNewClients();
 	}
 
 	/**
