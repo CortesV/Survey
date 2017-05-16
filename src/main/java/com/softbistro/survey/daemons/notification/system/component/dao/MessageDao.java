@@ -1,5 +1,6 @@
 package com.softbistro.survey.daemons.notification.system.component.dao;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -44,7 +45,7 @@ public class MessageDao implements ISendingMessage {
 
 	private static final String SQL_INSERT_NOTIFICATION = "INSERT INTO notification(`from`,`cc`, `to`, `header`, `body`,`status`) VALUES (?,?,?,?,?,'NEW')";
 	
-	private static final String SQL_INSERT_SENDING_CLIENT = "INSERT INTO sending_client (`url`,`client_id`) VALUES(?,?)";
+	private static final String SQL_INSERT_SENDING_CLIENT = "INSERT INTO sending_client (`url`,`client_id`, `working_time`) VALUES(?,?,?)";
 	
 	private static final String SQL_INSERT_SENDING_PASSWORD = "INSERT INTO sending_password (`url`,`client_id`) VALUES(?,?)";
 	
@@ -59,7 +60,6 @@ public class MessageDao implements ISendingMessage {
 	@Qualifier("jdbcSurvey")
 	private JdbcTemplate jdbcTemplateSending;
 	
-
 	/**
 	 * Need for getting e-mails in string format from database
 	 * 
@@ -158,7 +158,7 @@ public class MessageDao implements ISendingMessage {
 	@Override
 	public void insertIntoSendingClient(NotificationClientSending notification) {
 		jdbcTemplateSending.update(SQL_INSERT_SENDING_CLIENT,
-				new Object[] {notification.getUrl(),notification.getClientId() });
+				new Object[] {notification.getUrl(),notification.getClientId(), notification.getDate() });
 	}
 	
 	/**

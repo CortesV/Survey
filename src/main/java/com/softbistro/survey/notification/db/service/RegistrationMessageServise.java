@@ -1,6 +1,9 @@
 package com.softbistro.survey.notification.db.service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -52,29 +55,39 @@ public class RegistrationMessageServise implements ICreateMessage {
 	@Value("${client.text.for.sending.url}")
 	private String url;
 
+	private Date date = new Date(System.currentTimeMillis());
+
 	/**
 	 * Sending message to database
 	 */
 	@Override
 	public void send() {
 		List<ClientForSending> clients = iClient.getNewClients();
-		
+
 		clients.stream().forEach(client -> {
 			String uuid = UUID.randomUUID().toString();
-			
+
 			Notification notification = new Notification(username, client.getEmail(), generateThemeForMessage(),
-					generateTextForMessage(client.getEmail(),uuid));
+					generateTextForMessage(client.getEmail(), uuid));
 			iSendingMessage.insertIntoNotification(notification);
+
 			
-			NotificationClientSending notificationSending = new NotificationClientSending(uuid, client.getId());
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.DAY_OF_YEAR,4);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+
+			NotificationClientSending notificationSending = new NotificationClientSending(uuid, client.getId(), new Date(cal.getTimeInMillis()));
 			iSendingMessage.insertIntoSendingClient(notificationSending);
-			
+
 			iClient.updateStatusOfNewClients();
-			
+
 			log.info(String.format("Registration email: %s", client.getEmail()));
 		});
-			
-		
+
 	}
 
 	/**
