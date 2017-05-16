@@ -3,6 +3,8 @@ package com.softbistro.survey.daemons.notification.system.component.interfaces;
 import java.util.List;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.component.entity.NotificationClientSending;
+import com.softbistro.survey.daemons.notification.system.component.entity.NotificationSurveySending;
 
 /**
  * Methods for working with notification
@@ -52,5 +54,35 @@ public interface ISendingMessage {
 	 * @author alex_alokhin
 	 */
 	public void insertIntoNotification(Notification notification);
+
+	/**
+	 * Insert info about notification
+	 * 
+	 * @param notification
+	 *            - new record
+	 * 
+	 * @author alex_alokhin
+	 */
+	public void insertIntoSendingClient(NotificationClientSending notification);
+
+	/**
+	 * Insert info about notification
+	 * 
+	 * @param notification
+	 *            - new record
+	 * 
+	 * @author alex_alokhin
+	 */
+	public void insertIntoSendingPassword(NotificationClientSending notification);
+
+	/**
+	 * Insert info about notification
+	 * 
+	 * @param notification
+	 *            - new record
+	 * 
+	 * @author alex_alokhin
+	 */
+	public void insertIntoSendingSurvey(NotificationSurveySending notification);
 
 }
