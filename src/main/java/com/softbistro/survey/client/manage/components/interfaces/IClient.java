@@ -3,6 +3,8 @@ package com.softbistro.survey.client.manage.components.interfaces;
 import java.util.List;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
+import com.softbistro.survey.client.manage.components.entity.ClientForSending;
+import com.softbistro.survey.daemons.notification.system.component.entity.NotificationSurveySending;
 
 public interface IClient {
 
@@ -104,23 +106,50 @@ public interface IClient {
 	 * 
 	 * @author alex_alokhin
 	 */
-	public List<String> getEmailOfNewPassword();
+	public List<ClientForSending> getClientUpdatePassword();
 
 	/**
-	 * Get mails of clients that have registration process
+	 * Get clients that have registration process
+	 * @return - list of clients
+	 * 
+	 * @author alex_alokhin
+	 */
+	public List<ClientForSending> getNewClients();
+
+	/**
+	 * Get clients that started the survey
+	 * @return - list of clients
+	 * 
+	 * @author alex_alokhin
+	 */
+	public List<NotificationSurveySending> getClientsForSendingSurvey();
+
+	/**
+	 * Update status of client
+	 * 
 	 * @return - list of mails
 	 * 
 	 * @author alex_alokhin
 	 */
-	public List<String> getEmailOfNewClients();
+	public void updateStatusOfNewClients();
 
 	/**
-	 * Get mails of clients that started the survey
-	 * @return - list of mails
+	 * Update status of clients that update password
 	 * 
 	 * @author alex_alokhin
 	 */
-	public List<String> getEmailsForSendingSurvey();
+	public void updateStatusOfUpdatePassword();
+	
+	/**
+	 * Update status of survey
+	 * 
+	 * @author alex_alokhin
+	 */
+	public void updateStatusOfSurvey();
+
+	
+
+
 
 	
 }

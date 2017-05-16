@@ -24,6 +24,6 @@ public interface ICreateMessage {
 	 * 
 	 * @param email
 	 */
-	public String generateTextForMessage(String email);
+	public String generateTextForMessage(String mail, String uuid);
 	
 }
