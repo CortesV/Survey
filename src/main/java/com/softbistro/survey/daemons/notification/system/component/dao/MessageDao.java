@@ -184,8 +184,8 @@ public class MessageDao implements ISendingMessage {
 	 */
 	@Override
 	public void insertIntoSendingSurvey(NotificationSurveySending notification) {
-		jdbcTemplateSending.update(SQL_INSERT_SENDING_SURVEY, new Object[] { notification.getUrl(),
-				notification.getParticipantId(), notification.getSurveyId(), notification.getDate() });
+		jdbcTemplateSending.update(SQL_INSERT_SENDING_SURVEY, notification.getUrl(),
+				notification.getParticipantId(), notification.getSurveyId(), notification.getDate());
 	}
 
 }
