@@ -103,8 +103,6 @@ public class ClientIntegrationTest {
 	@Test
 	public void updatePasswordTest() {
 
-		Client findServiceClient = findClientService.findByEmail(testClient);
-
 		testClient.setPassword("Manager");
 		clientDao.updatePassword(testClient, clientId);
 
@@ -118,20 +116,13 @@ public class ClientIntegrationTest {
 	@Test
 	public void socialSaveTest() {
 
-		testClient = clientDao.findClient(1);
-		testClient.setFacebookId("facebookId");
-		testClient.setFlag("facebook");
-		clientDao.saveSocialClient(testClient);
+		Client client = new Client();
+		client.setFacebookId("facebookId");
+		client.setFlag("facebook");
+		clientDao.saveSocialClient(client);
 
-		if (findClientService.findClient(testClient) == null) {
-
-			assertThat(clientDao.findClient(1).getFacebookId()).as("FacebookId = ")
-					.isEqualTo(testClient.getFacebookId());
-		} else {
-
-			assertThat(findClientService.findClient(testClient).getFacebookId()).as("FacebookId = ")
-					.isEqualTo(testClient.getFacebookId());
-		}
+		assertThat(findClientService.findClient(client).getFacebookId()).as("FacebookId = ")
+				.isEqualTo(client.getFacebookId());
 
 	}
 

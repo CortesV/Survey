@@ -39,9 +39,10 @@ public class ClientController {
 
 	@Autowired
 	private ChangePasswordMessageService changePassService;
-	
+
 	@Autowired
 	private RegistrationMessageServise registrationService;
+
 	/**
 	 * Find client in database by id of client
 	 * 
@@ -82,14 +83,14 @@ public class ClientController {
 	public ResponseEntity<Object> saveClient(@RequestBody Client client) {
 
 		try {
-			
+
 			Integer id = clientService.saveClient(client);
-			if(id == null) {
-				return new ResponseEntity<>(HttpStatus.OK);
-			}
-			else{
+			if (id != null) {
 				registrationService.send();
 				return new ResponseEntity<>(id, HttpStatus.CREATED);
+
+			} else {
+				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		} catch (Exception e) {
 
