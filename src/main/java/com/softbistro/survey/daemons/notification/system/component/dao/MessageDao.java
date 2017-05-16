@@ -144,8 +144,8 @@ public class MessageDao implements ISendingMessage {
 	@Override
 	public void insertIntoNotification(Notification notification) {
 		jdbcTemplateNotification.update(SQL_INSERT_NOTIFICATION,
-				new Object[] { notification.getSenderEmail(), notification.getReceiverCCEmail(),
-						notification.getReceiverEmail(), notification.getHeader(), notification.getBody() });
+				 notification.getSenderEmail(), notification.getReceiverCCEmail(),
+					notification.getReceiverEmail(), notification.getHeader(), notification.getBody());
 	}
 
 	/**
@@ -158,8 +158,7 @@ public class MessageDao implements ISendingMessage {
 	 */
 	@Override
 	public void insertIntoSendingClient(NotificationClientSending notification) {
-		jdbcTemplateSending.update(SQL_INSERT_SENDING_CLIENT,
-				new Object[] { notification.getUrl(), notification.getClientId(), notification.getDate() });
+		jdbcTemplateSending.update(SQL_INSERT_SENDING_CLIENT, notification.getUrl(), notification.getClientId(), notification.getDate());
 	}
 
 	/**
@@ -172,8 +171,7 @@ public class MessageDao implements ISendingMessage {
 	 */
 	@Override
 	public void insertIntoSendingPassword(NotificationClientSending notification) {
-		jdbcTemplateSending.update(SQL_INSERT_SENDING_PASSWORD,
-				new Object[] { notification.getUrl(), notification.getClientId(),notification.getDate() });
+		jdbcTemplateSending.update(SQL_INSERT_SENDING_PASSWORD,notification.getUrl(), notification.getClientId(),notification.getDate());
 	}
 
 	/**
