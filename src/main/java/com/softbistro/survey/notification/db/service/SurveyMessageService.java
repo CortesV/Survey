@@ -1,5 +1,7 @@
 package com.softbistro.survey.notification.db.service;
 
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -49,7 +51,11 @@ public class SurveyMessageService implements ICreateMessage {
 
 	@Value("${survey.text.for.sending.url}")
 	private String url;
+	
+	private Date date = new Date(System.currentTimeMillis());
 
+	@Value("${client.url.duration.days}")
+	private Integer durationDays;
 	/**
 	 * Sending message to database
 	 */
@@ -63,7 +69,15 @@ public class SurveyMessageService implements ICreateMessage {
 					generateTextForMessage(client.getEmail(), uuid));
 			iSendingMessage.insertIntoNotification(notification);
 
-			NotificationSurveySending notificationSending = new NotificationSurveySending(uuid, client.getParticipantId(),client.getSurveyId());
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.DAY_OF_YEAR,durationDays);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+			
+			NotificationSurveySending notificationSending = new NotificationSurveySending(uuid, client.getParticipantId(),client.getSurveyId(),new Date(cal.getTimeInMillis()));
 			iSendingMessage.insertIntoSendingSurvey(notificationSending);
 
 			iClient.updateStatusOfSurvey();

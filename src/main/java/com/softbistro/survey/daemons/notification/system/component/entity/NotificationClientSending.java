@@ -1,6 +1,6 @@
 package com.softbistro.survey.daemons.notification.system.component.entity;
 
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * Entity for sending_client table
