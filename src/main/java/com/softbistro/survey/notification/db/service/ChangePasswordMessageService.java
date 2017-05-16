@@ -1,5 +1,7 @@
 package com.softbistro.survey.notification.db.service;
 
+import java.sql.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +46,11 @@ public class ChangePasswordMessageService implements ICreateMessage {
 	@Value("${password.text.for.sending.url}")
 	private String url;
 
+	private Date date = new Date(System.currentTimeMillis());
+
+	@Value("${password.url.duration.days}")
+	private Integer durationDays;
+
 	/**
 	 * Sending message to database
 	 */
@@ -58,7 +65,17 @@ public class ChangePasswordMessageService implements ICreateMessage {
 					generateTextForMessage(client.getEmail(), uuid));
 			iSendingMessage.insertIntoNotification(notification);
 
-			NotificationClientSending notificationSending = new NotificationClientSending(uuid, client.getId());
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(date);
+			cal.add(Calendar.DAY_OF_YEAR, durationDays);
+			cal.set(Calendar.HOUR_OF_DAY, 0);
+			cal.set(Calendar.MINUTE, 0);
+			cal.set(Calendar.SECOND, 0);
+			cal.set(Calendar.MILLISECOND, 0);
+
+			NotificationClientSending notificationSending = new NotificationClientSending(uuid, client.getId(),
+					new Date(cal.getTimeInMillis()));
+			
 			iSendingMessage.insertIntoSendingPassword(notificationSending);
 
 			iClient.updateStatusOfUpdatePassword();

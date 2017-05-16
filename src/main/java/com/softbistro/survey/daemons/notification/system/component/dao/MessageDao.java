@@ -44,22 +44,21 @@ public class MessageDao implements ISendingMessage {
 	private static final String SQL_UPDATE_LIST_EMAIL_TO_ERROR = "UPDATE notification SET status='ERROR' WHERE status = ? LIMIT ?";
 
 	private static final String SQL_INSERT_NOTIFICATION = "INSERT INTO notification(`from`,`cc`, `to`, `header`, `body`,`status`) VALUES (?,?,?,?,?,'NEW')";
-	
+
 	private static final String SQL_INSERT_SENDING_CLIENT = "INSERT INTO sending_client (`url`,`client_id`, `working_time`) VALUES(?,?,?)";
-	
-	private static final String SQL_INSERT_SENDING_PASSWORD = "INSERT INTO sending_password (`url`,`client_id`) VALUES(?,?)";
-	
-	private static final String SQL_INSERT_SENDING_SURVEY = "INSERT INTO sending_survey (`url`,`participant_id`,`survey_id`) VALUES(?,?,?)";
-	
-	
+
+	private static final String SQL_INSERT_SENDING_PASSWORD = "INSERT INTO sending_password (`url`,`client_id`,`working_time`) VALUES(?,?,?)";
+
+	private static final String SQL_INSERT_SENDING_SURVEY = "INSERT INTO sending_survey (`url`,`participant_id`,`survey_id`,`working_time`) VALUES(?,?,?,?)";
+
 	@Autowired
 	@Qualifier("jdbcNotificationSystem")
 	private JdbcTemplate jdbcTemplateNotification;
-	
+
 	@Autowired
 	@Qualifier("jdbcSurvey")
 	private JdbcTemplate jdbcTemplateSending;
-	
+
 	/**
 	 * Need for getting e-mails in string format from database
 	 * 
@@ -148,41 +147,47 @@ public class MessageDao implements ISendingMessage {
 				new Object[] { notification.getSenderEmail(), notification.getReceiverCCEmail(),
 						notification.getReceiverEmail(), notification.getHeader(), notification.getBody() });
 	}
-	
+
 	/**
 	 * Insert info about client
-	 * @param notification - new record
+	 * 
+	 * @param notification
+	 *            - new record
 	 * 
 	 * @author alex_alokhin
 	 */
 	@Override
 	public void insertIntoSendingClient(NotificationClientSending notification) {
 		jdbcTemplateSending.update(SQL_INSERT_SENDING_CLIENT,
-				new Object[] {notification.getUrl(),notification.getClientId(), notification.getDate() });
+				new Object[] { notification.getUrl(), notification.getClientId(), notification.getDate() });
 	}
-	
+
 	/**
 	 * Insert info about client
-	 * @param notification - new record
+	 * 
+	 * @param notification
+	 *            - new record
 	 * 
 	 * @author alex_alokhin
 	 */
 	@Override
 	public void insertIntoSendingPassword(NotificationClientSending notification) {
 		jdbcTemplateSending.update(SQL_INSERT_SENDING_PASSWORD,
-				new Object[] {notification.getUrl(),notification.getClientId() });
+				new Object[] { notification.getUrl(), notification.getClientId(),notification.getDate() });
 	}
-	
+
 	/**
 	 * Insert info about client
-	 * @param notification - new record
+	 * 
+	 * @param notification
+	 *            - new record
 	 * 
 	 * @author alex_alokhin
 	 */
 	@Override
 	public void insertIntoSendingSurvey(NotificationSurveySending notification) {
-		jdbcTemplateSending.update(SQL_INSERT_SENDING_SURVEY,
-				new Object[] {notification.getUrl(),notification.getParticipantId(),notification.getSurveyId() });
+		jdbcTemplateSending.update(SQL_INSERT_SENDING_SURVEY, new Object[] { notification.getUrl(),
+				notification.getParticipantId(), notification.getSurveyId(), notification.getDate() });
 	}
 
 }

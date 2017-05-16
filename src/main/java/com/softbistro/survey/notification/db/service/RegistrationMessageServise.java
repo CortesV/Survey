@@ -57,6 +57,9 @@ public class RegistrationMessageServise implements ICreateMessage {
 
 	private Date date = new Date(System.currentTimeMillis());
 
+	@Value("${client.url.duration.days}")
+	private Integer durationDays;
+
 	/**
 	 * Sending message to database
 	 */
@@ -71,16 +74,16 @@ public class RegistrationMessageServise implements ICreateMessage {
 					generateTextForMessage(client.getEmail(), uuid));
 			iSendingMessage.insertIntoNotification(notification);
 
-			
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(date);
-			cal.add(Calendar.DAY_OF_YEAR,4);
+			cal.add(Calendar.DAY_OF_YEAR, durationDays);
 			cal.set(Calendar.HOUR_OF_DAY, 0);
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
 			cal.set(Calendar.MILLISECOND, 0);
 
-			NotificationClientSending notificationSending = new NotificationClientSending(uuid, client.getId(), new Date(cal.getTimeInMillis()));
+			NotificationClientSending notificationSending = new NotificationClientSending(uuid, client.getId(),
+					new Date(cal.getTimeInMillis()));
 			iSendingMessage.insertIntoSendingClient(notificationSending);
 
 			iClient.updateStatusOfNewClients();
