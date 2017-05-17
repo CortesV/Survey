@@ -146,7 +146,7 @@ public class SheetsService {
 
 	public List<String> generateHeadersColumn(CellFeed cellFeed, List<String> filters) {
 
-		List<String> arrNames = (LinkedList<String>)filters.stream().collect(Collectors.toList());
+		List<String> arrNames =filters.stream().collect(Collectors.toList());
 		arrNames.forEach(name -> {
 			int cell = 1;
 			CellEntry cellEntry;

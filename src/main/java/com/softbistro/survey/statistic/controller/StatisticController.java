@@ -80,10 +80,10 @@ public class StatisticController {
 	public ResponseEntity<Object> exportSurveyStatistic(@PathVariable("survey_id") Integer surveyId,
 			@RequestBody List<String> filters, @RequestHeader String token) {
 
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
+//		if (!authorizationService.checkAccess(token)) {
+//
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		}
 
 		for (String filter : filters) {
 			if (!statisticService.getStatisticColumnFilters().contains(filter)) {
@@ -140,10 +140,10 @@ public class StatisticController {
 	@RequestMapping(value = "/filters/", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<String>> getStatisticFilters(@RequestHeader String token) {
 
-		if (!authorizationService.checkAccess(token)) {
-
-			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-		}
+//		if (!authorizationService.checkAccess(token)) {
+//
+//			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//		}
 		
 		try {
 
