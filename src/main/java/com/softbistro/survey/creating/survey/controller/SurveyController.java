@@ -16,6 +16,7 @@ import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.creating.survey.component.entity.Group;
 import com.softbistro.survey.creating.survey.component.entity.Survey;
 import com.softbistro.survey.creating.survey.service.SurveyService;
+import com.softbistro.survey.notification.db.service.SurveyMessageService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -28,6 +29,9 @@ public class SurveyController {
 
 	@Autowired
 	private SurveyService surveyService;
+	
+	@Autowired
+	private SurveyMessageService surveyMessageService;
 
 	/**
 	 * Writing new survey into database.
@@ -200,6 +204,7 @@ public class SurveyController {
 
 		try {
 			surveyService.start(surveyId);
+			surveyMessageService.send();
 			return new ResponseEntity<Object>(HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);

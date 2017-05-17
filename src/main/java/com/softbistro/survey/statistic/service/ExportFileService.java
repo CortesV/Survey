@@ -2,9 +2,7 @@ package com.softbistro.survey.statistic.service;
 
 import java.io.File;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +14,7 @@ import com.softbistro.survey.statistic.export.xml.XmlStatisticService;
 
 /**
  * Export data to file with specified extension
+ * 
  * @author alex_alokhin
  *
  */
@@ -31,17 +30,17 @@ public class ExportFileService {
 	private XlsxStatisticService xlsxStatisticService;
 	@Autowired
 	private CsvStatisticService csvStatisticService;
-	
+
 	private static final String CSV = "csv";
 	private static final String XML = "xml";
 	private static final String XLSX = "xlsx";
 	private static final String JSON = "json";
-	
-	public File exportToFile(String extension){
+
+	public File exportToFile(String extension) {
 		IExportFile exportSurvey;
 		switch (extension.toLowerCase()) {
 		case XML:
-			exportSurvey = xmlStatisticService;	
+			exportSurvey = xmlStatisticService;
 			break;
 		case CSV:
 			exportSurvey = csvStatisticService;
@@ -52,8 +51,8 @@ public class ExportFileService {
 		case XLSX:
 			exportSurvey = xlsxStatisticService;
 			break;
-		default:	
-			exportSurvey = null;	
+		default:
+			exportSurvey = null;
 			break;
 		}
 		return exportSurvey.exportToFile(extension);

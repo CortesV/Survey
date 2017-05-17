@@ -27,7 +27,7 @@ public class SurveyDao implements ISurveyDao {
 	private static final String SQL_UPDATE_NAME_OF_SURVEY = "UPDATE survey "
 			+ "SET survey.client_id=?, survey.name =?, survey.theme=?, "
 			+ "survey.start_time=?, survey.finish_time=? WHERE survey.id = ?";
-	private static final String SQL_GET_LIST_OF_SURVEYS = "SELECT * FROM survey WHERE client_id = ? AND survey.delete = 0";
+	private static final String SQL_GET_LIST_OF_SURVEYS = "SELECT * FROM survey WHERE client_id = ? AND 'delete' = 0";
 	private static final String SQL_GET_LIST_OF_GROUPS_CLIENT = "SELECT * FROM `group` WHERE client_id = ? AND `delete`=0";
 	private static final String SQL_ADD_GROUP_TO_SURVEY = "INSERT INTO connect_group_survey (survey_id, group_id) VALUES(?,?) ";
 	private static final String SQL_GET_LIST_OF_GROUPS_SURVEY = "SELECT group.id, group.client_id, group.group_name FROM `group` INNER JOIN connect_group_survey AS cgs "
@@ -48,23 +48,6 @@ public class SurveyDao implements ISurveyDao {
 	 * Printing information in stack trace
 	 */
 	private static Logger log = Logger.getLogger(SurveyDao.class.getName());
-
-	private class ListOfSurveys implements RowMapper<Survey> {
-
-		@Override
-		public Survey mapRow(ResultSet rs, int rowNum) throws SQLException {
-			Survey survey = new Survey();
-			survey.setId(rs.getInt(1));
-			survey.setClientId(rs.getInt(2));
-			survey.setSurveyName(rs.getString(3));
-			survey.setSurveyTheme(rs.getString(4));
-			survey.setStartTime(rs.getDate(5));
-			survey.setFinishTime(rs.getDate(6));
-
-			return survey;
-		}
-
-	}
 
 	private class ListOfGroups implements RowMapper<Group> {
 
@@ -136,7 +119,7 @@ public class SurveyDao implements ISurveyDao {
 	 */
 	@Override
 	public List<Survey> getAllSurveysByClient(Integer clientId) {
-		return jdbcTemplate.query(SQL_GET_LIST_OF_SURVEYS, new ListOfSurveys(), clientId);
+		return jdbcTemplate.query(SQL_GET_LIST_OF_SURVEYS, new BeanPropertyRowMapper<>(Survey.class), clientId);
 	}
 
 	/**

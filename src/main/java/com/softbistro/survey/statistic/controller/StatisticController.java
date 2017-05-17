@@ -14,16 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
-import com.softbistro.survey.statistic.export.csv.CsvStatisticService;
-import com.softbistro.survey.statistic.export.json.JsonStatisticService;
-import com.softbistro.survey.statistic.export.xlsx.XlsxStatisticService;
 import com.softbistro.survey.statistic.service.ExportFileService;
-import com.softbistro.survey.statistic.service.StatisticService;
 import com.softbistro.survey.statistic.service.StatisticService;
 
 import io.swagger.annotations.ApiOperation;
@@ -107,11 +102,11 @@ public class StatisticController {
 	 */
 	@ApiOperation(value = "Export statistic about surveys to file with specified extension", notes = "Export statistic about surveys to temporaty file", tags = "Statistic")
 	@RequestMapping(value = "/data/{extension}", method = RequestMethod.POST)
-	public ResponseEntity<Object> exportSurveyStatistic(/*@RequestHeader String token,*/ @PathVariable("extension") String extension) {
+	public ResponseEntity<Object> exportSurveyStatistic(@RequestHeader String token, @PathVariable("extension") String extension) {
  		
-		/*if (!authorizationService.checkAccess(token)) {
+		if (!authorizationService.checkAccess(token)) {
  			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
- 		}*/
+ 		}
 		
 		try {
 
@@ -138,6 +133,7 @@ public class StatisticController {
 	@ApiOperation(value = "Get Statistic Filters for Export statistic on google sheets", notes = "Get column filters for export statistic on google sheets ", tags = "Statistic")
 	@RequestMapping(value = "/filters/{survey_id}/", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<List<String>> getStatisticFilters(@PathVariable("survey_id") Integer surveyId, @RequestHeader String token) {
+
 
 //		if (!authorizationService.checkAccess(token)) {
 //

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class SheetsService {
 
 	@Autowired
 	private GoogleAuthorization googleAuthorization;
-	
+
 	@Autowired
 	private StatisticColumnFilter statisticColumnFilter;
 
@@ -118,7 +119,7 @@ public class SheetsService {
 
 			CellFeed cellFeed = spreadsheetService.getFeed(celledUrl, CellFeed.class);
 
-			List<String> arrHeadersColumn = generateHeadersColumn(cellFeed, filters, list);
+			List<String> arrHeadersColumn = generateHeadersColumn(cellFeed, filters);
 
 			ListEntry newRow = new ListEntry();
 
@@ -129,17 +130,15 @@ public class SheetsService {
 				for (int column = 0; column < filters.size(); column++) {
 					String header = arrHeadersColumn.get(column);
 
-					if (!statisticColumnFilter.getFilterList().contains(header)){
-						isAttributeNext = true;}
-					
-				
+					if (!statisticColumnFilter.getFilterList().contains(header)) {
+						isAttributeNext = true;
+					}
+
 					if (statisticColumnFilter.getFilterList().contains(header) & !isAttributeNext) {
 
 						fillValue(newRow, header, String.valueOf(list.get(numberOfRecord)
 								.get(new StatisticColumnFilter().getFiltersMap().get(filters.get(column)))));
-						
 
-						
 					}
 
 					else {
@@ -159,9 +158,9 @@ public class SheetsService {
 								.equals(String.valueOf(list.get(numberOfRecord - 1).get("answer_id"))))))
 						|| !((String.valueOf(list.get(numberOfRecord).get("answer_id"))
 								.equals(String.valueOf(list.get(numberOfRecord + 1).get("answer_id"))))))) {
-					
+
 					spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
-					
+
 					isAttributeNext = false;
 					newRow = new ListEntry();
 				}
@@ -183,30 +182,23 @@ public class SheetsService {
 
 	}
 
-	public List<String> generateHeadersColumn(CellFeed cellFeed, List<String> filters, List<Map<String, Object>> list) {
-		List<String> arrNames = new LinkedList<>();
+	public List<String> generateHeadersColumn(CellFeed cellFeed, List<String> filters) {
 
-		try {
+		CellEntry cellEntry;
 
-			for (String filter : filters) {
+		int cell = 1;
 
-					arrNames.add(filter);
-				}
-			
+		for (String name : filters) {
+			cellEntry = new CellEntry(1, cell++, name);
 
-			CellEntry cellEntry;
-
-			int cell = 1;
-			for (String name : arrNames) {
-
-				cellEntry = new CellEntry(1, cell++, name);
+			try {
 				cellFeed.insert(cellEntry);
+			} catch (ServiceException | IOException e) {
+				LOG.error("Generate headers " + e.getMessage());
 			}
-
-		} catch (ServiceException | IOException e) {
-			LOG.error("Generate headers " + e.getMessage());
 		}
-		return arrNames;
+		return filters;
+
 	}
 
 	private void publicAccess(String fileId) {

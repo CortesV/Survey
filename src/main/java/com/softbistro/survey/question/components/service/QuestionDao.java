@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,31 +43,6 @@ public class QuestionDao implements IQuestion {
 	private JdbcTemplate jdbc;
 
 	/**
-	 * Class for geting clients from database
-	 * 
-	 * @author cortes
-	 *
-	 */
-	public class WorkingWithRowMap implements RowMapper<Question> {
-
-		@Override
-		public Question mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-			Question question = new Question();
-			question.setId(resultSet.getInt(1));
-			question.setSurveyId(resultSet.getInt(2));
-			question.setQuestion(resultSet.getString(3));
-			question.setDescriptionShort(resultSet.getString(4));
-			question.setDescriptionLong(resultSet.getString(5));
-			question.setQuestionSectionId(resultSet.getInt(6));
-			question.setAnswerType(resultSet.getString(7));
-			question.setQuestionChoices(resultSet.getString(8));
-			question.setRequired(resultSet.getBoolean(9));
-			question.setRequiredComment(resultSet.getBoolean(10));
-			return question;
-		}
-	}
-
-	/**
 	 * Find question in database by id of question
 	 * 
 	 * @param id
@@ -77,12 +53,8 @@ public class QuestionDao implements IQuestion {
 	public Question findQuestionById(Integer id) {
 
 		try {
-
-			List<Question> questionList = jdbc.query(SELECT_QUESTION_BY_ID, new BeanPropertyRowMapper<>(Question.class),
-					id);
-
-			return questionList.isEmpty() ? null : questionList.get(0);
-
+			return Optional.ofNullable(jdbc.query(SELECT_QUESTION_BY_ID, new BeanPropertyRowMapper<>(Question.class),
+					id)).get().stream().findFirst().orElse(null);
 		} catch (Exception e) {
 
 			LOGGER.debug(e.getMessage());
@@ -124,7 +96,7 @@ public class QuestionDao implements IQuestion {
 				}
 			}, holder);
 
-			return holder.getKey().intValue();
+			return holder.getKey().intValue();	
 
 		} catch (Exception e) {
 
