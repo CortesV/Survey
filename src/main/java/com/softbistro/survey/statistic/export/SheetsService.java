@@ -121,9 +121,7 @@ public class SheetsService {
 
 				ListEntry newRow = new ListEntry();
 				arrHeadersColumn.stream().forEach(header -> {
-
 					fillValue(newRow, header, item.get(header));
-
 				});
 
 				try {
