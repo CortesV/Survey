@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,9 @@ public class SheetsService {
 	public String send(List<SurveyStatisticExport> list, List<String> filters)
 			throws IOException, GeneralSecurityException {
 
+		if (list.isEmpty()) {
+			throw new NoSuchElementException("No content");
+		}
 		@SuppressWarnings("static-access")
 		Sheets sheetsService = googleAuthorization.getSheetsService();
 

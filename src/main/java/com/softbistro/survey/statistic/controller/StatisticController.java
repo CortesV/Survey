@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,13 +89,18 @@ public class StatisticController {
 
 		try {
 			Map<String, String> responseValue = new HashMap<String, String>();
-			if (responseValue.isEmpty()) {
-				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			}
+
 			responseValue.put("URL", statisticService.export(surveyId, filters));
+		
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 
-		} catch (Exception e) {
+		}
+		
+		catch(NoSuchElementException e){
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			
+		}
+		catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
