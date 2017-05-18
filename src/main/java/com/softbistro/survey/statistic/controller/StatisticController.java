@@ -25,6 +25,7 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * Controller for statistic
+ * 
  * @author alex_alokhin
  *
  */
@@ -37,7 +38,7 @@ public class StatisticController {
 
 	@Autowired
 	private AuthorizationService authorizationService;
-	
+
 	@Autowired
 	private ExportFileService exportFileService;
 
@@ -85,51 +86,51 @@ public class StatisticController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		for (String filter : filters) {
-			if (!statisticService.getStatisticColumnFilters().contains(filter)) {
-				return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
-			}
-		}
-
 		try {
 			Map<String, String> responseValue = new HashMap<String, String>();
+			if (responseValue.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
 			responseValue.put("URL", statisticService.export(surveyId, filters));
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
+
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	
+
 	/**
 	 * Export statistic about surveys to file with specified extension
-	 * @return 
+	 * 
+	 * @return
 	 */
 	@ApiOperation(value = "Export statistic about surveys to file with specified extension", notes = "Export statistic about surveys to temporaty file", tags = "Statistic")
 	@RequestMapping(value = "/data/{extension}", method = RequestMethod.POST)
-	public ResponseEntity<Object> exportSurveyStatistic(@RequestHeader String token, @PathVariable("extension") String extension) {
- 		
+	public ResponseEntity<Object> exportSurveyStatistic(@RequestHeader String token,
+			@PathVariable("extension") String extension) {
+
 		if (!authorizationService.checkAccess(token)) {
- 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
- 		}
-		
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
 		try {
 
- 			Map<String, File> responseValue = new HashMap<String, File>();
+			Map<String, File> responseValue = new HashMap<String, File>();
 
- 			responseValue.put("File", exportFileService.exportToFile(extension));
+			responseValue.put("File", exportFileService.exportToFile(extension));
 
- 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
+			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 
- 		} catch (Exception e) {
+		} catch (Exception e) {
 
- 			LOG.error("Export statistic" + e.getMessage());
+			LOG.error("Export statistic" + e.getMessage());
 
- 			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
- 		}
+		}
 	}
+
 	/**
 	 * Export statistic about survey
 	 * 
@@ -137,17 +138,19 @@ public class StatisticController {
 	 * @return
 	 */
 	@ApiOperation(value = "Get Statistic Filters for Export statistic on google sheets", notes = "Get column filters for export statistic on google sheets ", tags = "Statistic")
-	@RequestMapping(value = "/filters/", method = RequestMethod.GET, produces = "application/json")
-	public ResponseEntity<List<String>> getStatisticFilters(@RequestHeader String token) {
+	@RequestMapping(value = "/filters/{survey_id}/", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<List<String>> getStatisticFilters(@PathVariable("survey_id") Integer surveyId,
+			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		
+
 		try {
 
-			return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(), HttpStatus.OK);
+			return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(surveyId),
+					HttpStatus.OK);
 		} catch (Exception e) {
 			LOG.error("Export statistic" + e.getMessage());
 			return new ResponseEntity<List<String>>(HttpStatus.INTERNAL_SERVER_ERROR);

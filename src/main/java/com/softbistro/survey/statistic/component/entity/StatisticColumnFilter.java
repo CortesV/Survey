@@ -1,8 +1,9 @@
 package com.softbistro.survey.statistic.component.entity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
 
 /**
  * Class that represent filter entity
@@ -10,11 +11,11 @@ import java.util.Map;
  * @author af150416
  *
  */
+@Component
 public class StatisticColumnFilter {
 
-	private static final ArrayList<String> filterList = new ArrayList<String>();
-	private static final Map<String, String> filtersMap = new HashMap<String, String>();
-	
+	private static final List<String> filterList = new ArrayList<String>();
+
 	static {
 
 		filterList.add("SurveyID");
@@ -27,30 +28,9 @@ public class StatisticColumnFilter {
 		filterList.add("Answer");
 		filterList.add("Comment");
 		filterList.add("AnswerDateAndTime");
-		filterList.add("ParticipantGroup");
-		filterList.add("ParticipantAttributeName");
-		filterList.add("ParticipantAttributeValue");
-
-		filtersMap.put("SurveyID", "survey_id");
-		filtersMap.put("SurveyName", "survey_name");
-		filtersMap.put("ParticipantFirstName", "first_name");
-		filtersMap.put("ParticipantLastName", "last_name");
-		filtersMap.put("QuestionGroupName", "section_name");
-		filtersMap.put("QuestionName", "question");
-		filtersMap.put("ParticipantID", "participant_id");
-		filtersMap.put("Answer", "answer_value");
-		filtersMap.put("Comment", "comment");
-		filtersMap.put("AnswerDateAndTime", "answer_datetime");
-		filtersMap.put("ParticipantGroup", "group_name");
-		filtersMap.put("ParticipantAttributeName", "attribute");
-		filtersMap.put("ParticipantAttributeValue", "attribute_value");
 	}
 
-	public static Map<String, String> getFiltersMap() {
-		return filtersMap;
-	}
-
-	public static ArrayList<String> getFilterlist() {
+	public static List<String> getFilterList() {
 		return filterList;
 	}
 }

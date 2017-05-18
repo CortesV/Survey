@@ -54,7 +54,7 @@ public class StatisticService {
 	 * @param
 	 * @return statisticColumnFilter
 	 */
-	public List<String> getStatisticColumnFilters() {
-		return statisticDao.getStatisticColumnFilters();
+	public List<String> getStatisticColumnFilters(Integer surveyId) {
+		return statisticDao.getStatisticColumnFilters(surveyId);
 	}
 }
