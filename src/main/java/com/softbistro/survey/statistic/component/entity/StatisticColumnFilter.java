@@ -1,9 +1,7 @@
 package com.softbistro.survey.statistic.component.entity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -16,11 +14,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class StatisticColumnFilter {
 
-	private static final  List<String> filterList = new ArrayList<String>();
-	private static final Map<String, String> filtersMap = new HashMap<String, String>();
+	private static final List<String> filterList = new ArrayList<String>();
 
 	static {
-		
+
 		filterList.add("SurveyID");
 		filterList.add("SurveyName");
 		filterList.add("ParticipantFirstName");
@@ -31,26 +28,6 @@ public class StatisticColumnFilter {
 		filterList.add("Answer");
 		filterList.add("Comment");
 		filterList.add("AnswerDateAndTime");
-		filterList.add("ParticipantGroup");
-
-		
-		
-		filtersMap.put("SurveyID", "survey_id");
-		filtersMap.put("SurveyName", "survey_name");
-		filtersMap.put("ParticipantFirstName", "first_name");
-		filtersMap.put("ParticipantLastName", "last_name");
-		filtersMap.put("QuestionGroupName", "section_name");
-		filtersMap.put("QuestionName", "question");
-		filtersMap.put("ParticipantID", "participant_id");
-		filtersMap.put("Answer", "answer_value");
-		filtersMap.put("Comment", "comment");
-		filtersMap.put("AnswerDateAndTime", "answer_datetime");
-		filtersMap.put("ParticipantGroup", "group_name");
-
-	}
-
-	public static Map<String, String> getFiltersMap() {
-		return filtersMap;
 	}
 
 	public static List<String> getFilterList() {

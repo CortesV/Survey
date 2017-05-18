@@ -3,6 +3,7 @@ package com.softbistro.survey.statistic.component.interfacee;
 import java.util.List;
 import java.util.Map;
 
+import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticShort;
 
 /**
@@ -28,7 +29,7 @@ public interface IStatisticDao {
 	 * @param surveyId
 	 * @return
 	 */
-	public List<Map<String, Object>> export(Integer surveyId);
+	public List<SurveyStatisticExport> export(Integer surveyId);
 
 	/**
 	 * Get Statistic Filters for Export statistic on google sheets

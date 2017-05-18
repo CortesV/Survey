@@ -109,5 +109,4 @@ public class SurveyStatisticExport {
 	public void setParticipantAttribute(List<ParticipantAttributes> participantAttribute) {
 		this.participantAttribute = participantAttribute;
 	}
-
 }

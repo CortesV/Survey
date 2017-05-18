@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +27,13 @@ import com.google.gdata.data.spreadsheet.ListEntry;
 import com.google.gdata.data.spreadsheet.WorksheetEntry;
 import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
-import com.softbistro.survey.statistic.component.entity.StatisticColumnFilter;
+import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 
 @Service
 public class SheetsService {
 
 	@Autowired
 	private GoogleAuthorization googleAuthorization;
-
-	@Autowired
-	private StatisticColumnFilter statisticColumnFilter;
 
 	private static final Logger LOG = Logger.getLogger(SheetsService.class);
 
@@ -48,7 +44,7 @@ public class SheetsService {
 	 * @throws IOException
 	 * @throws GeneralSecurityException
 	 */
-	public String send(List<Map<String, Object>> list, List<String> filters)
+	public String send(List<SurveyStatisticExport> list, List<String> filters)
 			throws IOException, GeneralSecurityException {
 
 		@SuppressWarnings("static-access")
@@ -73,8 +69,8 @@ public class SheetsService {
 	 * @param sheetsService
 	 * @return
 	 */
-	public Spreadsheet create(List<Map<String, Object>> list, Sheets sheetsService) {
-		String title = list.get(0).get("survey_name") + " " + new java.util.Date().toString();
+	public Spreadsheet create(List<SurveyStatisticExport> list, Sheets sheetsService) {
+		String title = list.get(0).getName() + " " + new java.util.Date().toString();
 
 		Spreadsheet requestBody = new Spreadsheet();
 
@@ -102,7 +98,7 @@ public class SheetsService {
 	 * @param key
 	 */
 	@SuppressWarnings("static-access")
-	public void insertData(String key, List<Map<String, Object>> list, List<String> filters) {
+	public void insertData(String key, List<SurveyStatisticExport> list, List<String> filters) {
 		try {
 
 			SpreadsheetService spreadsheetService = new SpreadsheetService("SurveySoftbistro");
@@ -121,56 +117,57 @@ public class SheetsService {
 
 			List<String> arrHeadersColumn = generateHeadersColumn(cellFeed, filters);
 
-			ListEntry newRow = new ListEntry();
+			surveyStatisticExportToMap(list).forEach(item -> {
 
-			Boolean isAttributeNext = false;
+				ListEntry newRow = new ListEntry();
+				arrHeadersColumn.stream().forEach(header -> {
 
-			for (int numberOfRecord = 0; numberOfRecord < list.size(); numberOfRecord++) {
+					fillValue(newRow, header, item.get(header));
 
-				for (int column = 0; column < filters.size(); column++) {
-					String header = arrHeadersColumn.get(column);
+				});
 
-					if (!statisticColumnFilter.getFilterList().contains(header)) {
-						isAttributeNext = true;
-					}
-
-					if (statisticColumnFilter.getFilterList().contains(header) & !isAttributeNext) {
-
-						fillValue(newRow, header, String.valueOf(list.get(numberOfRecord)
-								.get(new StatisticColumnFilter().getFiltersMap().get(filters.get(column)))));
-
-					}
-
-					else {
-
-						header = (list.get(numberOfRecord).get("group_name").toString()
-								+ list.get(numberOfRecord).get("attribute").toString())
-										.replaceAll("[^\\p{Alpha}\\p{Digit}]+", "");
-
-						fillValue(newRow, header, String.valueOf(list.get(numberOfRecord).get("attribute_value")));
-
-					}
-				}
-				if ((!((numberOfRecord == 0)
-						|| (numberOfRecord > 0 && (String.valueOf(list.get(numberOfRecord).get("answer_id"))
-								.equals(String.valueOf(list.get(0).get("answer_id")))))
-						|| (numberOfRecord > 0 && (String.valueOf(list.get(numberOfRecord).get("answer_id"))
-								.equals(String.valueOf(list.get(numberOfRecord - 1).get("answer_id"))))))
-						|| !((String.valueOf(list.get(numberOfRecord).get("answer_id"))
-								.equals(String.valueOf(list.get(numberOfRecord + 1).get("answer_id"))))))) {
-
+				try {
 					spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
 
-					isAttributeNext = false;
-					newRow = new ListEntry();
+				} catch (IOException | ServiceException e) {
+					LOG.error("Insert data " + e.getMessage());
 				}
-
-			}
+			});
 
 		} catch (ServiceException | IOException e) {
 			LOG.error("Insert data " + e.getMessage());
 		}
 
+	}
+
+	private List<Map<String, String>> surveyStatisticExportToMap(List<SurveyStatisticExport> list) {
+		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
+		try {
+			list.stream().forEach(item -> {
+				Map<String, String> statisticMap = new HashMap<String, String>();
+
+				statisticMap.put("SurveyID", item.getId().toString());
+				statisticMap.put("SurveyName", item.getName());
+				statisticMap.put("ParticipantFirstName", item.getFirstName());
+				statisticMap.put("ParticipantLastName", item.getLastName());
+				statisticMap.put("QuestionGroupName", item.getGroupName());
+				statisticMap.put("QuestionName", item.getQuestionName());
+				statisticMap.put("ParticipantID", item.getParticipantId().toString());
+				statisticMap.put("Answer", item.getAnswer());
+				statisticMap.put("Comment", item.getComment());
+				statisticMap.put("AnswerDateAndTime", item.getAnswerDateTime().toString());
+
+				item.getParticipantAttribute().stream().forEach(attr -> statisticMap
+						.put(attr.getName().replaceAll("[^\\p{Alpha}\\p{Digit}]+", ""), attr.getValue()));
+
+				listMap.add(statisticMap);
+			});
+
+		} catch (Exception e) {
+			LOG.error("Prepearing export data " + e.getMessage());
+		}
+
+		return listMap;
 	}
 
 	private void fillValue(ListEntry newRow, String name, String value) {
