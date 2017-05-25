@@ -3,9 +3,9 @@ package com.softbistro.survey.participant.component.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,33 +48,19 @@ public class GroupDao implements IGroup {
 	 */
 	@Override
 	public Integer setGroup(Group group) {
+		KeyHolder holder = new GeneratedKeyHolder();
+		jdbcTemplate.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_GROUP,
+						Statement.RETURN_GENERATED_KEYS);
+				preparedStatement.setInt(1, group.getClientId());
+				preparedStatement.setString(2, group.getGroupName());
 
-		try {
-
-			KeyHolder holder = new GeneratedKeyHolder();
-
-			jdbcTemplate.update(new PreparedStatementCreator() {
-
-				@Override
-				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_GROUP,
-							Statement.RETURN_GENERATED_KEYS);
-					preparedStatement.setInt(1, group.getClientId());
-					preparedStatement.setString(2, group.getGroupName());
-
-					return preparedStatement;
-				}
-			}, holder);
-
-			return holder.getKey().intValue();
-
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+				return preparedStatement;
+			}
+		}, holder);
+		return holder.getKey().intValue();
 	}
 
 	/**
@@ -85,16 +71,9 @@ public class GroupDao implements IGroup {
 	 */
 	@Override
 	public Group getGroupByid(Integer groupId) {
-
-		try {
-			return Optional.ofNullable(
-					jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_ID, new BeanPropertyRowMapper<>(Group.class), groupId))
-					.get().stream().findFirst().orElse(null);
-		}
-		catch (Exception e) {
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional.ofNullable(
+				jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_ID, new BeanPropertyRowMapper<>(Group.class), groupId))
+				.get().stream().findFirst().orElse(null);
 	}
 
 	/**
@@ -105,15 +84,10 @@ public class GroupDao implements IGroup {
 	 */
 	@Override
 	public List<Group> getGroupsByClient(Integer clientId) {
-
-		try {
-			return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT,
-					new BeanPropertyRowMapper<>(Group.class), clientId)).filter(group->!group.isEmpty()).orElse(null);
-		}
-		catch (Exception e) {
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional
+				.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT,
+						new BeanPropertyRowMapper<>(Group.class), clientId))
+				.orElse(new ArrayList<Group>());
 	}
 
 	/**
@@ -124,16 +98,7 @@ public class GroupDao implements IGroup {
 	 */
 	@Override
 	public void updateGroupById(Group group, Integer id) {
-
-		try {
-
-			jdbcTemplate.update(SQL_FOR_UPDATING_GROUP_BY_ID, group.getGroupName(), id);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_UPDATING_GROUP_BY_ID, group.getGroupName(), id);
 	}
 
 	/**
@@ -144,15 +109,6 @@ public class GroupDao implements IGroup {
 	 */
 	@Override
 	public void deleteGroupById(Integer groupId) {
-
-		try {
-
-			jdbcTemplate.update(SQL_FOR_DELETING_GROUP_BY_ID, groupId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_DELETING_GROUP_BY_ID, groupId);
 	}
 }

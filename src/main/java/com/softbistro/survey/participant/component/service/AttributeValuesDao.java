@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,34 +71,20 @@ public class AttributeValuesDao implements IAttributeValues {
 	 */
 	@Override
 	public Integer setAttributeValues(AttributeValues attributeValues) {
+		KeyHolder holder = new GeneratedKeyHolder();
+		jdbcTemplate.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_ATTRIBUTE_VALUES,
+						Statement.RETURN_GENERATED_KEYS);
+				preparedStatement.setInt(1, attributeValues.getAttributeId());
+				preparedStatement.setInt(2, attributeValues.getParticipantId());
+				preparedStatement.setString(3, attributeValues.getValue());
 
-		try {
-
-			KeyHolder holder = new GeneratedKeyHolder();
-
-			jdbcTemplate.update(new PreparedStatementCreator() {
-
-				@Override
-				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_ATTRIBUTE_VALUES,
-							Statement.RETURN_GENERATED_KEYS);
-					preparedStatement.setInt(1, attributeValues.getAttributeId());
-					preparedStatement.setInt(2, attributeValues.getParticipantId());
-					preparedStatement.setString(3, attributeValues.getValue());
-
-					return preparedStatement;
-				}
-			}, holder);
-
-			return holder.getKey().intValue();
-
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+				return preparedStatement;
+			}
+		}, holder);
+		return holder.getKey().intValue();
 	}
 
 	/**
@@ -108,19 +96,8 @@ public class AttributeValuesDao implements IAttributeValues {
 	@Override
 	public AttributeValues getAttributeValuesById(Integer attributeValuesId) {
 
-		try {
-
-			List<AttributeValues> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTE_VALUES_BY_ID,
-					new AttributeValuesRawMapper(), attributeValuesId);
-
-			return list.isEmpty() ? null : list.get(0);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTE_VALUES_BY_ID,
+				new AttributeValuesRawMapper(), attributeValuesId)).get().stream().findFirst().orElse(null);
 	}
 
 	/**
@@ -131,16 +108,7 @@ public class AttributeValuesDao implements IAttributeValues {
 	 */
 	@Override
 	public void updateAttributeValuesById(AttributeValues attributeValues, Integer id) {
-
-		try {
-
-			jdbcTemplate.update(SQL_FOR_UPDATING_ATTRIBUTE_VALUES_BY_ID, attributeValues.getValue(), id);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_UPDATING_ATTRIBUTE_VALUES_BY_ID, attributeValues.getValue(), id);
 	}
 
 	/**
@@ -151,15 +119,7 @@ public class AttributeValuesDao implements IAttributeValues {
 	 */
 	@Override
 	public void deleteAttributeValuesById(Integer attributeValuesId) {
-
-		try {
-			jdbcTemplate.update(SQL_FOR_DELETING_ATTRIBUTE_VALUES_BY_ID, attributeValuesId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_DELETING_ATTRIBUTE_VALUES_BY_ID, attributeValuesId);
 	}
 
 	/**
@@ -172,18 +132,7 @@ public class AttributeValuesDao implements IAttributeValues {
 	@Override
 	public List<AttributeValues> getParticipantAttributesInGroup(Integer groupId, Integer participantId) {
 
-		try {
-
-			List<AttributeValues> list = jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES,
-					new AttributeValuesRawMapper(), groupId, participantId);
-
-			return list.isEmpty() ? null : list;
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES,
+				new AttributeValuesRawMapper(), groupId, participantId)).orElse(new ArrayList<AttributeValues>());
 	}
 }
