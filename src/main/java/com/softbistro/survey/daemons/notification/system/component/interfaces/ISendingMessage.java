@@ -3,8 +3,6 @@ package com.softbistro.survey.daemons.notification.system.component.interfaces;
 import java.util.List;
 
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.daemons.notification.system.component.entity.NotificationClientSending;
-import com.softbistro.survey.daemons.notification.system.component.entity.NotificationSurveySending;
 
 /**
  * Methods for working with notification
@@ -20,30 +18,32 @@ public interface ISendingMessage {
 	public List<Notification> getEmailsForSending();
 
 	/**
-	 * Update status on emails that need to resending to "NEW"
-	 */
-	public void updateStatusMessagesToNew();
-
-	/**
-	 * Update status on emails that need to resending to "NEW"
+	 * Update status on emails that need to sending to "IN_PROCESS"
 	 * 
 	 * @author yagi
 	 */
 	public void updateStatusMessagesToInProcess();
 
 	/**
-	 * Update status on emails that need to send to "IN_PROCESS"
+	 * Update status on emails that sent to "PROCESSED" from "IN_PROCESS"
 	 * 
 	 * @author yagi
 	 */
-	public void updateStatusMessagesToProcessed();
+	public void updateStatusMessagesFromInProcessToProcessed(int id);
+
+	/**
+	 * Update status on emails that sent to "PROCESSED" from "ERROR"
+	 * 
+	 * @author yagi
+	 */
+	public void updateStatusMessagesFromErrorToProcessed(int id);
 
 	/**
 	 * Update status on emails that has errors to "ERROR"
 	 * 
 	 * @author yagi
 	 */
-	public void updateStatusMessagesToError();
+	public void updateStatusMessagesToError(int id);
 
 	/**
 	 * Insert notification into table
@@ -54,35 +54,5 @@ public interface ISendingMessage {
 	 * @author alex_alokhin
 	 */
 	public void insertIntoNotification(Notification notification);
-
-	/**
-	 * Insert info about notification
-	 * 
-	 * @param notification
-	 *            - new record
-	 * 
-	 * @author alex_alokhin
-	 */
-	public void insertIntoSendingClient(NotificationClientSending notification);
-
-	/**
-	 * Insert info about notification
-	 * 
-	 * @param notification
-	 *            - new record
-	 * 
-	 * @author alex_alokhin
-	 */
-	public void insertIntoSendingPassword(NotificationClientSending notification);
-
-	/**
-	 * Insert info about notification
-	 * 
-	 * @param notification
-	 *            - new record
-	 * 
-	 * @author alex_alokhin
-	 */
-	public void insertIntoSendingSurvey(NotificationSurveySending notification);
 
 }

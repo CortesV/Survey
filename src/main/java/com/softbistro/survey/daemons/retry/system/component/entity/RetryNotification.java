@@ -1,6 +1,6 @@
-package com.softbistro.survey.daemons.notification.system.component.entity;
+package com.softbistro.survey.daemons.retry.system.component.entity;
 
-public class Notification {
+public class RetryNotification {
 	private int id;
 	private String senderEmail;
 	private String senderPassword;
@@ -9,26 +9,15 @@ public class Notification {
 	private String receiverEmail;
 	private String header;
 	private String body;
+	private String textException;
+	private int retryCount;
 
-	public Notification(String senderEmail, String receiverEmail, String header, String body) {
-		this.senderEmail = senderEmail;
-		this.receiverEmail = receiverEmail;
-		this.header = header;
-		this.body = body;
+	public RetryNotification() {
 	}
 
-	public Notification(String senderEmail, String senderPassword, String senderDescription, String receiverCCEmail,
-			String receiverEmail, String header, String body) {
-		this.senderEmail = senderEmail;
-		this.senderPassword = senderPassword;
-		this.senderDescription = senderDescription;
-		this.receiverCCEmail = receiverCCEmail;
-		this.receiverEmail = receiverEmail;
-		this.header = header;
-		this.body = body;
-	}
-
-	public Notification() {
+	public RetryNotification(int id, String textException) {
+		this.id = id;
+		this.textException = textException;
 	}
 
 	public int getId() {
@@ -95,4 +84,19 @@ public class Notification {
 		this.body = body;
 	}
 
+	public String getTextException() {
+		return textException;
+	}
+
+	public void setTextException(String textException) {
+		this.textException = textException;
+	}
+
+	public int getRetryCount() {
+		return retryCount;
+	}
+
+	public void setRetryCount(int retryCount) {
+		this.retryCount = retryCount;
+	}
 }
