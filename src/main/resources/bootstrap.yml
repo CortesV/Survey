@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: survey-dev
+  cloud:
+    config:
+      uri: http://192.168.128.242:8888
