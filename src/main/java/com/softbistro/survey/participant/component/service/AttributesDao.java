@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,20 +47,33 @@ public class AttributesDao implements IAttributes {
 	 */
 	@Override
 	public Integer setAttribute(Attributes attributes) {
-		KeyHolder holder = new GeneratedKeyHolder();
-		jdbcTemplate.update(new PreparedStatementCreator() {
-			@Override
-			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-				PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_ATTRIBUTES,
-						Statement.RETURN_GENERATED_KEYS);
-				preparedStatement.setInt(1, attributes.getGroupId());
-				preparedStatement.setString(2, attributes.getAttribute());
 
-				return preparedStatement;
-			}
-		}, holder);
+		try {
 
-		return holder.getKey().intValue();
+			KeyHolder holder = new GeneratedKeyHolder();
+
+			jdbcTemplate.update(new PreparedStatementCreator() {
+
+				@Override
+				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_ATTRIBUTES,
+							Statement.RETURN_GENERATED_KEYS);
+					preparedStatement.setInt(1, attributes.getGroupId());
+					preparedStatement.setString(2, attributes.getAttribute());
+
+					return preparedStatement;
+				}
+			}, holder);
+
+			return holder.getKey().intValue();
+
+		}
+
+		catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return null;
+		}
 	}
 
 	/**
@@ -72,10 +84,20 @@ public class AttributesDao implements IAttributes {
 	 */
 	@Override
 	public Attributes getAttributeById(Integer attributesId) {
-		return Optional
-				.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_ID,
-						new BeanPropertyRowMapper<>(Attributes.class), attributesId))
-				.get().stream().findFirst().orElse(null);
+
+		try {
+
+			List<Attributes> list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_ID,
+					new BeanPropertyRowMapper<>(Attributes.class), attributesId);
+
+			return list.isEmpty() ? null : list.get(0);
+		}
+
+		catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return null;
+		}
 	}
 
 	/**
@@ -86,8 +108,17 @@ public class AttributesDao implements IAttributes {
 	 */
 	@Override
 	public void updateAttributes(Attributes attributes, Integer attributesId) {
-		jdbcTemplate.update(SQL_FOR_UPDATING__ATTRIBUTES_BY_ID, attributes.getGroupId(), attributes.getAttribute(),
-				attributesId);
+
+		try {
+
+			jdbcTemplate.update(SQL_FOR_UPDATING__ATTRIBUTES_BY_ID, attributes.getGroupId(), attributes.getAttribute(),
+					attributesId);
+		}
+
+		catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+		}
 	}
 
 	/**
@@ -98,7 +129,16 @@ public class AttributesDao implements IAttributes {
 	 */
 	@Override
 	public void deleteAttributes(Integer attributesId) {
-		jdbcTemplate.update(SQL_FOR_DELETING_ATTRIBUTES, attributesId);
+
+		try {
+
+			jdbcTemplate.update(SQL_FOR_DELETING_ATTRIBUTES, attributesId);
+		}
+
+		catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+		}
 	}
 
 	/**
@@ -109,7 +149,20 @@ public class AttributesDao implements IAttributes {
 	 */
 	@Override
 	public List<Attributes> getAttributesByGroup(Integer groupId) {
-		return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP,
-				new BeanPropertyRowMapper<>(Attributes.class), groupId)).orElse(new ArrayList<Attributes>());
+
+		List<Attributes> list = new ArrayList<>();
+		try {
+
+			list = jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP,
+					new BeanPropertyRowMapper<>(Attributes.class), groupId);
+
+			return list.isEmpty() ? null : list;
+		}
+
+		catch (Exception e) {
+
+			LOGGER.error(e.getMessage());
+			return list;
+		}
 	}
 }

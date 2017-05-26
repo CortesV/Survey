@@ -29,6 +29,13 @@ public class AuthorizedClient implements Serializable {
 
 	}
 
+	/**
+	 * Need for initializing client in authorization
+	 * 
+	 * @param token
+	 * @param clientId
+	 * @param timeValidKey
+	 */
 	public AuthorizedClient(String token, String clientId, Integer timeValidKey) {
 
 		this.clientId = clientId;
