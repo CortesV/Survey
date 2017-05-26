@@ -61,35 +61,22 @@ public class ParticipantDao implements IParticipant {
 	 */
 	@Override
 	public Integer setParticipant(Participant participant) {
+		KeyHolder holder = new GeneratedKeyHolder();
+		jdbcTemplate.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_PARTICIPANT,
+						Statement.RETURN_GENERATED_KEYS);
+				preparedStatement.setInt(1, participant.getClientId());
+				preparedStatement.setString(2, participant.getFirstName());
+				preparedStatement.setString(3, participant.getLastName());
+				preparedStatement.setString(4, participant.geteMail());
 
-		try {
+				return preparedStatement;
+			}
+		}, holder);
 
-			KeyHolder holder = new GeneratedKeyHolder();
-
-			jdbcTemplate.update(new PreparedStatementCreator() {
-
-				@Override
-				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_PARTICIPANT,
-							Statement.RETURN_GENERATED_KEYS);
-					preparedStatement.setInt(1, participant.getClientId());
-					preparedStatement.setString(2, participant.getFirstName());
-					preparedStatement.setString(3, participant.getLastName());
-					preparedStatement.setString(4, participant.geteMail());
-
-					return preparedStatement;
-				}
-			}, holder);
-
-			return holder.getKey().intValue();
-
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return holder.getKey().intValue();
 	}
 
 	/**
@@ -100,17 +87,8 @@ public class ParticipantDao implements IParticipant {
 	 */
 	@Override
 	public void updateParticipant(Participant participant, Integer id) {
-
-		try {
-
-			jdbcTemplate.update(SQL_FOR_UPDATING_PARTICIPANT, participant.getFirstName(), participant.getLastName(),
-					participant.geteMail(), id);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_UPDATING_PARTICIPANT, participant.getFirstName(), participant.getLastName(),
+				participant.geteMail(), id);
 	}
 
 	/**
@@ -121,16 +99,7 @@ public class ParticipantDao implements IParticipant {
 	 */
 	@Override
 	public void deleteParticipantById(Integer participantId) {
-
-		try {
-
-			jdbcTemplate.update(SQL_FOR_DELETING_PARTICIPANT, participantId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_DELETING_PARTICIPANT, participantId);
 	}
 
 	/**
@@ -141,19 +110,10 @@ public class ParticipantDao implements IParticipant {
 	 */
 	@Override
 	public Participant getParticipantById(Integer participantId) {
-
-		try {
-			return Optional
-					.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ID,
-							new BeanPropertyRowMapper<>(Participant.class), participantId))
-					.get().stream().findFirst().orElse(null);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional
+				.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ID,
+						new BeanPropertyRowMapper<>(Participant.class), participantId))
+				.get().stream().findFirst().orElse(null);
 	}
 
 	/**
@@ -165,19 +125,10 @@ public class ParticipantDao implements IParticipant {
 	 */
 	@Override
 	public List<Participant> getParticipantByAttributeValue(Integer attributeId, String attributeValue) {
-
-		try {
-			return Optional
-					.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE,
-							new BeanPropertyRowMapper<>(Participant.class), attributeId, attributeValue))
-					.filter(participants -> !participants.isEmpty()).orElse(null);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional
+				.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE,
+						new BeanPropertyRowMapper<>(Participant.class), attributeId, attributeValue))
+				.orElse(new ArrayList<Participant>());
 	}
 
 	/**
@@ -188,18 +139,7 @@ public class ParticipantDao implements IParticipant {
 	 */
 	@Override
 	public List<Participant> selectClientAllParticipants(Integer cliectId) {
-
-		try {
-			return Optional
-					.ofNullable(jdbcTemplate.query(SELECT_CLIENT_ALL_CLIENT_PARTICIPANTS,
-							new BeanPropertyRowMapper<>(Participant.class), cliectId))
-					.filter(participants -> !participants.isEmpty()).orElse(null);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional.ofNullable(jdbcTemplate.query(SELECT_CLIENT_ALL_CLIENT_PARTICIPANTS,
+				new BeanPropertyRowMapper<>(Participant.class), cliectId)).orElse(new ArrayList<Participant>());
 	}
 }

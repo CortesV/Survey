@@ -2,6 +2,7 @@ package com.softbistro.survey.participant.component.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,19 +52,8 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 */
 	@Override
 	public List<Participant> getParticipantsByGroup(Integer groupId) {
-
-		try {
-			return Optional
-					.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
-							new BeanPropertyRowMapper<>(Participant.class), groupId))
-					.filter(participants -> !participants.isEmpty()).orElse(null);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
+				new BeanPropertyRowMapper<>(Participant.class), groupId)).orElse(new ArrayList<Participant>());
 	}
 
 	/**
@@ -75,29 +65,18 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 */
 	@Override
 	public void addParticipantInGroup(ParticipantInGroup participantInGoup) {
+		jdbcTemplate.batchUpdate(SQL_FOR_ADDING_PARTICIPANT_IN_GROUP, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ps.setInt(1, participantInGoup.getGroupId());
+				ps.setInt(2, participantInGoup.getParticipantsId().get(i));
+			}
 
-		try {
-
-			jdbcTemplate.batchUpdate(SQL_FOR_ADDING_PARTICIPANT_IN_GROUP, new BatchPreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
-					ps.setInt(1, participantInGoup.getGroupId());
-					ps.setInt(2, participantInGoup.getParticipantsId().get(i));
-				}
-
-				@Override
-				public int getBatchSize() {
-					return participantInGoup.getParticipantsId().size();
-				}
-			});
-
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+			@Override
+			public int getBatchSize() {
+				return participantInGoup.getParticipantsId().size();
+			}
+		});
 	}
 
 	/**
@@ -109,16 +88,7 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 */
 	@Override
 	public void deletingParticipantfromGroup(Integer groupId, Integer participantId) {
-
-		try {
-
-			jdbcTemplate.update(SQL_FOR_DELETING_PARTICIPANT_IN_GROUP, groupId, participantId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_DELETING_PARTICIPANT_IN_GROUP, groupId, participantId);
 	}
 
 	/**
@@ -129,17 +99,7 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 */
 	@Override
 	public List<Group> getParticipantGroups(Integer participantId) {
-		try {
-			return Optional
-					.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_GROUPS,
-							new BeanPropertyRowMapper<>(Group.class), participantId))
-					.filter(participants -> !participants.isEmpty()).orElse(null);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_GROUPS,
+				new BeanPropertyRowMapper<>(Group.class), participantId)).orElse(new ArrayList<Group>());
 	}
 }
