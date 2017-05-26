@@ -2,7 +2,6 @@ package com.softbistro.survey.confirm.url.controller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +27,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("rest/survey/v1/answer")
 public class VoteController {
 
-	private static final Logger LOGGER = Logger.getLogger(VoteController.class);
-
 	@Autowired
 	private VoteService voteService;
 
@@ -46,15 +43,8 @@ public class VoteController {
 	@RequestMapping(value = "/{uuid}", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> vote(@PathVariable(value = "uuid") String uuid, @RequestBody List<Answer> answers) {
 
-		try {
-
-			voteService.answerOnSurvey(uuid, answers);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		voteService.answerOnSurvey(uuid, answers);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -67,13 +57,6 @@ public class VoteController {
 	@RequestMapping(value = "/{uuid}", method = RequestMethod.GET)
 	public ResponseEntity<List<VotePage>> getVotePage(@PathVariable(value = "uuid") String uuid) {
 
-		try {
-
-			return new ResponseEntity<>(voteService.getVotePage(uuid), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(voteService.getVotePage(uuid), HttpStatus.OK);
 	}
 }

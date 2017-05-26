@@ -56,17 +56,10 @@ public class AuthorizationService {
 	 */
 	public Client simpleAthorization(Client requestClient) {
 
-		try {
-
-			Optional<Client> resultFindClient = Optional.ofNullable(findClientService.findByEmail(requestClient));
-			return resultFindClient
-					.filter(client -> client.getPassword().equals(DigestUtils.md5Hex(requestClient.getPassword())))
-					.map(client -> getInformationAfterSimpleAuthotization(client)).orElse(logWrongSimpleAuth());
-		} catch (Exception e) {
-
-			LOGGER.error(SIMPLE_AUTH_EXCEPTION, e);
-			return null;
-		}
+		Optional<Client> resultFindClient = Optional.ofNullable(findClientService.findByEmail(requestClient));
+		return resultFindClient
+				.filter(client -> client.getPassword().equals(DigestUtils.md5Hex(requestClient.getPassword())))
+				.map(client -> getInformationAfterSimpleAuthotization(client)).orElse(logWrongSimpleAuth());
 
 	}
 
@@ -95,33 +88,24 @@ public class AuthorizationService {
 	 */
 	public Client socialAuthorization(Client requestClient) {
 
-		try {
+		if (!checkFlag(requestClient)) {
 
-			
-
-			if (!checkFlag(requestClient)) {
-
-				LOGGER.info(SOCIAL_AUTH + BAD_FLAG);
-				return null;
-			}
-			
-			clientService.saveSocialClient(requestClient);
-
-			Optional<Client> resultFindClient = Optional.ofNullable(findClientService.findClient(requestClient));
-
-			return resultFindClient.map(client -> getInformationAfterSocialAuthotization(client)).orElse(null);
-			
-		} catch (Exception e) {
-
-			LOGGER.error(SOCIAL_AUTH_EXCEPTION, e);
+			LOGGER.info(SOCIAL_AUTH + BAD_FLAG);
 			return null;
 		}
+
+		clientService.saveSocialClient(requestClient);
+
+		Optional<Client> resultFindClient = Optional.ofNullable(findClientService.findClient(requestClient));
+
+		return resultFindClient.map(client -> getInformationAfterSocialAuthotization(client)).orElse(null);
 	}
-	
+
 	private Client getInformationAfterSocialAuthotization(Client databaseClient) {
 
 		String uniqueKey = UUID.randomUUID().toString();
-		AuthorizedClient authorizedClient = new AuthorizedClient(uniqueKey, databaseClient.getId().toString(), timeValidKey);
+		AuthorizedClient authorizedClient = new AuthorizedClient(uniqueKey, databaseClient.getId().toString(),
+				timeValidKey);
 		authorizedClientService.saveClient(authorizedClient);
 
 		Client responseClient = new Client(databaseClient.getId(), databaseClient.getClientName(),

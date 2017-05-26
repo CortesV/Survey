@@ -2,7 +2,6 @@ package com.softbistro.survey.participant.controller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +28,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rest/survey/v1/attribute")
 public class AttributesController {
 
-	private static final Logger LOGGER = Logger.getLogger(AttributesController.class);
-
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -52,14 +49,7 @@ public class AttributesController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(attributesService.setAttribute(attributes), HttpStatus.CREATED);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(attributesService.setAttribute(attributes), HttpStatus.CREATED);
 	}
 
 	/**
@@ -78,14 +68,7 @@ public class AttributesController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(attributesService.getAttributeById(attributesId), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(attributesService.getAttributeById(attributesId), HttpStatus.OK);
 	}
 
 	/**
@@ -104,14 +87,7 @@ public class AttributesController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(attributesService.getAttributesByGroupId(groupId), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(attributesService.getAttributesByGroupId(groupId), HttpStatus.OK);
 	}
 
 	/**
@@ -130,15 +106,8 @@ public class AttributesController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			attributesService.updateAttributes(attributes, attributesId);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		attributesService.updateAttributes(attributes, attributesId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -157,14 +126,7 @@ public class AttributesController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			attributesService.deleteAttributesById(attributesId);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		attributesService.deleteAttributesById(attributesId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

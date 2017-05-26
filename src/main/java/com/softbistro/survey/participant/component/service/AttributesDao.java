@@ -3,11 +3,9 @@ package com.softbistro.survey.participant.component.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -31,8 +29,6 @@ public class AttributesDao implements IAttributes {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
-	private static final Logger LOGGER = Logger.getLogger(AttributesDao.class);
 
 	private static final String SQL_FOR_SETTING_ATTRIBUTES = "INSERT INTO attributes (attributes.group_id, attributes.attribute) VALUES (?, ?)";
 	private static final String SQL_FOR_GETTING_ATTRIBUTES_BY_ID = "SELECT * FROM attributes AS at WHERE at.id = ? AND at.delete = 0";
@@ -109,7 +105,7 @@ public class AttributesDao implements IAttributes {
 	 */
 	@Override
 	public List<Attributes> getAttributesByGroup(Integer groupId) {
-		return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP,
-				new BeanPropertyRowMapper<>(Attributes.class), groupId)).orElse(new ArrayList<Attributes>());
+		return jdbcTemplate.query(SQL_FOR_GETTING_ATTRIBUTES_BY_GROUP, new BeanPropertyRowMapper<>(Attributes.class),
+				groupId);
 	}
 }

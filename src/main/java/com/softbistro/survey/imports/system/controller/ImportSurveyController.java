@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +27,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/rest/survey/v1/import")
 public class ImportSurveyController {
-
-	private static final Logger LOGGER = Logger.getLogger(ImportSurveyController.class);
 
 	@Autowired
 	private ImportSurveyService importSurveyService;
@@ -54,15 +51,9 @@ public class ImportSurveyController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			Map<String, Integer> responseSurveyId = new HashMap<>();
-			responseSurveyId.put("surveyId", importSurveyService.importFile(request, clientId));
-			return new ResponseEntity<>(responseSurveyId, HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		Map<String, Integer> responseSurveyId = new HashMap<>();
+		responseSurveyId.put("surveyId", importSurveyService.importFile(request, clientId));
+		return new ResponseEntity<>(responseSurveyId, HttpStatus.OK);
 	}
 
 }

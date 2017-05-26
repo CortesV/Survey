@@ -38,7 +38,7 @@ import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 @Service
 @Scope("prototype")
 public class RegistrationMessageServise implements ICreateMessage {
-	private Logger log = LogManager.getLogger(getClass());
+	private Logger LOGGER = LogManager.getLogger(getClass());
 
 	@Autowired
 	private ISendingMessage iSendingMessage;
@@ -88,7 +88,7 @@ public class RegistrationMessageServise implements ICreateMessage {
 
 			iClient.updateStatusOfNewClients();
 
-			log.info(String.format("Registration email: %s", client.getEmail()));
+			LOGGER.info(String.format("Registration email: %s", client.getEmail()));
 		});
 
 	}

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +42,6 @@ public class StatisticController {
 	@Autowired
 	private ExportFileService exportFileService;
 
-	private static final Logger LOG = Logger.getLogger(StatisticController.class);
-
 	/**
 	 * Get answers on question from survey
 	 * 
@@ -62,12 +59,7 @@ public class StatisticController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			return new ResponseEntity<SurveyStatisticShort>(statisticService.survey(surveyId), HttpStatus.OK);
-		} catch (Exception e) {
-			LOG.error("Short statistic" + e.getMessage());
-			return new ResponseEntity<SurveyStatisticShort>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<SurveyStatisticShort>(statisticService.survey(surveyId), HttpStatus.OK);
 	}
 
 	/**
@@ -91,18 +83,12 @@ public class StatisticController {
 			Map<String, String> responseValue = new HashMap<String, String>();
 
 			responseValue.put("URL", statisticService.export(surveyId, filters));
-		
+
 			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 
-		}
-		
-		catch(NoSuchElementException e){
+		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-			
-		}
-		catch (Exception e) {
-			LOG.error("Export statistic" + e.getMessage());
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+
 		}
 	}
 
@@ -120,21 +106,11 @@ public class StatisticController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
+		Map<String, File> responseValue = new HashMap<String, File>();
 
-			Map<String, File> responseValue = new HashMap<String, File>();
+		responseValue.put("File", exportFileService.exportToFile(extension));
 
-			responseValue.put("File", exportFileService.exportToFile(extension));
-
-			return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
-
-		} catch (Exception e) {
-
-			LOG.error("Export statistic" + e.getMessage());
-
-			return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-
-		}
+		return new ResponseEntity<Object>(responseValue, HttpStatus.OK);
 	}
 
 	/**
@@ -153,13 +129,6 @@ public class StatisticController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(surveyId),
-					HttpStatus.OK);
-		} catch (Exception e) {
-			LOG.error("Export statistic" + e.getMessage());
-			return new ResponseEntity<List<String>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<List<String>>(statisticService.getStatisticColumnFilters(surveyId), HttpStatus.OK);
 	}
 }

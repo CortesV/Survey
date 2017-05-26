@@ -2,6 +2,7 @@ package com.softbistro.survey.statistic.export.xlsx;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class XlsxStatisticService implements IExportFile {
 
 	private final static String PARTICIPANT_ATTR = "Attribute value";
 
-	private static final Logger LOG = Logger.getLogger(XlsxStatisticService.class);
+	private static final Logger LOGGER = Logger.getLogger(XlsxStatisticService.class);
 
 	/**
 	 * Export statistic about surveys to xlsx file
@@ -103,8 +104,8 @@ public class XlsxStatisticService implements IExportFile {
 			}
 			workbook.write(fop);
 			fop.close();
-		} catch (Exception e) {
-			LOG.error(e.getMessage());
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
 			return null;
 		} finally {
 			file.deleteOnExit();

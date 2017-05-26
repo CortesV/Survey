@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.service.ClientDao;
 import com.softbistro.survey.creating.survey.service.SurveyService;
-import com.softbistro.survey.daemons.notification.system.component.dao.MessageDao;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.component.service.MessageDao;
 import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**

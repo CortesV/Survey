@@ -76,17 +76,8 @@ public class ClientDao implements IClient {
 	@Override
 	public Client findClient(Integer id) {
 
-		try {
-
-			Client findClient = jdbc.queryForObject(FIND_CLIENT_BY_ID, new BeanPropertyRowMapper<Client>(Client.class),
-					id);
-			return Optional.ofNullable(findClient).map(client -> client).orElse(null);
-
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional.ofNullable(jdbc.query(FIND_CLIENT_BY_ID, new BeanPropertyRowMapper<Client>(Client.class), id))
+				.get().stream().findFirst().orElse(null);
 
 	}
 
@@ -101,37 +92,29 @@ public class ClientDao implements IClient {
 	@Override
 	public Integer saveClient(Client client) {
 
-		try {
+		if (findClientByLoginAndEmail(client) != null) {
 
-			if (findClientByLoginAndEmail(client) != null) {
-
-				return null;
-			}
-
-			KeyHolder holder = new GeneratedKeyHolder();
-
-			jdbc.update(new PreparedStatementCreator() {
-
-				@Override
-				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-					PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CLIENT,
-							Statement.RETURN_GENERATED_KEYS);
-
-					preparedStatement.setString(1, client.getClientName());
-					preparedStatement.setString(2, DigestUtils.md5Hex(client.getPassword()));
-					preparedStatement.setString(3, client.getEmail());
-
-					return preparedStatement;
-				}
-			}, holder);
-
-			return holder.getKey().intValue();
-
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
 			return null;
 		}
+
+		KeyHolder holder = new GeneratedKeyHolder();
+
+		jdbc.update(new PreparedStatementCreator() {
+
+			@Override
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CLIENT,
+						Statement.RETURN_GENERATED_KEYS);
+
+				preparedStatement.setString(1, client.getClientName());
+				preparedStatement.setString(2, DigestUtils.md5Hex(client.getPassword()));
+				preparedStatement.setString(3, client.getEmail());
+
+				return preparedStatement;
+			}
+		}, holder);
+
+		return holder.getKey().intValue();
 
 	}
 
@@ -145,20 +128,12 @@ public class ClientDao implements IClient {
 	@Override
 	public Client saveSocialClient(Client client) {
 
-		try {
-
-			Client resultFindClient = findClientService.findClient(client);
-			if (resultFindClient == null) {
-				return socialSaveClientNotExist(client);
-			} else {
-				return socialSaveClientExist(client, resultFindClient);
-			}
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
+		Client resultFindClient = findClientService.findClient(client);
+		if (resultFindClient == null) {
+			return socialSaveClientNotExist(client);
+		} else {
+			return socialSaveClientExist(client, resultFindClient);
 		}
-
 	}
 
 	/**
@@ -171,13 +146,7 @@ public class ClientDao implements IClient {
 	@Override
 	public void deleteClient(Integer id) {
 
-		try {
-
-			jdbc.update(DELETE_CLIENT, id);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbc.update(DELETE_CLIENT, id);
 	}
 
 	/**
@@ -195,16 +164,9 @@ public class ClientDao implements IClient {
 	@Override
 	public void updateClient(Client client, Integer id) {
 
-		try {
-
-			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
-			jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), md5HexPassword,
-					client.getFacebookId(), client.getGoogleId(), id);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
-
+		String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+		jdbc.update(UPDATE_CLIENT, client.getClientName(), client.getEmail(), md5HexPassword, client.getFacebookId(),
+				client.getGoogleId(), id);
 	}
 
 	/**
@@ -221,15 +183,8 @@ public class ClientDao implements IClient {
 	@Override
 	public void updatePassword(Client client, Integer id) {
 
-		try {
-
-			String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
-			jdbc.update(UPDATE_CLIENT_PASSWORD, md5HexPassword, id);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
-
+		String md5HexPassword = DigestUtils.md5Hex(client.getPassword());
+		jdbc.update(UPDATE_CLIENT_PASSWORD, md5HexPassword, id);
 	}
 
 	/**
@@ -241,18 +196,10 @@ public class ClientDao implements IClient {
 	@Override
 	public Client findClientByLoginAndEmail(Client client) {
 
-		try {
+		List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper<>(Client.class), client.getEmail(),
+				client.getClientName());
 
-			List<Client> clientList = jdbc.query(FIND_CLIENT, new BeanPropertyRowMapper<>(Client.class),
-					client.getEmail(), client.getClientName());
-
-			return clientList.stream().findFirst().orElse(null);
-
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return clientList.stream().findFirst().orElse(null);
 	}
 
 	/**
@@ -264,28 +211,19 @@ public class ClientDao implements IClient {
 	 */
 	private Client socialSaveClientNotExist(Client client) {
 
-		try {
-
-			Client resultFindClient = findClientService.findByEmail(client);
-			if (resultFindClient != null) {
-				return null;
-			}
-			if (client.getFlag().equals(FACEBOOK)) {
-
-				jdbc.update(SAVE_FACEBOOK_CLIENT, client.getClientName(), client.getFacebookId(), client.getEmail());
-			}
-			if (client.getFlag().equals(GOOGLE)) {
-
-				jdbc.update(SAVE_GOOGLE_CLIENT, client.getClientName(), client.getGoogleId(), client.getEmail());
-			}
-			return client;
-
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
+		Client resultFindClient = findClientService.findByEmail(client);
+		if (resultFindClient != null) {
 			return null;
 		}
+		if (client.getFlag().equals(FACEBOOK)) {
 
+			jdbc.update(SAVE_FACEBOOK_CLIENT, client.getClientName(), client.getFacebookId(), client.getEmail());
+		}
+		if (client.getFlag().equals(GOOGLE)) {
+
+			jdbc.update(SAVE_GOOGLE_CLIENT, client.getClientName(), client.getGoogleId(), client.getEmail());
+		}
+		return client;
 	}
 
 	/**
@@ -298,35 +236,27 @@ public class ClientDao implements IClient {
 	 */
 	private Client socialSaveClientExist(Client client, Client resultFindClient) {
 
-		try {
+		if (client.getFlag().equals(FACEBOOK) && StringUtils.isNotBlank(resultFindClient.getFacebookId())
+				&& !resultFindClient.getEmail().equals(client.getEmail())) {
 
-			if (client.getFlag().equals(FACEBOOK) && StringUtils.isNotBlank(resultFindClient.getFacebookId())
-					&& !resultFindClient.getEmail().equals(client.getEmail())) {
-
-				resultFindClient.setEmail(client.getEmail());
-				jdbc.update(UPDATE_CLIENT, resultFindClient.getClientName(), resultFindClient.getEmail(),
-						resultFindClient.getPassword(), resultFindClient.getFacebookId(),
-						resultFindClient.getGoogleId(), resultFindClient.getId());
-				return client;
-			}
-
-			if (client.getFlag().equals(GOOGLE) && StringUtils.isNotBlank(resultFindClient.getGoogleId())
-					&& !resultFindClient.getEmail().equals(client.getEmail())) {
-
-				resultFindClient.setEmail(client.getEmail());
-				jdbc.update(UPDATE_CLIENT, resultFindClient.getClientName(), resultFindClient.getEmail(),
-						resultFindClient.getPassword(), resultFindClient.getFacebookId(),
-						resultFindClient.getGoogleId(), resultFindClient.getId());
-				return client;
-			}
-
+			resultFindClient.setEmail(client.getEmail());
+			jdbc.update(UPDATE_CLIENT, resultFindClient.getClientName(), resultFindClient.getEmail(),
+					resultFindClient.getPassword(), resultFindClient.getFacebookId(), resultFindClient.getGoogleId(),
+					resultFindClient.getId());
 			return client;
-
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
 		}
+
+		if (client.getFlag().equals(GOOGLE) && StringUtils.isNotBlank(resultFindClient.getGoogleId())
+				&& !resultFindClient.getEmail().equals(client.getEmail())) {
+
+			resultFindClient.setEmail(client.getEmail());
+			jdbc.update(UPDATE_CLIENT, resultFindClient.getClientName(), resultFindClient.getEmail(),
+					resultFindClient.getPassword(), resultFindClient.getFacebookId(), resultFindClient.getGoogleId(),
+					resultFindClient.getId());
+			return client;
+		}
+
+		return client;
 	}
 
 	/**
@@ -341,17 +271,10 @@ public class ClientDao implements IClient {
 	@Override
 	public Client findByTemplate(String template, String value) {
 
-		try {
+		List<Client> clientList = jdbc.query(SELECT_CLIENT_FIRST_PART + template + SELECT_CLIENT_SECOND_PART,
+				new BeanPropertyRowMapper<Client>(Client.class), value);
 
-			List<Client> clientList = jdbc.query(SELECT_CLIENT_FIRST_PART + template + SELECT_CLIENT_SECOND_PART,
-					new BeanPropertyRowMapper<Client>(Client.class), value);
-
-			return clientList.isEmpty() ? null : clientList.get(0);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return clientList.isEmpty() ? null : clientList.get(0);
 	}
 
 	/**

@@ -34,15 +34,15 @@ public class ParticipantInGroupService {
 	}
 
 	/**
-	 * Method for adding participant in group
+	 * Method for adding participants in group
 	 * 
 	 * @param groupId
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public void addParticipantInGroup(ParticipantInGroup participantInGoup) {
+	public void addParticipantsInGroup(ParticipantInGroup participantInGoup) {
 
-		iParticipantInGroup.addParticipantInGroup(participantInGoup);
+		iParticipantInGroup.addParticipantsInGroup(participantInGoup);
 	}
 
 	/**

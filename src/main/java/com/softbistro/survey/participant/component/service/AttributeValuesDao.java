@@ -4,11 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -32,8 +30,6 @@ public class AttributeValuesDao implements IAttributeValues {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-
-	private static final Logger LOGGER = Logger.getLogger(AttributeValuesDao.class);
 
 	private static final String SQL_FOR_SETTING_ATTRIBUTE_VALUES = "INSERT INTO attribute_values "
 			+ "(attribute_values.attribute_id, attribute_values.participant_id, attribute_values.attribute_value)"
@@ -132,7 +128,7 @@ public class AttributeValuesDao implements IAttributeValues {
 	@Override
 	public List<AttributeValues> getParticipantAttributesInGroup(Integer groupId, Integer participantId) {
 
-		return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES,
-				new AttributeValuesRawMapper(), groupId, participantId)).orElse(new ArrayList<AttributeValues>());
+		return jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_ATTRIBUTES, new AttributeValuesRawMapper(), groupId,
+				participantId);
 	}
 }
