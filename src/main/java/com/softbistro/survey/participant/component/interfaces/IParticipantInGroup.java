@@ -15,13 +15,13 @@ import com.softbistro.survey.participant.component.entity.ParticipantInGroup;
 public interface IParticipantInGroup {
 
 	/**
-	 * Method for adding participant in group
+	 * Method for adding participants in group
 	 * 
 	 * @param groupId
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	public void addParticipantInGroup(ParticipantInGroup participantInGoup);
+	public void addParticipantsInGroup(ParticipantInGroup participantInGoup);
 
 	/**
 	 * Method for deleting participant from group

@@ -3,11 +3,9 @@ package com.softbistro.survey.participant.component.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,8 +26,6 @@ import com.softbistro.survey.participant.component.interfaces.IParticipant;
  */
 @Repository
 public class ParticipantDao implements IParticipant {
-
-	private static final Logger LOGGER = Logger.getLogger(ParticipantDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -125,10 +121,8 @@ public class ParticipantDao implements IParticipant {
 	 */
 	@Override
 	public List<Participant> getParticipantByAttributeValue(Integer attributeId, String attributeValue) {
-		return Optional
-				.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE,
-						new BeanPropertyRowMapper<>(Participant.class), attributeId, attributeValue))
-				.orElse(new ArrayList<Participant>());
+		return jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_BY_ATTRIBUTE_VALUE,
+				new BeanPropertyRowMapper<>(Participant.class), attributeId, attributeValue);
 	}
 
 	/**
@@ -139,7 +133,7 @@ public class ParticipantDao implements IParticipant {
 	 */
 	@Override
 	public List<Participant> selectClientAllParticipants(Integer cliectId) {
-		return Optional.ofNullable(jdbcTemplate.query(SELECT_CLIENT_ALL_CLIENT_PARTICIPANTS,
-				new BeanPropertyRowMapper<>(Participant.class), cliectId)).orElse(new ArrayList<Participant>());
+		return jdbcTemplate.query(SELECT_CLIENT_ALL_CLIENT_PARTICIPANTS, new BeanPropertyRowMapper<>(Participant.class),
+				cliectId);
 	}
 }

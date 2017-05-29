@@ -39,7 +39,7 @@ public class FindClientService {
 			credential = client.getFacebookId();
 			template = FACEBOOK_ID;
 		} else if (StringUtils.isNotBlank(client.getGoogleId())) {
-			
+
 			credential = client.getGoogleId();
 			template = GOOGLE_ID;
 		}
@@ -50,6 +50,7 @@ public class FindClientService {
 
 	/**
 	 * Method that find client by email
+	 * 
 	 * @param client
 	 * @return
 	 */
@@ -58,11 +59,8 @@ public class FindClientService {
 		String credential = null;
 		String template = null;
 
-		if (StringUtils.isNotBlank(client.getEmail())) {
-
-			credential = client.getEmail();
-			template = EMAIL;
-		}
+		credential = client.getEmail();
+		template = EMAIL;
 
 		return clientService.findByTemplate(template, credential);
 	}

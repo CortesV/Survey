@@ -35,7 +35,7 @@ import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 @Service
 @Scope("prototype")
 public class SurveyMessageService implements ICreateMessage {
-	private static final Logger log = LogManager.getLogger(SurveyMessageService.class);
+	private static final Logger LOGGER = LogManager.getLogger(SurveyMessageService.class);
 
 	@Autowired
 	private ISendingMessage iSendingMessage;
@@ -82,7 +82,7 @@ public class SurveyMessageService implements ICreateMessage {
 
 			iClient.updateStatusOfSurvey();
 
-			log.info(String.format("Client email that started survey : %s", client.getEmail()));
+			LOGGER.info(String.format("Client email that started survey : %s", client.getEmail()));
 		});
 	}
 

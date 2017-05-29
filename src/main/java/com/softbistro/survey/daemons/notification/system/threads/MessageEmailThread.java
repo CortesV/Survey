@@ -19,13 +19,30 @@ import com.softbistro.survey.daemons.notification.system.interfaces.ISending;
 
 public class MessageEmailThread implements Runnable, ISending {
 	private Session session;
+
 	private List<Notification> messages;
+
 	private int emailIndex;
+
 	private String messageTheme;
+
 	private String messageText;
+
 	private String username;
+
 	private ISendingMessage iSendingMessage;
 
+	/**
+	 * Create thread for sending email
+	 * 
+	 * @param session
+	 * @param messages
+	 * @param emailIndex
+	 * @param messageTheme
+	 * @param messageText
+	 * @param username
+	 * @param iSendingMessage
+	 */
 	public MessageEmailThread(Session session, List<Notification> messages, int emailIndex, String messageTheme,
 			String messageText, String username, ISendingMessage iSendingMessage) {
 		this.session = session;

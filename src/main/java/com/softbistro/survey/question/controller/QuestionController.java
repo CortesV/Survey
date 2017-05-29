@@ -1,6 +1,5 @@
 package com.softbistro.survey.question.controller;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +26,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "/rest/survey/v1/question")
 public class QuestionController {
 
-	private static final Logger LOGGER = Logger.getLogger(QuestionController.class);
-
 	@Autowired
 	private QuestionService questionService;
 
@@ -51,14 +48,7 @@ public class QuestionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(questionService.findQuestionById(id), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.debug(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(questionService.findQuestionById(id), HttpStatus.OK);
 	}
 
 	/**
@@ -80,14 +70,7 @@ public class QuestionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(questionService.saveQuestion(question), HttpStatus.CREATED);
-		} catch (Exception e) {
-
-			LOGGER.debug(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(questionService.saveQuestion(question), HttpStatus.CREATED);
 	}
 
 	/**
@@ -106,15 +89,8 @@ public class QuestionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			questionService.deleteQuestion(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.debug(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		questionService.deleteQuestion(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -139,14 +115,7 @@ public class QuestionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			questionService.updateQuestion(question, id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.debug(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		questionService.updateQuestion(question, id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

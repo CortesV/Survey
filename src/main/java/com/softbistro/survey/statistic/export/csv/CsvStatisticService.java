@@ -31,7 +31,7 @@ public class CsvStatisticService implements IExportFile {
 
 	private final static char DELIMETER = ',';
 
-	private static final Logger LOG = Logger.getLogger(CsvStatisticService.class);
+	private static final Logger LOGGER = Logger.getLogger(CsvStatisticService.class);
 
 	/**
 	 * Export statistic about surveys to CSV file
@@ -88,14 +88,14 @@ public class CsvStatisticService implements IExportFile {
 
 					csvWriter.endRecord();
 				} catch (IOException e) {
-					LOG.error(e.getMessage());
+					LOGGER.error(e.getMessage());
 				}
 
 			});
 
 			csvWriter.close();
-		} catch (Exception e) {
-			LOG.error(e.getMessage());
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage());
 			return null;
 		} finally {
 			file.deleteOnExit();

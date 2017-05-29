@@ -29,7 +29,7 @@ public class SurveyController {
 
 	@Autowired
 	private SurveyService surveyService;
-	
+
 	@Autowired
 	private SurveyMessageService surveyMessageService;
 
@@ -48,11 +48,7 @@ public class SurveyController {
 			return new ResponseEntity<Integer>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			return new ResponseEntity<Integer>(surveyService.create(survey), HttpStatus.CREATED);
-		} catch (Exception e) {
-			return new ResponseEntity<Integer>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<Integer>(surveyService.create(survey), HttpStatus.CREATED);
 	}
 
 	/**
@@ -70,12 +66,8 @@ public class SurveyController {
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			surveyService.update(survey);
-			return new ResponseEntity<Object>(HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		surveyService.update(survey);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -93,11 +85,7 @@ public class SurveyController {
 			return new ResponseEntity<List<Survey>>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			return new ResponseEntity<List<Survey>>(surveyService.getAllSurveysByClient(clientId), HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<List<Survey>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<List<Survey>>(surveyService.getAllSurveysByClient(clientId), HttpStatus.OK);
 	}
 
 	/**
@@ -114,12 +102,8 @@ public class SurveyController {
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			surveyService.addGroups(groups);
-			return new ResponseEntity<Object>(HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		surveyService.addGroups(groups);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -137,11 +121,7 @@ public class SurveyController {
 			return new ResponseEntity<List<Group>>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			return new ResponseEntity<List<Group>>(surveyService.getGroupsClient(clientId), HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<List<Group>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<List<Group>>(surveyService.getGroupsClient(clientId), HttpStatus.OK);
 	}
 
 	/**
@@ -158,11 +138,7 @@ public class SurveyController {
 			return new ResponseEntity<List<Group>>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			return new ResponseEntity<List<Group>>(surveyService.getGroupsSurvey(surveyId), HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<List<Group>>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<List<Group>>(surveyService.getGroupsSurvey(surveyId), HttpStatus.OK);
 	}
 
 	/**
@@ -180,12 +156,8 @@ public class SurveyController {
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			surveyService.delete(surveyId);
-			return new ResponseEntity<Object>(HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		surveyService.delete(surveyId);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -202,13 +174,9 @@ public class SurveyController {
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			surveyService.start(surveyId);
-			surveyMessageService.send();
-			return new ResponseEntity<Object>(HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		surveyService.start(surveyId);
+		surveyMessageService.send();
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 
 	/**
@@ -225,12 +193,7 @@ public class SurveyController {
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-			surveyService.stop(surveyId);
-			return new ResponseEntity<Object>(HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		surveyService.stop(surveyId);
+		return new ResponseEntity<Object>(HttpStatus.OK);
 	}
 }

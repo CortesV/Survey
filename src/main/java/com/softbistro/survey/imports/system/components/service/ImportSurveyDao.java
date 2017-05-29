@@ -103,31 +103,29 @@ public class ImportSurveyDao implements IImportSurveyDAO {
 		}
 		return generatedSurveyId;
 
-	}	
+	}
 
 	private void insertGroups(Connection connection, ImportSurvey importSurvey) {
-		try {
-			Map<String, Integer> groups = importSurvey.getGroups();
 
-			Set<String> groupsName = importSurvey.getGroups().keySet();
+		Map<String, Integer> groups = importSurvey.getGroups();
 
-			groupsName.stream().forEach(groupName -> connectGroupQuestionAndSurvey(connection, importSurvey, groupName, groups));
+		Set<String> groupsName = importSurvey.getGroups().keySet();
 
-			importSurvey.setGroups(groups);
-		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
-		}
+		groupsName.stream()
+				.forEach(groupName -> connectGroupQuestionAndSurvey(connection, importSurvey, groupName, groups));
 
+		importSurvey.setGroups(groups);
 	}
-	
-	private void connectGroupQuestionAndSurvey(Connection connection, ImportSurvey importSurvey, String groupName, Map<String, Integer> groups){
-		
-		try{
-			
+
+	private void connectGroupQuestionAndSurvey(Connection connection, ImportSurvey importSurvey, String groupName,
+			Map<String, Integer> groups) {
+
+		try {
+
 			PreparedStatement preparedStatement = connection.prepareStatement(SQL_INSERT_GROUP,
 					Statement.RETURN_GENERATED_KEYS);
 			ResultSet keys;
-			
+
 			preparedStatement.setString(1, groupName);
 			preparedStatement.executeUpdate();
 			keys = preparedStatement.getGeneratedKeys();
@@ -140,14 +138,13 @@ public class ImportSurveyDao implements IImportSurveyDAO {
 			groups.put(groupName, generatedId);
 
 			// Connect group to survey
-			jdbcTemplate.update(SQL_CONNECT_GROUP_OF_QUESTIONS_TO_SURVEY, groups.get(groupName),
-					importSurvey.getId());
-			
-		}catch (SQLException e) {
+			jdbcTemplate.update(SQL_CONNECT_GROUP_OF_QUESTIONS_TO_SURVEY, groups.get(groupName), importSurvey.getId());
+
+		} catch (SQLException e) {
 			LOGGER.error(e.getMessage());
 		}
 	}
-	
+
 	private void insertQuestions(ImportSurvey importSurvey) {
 		jdbcTemplate.batchUpdate(SQL_INSERT_QUESTION, new BatchPreparedStatementSetter() {
 

@@ -34,6 +34,9 @@ public class NotificationService implements Runnable {
 	private String username;
 	private String password;
 
+	/**
+	 * Send a message on email
+	 */
 	public void send() {
 
 		List<Notification> messages = iSendingMessage.getEmailsForSending();
@@ -71,6 +74,9 @@ public class NotificationService implements Runnable {
 
 	}
 
+	/**
+	 * Strat thread for sending message
+	 */
 	@Override
 	public void run() {
 		send();

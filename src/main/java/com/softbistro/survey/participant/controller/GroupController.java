@@ -2,7 +2,6 @@ package com.softbistro.survey.participant.controller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +28,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rest/survey/v1/group")
 public class GroupController {
 
-	private static final Logger LOGGER = Logger.getLogger(GroupController.class);
-
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -52,14 +49,7 @@ public class GroupController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(groupService.setGroup(group), HttpStatus.CREATED);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(groupService.setGroup(group), HttpStatus.CREATED);
 	}
 
 	/**
@@ -77,14 +67,7 @@ public class GroupController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(groupService.getGroupById(id), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(groupService.getGroupById(id), HttpStatus.OK);
 	}
 
 	/**
@@ -102,14 +85,7 @@ public class GroupController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(groupService.getGroupsByClient(id), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(groupService.getGroupsByClient(id), HttpStatus.OK);
 	}
 
 	/**
@@ -128,15 +104,8 @@ public class GroupController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			groupService.updateGroupById(group, id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		groupService.updateGroupById(group, id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -154,14 +123,7 @@ public class GroupController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			groupService.deleteGroupById(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		groupService.deleteGroupById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

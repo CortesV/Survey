@@ -3,6 +3,9 @@ package com.softbistro.survey.participant.component.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +45,10 @@ public class ParticipantInGroupIntegrationTest {
 
 		participantInGroupTest = new ParticipantInGroup();
 
-		participantInGroupTest.setParticipantId(PARTICIPANT_ID);
+		List<Integer> participantsId = new ArrayList<>();
+		participantsId.add(PARTICIPANT_ID);
+
+		participantInGroupTest.setParticipantsId(participantsId);
 		participantInGroupTest.setGroupId(1);
 	}
 
@@ -52,7 +58,7 @@ public class ParticipantInGroupIntegrationTest {
 	@Test
 	public void saveParticipantInGroupTest() {
 
-		participantInGroupDao.addParticipantInGroup(participantInGroupTest);
+		participantInGroupDao.addParticipantsInGroup(participantInGroupTest);
 		assertNotEquals(participantInGroupDao.getParticipantsByGroup(participantInGroupTest.getGroupId()).size(), 0);
 	}
 
@@ -64,8 +70,7 @@ public class ParticipantInGroupIntegrationTest {
 		int sizeBeforeDeleting = participantInGroupDao.getParticipantGroups(PARTICIPANT_ID).size();
 
 		participantInGroupDao.deletingParticipantfromGroup(1, 1);
-		assertEquals(participantInGroupDao.getParticipantGroups(PARTICIPANT_ID).size(),
-				sizeBeforeDeleting - 1);
+		assertEquals(participantInGroupDao.getParticipantGroups(PARTICIPANT_ID).size(), sizeBeforeDeleting - 1);
 	}
 
 	/**

@@ -1,8 +1,5 @@
 package com.softbistro.survey.client.auth.controller;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,15 +55,8 @@ public class AuthController {
 	@RequestMapping(value = "auth/simple", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Client> simpleAuth(@RequestBody Client client) {
 
-		try {
-
-			LOGGER.info(SIMPLE_AUTH + client.toString());
-			return new ResponseEntity<>(authorizationService.simpleAthorization(client), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		LOGGER.info(SIMPLE_AUTH + client.toString());
+		return new ResponseEntity<>(authorizationService.simpleAthorization(client), HttpStatus.OK);
 	}
 
 	/**
@@ -81,15 +71,8 @@ public class AuthController {
 	@RequestMapping(value = "auth/social", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Client> socialAuth(@RequestBody Client client) {
 
-		try {
-
-			LOGGER.info(SOCIAL_AUTH + client.toString());
-			return new ResponseEntity<>(authorizationService.socialAuthorization(client), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		LOGGER.info(SOCIAL_AUTH + client.toString());
+		return new ResponseEntity<>(authorizationService.socialAuthorization(client), HttpStatus.OK);
 	}
 
 	/**
@@ -111,16 +94,9 @@ public class AuthController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
+		authorizedClientService.deleteClients(token);
 
-			authorizedClientService.deleteClients(token);
-
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -140,15 +116,8 @@ public class AuthController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			clientService.addSocialInfo(client);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		clientService.addSocialInfo(client);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

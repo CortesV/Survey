@@ -3,11 +3,9 @@ package com.softbistro.survey.participant.component.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -32,12 +30,14 @@ public class GroupDao implements IGroup {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private static final Logger LOGGER = Logger.getLogger(GroupDao.class);
-
 	private static final String SQL_FOR_SETTING_GROUP = "INSERT INTO `group` (`group`.client_id, `group`.group_name) VALUES (?, ?)";
+
 	private static final String SQL_FOR_GETTING_GROUP_BY_ID = "SELECT * FROM `group` AS g WHERE g.id = ? AND g.`delete` = 0";
+
 	private static final String SQL_FOR_GETTING_GROUP_BY_CLIENT = "SELECT * FROM `group` AS g WHERE g.client_id = ? AND g.`delete` = 0";
+
 	private static final String SQL_FOR_UPDATING_GROUP_BY_ID = "UPDATE `group` AS g SET g.group_name = ? WHERE g.id = ?";
+
 	private static final String SQL_FOR_DELETING_GROUP_BY_ID = "UPDATE `group` AS g SET g.delete = 1 WHERE g.id = ?";
 
 	/**
@@ -84,10 +84,7 @@ public class GroupDao implements IGroup {
 	 */
 	@Override
 	public List<Group> getGroupsByClient(Integer clientId) {
-		return Optional
-				.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT,
-						new BeanPropertyRowMapper<>(Group.class), clientId))
-				.orElse(new ArrayList<Group>());
+		return jdbcTemplate.query(SQL_FOR_GETTING_GROUP_BY_CLIENT, new BeanPropertyRowMapper<>(Group.class), clientId);
 	}
 
 	/**

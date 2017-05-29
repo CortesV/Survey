@@ -2,7 +2,6 @@ package com.softbistro.survey.question.controller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +28,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rest/survey/v1/questionSection")
 public class QuestionSectionController {
 
-	private static final Logger LOGGER = Logger.getLogger(QuestionSectionController.class);
-
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -53,14 +50,7 @@ public class QuestionSectionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(questionSectionService.setQuestionSection(questionSection), HttpStatus.CREATED);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(questionSectionService.setQuestionSection(questionSection), HttpStatus.CREATED);
 	}
 
 	/**
@@ -79,15 +69,8 @@ public class QuestionSectionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			questionSectionService.updateQuestionSection(questionSection, questionSectionId);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		questionSectionService.updateQuestionSection(questionSection, questionSectionId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -106,15 +89,8 @@ public class QuestionSectionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			questionSectionService.deleteQuestionSection(questionSectionId);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		questionSectionService.deleteQuestionSection(questionSectionId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -133,14 +109,7 @@ public class QuestionSectionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(questionSectionService.getQuestionSectionById(id), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(questionSectionService.getQuestionSectionById(id), HttpStatus.OK);
 	}
 
 	/**
@@ -159,14 +128,7 @@ public class QuestionSectionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(questionSectionService.getQuestionSectionByClientId(id), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(questionSectionService.getQuestionSectionByClientId(id), HttpStatus.OK);
 	}
 
 	/**
@@ -185,14 +147,7 @@ public class QuestionSectionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(questionSectionService.getQuestionSectionBySurveyId(id), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(questionSectionService.getQuestionSectionBySurveyId(id), HttpStatus.OK);
 	}
 
 	/**
@@ -212,15 +167,8 @@ public class QuestionSectionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			questionSectionService.addQuestionSectionToSurvey(questionSectionId, surveyId);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		questionSectionService.addQuestionSectionToSurvey(questionSectionId, surveyId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -240,14 +188,7 @@ public class QuestionSectionController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			questionSectionService.deleteQuestionSectionFromSurvey(questionSectionId, surveyId);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		questionSectionService.deleteQuestionSectionFromSurvey(questionSectionId, surveyId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

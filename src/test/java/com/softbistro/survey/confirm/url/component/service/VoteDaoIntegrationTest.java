@@ -55,6 +55,9 @@ public class VoteDaoIntegrationTest {
 
 		answer.setAnswerValue("IntegrationTestAnswerValue");
 		answer.setQuestionId(1);
+		answer.setAnswerType("RATE1-10");
+		answer.setComment("RATE1-10");
+		answer.setAnswerValue("2");
 
 		List<Answer> answers = new LinkedList<>();
 		answers.add(answer);

@@ -1,6 +1,5 @@
-package com.softbistro.survey.daemons.notification.system.component.dao;
+package com.softbistro.survey.daemons.notification.system.component.service;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -143,9 +142,9 @@ public class MessageDao implements ISendingMessage {
 	 */
 	@Override
 	public void insertIntoNotification(Notification notification) {
-		jdbcTemplateNotification.update(SQL_INSERT_NOTIFICATION,
-				 notification.getSenderEmail(), notification.getReceiverCCEmail(),
-					notification.getReceiverEmail(), notification.getHeader(), notification.getBody());
+		jdbcTemplateNotification.update(SQL_INSERT_NOTIFICATION, notification.getSenderEmail(),
+				notification.getReceiverCCEmail(), notification.getReceiverEmail(), notification.getHeader(),
+				notification.getBody());
 	}
 
 	/**
@@ -158,7 +157,8 @@ public class MessageDao implements ISendingMessage {
 	 */
 	@Override
 	public void insertIntoSendingClient(NotificationClientSending notification) {
-		jdbcTemplateSending.update(SQL_INSERT_SENDING_CLIENT, notification.getUrl(), notification.getClientId(), notification.getDate());
+		jdbcTemplateSending.update(SQL_INSERT_SENDING_CLIENT, notification.getUrl(), notification.getClientId(),
+				notification.getDate());
 	}
 
 	/**
@@ -171,7 +171,8 @@ public class MessageDao implements ISendingMessage {
 	 */
 	@Override
 	public void insertIntoSendingPassword(NotificationClientSending notification) {
-		jdbcTemplateSending.update(SQL_INSERT_SENDING_PASSWORD,notification.getUrl(), notification.getClientId(),notification.getDate());
+		jdbcTemplateSending.update(SQL_INSERT_SENDING_PASSWORD, notification.getUrl(), notification.getClientId(),
+				notification.getDate());
 	}
 
 	/**
@@ -184,8 +185,8 @@ public class MessageDao implements ISendingMessage {
 	 */
 	@Override
 	public void insertIntoSendingSurvey(NotificationSurveySending notification) {
-		jdbcTemplateSending.update(SQL_INSERT_SENDING_SURVEY, notification.getUrl(),
-				notification.getParticipantId(), notification.getSurveyId(), notification.getDate());
+		jdbcTemplateSending.update(SQL_INSERT_SENDING_SURVEY, notification.getUrl(), notification.getParticipantId(),
+				notification.getSurveyId(), notification.getDate());
 	}
 
 }
