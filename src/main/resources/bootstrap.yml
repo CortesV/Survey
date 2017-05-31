@@ -3,4 +3,4 @@ spring:
     name: survey-dev
   cloud:
     config:
-      uri: http://192.168.128.242:8888
+      uri: http://192.168.128.242:19095
