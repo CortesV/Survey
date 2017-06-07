@@ -13,24 +13,29 @@ import javax.mail.internet.MimeMessage;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
 import com.softbistro.survey.daemons.retry.system.component.entity.RetryNotification;
 
-public class FormingMessage {
+/**
+ * Forming message for email that will be sent then
+ * 
+ * @throws MessagingException
+ * @throws AddressException
+ */
+public class FormMessageForSendService {
 	private Session session;
 	private RetryNotification retryMessage;
 	private Notification message;
 
-	public FormingMessage(Session session, RetryNotification retryMessage) {
+	public FormMessageForSendService(Session session, RetryNotification retryMessage) {
 		this.session = session;
 		this.retryMessage = retryMessage;
 	}
 
-	public FormingMessage(Session session, Notification message) {
+	public FormMessageForSendService(Session session, Notification message) {
 		this.session = session;
 		this.message = message;
 	}
 
 	/**
-	 * Forming message on email about registration<br>
-	 * then store information in database for message
+	 * Forming message for email that will be sent then
 	 * 
 	 * @throws MessagingException
 	 * @throws AddressException
@@ -54,8 +59,7 @@ public class FormingMessage {
 	}
 
 	/**
-	 * Forming message on email about registration<br>
-	 * then store information in database for retry message
+	 * Forming message for email that will be sent then (for retry system)
 	 * 
 	 * @throws MessagingException
 	 * @throws AddressException

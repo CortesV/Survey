@@ -1,5 +1,7 @@
 package com.softbistro.survey.daemons.retry.system.component.interfaces;
 
+import java.util.List;
+
 import com.softbistro.survey.daemons.retry.system.component.entity.RetryNotification;
 
 /**
@@ -12,13 +14,12 @@ import com.softbistro.survey.daemons.retry.system.component.entity.RetryNotifica
 public interface IRetryNotification {
 
 	/**
-	 * Get an e-mail that need to resend
+	 * Get all records from DB with e-mails of users, header and body of message
+	 * for sending general information as email
 	 * 
-	 * @author yagi
-	 * @param id
-	 * @return email
+	 * @return List<RetryNotification>
 	 */
-	public RetryNotification getEmailForResending(int id);
+	public List<RetryNotification> getAllErrorEmailsToResending();
 
 	/**
 	 * Insert notification_failure into table
@@ -31,42 +32,32 @@ public interface IRetryNotification {
 	public void insertRetryNotification(RetryNotification retryNotification);
 
 	/**
-	 * Update status on email that try to resend to "TRY"
+	 * Update list of messages that has errors to "ERROR" (increase count of
+	 * retry (retry_count))
 	 * 
 	 * @author yagi
-	 * @param id
 	 */
-	public void updateStatusRetryMessageToTry(int id);
+	public void updateIncreaseRetryCountForMessageToResend();
+	
+	/**
+	 * Update status on emails that need to resending to "IN_PROCESS"
+	 * 
+	 * @author yagi
+	 */
+	public void updateStatusMessagesToInProcess();
 
 	/**
-	 * Update status on email that try to resend and end succesfull to "SENT"
+	 * Update status on email that sent to "PROCESSED" from "IN_PROCESS"
 	 * 
 	 * @author yagi
-	 * @param id
 	 */
-	public void updateStatusRetryMessageToSent(int id);
+	public void updateStatusMessagesFromErrorToProcessed(int id);
 
 	/**
 	 * Update status on email that has errors to "ERROR"
 	 * 
 	 * @author yagi
 	 */
-	public void updateStatusRetryMessageToError(int id);
-
-	/**
-	 * Update count of try on email that has errors to "ERROR" (add +1)
-	 * 
-	 * @author yagi
-	 */
-	public void updateIncreaseRetryCountForMessageToResend(int id);
-
-	/**
-	 * Update status on email that try to resend and had exception 3 try to
-	 * "VERIFIED_ERROR"
-	 * 
-	 * @author yagi
-	 * @param id
-	 */
-	public void updateStatusRetryMessageToVerifiedError(int id);
+	public void updateStatusMessagesToError(int id);
 
 }

@@ -1,18 +1,9 @@
 package com.softbistro.survey.notification.db.service;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Properties;
 import java.util.UUID;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -24,8 +15,8 @@ import org.springframework.stereotype.Service;
 import com.softbistro.survey.client.manage.components.entity.ClientForSending;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.daemons.notification.system.component.entity.NotificationClientSending;
-import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
+import com.softbistro.survey.daemons.notification.system.component.interfaces.INotification;
+import com.softbistro.survey.notification.db.entity.NotificationClientSending;
 import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 
 /**
@@ -41,7 +32,7 @@ public class RegistrationMessageServise implements ICreateMessage {
 	private Logger log = LogManager.getLogger(getClass());
 
 	@Autowired
-	private ISendingMessage iSendingMessage;
+	private INotification iSendingMessage;
 
 	@Autowired
 	private IClient iClient;
