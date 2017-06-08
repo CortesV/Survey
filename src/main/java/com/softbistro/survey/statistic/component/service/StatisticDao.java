@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,8 +32,6 @@ public class StatisticDao implements IStatisticDao {
 
 	@Autowired
 	private StatisticColumnFilter statisticColumnFilter;
-
-	private static final Logger LOGGER = Logger.getLogger(StatisticDao.class);
 
 	private static final String SQL_GET_SURVEY_STATISTIC_SHORT = "SELECT survey.id, survey.name, survey.start_time, survey.finish_time, COUNT(ss.id) AS participant_count ,"
 			+ " (SELECT COUNT(ss.id) AS voted_count  FROM sending_survey AS ss "
@@ -64,10 +61,8 @@ public class StatisticDao implements IStatisticDao {
 	 */
 	@Override
 	public SurveyStatisticShort survey(Integer surveyId) {
-		SurveyStatisticShort surveyStatisticShort = jdbcTemplate.queryForObject(SQL_GET_SURVEY_STATISTIC_SHORT,
-				new SurveyStatisticShortMapper(), surveyId, surveyId, surveyId);
-
-		return surveyStatisticShort;
+		return jdbcTemplate.queryForObject(SQL_GET_SURVEY_STATISTIC_SHORT, new SurveyStatisticShortMapper(), surveyId,
+				surveyId, surveyId);
 	}
 
 	/**

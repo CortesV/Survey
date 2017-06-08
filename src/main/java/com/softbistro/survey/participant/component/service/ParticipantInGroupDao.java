@@ -2,11 +2,8 @@ package com.softbistro.survey.participant.component.service;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -30,8 +27,6 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private static final Logger LOGGER = Logger.getLogger(ParticipantInGroupDao.class);
-
 	private static final String SQL_FOR_ADDING_PARTICIPANT_IN_GROUP = "INSERT INTO connect_group_participant "
 			+ "(connect_group_participant.group_id, connect_group_participant.participant_id) VALUES (?, ?)";
 	private static final String SQL_FOR_DELETING_PARTICIPANT_IN_GROUP = "UPDATE connect_group_participant AS c "
@@ -52,8 +47,8 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 */
 	@Override
 	public List<Participant> getParticipantsByGroup(Integer groupId) {
-		return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
-				new BeanPropertyRowMapper<>(Participant.class), groupId)).orElse(new ArrayList<Participant>());
+		return jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANTS_BY_GROUP_ID,
+				new BeanPropertyRowMapper<>(Participant.class), groupId);
 	}
 
 	/**
@@ -64,7 +59,7 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 * @return ResponseEntity
 	 */
 	@Override
-	public void addParticipantInGroup(ParticipantInGroup participantInGoup) {
+	public void addParticipantsInGroup(ParticipantInGroup participantInGoup) {
 		jdbcTemplate.batchUpdate(SQL_FOR_ADDING_PARTICIPANT_IN_GROUP, new BatchPreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
@@ -99,7 +94,7 @@ public class ParticipantInGroupDao implements IParticipantInGroup {
 	 */
 	@Override
 	public List<Group> getParticipantGroups(Integer participantId) {
-		return Optional.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_GROUPS,
-				new BeanPropertyRowMapper<>(Group.class), participantId)).orElse(new ArrayList<Group>());
+		return jdbcTemplate.query(SQL_FOR_GETTING_PARTICIPANT_GROUPS, new BeanPropertyRowMapper<>(Group.class),
+				participantId);
 	}
 }

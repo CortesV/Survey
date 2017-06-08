@@ -1,6 +1,5 @@
 package com.softbistro.survey.client.manage.controller;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +27,6 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping(value = "/rest/survey/v1/client")
 public class ClientController {
-
-	private static final Logger LOGGER = Logger.getLogger(ClientController.class);
 
 	@Autowired
 	private ClientService clientService;
@@ -60,14 +57,7 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(clientService.findClient(id), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(clientService.findClient(id), HttpStatus.OK);
 	}
 
 	/**
@@ -82,20 +72,13 @@ public class ClientController {
 	@RequestMapping(value = "/", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> saveClient(@RequestBody Client client) {
 
-		try {
+		Integer id = clientService.saveClient(client);
+		if (id != null) {
+			registrationService.send();
+			return new ResponseEntity<>(id, HttpStatus.CREATED);
 
-			Integer id = clientService.saveClient(client);
-			if (id != null) {
-				registrationService.send();
-				return new ResponseEntity<>(id, HttpStatus.CREATED);
-
-			} else {
-				return new ResponseEntity<>(HttpStatus.OK);
-			}
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		} else {
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
 	}
 
@@ -115,15 +98,8 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			clientService.deleteClient(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		clientService.deleteClient(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -148,15 +124,8 @@ public class ClientController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			clientService.updateClient(client, id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		clientService.updateClient(client, id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -179,15 +148,9 @@ public class ClientController {
 
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
-		try {
 
-			clientService.updatePassword(client, id);
-			changePassService.send();
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		clientService.updatePassword(client, id);
+		changePassService.send();
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

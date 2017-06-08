@@ -30,13 +30,19 @@ import com.google.gdata.data.spreadsheet.WorksheetFeed;
 import com.google.gdata.util.ServiceException;
 import com.softbistro.survey.statistic.component.entity.SurveyStatisticExport;
 
+/**
+ * Working with google Sheets
+ * 
+ * @author zviproject
+ *
+ */
 @Service
 public class SheetsService {
 
 	@Autowired
 	private GoogleAuthorization googleAuthorization;
 
-	private static final Logger LOG = Logger.getLogger(SheetsService.class);
+	private static final Logger LOGGER = Logger.getLogger(SheetsService.class);
 
 	/**
 	 * Creating and configure new sheets
@@ -132,42 +138,37 @@ public class SheetsService {
 					spreadsheetService.insert(worksheetEntry.getListFeedUrl(), newRow);
 
 				} catch (IOException | ServiceException e) {
-					LOG.error("Insert data " + e.getMessage());
+					LOGGER.error("Insert data " + e.getMessage());
 				}
 			});
 
 		} catch (ServiceException | IOException e) {
-			LOG.error("Insert data " + e.getMessage());
+			LOGGER.error("Insert data " + e.getMessage());
 		}
 
 	}
 
 	private List<Map<String, String>> surveyStatisticExportToMap(List<SurveyStatisticExport> list) {
 		List<Map<String, String>> listMap = new ArrayList<Map<String, String>>();
-		try {
-			list.stream().forEach(item -> {
-				Map<String, String> statisticMap = new HashMap<String, String>();
+		list.stream().forEach(item -> {
+			Map<String, String> statisticMap = new HashMap<String, String>();
 
-				statisticMap.put("SurveyID", item.getId().toString());
-				statisticMap.put("SurveyName", item.getName());
-				statisticMap.put("ParticipantFirstName", item.getFirstName());
-				statisticMap.put("ParticipantLastName", item.getLastName());
-				statisticMap.put("QuestionGroupName", item.getGroupName());
-				statisticMap.put("QuestionName", item.getQuestionName());
-				statisticMap.put("ParticipantID", item.getParticipantId().toString());
-				statisticMap.put("Answer", item.getAnswer());
-				statisticMap.put("Comment", item.getComment());
-				statisticMap.put("AnswerDateAndTime", item.getAnswerDateTime().toString());
+			statisticMap.put("SurveyID", item.getId().toString());
+			statisticMap.put("SurveyName", item.getName());
+			statisticMap.put("ParticipantFirstName", item.getFirstName());
+			statisticMap.put("ParticipantLastName", item.getLastName());
+			statisticMap.put("QuestionGroupName", item.getGroupName());
+			statisticMap.put("QuestionName", item.getQuestionName());
+			statisticMap.put("ParticipantID", item.getParticipantId().toString());
+			statisticMap.put("Answer", item.getAnswer());
+			statisticMap.put("Comment", item.getComment());
+			statisticMap.put("AnswerDateAndTime", item.getAnswerDateTime().toString());
 
-				item.getParticipantAttribute().stream().forEach(attr -> statisticMap
-						.put(attr.getName().replaceAll("[^\\p{Alpha}\\p{Digit}]+", ""), attr.getValue()));
+			item.getParticipantAttribute().stream().forEach(attr -> statisticMap
+					.put(attr.getName().replaceAll("[^\\p{Alpha}\\p{Digit}]+", ""), attr.getValue()));
 
-				listMap.add(statisticMap);
-			});
-
-		} catch (Exception e) {
-			LOG.error("Prepearing export data " + e.getMessage());
-		}
+			listMap.add(statisticMap);
+		});
 
 		return listMap;
 	}
@@ -193,7 +194,7 @@ public class SheetsService {
 			try {
 				cellFeed.insert(cellEntry);
 			} catch (ServiceException | IOException e) {
-				LOG.error("Generate headers " + e.getMessage());
+				LOGGER.error("Generate headers " + e.getMessage());
 			}
 		}
 		return filters;
@@ -209,7 +210,7 @@ public class SheetsService {
 			newPermission.setRole("writer");
 			service.permissions().create(fileId, newPermission).execute();
 		} catch (IOException e) {
-			LOG.error("Public access " + e.getMessage());
+			LOGGER.error("Public access " + e.getMessage());
 		}
 	}
 

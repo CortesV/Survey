@@ -2,7 +2,6 @@ package com.softbistro.survey.participant.controller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +28,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rest/survey/v1/participant")
 public class ParticipantController {
 
-	private static final Logger LOGGER = Logger.getLogger(ParticipantController.class);
-
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -52,15 +49,7 @@ public class ParticipantController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(participantService.getParticipantById(id), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.debug(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
+		return new ResponseEntity<>(participantService.getParticipantById(id), HttpStatus.OK);
 	}
 
 	/**
@@ -81,15 +70,8 @@ public class ParticipantController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(participantService.getParticipantByAttributeValue(attributeId, attributeValue),
-					HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(participantService.getParticipantByAttributeValue(attributeId, attributeValue),
+				HttpStatus.OK);
 	}
 
 	/**
@@ -107,14 +89,7 @@ public class ParticipantController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(participantService.setParticipant(participant), HttpStatus.CREATED);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(participantService.setParticipant(participant), HttpStatus.CREATED);
 	}
 
 	/**
@@ -133,15 +108,8 @@ public class ParticipantController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			participantService.updateParticipant(participant, id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		participantService.updateParticipant(participant, id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -159,15 +127,8 @@ public class ParticipantController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			participantService.deleteParticipantById(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		participantService.deleteParticipantById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Get client's participants by client id", notes = "Get client's participant by client id", tags = "Participant")
@@ -180,13 +141,6 @@ public class ParticipantController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(participantService.selectClientAllParticipants(clientId), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(participantService.selectClientAllParticipants(clientId), HttpStatus.OK);
 	}
 }

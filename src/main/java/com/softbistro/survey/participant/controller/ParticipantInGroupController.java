@@ -2,7 +2,6 @@ package com.softbistro.survey.participant.controller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +30,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rest/survey/v1/participant_in_group")
 public class ParticipantInGroupController {
 
-	private static final Logger LOGGER = Logger.getLogger(ParticipantInGroupController.class);
-
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -55,24 +52,17 @@ public class ParticipantInGroupController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(participantInGroupService.getParticipantsByGroupId(groupId), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(participantInGroupService.getParticipantsByGroupId(groupId), HttpStatus.OK);
 	}
 
 	/**
-	 * Method for adding participant in group
+	 * Method for adding participants in group
 	 * 
 	 * @param groupId
 	 * @param participantId
 	 * @return ResponseEntity
 	 */
-	@ApiOperation(value = "Add Participant in Group", notes = "Add participant in group by group id and group id", tags = "Participant")
+	@ApiOperation(value = "Add Participants in Group", notes = "Add participants in group by list participants id and group id", tags = "Participant")
 	@RequestMapping(method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<Object> addParticipantInGroup(@RequestBody ParticipantInGroup participantInGoup,
 			@RequestHeader String token) {
@@ -82,15 +72,8 @@ public class ParticipantInGroupController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			participantInGroupService.addParticipantInGroup(participantInGoup);
-			return new ResponseEntity<>(HttpStatus.CREATED);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		participantInGroupService.addParticipantsInGroup(participantInGoup);
+		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 
 	/**
@@ -110,15 +93,8 @@ public class ParticipantInGroupController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			participantInGroupService.deletingParticipantfromGroup(groupId, participantId);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		participantInGroupService.deletingParticipantfromGroup(groupId, participantId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -137,13 +113,6 @@ public class ParticipantInGroupController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(participantInGroupService.getParticipantGroups(participantId), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(participantInGroupService.getParticipantGroups(participantId), HttpStatus.OK);
 	}
 }

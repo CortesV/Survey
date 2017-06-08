@@ -2,7 +2,6 @@ package com.softbistro.survey.participant.controller;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +28,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/rest/survey/v1/attribute_value")
 public class AttributeValuesController {
 
-	private static final Logger LOGGER = Logger.getLogger(AttributeValuesController.class);
-
 	@Autowired
 	private AuthorizationService authorizationService;
 
@@ -53,14 +50,7 @@ public class AttributeValuesController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(attributeValuesService.setAttributeValues(attributeValues), HttpStatus.CREATED);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(attributeValuesService.setAttributeValues(attributeValues), HttpStatus.CREATED);
 	}
 
 	/**
@@ -79,14 +69,7 @@ public class AttributeValuesController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(attributeValuesService.getAttributeValuesById(id), HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(attributeValuesService.getAttributeValuesById(id), HttpStatus.OK);
 	}
 
 	/**
@@ -105,15 +88,8 @@ public class AttributeValuesController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			attributeValuesService.updateAttributeValuesById(attributeValues, id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		attributeValuesService.updateAttributeValuesById(attributeValues, id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -131,15 +107,8 @@ public class AttributeValuesController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 
-		try {
-
-			attributeValuesService.deleteAttributeValuesById(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		attributeValuesService.deleteAttributeValuesById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -160,14 +129,7 @@ public class AttributeValuesController {
 			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		try {
-
-			return new ResponseEntity<>(attributeValuesService.getParticipantAttributesInGroup(groupId, participantId),
-					HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		return new ResponseEntity<>(attributeValuesService.getParticipantAttributesInGroup(groupId, participantId),
+				HttpStatus.OK);
 	}
 }

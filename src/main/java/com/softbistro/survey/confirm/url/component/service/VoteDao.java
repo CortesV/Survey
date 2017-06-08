@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -21,10 +21,14 @@ import com.softbistro.survey.confirm.url.component.entity.UuidInformation;
 import com.softbistro.survey.confirm.url.component.entity.VotePage;
 import com.softbistro.survey.confirm.url.component.interfacee.IVote;
 
+/**
+ * Add answers to the database
+ * 
+ * @author zviproject
+ *
+ */
 @Repository
 public class VoteDao implements IVote {
-
-	private static final Logger LOGGER = Logger.getLogger(VoteDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -49,39 +53,42 @@ public class VoteDao implements IVote {
 	@Override
 	public void answerOnSurvey(String uuid, List<Answer> answers) {
 
-		try {
+		UuidInformation uuidInformation = jdbcTemplate.queryForObject(SQL_GET_UUID_INFORMATION,
+				new RowMapper<UuidInformation>() {
 
-			Date date = new Date(System.currentTimeMillis());
-			UuidInformation uuidInformation = jdbcTemplate.queryForObject(SQL_GET_UUID_INFORMATION,
-					new BeanPropertyRowMapper<>(UuidInformation.class), uuid, date);
+					@Override
+					public UuidInformation mapRow(ResultSet rs, int rowNum) throws SQLException {
+						UuidInformation uuidInformation = new UuidInformation();
+						uuidInformation.setPartisipantId(rs.getInt(1));
+						uuidInformation.setSurveyId(rs.getInt(2));
 
-			jdbcTemplate.batchUpdate(SQL_INSERT_ANSWERS, new BatchPreparedStatementSetter() {
+						return uuidInformation;
+					}
+				}, uuid, new Date(System.currentTimeMillis()));
 
-				@Override
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
+		jdbcTemplate.batchUpdate(SQL_INSERT_ANSWERS, new BatchPreparedStatementSetter() {
 
-					Answer answer = answers.get(i);
-					ps.setInt(1, answer.getQuestionId());
-					ps.setInt(2, uuidInformation.getPartisipantId());
-					ps.setString(3, answer.getAnswerType());
-					ps.setString(4, answer.getAnswerValue());
-					ps.setString(5, answer.getComment());
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
 
-				}
+				Answer answer = answers.get(i);
+				ps.setInt(1, answer.getQuestionId());
+				ps.setInt(2, uuidInformation.getPartisipantId());
+				ps.setString(3, answer.getAnswerType());
+				ps.setString(4, answer.getAnswerValue());
+				ps.setString(5, answer.getComment());
 
-				@Override
-				public int getBatchSize() {
+			}
 
-					return answers.size();
-				}
-			});
+			@Override
+			public int getBatchSize() {
 
-			jdbcTemplate.update(SQL_UPDATE_STATUS_SENDING_SURVEY, statusForUpdate, uuid);
+				return answers.size();
+			}
+		});
 
-		} catch (Exception e) {
+		jdbcTemplate.update(SQL_UPDATE_STATUS_SENDING_SURVEY, statusForUpdate, uuid);
 
-			LOGGER.error(e.getMessage());
-		}
 	}
 
 	/**
@@ -93,28 +100,23 @@ public class VoteDao implements IVote {
 	@Override
 	public List<VotePage> getVotePage(String uuid) {
 
-		try {
+		Date date = new Date(System.currentTimeMillis());
+		UuidInformation uuidInformation = Optional
+				.ofNullable(jdbcTemplate.query(SQL_GET_UUID_INFORMATION,
+						new BeanPropertyRowMapper<>(UuidInformation.class), uuid, date))
+				.get().stream().findFirst().orElse(null);
+		;
 
-			Date date = new Date(System.currentTimeMillis());
-			UuidInformation uuidInformation = jdbcTemplate.queryForObject(SQL_GET_UUID_INFORMATION,
-					new BeanPropertyRowMapper<>(UuidInformation.class), uuid, date);
+		List<VotePage> votePages = jdbcTemplate.query(SQL_GET_INFORMATION_ABOUT_QUESTIONS, new RowMapper<VotePage>() {
 
-			List<VotePage> votePages = jdbcTemplate.query(SQL_GET_INFORMATION_ABOUT_QUESTIONS,
-					new RowMapper<VotePage>() {
+			@Override
+			public VotePage mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-						@Override
-						public VotePage mapRow(ResultSet rs, int rowNum) throws SQLException {
+				return getQuestionsInfo(rs);
+			}
 
-							return getQuestionsInfo(rs);
-						}
-
-					}, uuidInformation.getSurveyId());
-			return votePages;
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		}, uuidInformation.getSurveyId());
+		return votePages;
 	}
 
 	private VotePage getQuestionsInfo(ResultSet rs) throws SQLException {

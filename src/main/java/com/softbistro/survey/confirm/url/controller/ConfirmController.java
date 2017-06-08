@@ -1,6 +1,5 @@
 package com.softbistro.survey.confirm.url.controller;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +16,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(value = "rest/survey/v1/confirm")
 public class ConfirmController {
 
-	private static final Logger LOGGER = Logger.getLogger(ConfirmController.class);
-
 	@Autowired
 	private ConfirmService confirmService;
 
@@ -26,30 +23,16 @@ public class ConfirmController {
 	@RequestMapping(value = "/password/{uuid}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Object> confirmPassword(@PathVariable(value = "uuid") String uuid) {
 
-		try {
-
-			confirmService.confirmPassword(uuid);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		confirmService.confirmPassword(uuid);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Confirm Email", notes = "Confirm the eMail by uuid", tags = "Confirm")
 	@RequestMapping(value = "/client/{uuid}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Object> confirmEmail(@PathVariable(value = "uuid") String uuid) {
 
-		try {
-
-			confirmService.confirmEmail(uuid);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		confirmService.confirmEmail(uuid);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

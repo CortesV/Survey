@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,8 +26,6 @@ import com.softbistro.survey.question.components.interfaces.IQuestionSection;
  */
 @Repository
 public class QuestionSectionDao implements IQuestionSection {
-
-	private static final Logger LOGGER = Logger.getLogger(QuestionSectionDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -57,37 +55,28 @@ public class QuestionSectionDao implements IQuestionSection {
 	@Override
 	public Integer setQuestionSection(QuestionSection questionSection) {
 
-		try {
+		KeyHolder holder = new GeneratedKeyHolder();
 
-			KeyHolder holder = new GeneratedKeyHolder();
+		jdbcTemplate.update(new PreparedStatementCreator() {
 
-			jdbcTemplate.update(new PreparedStatementCreator() {
+			@Override
+			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_QUESTION_SECTION,
+						Statement.RETURN_GENERATED_KEYS);
+				preparedStatement.setInt(1, questionSection.getClientId());
+				preparedStatement.setString(2, questionSection.getSectionName());
+				preparedStatement.setString(3, questionSection.getDescriptionShort());
+				preparedStatement.setString(4, questionSection.getDescriptionLong());
+				return preparedStatement;
+			}
+		}, holder);
 
-				@Override
-				public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-					PreparedStatement preparedStatement = connection.prepareStatement(SQL_FOR_SETTING_QUESTION_SECTION,
-							Statement.RETURN_GENERATED_KEYS);
-					preparedStatement.setInt(1, questionSection.getClientId());
-					preparedStatement.setString(2, questionSection.getSectionName());
-					preparedStatement.setString(3, questionSection.getDescriptionShort());
-					preparedStatement.setString(4, questionSection.getDescriptionLong());
-					return preparedStatement;
-				}
-			}, holder);
+		return holder.getKey().intValue();
 
-			return holder.getKey().intValue();
-
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
 	}
 
-	/**getJdbcTemplate
-	 * Method for updating QuestionSection
+	/**
+	 * getJdbcTemplate Method for updating QuestionSection
 	 * 
 	 * @param questionSection,
 	 *            id
@@ -96,17 +85,9 @@ public class QuestionSectionDao implements IQuestionSection {
 	@Override
 	public void updateQuestionSection(QuestionSection questionSection, Integer questionSectionId) {
 
-		try {
-
-			jdbcTemplate.update(SQL_FOR_UPDATING_QUESTION_SECTION, questionSection.getClientId(),
-					questionSection.getSectionName(), questionSection.getDescriptionShort(),
-					questionSection.getDescriptionLong(), questionSectionId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_UPDATING_QUESTION_SECTION, questionSection.getClientId(),
+				questionSection.getSectionName(), questionSection.getDescriptionShort(),
+				questionSection.getDescriptionLong(), questionSectionId);
 	}
 
 	/**
@@ -118,15 +99,7 @@ public class QuestionSectionDao implements IQuestionSection {
 	@Override
 	public void deleteQuestionSection(Integer questionSectionId) {
 
-		try {
-
-			jdbcTemplate.update(SQL_FOR_DELETING_QUESTION_SECTION, questionSectionId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_DELETING_QUESTION_SECTION, questionSectionId);
 	}
 
 	/**
@@ -138,17 +111,10 @@ public class QuestionSectionDao implements IQuestionSection {
 	@Override
 	public QuestionSection getQuestionSectionById(Integer questionSectionId) {
 
-		try {
-
-			return jdbcTemplate.queryForObject(SQL_FOR_GETTING_QUESTION_SECTION_BY_ID,
-					new BeanPropertyRowMapper<>(QuestionSection.class), questionSectionId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return Optional
+				.ofNullable(jdbcTemplate.query(SQL_FOR_GETTING_QUESTION_SECTION_BY_ID,
+						new BeanPropertyRowMapper<>(QuestionSection.class), questionSectionId))
+				.get().stream().findFirst().orElse(null);
 	}
 
 	/**
@@ -160,17 +126,8 @@ public class QuestionSectionDao implements IQuestionSection {
 	@Override
 	public List<QuestionSection> getQuestionSectionByClientId(Integer clientId) {
 
-		try {
-
-			return jdbcTemplate.query(SQL_FOR_GETTING_QUESTION_SECTION_BY_CLIENT_ID,
-					new BeanPropertyRowMapper<>(QuestionSection.class), clientId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return jdbcTemplate.query(SQL_FOR_GETTING_QUESTION_SECTION_BY_CLIENT_ID,
+				new BeanPropertyRowMapper<>(QuestionSection.class), clientId);
 	}
 
 	/**
@@ -182,17 +139,8 @@ public class QuestionSectionDao implements IQuestionSection {
 	@Override
 	public List<QuestionSection> getQuestionSectionBySurveyId(Integer surveyId) {
 
-		try {
-
-			return jdbcTemplate.query(SQL_FOR_GETTING_QUESTION_SECTION_BY_SURVEY_ID,
-					new BeanPropertyRowMapper<>(QuestionSection.class), surveyId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-			return null;
-		}
+		return jdbcTemplate.query(SQL_FOR_GETTING_QUESTION_SECTION_BY_SURVEY_ID,
+				new BeanPropertyRowMapper<>(QuestionSection.class), surveyId);
 	}
 
 	/**
@@ -205,15 +153,7 @@ public class QuestionSectionDao implements IQuestionSection {
 	@Override
 	public void addQuestionSectionToSurvey(Integer questionSectionId, Integer surveyId) {
 
-		try {
-
-			jdbcTemplate.update(SQL_FOR_ADDING_QUESTION_SECTION_TO_SURVEY, questionSectionId, surveyId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_ADDING_QUESTION_SECTION_TO_SURVEY, questionSectionId, surveyId);
 	}
 
 	/**
@@ -226,14 +166,6 @@ public class QuestionSectionDao implements IQuestionSection {
 	@Override
 	public void deleteQuestionSectionFromSurvey(Integer questionSectionId, Integer surveyId) {
 
-		try {
-
-			jdbcTemplate.update(SQL_FOR_DELETING_QUESTION_SECTION_FROM_SURVEY, questionSectionId, surveyId);
-		}
-
-		catch (Exception e) {
-
-			LOGGER.error(e.getMessage());
-		}
+		jdbcTemplate.update(SQL_FOR_DELETING_QUESTION_SECTION_FROM_SURVEY, questionSectionId, surveyId);
 	}
 }

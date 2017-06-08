@@ -34,7 +34,9 @@ import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 public class NotificationIntegrationTest {
 
 	private final static Integer SURVEY_ID = 1;
-	private final static String PARTICIPANT_EMAIL = "softbistrosurvey@gmail.com";
+	private final static String RECEIVER_EMAIL = "sashaalohin@ukr.net";
+	private final static String SENDER_EMAIL = "softbistrosurvey@gmail.com";
+	private final static Integer CLIENT_ID = 1;
 
 	@Autowired
 	private NotificationDao messageDao;
@@ -45,16 +47,17 @@ public class NotificationIntegrationTest {
 	@Autowired
 	private SurveyService surveyService;
 
-	Notification notification;
+	private Notification notification;
 
 	@Before
 	public void setUp() {
 		notification = new Notification();
 		notification.setBody("Body of notification");
 		notification.setHeader("Header of notification");
-		notification.setReceiverEmail("sashaalohin@ukr.net");
-		notification.setSenderEmail("softbistrosurvey@gmail.com");
+		notification.setReceiverEmail(RECEIVER_EMAIL);
+		notification.setSenderEmail(SENDER_EMAIL);
 
+		messageDao.insertIntoNotification(notification);
 	}
 
 	/**
@@ -67,8 +70,7 @@ public class NotificationIntegrationTest {
 	 */
 	@Test
 	public void insertIntoNotificationTest() {
-		messageDao.insertIntoNotification(notification);
-		assertThat(messageDao.getEmailsToSendingForThread().get(0).getBody()).isEqualTo(notification.getBody());
+		assertThat(messageDao.getAllEmailsToSending().get(0).getSenderEmail()).isEqualTo(SENDER_EMAIL);
 	}
 
 	/**
@@ -80,15 +82,8 @@ public class NotificationIntegrationTest {
 	 */
 	@Test
 	public void getNewClientsTest() {
-		Client testClientNew = new Client();
-		testClientNew.setId(111);
-		testClientNew.setClientName("vanyas");
-		testClientNew.setEmail("vanss@gmail.com");
-		testClientNew.setPassword("1234");
-		clientDao.saveClient(testClientNew);
-		assertThat(
-				clientDao.getNewClients().stream().filter(client -> client.getEmail().equals(testClientNew.getEmail())
-						&& client.getId().equals(testClientNew.getId())).findFirst().isPresent());
+		assertThat(clientDao.getNewClients().stream().filter(client -> client.getEmail().equals(SENDER_EMAIL))
+				.findFirst().isPresent());
 	}
 
 	/**
@@ -101,20 +96,14 @@ public class NotificationIntegrationTest {
 	@Test
 	public void getEmailOfNewPasswordTest() {
 
-		Client testClient = new Client();
-		testClient.setClientName("SurveyManager");
-		testClient.setEmail("SurveyManager@gmail.com");
-		testClient.setPassword("SurveyManager");
-		testClient.setGoogleId("googleId");
-		testClient.setFlag("google");
+		Client client = new Client();
+		client.setEmail(SENDER_EMAIL);
+		client.setPassword("testemail");
+		client.setFlag("google");
 
-		Integer clientId = clientDao.saveClient(testClient);
+		clientDao.updatePassword(client, CLIENT_ID);
 
-		Client findServiceClient = clientDao.findClient(clientId);
-		testClient.setPassword("Manager");
-		clientDao.updatePassword(testClient, findServiceClient.getId());
-
-		assertThat(clientDao.getClientUpdatePassword().get(0).getEmail()).isEqualTo(testClient.getEmail());
+		assertNotEquals(clientDao.getClientUpdatePassword().size(), 0);
 	}
 
 	/**
@@ -138,7 +127,6 @@ public class NotificationIntegrationTest {
 	 */
 	@Test
 	public void getEmailsForSendingTest() {
-		messageDao.insertIntoNotification(notification);
-		assertThat(messageDao.getEmailsToSendingForThread().get(0).getHeader()).isEqualTo(notification.getHeader());
+		assertNotEquals(messageDao.getAllEmailsToSending().size(), 0);
 	}
 }

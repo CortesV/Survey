@@ -20,7 +20,7 @@ public class StatisticService {
 	@Autowired
 	private SheetsService sheetsService;
 
-	private static final Logger LOG = Logger.getLogger(StatisticService.class);
+	private static final Logger LOGGER = Logger.getLogger(StatisticService.class);
 
 	/**
 	 * Get answers on question from survey
@@ -43,7 +43,7 @@ public class StatisticService {
 		try {
 			return sheetsService.send(statisticDao.export(surveyId), filters);
 		} catch (GeneralSecurityException | IOException e) {
-			LOG.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}

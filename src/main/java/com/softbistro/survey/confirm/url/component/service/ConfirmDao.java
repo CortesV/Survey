@@ -2,7 +2,6 @@ package com.softbistro.survey.confirm.url.component.service;
 
 import java.sql.Date;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -17,15 +16,13 @@ import com.softbistro.survey.confirm.url.component.interfacee.IConfirm;
  */
 @Repository
 public class ConfirmDao implements IConfirm {
-	
-	private static final Logger LOGGER = Logger.getLogger(ConfirmDao.class);
-	
+
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	private String statusForConfirmPassword = "DONE";
+	private final String statusForConfirmPassword = "DONE";
 
-	private String statusForConfirmClient = "DONE";
+	private final String statusForConfirmClient = "DONE";
 
 	/**
 	 * Current time for comparison with working time of url
@@ -48,16 +45,10 @@ public class ConfirmDao implements IConfirm {
 	 */
 	@Override
 	public void confirmPassword(String uuid) {
-		
-		try {
-			
-			Integer clientId = jdbcTemplate.queryForObject(SQL_GET_INFORMATION_BY_USING_UUID_PASSWORD, Integer.class,
-					uuid, date);
-			jdbcTemplate.update(SQL_UPDATE_STATUS_FOR_CONFIRMING_CLIENT_OPERATIONS, statusForConfirmPassword, clientId);
-		} catch (Exception e) {
-			
-			LOGGER.error(e.getMessage());
-		}
+
+		Integer clientId = jdbcTemplate.queryForObject(SQL_GET_INFORMATION_BY_USING_UUID_PASSWORD, Integer.class, uuid,
+				date);
+		jdbcTemplate.update(SQL_UPDATE_STATUS_FOR_CONFIRMING_CLIENT_OPERATIONS, statusForConfirmPassword, clientId);
 	}
 
 	/**
@@ -68,16 +59,10 @@ public class ConfirmDao implements IConfirm {
 	 */
 	@Override
 	public void confirmEmail(String uuid) {
-		
-		try {
-			
-			Integer clientId = jdbcTemplate.queryForObject(SQL_GET_INFORMATION_BY_USING_UUID_CLIENT, Integer.class,
-					uuid, date);
-			jdbcTemplate.update(SQL_UPDATE_STATUS_FOR_CONFIRMING_CLIENT_OPERATIONS, statusForConfirmClient, clientId);
-		} catch (Exception e) {
 
-			LOGGER.error(e.getMessage());
-		}
+		Integer clientId = jdbcTemplate.queryForObject(SQL_GET_INFORMATION_BY_USING_UUID_CLIENT, Integer.class, uuid,
+				date);
+		jdbcTemplate.update(SQL_UPDATE_STATUS_FOR_CONFIRMING_CLIENT_OPERATIONS, statusForConfirmClient, clientId);
 	}
 
 }

@@ -30,7 +30,7 @@ import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 @Scope("prototype")
 public class ChangePasswordMessageService implements ICreateMessage {
 
-	private Logger log = LogManager.getLogger(getClass());
+	private Logger LOGGER = LogManager.getLogger(getClass());
 
 	@Autowired
 	private INotification iSendingMessage;
@@ -80,7 +80,7 @@ public class ChangePasswordMessageService implements ICreateMessage {
 			
 			iClient.updateStatusOfUpdatePassword();
 
-			log.info(String.format("Changed client password with email: %s", client.getEmail()));
+			LOGGER.info(String.format("Changed client password with email: %s", client.getEmail()));
 		});
 	}
 
