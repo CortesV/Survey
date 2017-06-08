@@ -5,7 +5,6 @@ import java.util.List;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class SendMessageToEmailThread implements Runnable, ISendingMessageInSepa
 	private INotification iSendingMessage;
 	private IRetryNotification iRetryNotification;
 
-	private Logger log = LogManager.getLogger(getClass());
+	private static final Logger LOGGER = Logger.getLogger(SendMessageToEmailThread.class);
 
 	public SendMessageToEmailThread(Session session, List<Notification> messagesForThread, int emailIndex,
 			INotification iSendingMessage, IRetryNotification iRetryNotification) {
@@ -56,7 +55,7 @@ public class SendMessageToEmailThread implements Runnable, ISendingMessageInSepa
 
 			iSendingMessage.updateStatusMessagesFromInProcessToProcessed(messagesForThread.get(emailIndex).getId());
 
-			log.info(String.format("NotSys | Status of message [%s] was updated on 'PROCESSED'. | Message sent.",
+			LOGGER.info(String.format("NotSys | Status of message [%s] was updated on 'PROCESSED'. | Message sent.",
 					messagesForThread.get(emailIndex).getId()));
 
 		} catch (MessagingException e) {
@@ -64,7 +63,7 @@ public class SendMessageToEmailThread implements Runnable, ISendingMessageInSepa
 			iSendingMessage.updateStatusMessagesToError(messagesForThread.get(emailIndex).getId());
 			addErrorMessageToNotificationFailureTable((e.getMessage()));
 
-			log.info(String.format("NotSys | Status of message [%s] was updated on 'ERROR'. | Add to failure table.",
+			LOGGER.info(String.format("NotSys | Status of message [%s] was updated on 'ERROR'. | Add to failure table.",
 					messagesForThread.get(emailIndex).getId()));
 		}
 	}

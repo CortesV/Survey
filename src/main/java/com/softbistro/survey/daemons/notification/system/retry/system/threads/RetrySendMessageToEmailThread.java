@@ -5,7 +5,6 @@ import java.util.List;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 
-import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -19,12 +18,13 @@ import com.softbistro.survey.daemons.notification.system.retry.system.service.Fo
 @Service
 @Scope("prototype")
 public class RetrySendMessageToEmailThread implements Runnable, ISendingMessageInSeparateThread {
+
+	private static final Logger LOGGER = Logger.getLogger(RetrySendMessageToEmailThread.class);
+
 	private Session session;
 	private List<RetryNotification> messagesForRetryThread;
 	private int emailIndex;
 	private IRetryNotification iRetryNotification;
-
-	private Logger log = LogManager.getLogger(getClass());
 
 	public RetrySendMessageToEmailThread(Session session, List<RetryNotification> messagesForRetryThread,
 			int emailIndex, IRetryNotification iRetryNotification) {
@@ -47,16 +47,17 @@ public class RetrySendMessageToEmailThread implements Runnable, ISendingMessageI
 
 			iFormingMessage.formingMessage();
 
-			iRetryNotification.updateStatusMessagesFromInProcessToProcessed(messagesForRetryThread.get(emailIndex).getId());
+			iRetryNotification
+					.updateStatusMessagesFromInProcessToProcessed(messagesForRetryThread.get(emailIndex).getId());
 
-			log.info(String.format("NotSys | Status of message [%s] was updated on 'PROCESSED'. | Message sent.",
+			LOGGER.info(String.format("NotSys | Status of message [%s] was updated on 'PROCESSED'. | Message sent.",
 					messagesForRetryThread.get(emailIndex).getId()));
 
 		} catch (MessagingException e) {
 
 			iRetryNotification.updateStatusMessagesToError(messagesForRetryThread.get(emailIndex).getId());
 
-			log.info(String.format("NotSys | Status of message [%s] was updated on 'ERROR'. | Number of try: [%s].",
+			LOGGER.info(String.format("NotSys | Status of message [%s] was updated on 'ERROR'. | Number of try: [%s].",
 					messagesForRetryThread.get(emailIndex).getId(),
 					messagesForRetryThread.get(emailIndex).getRetryCount()));
 		}

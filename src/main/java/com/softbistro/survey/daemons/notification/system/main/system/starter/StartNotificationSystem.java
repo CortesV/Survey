@@ -53,7 +53,7 @@ public class StartNotificationSystem {
 		}
 
 		iSendingMessage.updateStatusMessagesToInProcess();
-		
+
 		countOfThread = (int) Math.ceil((double) messages.size() / countOfRecords);
 
 		lowerIndexOfEmailForThread = 0;
