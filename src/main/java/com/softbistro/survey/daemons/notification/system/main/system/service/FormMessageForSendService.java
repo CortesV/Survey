@@ -24,6 +24,12 @@ public class FormMessageForSendService implements IFormingMessage {
 	private Session session;
 	private Notification message;
 
+	/**
+	 * Use in class (SendMessageToEmailThread) for forming message.
+	 * 
+	 * @param session
+	 * @param message
+	 */
 	public FormMessageForSendService(Session session, Notification message) {
 		this.session = session;
 		this.message = message;

@@ -41,9 +41,9 @@ public class NotificationDao implements INotification {
 			+ " FROM notification AS n JOIN sender AS s ON n.from=s.sender_email WHERE status='NEW'"
 			+ " OR (status='IN_PROCESS' AND TIMESTAMPDIFF(MINUTE, n.modified_date, NOW())>=?) LIMIT ?";
 
-	private static final String SQL_UPDATE_LIST_EMAIL_TO_IN_PROCESS = "UPDATE notification SET status='IN_PROCESS' WHERE status = ?";
+	private static final String SQL_UPDATE_LIST_EMAIL_FROM_NEW_TO_IN_PROCESS = "UPDATE notification SET status='IN_PROCESS' WHERE status = 'NEW'";
 	private static final String SQL_UPDATE_LIST_EMAIL_TO_PROCESSED = "UPDATE notification SET status='PROCESSED' WHERE status = ? AND id = ?";
-	private static final String SQL_UPDATE_LIST_EMAIL_TO_ERROR = "UPDATE notification SET status='ERROR' WHERE status = ? AND id = ?";
+	private static final String SQL_UPDATE_LIST_EMAIL_FROM_IN_PROCESS_TO_ERROR = "UPDATE notification SET status='ERROR' WHERE status = 'IN_PROCESS' AND id = ?";
 
 	private static final String SQL_INSERT_NOTIFICATION = "INSERT INTO notification(`from`,`cc`, `to`, `header`, `body`,`status`) VALUES (?,?,?,?,?,'NEW')";
 	private static final String SQL_INSERT_SENDING_CLIENT = "INSERT INTO sending_client (`url`,`client_id`, `working_time`) VALUES(?,?,?)";
@@ -97,7 +97,8 @@ public class NotificationDao implements INotification {
 	 * Get records from DB with e-mails of users, header and body of message for
 	 * sending general information about survey as email get messages with
 	 * status "NEW" and with status "IN_PROCESS" where (current time - last
-	 * modified date (time)) > = 5 minutes
+	 * modified date (time)) >
+	 * = @Value("${count.of.minutes.then.thread.considered.stopped}")
 	 * 
 	 * @return List<Notification>
 	 */
@@ -108,13 +109,13 @@ public class NotificationDao implements INotification {
 	}
 
 	/**
-	 * Update status on emails that need to sending to "IN_PROCESS"
+	 * Update status on emails that need to sending from "NEW" to "IN_PROCESS"
 	 * 
 	 * @author yagi
 	 */
 	@Override
 	public void updateStatusMessagesToInProcess() {
-		jdbcTemplateNotification.update(SQL_UPDATE_LIST_EMAIL_TO_IN_PROCESS, "NEW");
+		jdbcTemplateNotification.update(SQL_UPDATE_LIST_EMAIL_FROM_NEW_TO_IN_PROCESS);
 	}
 
 	/**
@@ -138,13 +139,13 @@ public class NotificationDao implements INotification {
 	}
 
 	/**
-	 * Update status on email that has errors to "ERROR"
+	 * Update status on email that has errors from "IN_PROCESS" to "ERROR"
 	 * 
 	 * @author yagi
 	 */
 	@Override
 	public void updateStatusMessagesToError(int id) {
-		jdbcTemplateNotification.update(SQL_UPDATE_LIST_EMAIL_TO_ERROR, "IN_PROCESS", id);
+		jdbcTemplateNotification.update(SQL_UPDATE_LIST_EMAIL_FROM_IN_PROCESS_TO_ERROR, id);
 	}
 
 	/**

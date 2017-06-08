@@ -12,18 +12,19 @@ import org.springframework.stereotype.Service;
 import com.softbistro.survey.daemons.notification.system.main.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.main.system.component.interfaces.INotification;
 import com.softbistro.survey.daemons.notification.system.main.system.interfaces.IFormingMessage;
-import com.softbistro.survey.daemons.notification.system.main.system.interfaces.ISendingMessageInSeparateThread;
+import com.softbistro.survey.daemons.notification.system.main.system.interfaces.ISendingMessage;
 import com.softbistro.survey.daemons.notification.system.main.system.service.FormMessageForSendService;
 import com.softbistro.survey.daemons.notification.system.retry.system.component.entity.RetryNotification;
 import com.softbistro.survey.daemons.notification.system.retry.system.component.interfaces.IRetryNotification;
 
 /**
+ * For work with messages: - sending message;
+ * 
  * @author vlad
- *
  */
 @Service
 @Scope("prototype")
-public class SendMessageToEmailThread implements Runnable, ISendingMessageInSeparateThread {
+public class SendMessageToEmailThread implements Runnable, ISendingMessage {
 	private Session session;
 	private List<Notification> messagesForThread;
 	private int emailIndex;
@@ -42,8 +43,8 @@ public class SendMessageToEmailThread implements Runnable, ISendingMessageInSepa
 	}
 
 	/**
-	 * Sending message on email about registration<br>
-	 * then store information in database
+	 * For sending message in separate thread. Try sending message on email for
+	 * everyone message in separate thread.
 	 */
 	@Override
 	public void sendMessage() {

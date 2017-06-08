@@ -1,6 +1,5 @@
 package com.softbistro.survey.daemons.notification.system.main.system.starter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -24,10 +23,6 @@ import com.softbistro.survey.daemons.notification.system.retry.system.component.
 @Component
 @EnableScheduling
 public class StartNotificationSystem {
-	private int countOfThread;
-	private int lowerIndexOfEmailForThread;
-	private int upperIndexOfEmailForThread;
-
 	@Resource
 	private ApplicationContext context;
 
@@ -43,6 +38,11 @@ public class StartNotificationSystem {
 	@Value("${count.of.records}")
 	private int countOfRecords;
 
+	/**
+	 * Every 1 minute (60 seconds) start thread, which checking the database if
+	 * there are new messages. If there is - creates threads (or thread) to work
+	 * with them, if not - then nothing.
+	 */
 	@Scheduled(fixedRate = 60 * 1000)
 	public void CheckThread() {
 
@@ -54,29 +54,18 @@ public class StartNotificationSystem {
 
 		iSendingMessage.updateStatusMessagesToInProcess();
 
-		countOfThread = (int) Math.ceil((double) messages.size() / countOfRecords);
+		int upperIndexOfEmailForThread = countOfRecords;
 
-		lowerIndexOfEmailForThread = 0;
-		upperIndexOfEmailForThread = countOfRecords;
-
-		for (int i = 0; i < countOfThread; i++) {
-			List<Notification> messagesForThread = new ArrayList<Notification>();
+		for (int i = 0; i < messages.size(); i = i
+				+ countOfRecords, upperIndexOfEmailForThread = upperIndexOfEmailForThread + countOfRecords) {
 
 			if (upperIndexOfEmailForThread > messages.size()) {
 				upperIndexOfEmailForThread = messages.size();
-
 			}
 
-			for (int j = lowerIndexOfEmailForThread; j < upperIndexOfEmailForThread; j++) {
-				messagesForThread.add(messages.get(j));
-			}
+			new Thread(new NotificationService(messages.subList(i, upperIndexOfEmailForThread), iSendingMessage,
+					iRetryNotification, propertiesSurvey)).start();
 
-			new Thread(
-					new NotificationService(messagesForThread, iSendingMessage, iRetryNotification, propertiesSurvey))
-							.start();
-
-			lowerIndexOfEmailForThread = lowerIndexOfEmailForThread + countOfRecords;
-			upperIndexOfEmailForThread = upperIndexOfEmailForThread + countOfRecords;
 		}
 
 	}

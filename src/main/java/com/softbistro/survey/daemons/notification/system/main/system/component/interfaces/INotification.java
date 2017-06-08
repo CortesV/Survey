@@ -9,7 +9,7 @@ import com.softbistro.survey.notification.db.entity.NotificationSurveySending;
 /**
  * Methods for working with notification
  * 
- * @author alex_alokhin
+ * @author yagi, alex_alokhin
  *
  */
 public interface INotification {
@@ -24,7 +24,8 @@ public interface INotification {
 	 * Get records from DB with e-mails of users, header and body of message for
 	 * sending general information about survey as email get messages with
 	 * status "NEW" and with status "IN_PROCESS" where (current time - last
-	 * modified date (time)) > = 5 minutes
+	 * modified date (time)) >
+	 * = @Value("${count.of.minutes.then.thread.considered.stopped}")
 	 * 
 	 * @return List<Notification>
 	 */

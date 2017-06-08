@@ -13,12 +13,19 @@ import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.daemons.notification.system.main.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.main.system.component.interfaces.INotification;
-import com.softbistro.survey.daemons.notification.system.main.system.interfaces.ISendingMessages;
+import com.softbistro.survey.daemons.notification.system.main.system.interfaces.ICreateThreadForMessage;
 import com.softbistro.survey.daemons.notification.system.retry.system.component.interfaces.IRetryNotification;
 
+/**
+ * Service which start working with messages for sending. For work with
+ * messages: - create threads for everyone message;
+ * 
+ * @author vlad
+ *
+ */
 @Service
 @Scope("prototype")
-public class NotificationService implements Runnable, ISendingMessages {
+public class NotificationService implements Runnable, ICreateThreadForMessage {
 
 	private static final Logger LOGGER = Logger.getLogger(NotificationService.class);
 
@@ -41,7 +48,11 @@ public class NotificationService implements Runnable, ISendingMessages {
 		this.propertiesSurvey = propertiesSurvey;
 	}
 
-	public void send() {
+	/**
+	 * Creating thread for everyone message. Start to sending messages in
+	 * separate thread.
+	 */
+	public void createThreadForMessage() {
 
 		if (messagesForThread.isEmpty()) {
 			return;
@@ -56,6 +67,13 @@ public class NotificationService implements Runnable, ISendingMessages {
 
 	}
 
+	/**
+	 * Create message with session (sender email, sender password) and other
+	 * information which need to start sending information.
+	 * 
+	 * @param messagesForThread
+	 * @param emailIndex
+	 */
 	private void createSessionAndThreadForSendEmail(List<Notification> messagesForThread, int emailIndex) {
 		username = messagesForThread.get(emailIndex).getSenderEmail();
 		password = messagesForThread.get(emailIndex).getSenderPassword();
@@ -79,6 +97,6 @@ public class NotificationService implements Runnable, ISendingMessages {
 
 	@Override
 	public void run() {
-		send();
+		createThreadForMessage();
 	}
 }

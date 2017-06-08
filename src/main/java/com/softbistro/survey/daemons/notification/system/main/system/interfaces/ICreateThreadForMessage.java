@@ -1,13 +1,12 @@
 package com.softbistro.survey.daemons.notification.system.main.system.interfaces;
 
 /**
- * For sending messages
- * 
+ * For work with messages: - create threads for everyone message;
  */
-public interface ISendingMessages {
+public interface ICreateThreadForMessage {
 	/**
 	 * Creating thread for everyone message. Start to sending messages in
 	 * separate thread.
 	 */
-	public void send();
+	public void createThreadForMessage();
 }

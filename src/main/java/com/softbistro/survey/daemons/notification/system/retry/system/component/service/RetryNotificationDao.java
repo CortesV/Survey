@@ -34,14 +34,14 @@ public class RetryNotificationDao implements IRetryNotification {
 			+ " ON n.id=notification_fail.notification_id JOIN sender ON n.from=sender.sender_email"
 			+ " WHERE n.status = 'ERROR' AND retry_count<?;";
 
-	private static final String SQL_INSERT_RETRY_NOTIFICATION = "INSERT INTO notification_failure(`status`,`notification_id`,`exception`, `retry_count`) VALUES ('ERROR', ?, ?, 0)";
+	private static final String SQL_INSERT_RETRY_NOTIFICATION = "INSERT INTO notification_failure(`notification_id`,`exception`, `retry_count`) VALUES (?, ?, 0)";
 
 	private static final String SQL_UPDATE_INCREASE_RETRY_COUNT_FOR_RESEND_EMAIL = "UPDATE notification_failure AS notification_fail"
 			+ " JOIN notification AS n ON notification_fail.notification_id = n.id SET retry_count=retry_count+1 WHERE n.status='ERROR' AND retry_count<?";
 
-	private static final String SQL_UPDATE_LIST_RESEND_EMAIL_TO_IN_PROCESS = "UPDATE notification SET status='IN_PROCESS' WHERE status = ?";
-	private static final String SQL_UPDATE_LIST_RESEND_EMAIL_FROM_IN_PROCESS_TO_PROCESSED = "UPDATE notification SET status='PROCESSED' WHERE status = ? AND id = ?";
-	private static final String SQL_UPDATE_LIST_RESEND_EMAIL_TO_ERROR = "UPDATE notification SET status='ERROR' WHERE status = ? AND id = ?";
+	private static final String SQL_UPDATE_LIST_RESEND_EMAIL_FROM_ERROR_TO_IN_PROCESS = "UPDATE notification SET status='IN_PROCESS' WHERE status = 'ERROR'";
+	private static final String SQL_UPDATE_LIST_RESEND_EMAIL_FROM_IN_PROCESS_TO_PROCESSED = "UPDATE notification SET status='PROCESSED' WHERE status = 'IN_PROCESS' AND id = ?";
+	private static final String SQL_UPDATE_LIST_RESEND_EMAIL_FROM_IN_PROCESS_TO_ERROR = "UPDATE notification SET status='ERROR' WHERE status = 'IN_PROCESS' AND id = ?";
 
 	@Autowired
 	@Qualifier("jdbcNotificationSystem")
@@ -119,7 +119,7 @@ public class RetryNotificationDao implements IRetryNotification {
 	 */
 	@Override
 	public void updateStatusMessagesToInProcess() {
-		jdbcTemplateNotification.update(SQL_UPDATE_LIST_RESEND_EMAIL_TO_IN_PROCESS, "ERROR");
+		jdbcTemplateNotification.update(SQL_UPDATE_LIST_RESEND_EMAIL_FROM_ERROR_TO_IN_PROCESS);
 	}
 
 	/**
@@ -129,17 +129,17 @@ public class RetryNotificationDao implements IRetryNotification {
 	 */
 	@Override
 	public void updateStatusMessagesFromInProcessToProcessed(int id) {
-		jdbcTemplateNotification.update(SQL_UPDATE_LIST_RESEND_EMAIL_FROM_IN_PROCESS_TO_PROCESSED, "IN_PROCESS", id);
+		jdbcTemplateNotification.update(SQL_UPDATE_LIST_RESEND_EMAIL_FROM_IN_PROCESS_TO_PROCESSED, id);
 	}
 
 	/**
-	 * Update status on email that has errors to "ERROR"
+	 * Update status on email that has errors from "IN_PROCESS" to "ERROR"
 	 * 
 	 * @author yagi
 	 */
 	@Override
 	public void updateStatusMessagesToError(int id) {
-		jdbcTemplateNotification.update(SQL_UPDATE_LIST_RESEND_EMAIL_TO_ERROR, "IN_PROCESS", id);
+		jdbcTemplateNotification.update(SQL_UPDATE_LIST_RESEND_EMAIL_FROM_IN_PROCESS_TO_ERROR, id);
 	}
 
 }

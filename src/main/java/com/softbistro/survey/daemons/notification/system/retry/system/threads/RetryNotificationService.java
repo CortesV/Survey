@@ -11,13 +11,20 @@ import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.softbistro.survey.daemons.notification.system.main.system.interfaces.ISendingMessages;
+import com.softbistro.survey.daemons.notification.system.main.system.interfaces.ICreateThreadForMessage;
 import com.softbistro.survey.daemons.notification.system.retry.system.component.entity.RetryNotification;
 import com.softbistro.survey.daemons.notification.system.retry.system.component.interfaces.IRetryNotification;
 
+/**
+ * Service which start working with messages for sending. For work with
+ * messages: - create threads for everyone message;
+ * 
+ * @author vlad
+ *
+ */
 @Service
 @Scope("prototype")
-public class RetryNotificationService implements Runnable, ISendingMessages {
+public class RetryNotificationService implements Runnable, ICreateThreadForMessage {
 
 	private static final Logger LOGGER = Logger.getLogger(RetryNotificationService.class);
 
@@ -38,7 +45,11 @@ public class RetryNotificationService implements Runnable, ISendingMessages {
 		this.propertiesSurvey = propertiesSurvey;
 	}
 
-	public void send() {
+	/**
+	 * Creating thread for everyone message. Start to sending messages in
+	 * separate thread.
+	 */
+	public void createThreadForMessage() {
 
 		if (messagesForRetryThread.isEmpty()) {
 			return;
@@ -53,6 +64,13 @@ public class RetryNotificationService implements Runnable, ISendingMessages {
 
 	}
 
+	/**
+	 * Create message with session (sender email, sender password) and other
+	 * information which need to start sending information.
+	 * 
+	 * @param messagesForRetryThread
+	 * @param emailIndex
+	 */
 	private void createSessionAndThreadForSendEmail(List<RetryNotification> messagesForRetryThread, int emailIndex) {
 		username = messagesForRetryThread.get(emailIndex).getSenderEmail();
 		password = messagesForRetryThread.get(emailIndex).getSenderPassword();
@@ -77,6 +95,6 @@ public class RetryNotificationService implements Runnable, ISendingMessages {
 
 	@Override
 	public void run() {
-		send();
+		createThreadForMessage();
 	}
 }

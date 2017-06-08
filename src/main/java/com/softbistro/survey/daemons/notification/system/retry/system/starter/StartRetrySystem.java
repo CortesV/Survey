@@ -1,6 +1,5 @@
 package com.softbistro.survey.daemons.notification.system.retry.system.starter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -20,10 +19,6 @@ import com.softbistro.survey.daemons.notification.system.retry.system.threads.Re
 @Component
 @EnableScheduling
 public class StartRetrySystem {
-	private int countOfRetryThread;
-	private int lowerIndexOfEmailForRetryThread;
-	private int upperIndexOfEmailForRetryThread;
-
 	@Autowired
 	private IRetryNotification iRetryNotification;
 
@@ -33,7 +28,12 @@ public class StartRetrySystem {
 	@Value("${count.of.records}")
 	private int countOfRecords;
 
-	@Scheduled(fixedRate = 120 * 1000)
+	/**
+	 * Every 3 minutes (180 seconds) start thread, which checking the database
+	 * if there are messages with status "ERROR". If there is - creates threads
+	 * (or thread) to work with them, if not - then nothing.
+	 */
+	@Scheduled(fixedRate = 180 * 1000)
 	public void RetryCheckThread() {
 
 		List<RetryNotification> retryMessages = iRetryNotification.getAllErrorEmailsToResending();
@@ -45,28 +45,18 @@ public class StartRetrySystem {
 		iRetryNotification.updateIncreaseRetryCountForMessageToResend();
 		iRetryNotification.updateStatusMessagesToInProcess();
 
-		countOfRetryThread = (int) Math.ceil((double) retryMessages.size() / countOfRecords);
+		int upperIndexOfEmailForRetryThread = countOfRecords;
 
-		lowerIndexOfEmailForRetryThread = 0;
-		upperIndexOfEmailForRetryThread = countOfRecords;
-
-		for (int i = 0; i < countOfRetryThread; i++) {
-			List<RetryNotification> retryMessagesForThread = new ArrayList<RetryNotification>();
+		for (int i = 0; i < retryMessages.size(); i = i
+				+ countOfRecords, upperIndexOfEmailForRetryThread = upperIndexOfEmailForRetryThread + countOfRecords) {
 
 			if (upperIndexOfEmailForRetryThread > retryMessages.size()) {
 				upperIndexOfEmailForRetryThread = retryMessages.size();
-
 			}
 
-			for (int j = lowerIndexOfEmailForRetryThread; j < upperIndexOfEmailForRetryThread; j++) {
-				retryMessagesForThread.add(retryMessages.get(j));
-			}
-
-			new Thread(new RetryNotificationService(retryMessagesForThread, iRetryNotification, propertiesSurvey))
-					.start();
-
-			lowerIndexOfEmailForRetryThread = lowerIndexOfEmailForRetryThread + countOfRecords;
-			upperIndexOfEmailForRetryThread = upperIndexOfEmailForRetryThread + countOfRecords;
+			new Thread(new RetryNotificationService(retryMessages.subList(i, upperIndexOfEmailForRetryThread),
+					iRetryNotification, propertiesSurvey)).start();
 		}
+
 	}
 }

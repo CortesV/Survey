@@ -10,14 +10,19 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.daemons.notification.system.main.system.interfaces.IFormingMessage;
-import com.softbistro.survey.daemons.notification.system.main.system.interfaces.ISendingMessageInSeparateThread;
+import com.softbistro.survey.daemons.notification.system.main.system.interfaces.ISendingMessage;
 import com.softbistro.survey.daemons.notification.system.retry.system.component.entity.RetryNotification;
 import com.softbistro.survey.daemons.notification.system.retry.system.component.interfaces.IRetryNotification;
 import com.softbistro.survey.daemons.notification.system.retry.system.service.FormMessageForSendServiceRetry;
 
+/**
+ * For work with messages: - sending message;
+ * 
+ * @author vlad
+ */
 @Service
 @Scope("prototype")
-public class RetrySendMessageToEmailThread implements Runnable, ISendingMessageInSeparateThread {
+public class RetrySendMessageToEmailThread implements Runnable, ISendingMessage {
 
 	private static final Logger LOGGER = Logger.getLogger(RetrySendMessageToEmailThread.class);
 
@@ -35,8 +40,8 @@ public class RetrySendMessageToEmailThread implements Runnable, ISendingMessageI
 	}
 
 	/**
-	 * Sending message on email about registration<br>
-	 * then store information in database
+	 * For sending message in separate thread. Try sending message on email for
+	 * everyone message in separate thread.
 	 */
 	@Override
 	public void sendMessage() {
