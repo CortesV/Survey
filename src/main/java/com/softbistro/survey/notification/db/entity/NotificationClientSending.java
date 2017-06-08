@@ -1,4 +1,4 @@
-package com.softbistro.survey.daemons.notification.system.component.entity;
+package com.softbistro.survey.notification.db.entity;
 
 import java.util.Date;
 
@@ -13,6 +13,18 @@ public class NotificationClientSending {
 	private String url;
 	private Integer clientId;
 	private Date date;
+
+	public NotificationClientSending(String url, Integer clientId) {
+		this.url = url;
+		this.clientId = clientId;
+	}
+
+	public NotificationClientSending(String url, Integer clientId, Date date) {
+
+		this.url = url;
+		this.clientId = clientId;
+		this.date = date;
+	}
 
 	public String getUrl() {
 		return url;
@@ -35,18 +47,6 @@ public class NotificationClientSending {
 	}
 
 	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public NotificationClientSending(String url, Integer clientId) {
-		this.url = url;
-		this.clientId = clientId;
-	}
-
-	public NotificationClientSending(String url, Integer clientId, Date date) {
-
-		this.url = url;
-		this.clientId = clientId;
 		this.date = date;
 	}
 

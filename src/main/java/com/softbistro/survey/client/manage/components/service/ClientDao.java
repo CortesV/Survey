@@ -3,6 +3,7 @@ package com.softbistro.survey.client.manage.components.service;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,12 +19,11 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import com.mysql.cj.api.jdbc.Statement;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.entity.ClientForSending;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
 import com.softbistro.survey.client.manage.service.FindClientService;
-import com.softbistro.survey.daemons.notification.system.component.entity.NotificationSurveySending;
+import com.softbistro.survey.notification.db.entity.NotificationSurveySending;
 
 /**
  * CRUD for entity Client

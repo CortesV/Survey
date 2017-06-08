@@ -1,6 +1,14 @@
-package com.softbistro.survey.daemons.notification.system.component.entity;
+package com.softbistro.survey.daemons.notification.system.main.system.component.entity;
 
+/**
+ * 
+ * Entity of message for sending on email
+ * 
+ * @author yagi
+ *
+ */
 public class Notification {
+	private int id;
 	private String senderEmail;
 	private String senderPassword;
 	private String senderDescription;
@@ -9,6 +17,15 @@ public class Notification {
 	private String header;
 	private String body;
 
+	/**
+	 * This constructor is used when forming the message and recorded in the
+	 * table 'notification' for notification database
+	 * 
+	 * @param senderEmail
+	 * @param receiverEmail
+	 * @param header
+	 * @param body
+	 */
 	public Notification(String senderEmail, String receiverEmail, String header, String body) {
 		this.senderEmail = senderEmail;
 		this.receiverEmail = receiverEmail;
@@ -16,6 +33,19 @@ public class Notification {
 		this.body = body;
 	}
 
+	/**
+	 * 
+	 * This constructor for RowMapper (take info about messages from databases
+	 * for notification system
+	 * 
+	 * @param senderEmail
+	 * @param senderPassword
+	 * @param senderDescription
+	 * @param receiverCCEmail
+	 * @param receiverEmail
+	 * @param header
+	 * @param body
+	 */
 	public Notification(String senderEmail, String senderPassword, String senderDescription, String receiverCCEmail,
 			String receiverEmail, String header, String body) {
 		this.senderEmail = senderEmail;
@@ -28,6 +58,14 @@ public class Notification {
 	}
 
 	public Notification() {
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getSenderEmail() {
@@ -85,4 +123,5 @@ public class Notification {
 	public void setBody(String body) {
 		this.body = body;
 	}
+
 }

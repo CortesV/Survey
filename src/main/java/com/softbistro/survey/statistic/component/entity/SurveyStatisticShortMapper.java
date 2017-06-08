@@ -5,8 +5,6 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-
 public class SurveyStatisticShortMapper implements RowMapper<SurveyStatisticShort> {
 
 	@Override

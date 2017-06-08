@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.entity.ClientForSending;
-import com.softbistro.survey.daemons.notification.system.component.entity.NotificationSurveySending;
+import com.softbistro.survey.notification.db.entity.NotificationSurveySending;
 
 public interface IClient {
 
@@ -71,7 +71,6 @@ public interface IClient {
 	 * @return
 	 */
 	public Client saveSocialClient(Client client);
-	
 
 	/**
 	 * Find client by email and client name
@@ -91,7 +90,7 @@ public interface IClient {
 	 * @return return - information about of client
 	 */
 	public Client findByTemplate(String template, String value);
-	
+
 	/**
 	 * Method that add social data from social networks to exist client
 	 * 
@@ -101,7 +100,8 @@ public interface IClient {
 	public void addSocialInfo(Client socialClient);
 
 	/**
-	 * Get mails of clients that change password 
+	 * Get mails of clients that change password
+	 * 
 	 * @return - list of mails
 	 * 
 	 * @author alex_alokhin
@@ -110,6 +110,7 @@ public interface IClient {
 
 	/**
 	 * Get clients that have registration process
+	 * 
 	 * @return - list of clients
 	 * 
 	 * @author alex_alokhin
@@ -118,6 +119,7 @@ public interface IClient {
 
 	/**
 	 * Get clients that started the survey
+	 * 
 	 * @return - list of clients
 	 * 
 	 * @author alex_alokhin
@@ -139,7 +141,7 @@ public interface IClient {
 	 * @author alex_alokhin
 	 */
 	public void updateStatusOfUpdatePassword();
-	
+
 	/**
 	 * Update status of survey
 	 * 
@@ -147,9 +149,4 @@ public interface IClient {
 	 */
 	public void updateStatusOfSurvey();
 
-	
-
-
-
-	
 }

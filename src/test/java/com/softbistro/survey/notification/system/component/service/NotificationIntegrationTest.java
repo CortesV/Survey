@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.softbistro.survey.client.manage.components.entity.Client;
 import com.softbistro.survey.client.manage.components.service.ClientDao;
 import com.softbistro.survey.creating.survey.service.SurveyService;
-import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.daemons.notification.system.component.service.MessageDao;
+import com.softbistro.survey.daemons.notification.system.main.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.main.system.component.service.NotificationDao;
 import com.softbistro.survey.standalone.SurveySoftBistroApplication;
 
 /**
@@ -39,7 +39,7 @@ public class NotificationIntegrationTest {
 	private final static Integer CLIENT_ID = 1;
 
 	@Autowired
-	private MessageDao messageDao;
+	private NotificationDao messageDao;
 
 	@Autowired
 	private ClientDao clientDao;
@@ -70,7 +70,7 @@ public class NotificationIntegrationTest {
 	 */
 	@Test
 	public void insertIntoNotificationTest() {
-		assertThat(messageDao.getEmailsForSending().get(0).getSenderEmail()).isEqualTo(SENDER_EMAIL);
+		assertThat(messageDao.getAllEmailsToSending().get(0).getSenderEmail()).isEqualTo(SENDER_EMAIL);
 	}
 
 	/**
@@ -127,6 +127,6 @@ public class NotificationIntegrationTest {
 	 */
 	@Test
 	public void getEmailsForSendingTest() {
-		assertNotEquals(messageDao.getEmailsForSending().size(), 0);
+		assertNotEquals(messageDao.getAllEmailsToSending().size(), 0);
 	}
 }

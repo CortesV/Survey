@@ -1,9 +1,10 @@
-package com.softbistro.survey.daemons.notification.system.component.entity;
+package com.softbistro.survey.notification.db.entity;
 
 import java.util.Date;
 
 /**
  * Entity for sending_survey table
+ * 
  * @author alex_alokhin
  *
  */
@@ -20,7 +21,7 @@ public class NotificationSurveySending {
 		this.email = email;
 	}
 
-	public NotificationSurveySending(String url, Integer participantId, Integer surveyId,Date date) {
+	public NotificationSurveySending(String url, Integer participantId, Integer surveyId, Date date) {
 		this.url = url;
 		this.participantId = participantId;
 		this.surveyId = surveyId;

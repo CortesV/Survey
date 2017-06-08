@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.manage.components.entity.ClientForSending;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
-import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.daemons.notification.system.component.entity.NotificationClientSending;
-import com.softbistro.survey.daemons.notification.system.component.interfaces.ISendingMessage;
+import com.softbistro.survey.daemons.notification.system.main.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.main.system.component.interfaces.INotification;
+import com.softbistro.survey.notification.db.entity.NotificationClientSending;
 import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 
 /**
@@ -33,7 +33,7 @@ public class ChangePasswordMessageService implements ICreateMessage {
 	private Logger LOGGER = LogManager.getLogger(getClass());
 
 	@Autowired
-	private ISendingMessage iSendingMessage;
+	private INotification iSendingMessage;
 
 	@Autowired
 	private IClient iClient;
@@ -75,9 +75,9 @@ public class ChangePasswordMessageService implements ICreateMessage {
 
 			NotificationClientSending notificationSending = new NotificationClientSending(uuid, client.getId(),
 					new Date(cal.getTimeInMillis()));
-			
-			iSendingMessage.insertIntoSendingPassword(notificationSending);
 
+			iSendingMessage.insertIntoSendingPassword(notificationSending);
+			
 			iClient.updateStatusOfUpdatePassword();
 
 			LOGGER.info(String.format("Changed client password with email: %s", client.getEmail()));
@@ -106,5 +106,4 @@ public class ChangePasswordMessageService implements ICreateMessage {
 	public String generateThemeForMessage() {
 		return String.format("Changed password");
 	}
-
 }
