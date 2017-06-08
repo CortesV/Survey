@@ -1,6 +1,6 @@
 spring:
   application:
-    name: survey-notsys-test
+    name: survey-dev
   cloud:
     config:
       uri: http://80.91.191.79:19088
