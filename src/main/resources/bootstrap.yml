@@ -3,4 +3,4 @@
 #    name: survey-notsys-test
 #  cloud:
 #    config:
-#      uri: http://192.168.128.242:8888
+#      uri: http://80.91.191.79:19088

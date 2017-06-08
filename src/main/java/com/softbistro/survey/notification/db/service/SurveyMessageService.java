@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
-import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.daemons.notification.system.component.interfaces.INotification;
+import com.softbistro.survey.daemons.notification.system.main.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.main.system.component.interfaces.INotification;
 import com.softbistro.survey.notification.db.entity.NotificationSurveySending;
 import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 

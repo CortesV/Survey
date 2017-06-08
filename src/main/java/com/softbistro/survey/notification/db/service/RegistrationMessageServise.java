@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.client.manage.components.entity.ClientForSending;
 import com.softbistro.survey.client.manage.components.interfaces.IClient;
-import com.softbistro.survey.daemons.notification.system.component.entity.Notification;
-import com.softbistro.survey.daemons.notification.system.component.interfaces.INotification;
+import com.softbistro.survey.daemons.notification.system.main.system.component.entity.Notification;
+import com.softbistro.survey.daemons.notification.system.main.system.component.interfaces.INotification;
 import com.softbistro.survey.notification.db.entity.NotificationClientSending;
 import com.softbistro.survey.notification.db.interfacee.ICreateMessage;
 
