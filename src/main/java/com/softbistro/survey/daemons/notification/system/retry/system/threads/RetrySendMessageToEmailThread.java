@@ -7,6 +7,8 @@ import javax.mail.Session;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.daemons.notification.system.main.system.interfaces.IFormingMessage;
 import com.softbistro.survey.daemons.notification.system.main.system.interfaces.ISendingMessageInSeparateThread;
@@ -14,6 +16,8 @@ import com.softbistro.survey.daemons.notification.system.retry.system.component.
 import com.softbistro.survey.daemons.notification.system.retry.system.component.interfaces.IRetryNotification;
 import com.softbistro.survey.daemons.notification.system.retry.system.service.FormMessageForSendServiceRetry;
 
+@Service
+@Scope("prototype")
 public class RetrySendMessageToEmailThread implements Runnable, ISendingMessageInSeparateThread {
 	private Session session;
 	private List<RetryNotification> messagesForRetryThread;

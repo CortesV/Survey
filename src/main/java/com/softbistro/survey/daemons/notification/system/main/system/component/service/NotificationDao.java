@@ -41,7 +41,7 @@ public class NotificationDao implements INotification {
 			+ " FROM notification AS n JOIN sender AS s ON n.from=s.sender_email WHERE status='NEW'"
 			+ " OR (status='IN_PROCESS' AND TIMESTAMPDIFF(MINUTE, n.modified_date, NOW())>=?) LIMIT ?";
 
-	private static final String SQL_UPDATE_LIST_EMAIL_TO_IN_PROCESS = "UPDATE notification SET status='IN_PROCESS' WHERE status = ? OR status = ?";
+	private static final String SQL_UPDATE_LIST_EMAIL_TO_IN_PROCESS = "UPDATE notification SET status='IN_PROCESS' WHERE status = ?";
 	private static final String SQL_UPDATE_LIST_EMAIL_TO_PROCESSED = "UPDATE notification SET status='PROCESSED' WHERE status = ? AND id = ?";
 	private static final String SQL_UPDATE_LIST_EMAIL_TO_ERROR = "UPDATE notification SET status='ERROR' WHERE status = ? AND id = ?";
 
@@ -114,7 +114,7 @@ public class NotificationDao implements INotification {
 	 */
 	@Override
 	public void updateStatusMessagesToInProcess() {
-		jdbcTemplateNotification.update(SQL_UPDATE_LIST_EMAIL_TO_IN_PROCESS, "NEW", "IN_PROCESS");
+		jdbcTemplateNotification.update(SQL_UPDATE_LIST_EMAIL_TO_IN_PROCESS, "NEW");
 	}
 
 	/**

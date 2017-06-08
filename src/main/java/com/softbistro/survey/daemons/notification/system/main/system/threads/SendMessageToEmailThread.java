@@ -7,6 +7,8 @@ import javax.mail.Session;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 
 import com.softbistro.survey.daemons.notification.system.main.system.component.entity.Notification;
 import com.softbistro.survey.daemons.notification.system.main.system.component.interfaces.INotification;
@@ -20,6 +22,8 @@ import com.softbistro.survey.daemons.notification.system.retry.system.component.
  * @author vlad
  *
  */
+@Service
+@Scope("prototype")
 public class SendMessageToEmailThread implements Runnable, ISendingMessageInSeparateThread {
 	private Session session;
 	private List<Notification> messagesForThread;

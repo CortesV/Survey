@@ -75,8 +75,6 @@ public class StartNotificationSystem {
 					new NotificationService(messagesForThread, iSendingMessage, iRetryNotification, propertiesSurvey))
 							.start();
 
-			iRetryNotification.updateStatusMessagesToInProcess();
-
 			lowerIndexOfEmailForThread = lowerIndexOfEmailForThread + countOfRecords;
 			upperIndexOfEmailForThread = upperIndexOfEmailForThread + countOfRecords;
 		}
