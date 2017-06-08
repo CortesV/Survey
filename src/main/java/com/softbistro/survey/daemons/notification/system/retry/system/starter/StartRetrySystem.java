@@ -38,12 +38,12 @@ public class StartRetrySystem {
 
 		List<RetryNotification> retryMessages = iRetryNotification.getAllErrorEmailsToResending();
 
-		iRetryNotification.updateStatusMessagesToInProcess();
-		iRetryNotification.updateIncreaseRetryCountForMessageToResend();
-
 		if (retryMessages.isEmpty()) {
 			return;
 		}
+
+		iRetryNotification.updateIncreaseRetryCountForMessageToResend();
+		iRetryNotification.updateStatusMessagesToInProcess();
 
 		countOfRetryThread = (int) Math.ceil((double) retryMessages.size() / countOfRecords);
 

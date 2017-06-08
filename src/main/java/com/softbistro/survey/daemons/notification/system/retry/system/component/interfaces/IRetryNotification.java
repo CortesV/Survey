@@ -51,7 +51,7 @@ public interface IRetryNotification {
 	 * 
 	 * @author yagi
 	 */
-	public void updateStatusMessagesFromErrorToProcessed(int id);
+	public void updateStatusMessagesFromInProcessToProcessed(int id);
 
 	/**
 	 * Update status on email that has errors to "ERROR"

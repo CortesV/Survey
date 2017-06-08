@@ -47,7 +47,7 @@ public class RetrySendMessageToEmailThread implements Runnable, ISendingMessageI
 
 			iFormingMessage.formingMessage();
 
-			iRetryNotification.updateStatusMessagesFromErrorToProcessed(messagesForRetryThread.get(emailIndex).getId());
+			iRetryNotification.updateStatusMessagesFromInProcessToProcessed(messagesForRetryThread.get(emailIndex).getId());
 
 			log.info(String.format("NotSys | Status of message [%s] was updated on 'PROCESSED'. | Message sent.",
 					messagesForRetryThread.get(emailIndex).getId()));

@@ -48,12 +48,12 @@ public class StartNotificationSystem {
 
 		List<Notification> messages = iSendingMessage.getAllEmailsToSending();
 
-		iSendingMessage.updateStatusMessagesToInProcess();
-
 		if (messages.isEmpty()) {
 			return;
 		}
 
+		iSendingMessage.updateStatusMessagesToInProcess();
+		
 		countOfThread = (int) Math.ceil((double) messages.size() / countOfRecords);
 
 		lowerIndexOfEmailForThread = 0;
