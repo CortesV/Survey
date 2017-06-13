@@ -34,7 +34,7 @@ public class RetryNotificationDao implements IRetryNotification {
 			+ " ON n.id=notification_fail.notification_id JOIN sender ON n.from=sender.sender_email"
 			+ " WHERE n.status = 'ERROR' AND retry_count<?;";
 
-	private static final String SQL_INSERT_RETRY_NOTIFICATION = "INSERT INTO notification_failure(`notification_id`,`exception`, `retry_count`) VALUES (?, ?, 0) ON DUPLICATE KEY UPDATE notification_id=notification_id";
+	private static final String SQL_INSERT_RETRY_NOTIFICATION = "INSERT INTO notification_failure(`notification_id`,`exception`, `retry_count`) VALUES (?, ?, 0) ON DUPLICATE KEY UPDATE exception=?";
 
 	private static final String SQL_UPDATE_INCREASE_RETRY_COUNT_FOR_RESEND_EMAIL = "UPDATE notification_failure AS notification_fail"
 			+ " JOIN notification AS n ON notification_fail.notification_id = n.id SET retry_count=retry_count+1 WHERE n.status='ERROR' AND retry_count<?";
@@ -97,7 +97,7 @@ public class RetryNotificationDao implements IRetryNotification {
 	@Override
 	public void insertRetryNotification(RetryNotification retryNotification) {
 		jdbcTemplateNotification.update(SQL_INSERT_RETRY_NOTIFICATION, retryNotification.getId(),
-				retryNotification.getTextException());
+				retryNotification.getTextException(), retryNotification.getTextException());
 	}
 
 	/**
