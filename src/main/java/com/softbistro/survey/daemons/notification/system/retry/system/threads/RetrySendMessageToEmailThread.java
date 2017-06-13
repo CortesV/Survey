@@ -61,11 +61,26 @@ public class RetrySendMessageToEmailThread implements Runnable, ISendingMessage 
 		} catch (MessagingException e) {
 
 			iRetryNotification.updateStatusMessagesToError(messagesForRetryThread.get(emailIndex).getId());
+			updateTextErrorMessageInNotificationFailureTable((e.getMessage()));
 
 			LOGGER.info(String.format("NotSys | Status of message [%s] was updated on 'ERROR'. | Number of try: [%s].",
 					messagesForRetryThread.get(emailIndex).getId(),
 					messagesForRetryThread.get(emailIndex).getRetryCount()));
 		}
+	}
+
+	/**
+	 * If field (notification_id) duplicated, then updated field 'exception'
+	 * which contain text of exception "notification" in table
+	 * "notification_failure"
+	 * 
+	 * @param (textException),
+	 *            text from exception
+	 */
+	private void updateTextErrorMessageInNotificationFailureTable(String textException) {
+		RetryNotification retryNotification = new RetryNotification(messagesForRetryThread.get(emailIndex).getId(),
+				textException);
+		iRetryNotification.insertRetryNotification(retryNotification);
 	}
 
 	@Override
