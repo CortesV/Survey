@@ -2,6 +2,7 @@ package com.softbistro.survey.question.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.question.components.entity.Question;
 import com.softbistro.survey.question.service.QuestionService;
-import com.softbistro.survey.response.Response;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Controller for CRUD of Client
@@ -24,8 +26,6 @@ import com.softbistro.survey.response.Response;
 @RequestMapping(value = "/rest/survey/v1/question")
 public class QuestionController {
 
-	private static final String UNAUTHORIZED_CLIENT = "Unauthorized client";
-	
 	@Autowired
 	private QuestionService questionService;
 
@@ -39,15 +39,16 @@ public class QuestionController {
 	 *            id - id of question
 	 * @return return - all information about question
 	 */
+	@ApiOperation(value = "Get Question By Id", notes = "Get question instanse by question id", tags = "Question")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Response findQuestionById(@PathVariable("id") Long id, @RequestHeader String token) {
+	public ResponseEntity<Question> findQuestionById(@PathVariable("id") Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return questionService.findQuestionById(id);
+		return new ResponseEntity<>(questionService.findQuestionById(id), HttpStatus.OK);
 	}
 
 	/**
@@ -58,15 +59,18 @@ public class QuestionController {
 	 *            database
 	 * @return return - status of execution this method
 	 */
+	@ApiOperation(value = "Create new Question", notes = "Create question instanse by survey id, question, description short,"
+			+ " description Long, questionSection Id, answer Type, question Choices, required, required Comment. "
+			+ "Field answerType can have value such as: RATE1-10, RATE1-5, RATE1-3, BOOLEAN, LIST, MULTILIST, INPUT, MEMO", tags = "Question")
 	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public Response saveQuestion(@RequestBody Question question, @RequestHeader String token) {
+	public ResponseEntity<Object> saveQuestion(@RequestBody Question question, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return questionService.saveQuestion(question);
+		return new ResponseEntity<>(questionService.saveQuestion(question), HttpStatus.CREATED);
 	}
 
 	/**
@@ -76,15 +80,17 @@ public class QuestionController {
 	 *            of question
 	 * @return return - status of execution this method
 	 */
+	@ApiOperation(value = "Delete Question By Id", notes = "Delete question instanse by question id", tags = "Question")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public Response deleteQuestion(@PathVariable("id") Long id, @RequestHeader String token) {
+	public ResponseEntity<Object> deleteQuestion(@PathVariable("id") Integer id, @RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return questionService.deleteQuestion(id);
+		questionService.deleteQuestion(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
@@ -97,16 +103,19 @@ public class QuestionController {
 	 *            id-id of question
 	 * @return return - status of execution this method
 	 */
+	@ApiOperation(value = "Update Question By Id", notes = "Update question instanse by survey id, question, description short,"
+			+ " description Long, questionSection Id, answer Type, question Choices, required, required Comment and question id. "
+			+ "Field answerType can have value such as: RATE1-10, RATE1-5, RATE1-3, BOOLEAN, LIST, MULTILIST, INPUT, MEMO", tags = "Question")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public Response updateQuestion(@RequestBody Question question, @PathVariable("id") Long id,
+	public ResponseEntity<Object> updateQuestion(@RequestBody Question question, @PathVariable("id") Integer id,
 			@RequestHeader String token) {
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, UNAUTHORIZED_CLIENT);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
 
-		return questionService.updateQuestion(question, id);
+		questionService.updateQuestion(question, id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
-
 }

@@ -12,8 +12,10 @@ import org.springframework.stereotype.Repository;
 
 import com.softbistro.survey.client.auth.components.entities.AuthorizedClient;
 import com.softbistro.survey.client.auth.components.interfaces.IAuthorizedClientRepository;
+
 /**
  * CRUD for AuthorizedClient
+ * 
  * @author cortes
  *
  */
@@ -25,7 +27,7 @@ public class AuthorizedClientDao implements IAuthorizedClientRepository {
 	private RedisTemplate<String, AuthorizedClient> redisTemplate;
 
 	private HashOperations<String, String, AuthorizedClient> hashOps;
-	
+
 	@Autowired
 	public AuthorizedClientDao(RedisTemplate redisTemplate) {
 
@@ -47,7 +49,7 @@ public class AuthorizedClientDao implements IAuthorizedClientRepository {
 	@Override
 	public void saveClient(AuthorizedClient client) {
 
-		hashOps.put(OBJECT_KEY, client.getUniqueKey(), client);
+		hashOps.put(OBJECT_KEY, client.getToken(), client);
 		redisTemplate.expire(OBJECT_KEY, client.getTimeValidKey(), TimeUnit.MINUTES);
 	}
 
@@ -61,7 +63,7 @@ public class AuthorizedClientDao implements IAuthorizedClientRepository {
 	@Override
 	public void updateClient(AuthorizedClient client) {
 
-		hashOps.put(OBJECT_KEY, client.getUniqueKey(), client);
+		hashOps.put(OBJECT_KEY, client.getToken(), client);
 		redisTemplate.expire(OBJECT_KEY, client.getTimeValidKey(), TimeUnit.SECONDS);
 	}
 
@@ -85,7 +87,7 @@ public class AuthorizedClientDao implements IAuthorizedClientRepository {
 	 */
 	@Override
 	public Map<String, AuthorizedClient> findAllClients() {
-		
+
 		return hashOps.entries(OBJECT_KEY);
 	}
 
@@ -96,7 +98,7 @@ public class AuthorizedClientDao implements IAuthorizedClientRepository {
 	 */
 	@Override
 	public void deleteClients(String id) {
-		
+
 		hashOps.delete(OBJECT_KEY, id);
 	}
 

@@ -1,7 +1,9 @@
 package com.softbistro.survey.client.auth.controller;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.client.auth.service.AuthorizedClientService;
 import com.softbistro.survey.client.manage.components.entity.Client;
-import com.softbistro.survey.response.Response;
+import com.softbistro.survey.client.manage.service.ClientService;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Controller for authorization of Client
@@ -23,13 +27,22 @@ import com.softbistro.survey.response.Response;
 @RequestMapping(value = "/rest/survey/v1/")
 public class AuthController {
 
-	private static final String LOGOUT_SUCCESSFUL = "Logout is successful";
-	
+	private static final Logger LOGGER = Logger.getLogger(AuthController.class);
+	private static final String SIMPLE_AUTH = "Simple auth request --- ";
+	private static final String SOCIAL_AUTH = "Social auth request --- ";
+	private static final String LOGOUT = "Logout request --- ";
+	private static final String LOGOUT_FAIL = "Logout request --- Unauthorized client";
+	private static final String ADD_SOC_INFO = "Add social info request --- ";
+	private static final String ADD_SOC_FAIL = "Add social info request --- Unauthorized client";
+
 	@Autowired
 	private AuthorizationService authorizationService;
 
 	@Autowired
 	private AuthorizedClientService authorizedClientService;
+
+	@Autowired
+	private ClientService clientService;
 
 	/**
 	 * Method that do simple authorization of client
@@ -38,10 +51,12 @@ public class AuthController {
 	 *            client - information about client
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "auth/simple", method = RequestMethod.POST)
-	public Response simpleAuth(@RequestBody Client client) {
+	@ApiOperation(value = "Simple Authorization", notes = "Do simple authorization of client by client email and password", tags = "Authorization")
+	@RequestMapping(value = "auth/simple", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Client> simpleAuth(@RequestBody Client client) {
 
-		return authorizationService.simpleAthorization(client);
+		LOGGER.info(SIMPLE_AUTH + client.toString());
+		return new ResponseEntity<>(authorizationService.simpleAthorization(client), HttpStatus.OK);
 	}
 
 	/**
@@ -52,10 +67,12 @@ public class AuthController {
 	 *            client - information about client
 	 * @return return - status of execution this method
 	 */
-	@RequestMapping(value = "auth/social", method = RequestMethod.POST)
-	public Response socialAuth(@RequestBody Client client) {
+	@ApiOperation(value = "Social Network Authorization", notes = "do authorization with help of information from social networks", tags = "Authorization")
+	@RequestMapping(value = "auth/social", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Client> socialAuth(@RequestBody Client client) {
 
-		return authorizationService.socialAuthorization(client);
+		LOGGER.info(SOCIAL_AUTH + client.toString());
+		return new ResponseEntity<>(authorizationService.socialAuthorization(client), HttpStatus.OK);
 	}
 
 	/**
@@ -65,22 +82,42 @@ public class AuthController {
 	 *            token - token of some client
 	 * @return
 	 */
-	@RequestMapping(value = "logout", method = RequestMethod.POST)
-	public Response logout(@RequestHeader String token) {
+	@ApiOperation(value = "Logout Client", notes = "Logout the client by client token", tags = "Authorization")
+	@RequestMapping(value = "logout", method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<Object> logout(@RequestHeader String token) {
+
+		LOGGER.info(LOGOUT + token);
 
 		if (!authorizationService.checkAccess(token)) {
 
-			return new Response(null, HttpStatus.OK, "Unauthorized client");
+			LOGGER.info(LOGOUT_FAIL);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 		}
+
 		authorizedClientService.deleteClients(token);
 
-		return new Response(null, HttpStatus.OK, LOGOUT_SUCCESSFUL);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/cash2", method = RequestMethod.GET)
-	public Response setClient1(@RequestHeader String token) {
+	/**
+	 * Controller that add social data from social networks to exist client
+	 * 
+	 * @param token
+	 * @return
+	 */
+	@ApiOperation(value = "Add social info", notes = "Add social information for authorized client", tags = "Authorization")
+	@RequestMapping(value = "/add/social", method = RequestMethod.POST)
+	public ResponseEntity<Object> setClientInfo(@RequestHeader String token, @RequestBody Client client) {
 
-		return new Response(authorizedClientService.findClient(token), HttpStatus.OK, "OK");
+		LOGGER.info(ADD_SOC_INFO + client.toString() + "   " + token);
+		if (!authorizationService.checkAccess(token)) {
+
+			LOGGER.info(ADD_SOC_FAIL);
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		clientService.addSocialInfo(client);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

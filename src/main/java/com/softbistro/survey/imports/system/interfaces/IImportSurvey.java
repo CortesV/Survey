@@ -1,14 +1,19 @@
 package com.softbistro.survey.imports.system.interfaces;
 
-import com.softbistro.survey.response.Response;
+import javax.servlet.http.Part;
 
+/**
+ * Importing survey from file
+ * 
+ * @author olegnovatskiy
+ */
 public interface IImportSurvey {
 
 	/**
-	 * Import survey from file of CSV format.
+	 * Import survey from file different formats.
 	 * 
 	 * @param importFileName
 	 * @return
 	 */
-	public Response importSyrveyCSV(String fileName, String surveyName, Long clientId);
+	public Integer fromFile(Part filePart, Integer clientId);
 }

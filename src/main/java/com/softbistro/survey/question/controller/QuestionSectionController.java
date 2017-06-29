@@ -1,15 +1,22 @@
 package com.softbistro.survey.question.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.softbistro.survey.client.auth.service.AuthorizationService;
 import com.softbistro.survey.question.components.entity.QuestionSection;
 import com.softbistro.survey.question.service.QuestionSectionService;
-import com.softbistro.survey.response.Response;
+
+import io.swagger.annotations.ApiOperation;
 
 /**
  * Controller for QuestionSectionController
@@ -22,72 +29,166 @@ import com.softbistro.survey.response.Response;
 public class QuestionSectionController {
 
 	@Autowired
+	private AuthorizationService authorizationService;
+
+	@Autowired
 	private QuestionSectionService questionSectionService;
 
 	/**
 	 * Method for creating QuestionSection
 	 * 
 	 * @param questionSection
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Create new QuestionSection", notes = "Create new question section instanse by client id, section name, short description, long description", tags = "Question Section")
 	@RequestMapping(method = RequestMethod.POST)
-	public Response setQuestionSection(@RequestBody QuestionSection questionSection) {
-		return questionSectionService.setQuestionSection(questionSection);
+	public ResponseEntity<Object> setQuestionSection(@RequestBody QuestionSection questionSection,
+			@RequestHeader String token) {
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		return new ResponseEntity<>(questionSectionService.setQuestionSection(questionSection), HttpStatus.CREATED);
 	}
 
 	/**
 	 * Method for updating QuestionSection
 	 * 
 	 * @param questionSection
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Update QuestionSection", notes = "Update question section instanse by survey id, section name, short description, long description and question section id", tags = "Question Section")
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public Response updateQuestionSection(@RequestBody QuestionSection questionSection,
-			@PathVariable("id") Integer questionSectionId) {
-		return questionSectionService.updateQuestionSection(questionSection, questionSectionId);
+	public ResponseEntity<Object> updateQuestionSection(@RequestBody QuestionSection questionSection,
+			@PathVariable("id") Integer questionSectionId, @RequestHeader String token) {
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		questionSectionService.updateQuestionSection(questionSection, questionSectionId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
 	 * Method for deleting QuestionSection from db by id
 	 * 
 	 * @param questionSectionId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Delete QuestionSection", notes = "Delete question section instanse by question section id", tags = "Question Section")
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public Response deleteQuestionSection(@PathVariable("id") Integer questionSectionId) {
-		return questionSectionService.deleteQuestionSection(questionSectionId);
+	public ResponseEntity<Object> deleteQuestionSection(@PathVariable("id") Integer questionSectionId,
+			@RequestHeader String token) {
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		questionSectionService.deleteQuestionSection(questionSectionId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	/**
 	 * Method to getting QuestionSection from db by id
 	 * 
 	 * @param questionSectionId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Get QuestionSection By Id", notes = "Get question section instanse by question section id", tags = "Question Section")
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Response getQuestionSectionById(@PathVariable Integer id) {
-		return questionSectionService.getQuestionSectionById(id);
+	public ResponseEntity<QuestionSection> getQuestionSectionById(@PathVariable Integer id,
+			@RequestHeader String token) {
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		return new ResponseEntity<>(questionSectionService.getQuestionSectionById(id), HttpStatus.OK);
+	}
+
+	/**
+	 * Method to getting QuestionSection from db by clientId
+	 * 
+	 * @param clientId
+	 * @return ResponseEntity
+	 */
+	@ApiOperation(value = "Get QuestionSection By Client", notes = "Get question section instanse by client id", tags = "Question Section")
+	@RequestMapping(value = "/client/{id}", method = RequestMethod.GET)
+	public ResponseEntity<List<QuestionSection>> getQuestionSectionByClientId(@PathVariable Integer id,
+			@RequestHeader String token) {
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		return new ResponseEntity<>(questionSectionService.getQuestionSectionByClientId(id), HttpStatus.OK);
 	}
 
 	/**
 	 * Method to getting QuestionSection from db by surveyId
 	 * 
 	 * @param surveyId
-	 * @return Response
+	 * @return ResponseEntity
 	 */
+	@ApiOperation(value = "Get QuestionSection By Survey", notes = "Get question section instanse by survey id", tags = "Question Section")
 	@RequestMapping(value = "/survey/{id}", method = RequestMethod.GET)
-	public Response getQuestionSectionBySurveyId(@PathVariable Integer id) {
-		return questionSectionService.getQuestionSectionBySurveyId(id);
+	public ResponseEntity<List<QuestionSection>> getQuestionSectionBySurveyId(@PathVariable Integer id,
+			@RequestHeader String token) {
+
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		return new ResponseEntity<>(questionSectionService.getQuestionSectionBySurveyId(id), HttpStatus.OK);
 	}
 
 	/**
-	 * Method to getting QuestionSection from db by section name
+	 * Method for adding QuestionSection to survey
 	 * 
-	 * @param name
-	 * @return Response
+	 * @param questionSection
+	 *            id, survey id
+	 * @return ResponseEntity
 	 */
-	@RequestMapping(value = "/name/{name}", method = RequestMethod.GET)
-	public Response getQuestionSectionById(@PathVariable String name) {
-		return questionSectionService.getQuestionSectionByName(name);
+	@ApiOperation(value = "Adding Question Section to Survey", notes = "Add question section to survey by question section id and survey id", tags = "Question Section")
+	@RequestMapping(value = "/{questionSection_id}/{survey_id}", method = RequestMethod.POST)
+	public ResponseEntity<Object> addQuestionSectionToSurvey(
+			@PathVariable("questionSection_id") Integer questionSectionId, @PathVariable("survey_id") Integer surveyId,
+			@RequestHeader String token) {
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		questionSectionService.addQuestionSectionToSurvey(questionSectionId, surveyId);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	/**
+	 * Method for deleting QuestionSection from survey
+	 * 
+	 * @param questionSectionId,
+	 *            survey id
+	 * @return ResponseEntity
+	 */
+	@ApiOperation(value = "Delete QuestionSection from Survey", notes = "Delete question section from survey by question section id and survey id", tags = "Question Section")
+	@RequestMapping(value = "/{questionSection_id}/{survey_id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Object> deleteQuestionSectionFromSurvey(
+			@PathVariable("questionSection_id") Integer questionSectionId, @PathVariable("survey_id") Integer surveyId,
+			@RequestHeader String token) {
+		if (!authorizationService.checkAccess(token)) {
+
+			return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+		}
+
+		questionSectionService.deleteQuestionSectionFromSurvey(questionSectionId, surveyId);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
